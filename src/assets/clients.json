@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1,
+    "firstName": "Bartosz",
+    "lastName": "Kowalski",
+    "clientType": "PRIVATE",
+    "companyName": null,
+    "note": null,
+    "contact": {
+      "telephone": "600123456",
+      "email": "test@mail.com",
+      "address": null
+    }
+  },
+  {
+    "id": 2,
+    "firstName": "Marek",
+    "lastName": "Nowak",
+    "clientType": "PRIVATE",
+    "companyName": null,
+    "note": null,
+    "contact": {
+      "telephone": "707223356",
+      "email": "test2@mail.com",
+      "address": null
+    }
+  },
+  {
+    "id": 3,
+    "firstName": null,
+    "lastName": null,
+    "companyName": "Nazwa firmy",
+    "clientType": "CORPORATE",
+    "note": null,
+    "contact": {
+      "telephone": "808188997",
+      "email": "test3@mail.com",
+      "address": null
+    }
+  }
+]
