@@ -1,0 +1,20 @@
+<p-table [value]="clients" [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Telephone</th>
+            <th>Email</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-client>
+        <tr>
+            <td>{{ client.id }}</td>
+            <td>{{ client.clientType == ClientType.PRIVATE ? client.firstName + " " +  client.lastName : client.companyName }}</td>
+            <td>{{ client.clientType}}</td>
+            <td>{{ client.contact === null ? null : client.contact.telephone }}</td>
+            <td>{{ client.contact === null ? null : client.contact.email }}</td>
+        </tr>
+    </ng-template>
+</p-table>
