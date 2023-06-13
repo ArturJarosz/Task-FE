@@ -5,6 +5,8 @@ import {Injectable} from "@angular/core";
 
 export abstract class ClientService {
     abstract getClients(): Observable<Client[]>;
+
+    abstract getClient(clientId: number): Observable<Client>;
 }
 
 @Injectable()
@@ -15,9 +17,15 @@ export class ClientServiceImpl implements ClientService {
     }
 
     getClients(): Observable<Client[]> {
-        console.log("getting all clients");
         return this.httpClient.get<Client[]>(this.clientUrl).pipe(
             tap(data => console.log("All clients: " + JSON.stringify(data))),
+            catchError(this.handleError)
+        );
+    }
+
+    getClient(clientId: number): Observable<Client> {
+        return this.httpClient.get<Client>(`${this.clientUrl}/${clientId}`).pipe(
+            tap(data => console.log("Client: " + JSON.stringify(data))),
             catchError(this.handleError)
         );
     }
@@ -33,4 +41,6 @@ export class ClientServiceImpl implements ClientService {
         console.error(errorMessage);
         return throwError(() => errorMessage);
     }
+
+
 }

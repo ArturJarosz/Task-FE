@@ -11,7 +11,11 @@
     <ng-template pTemplate="body" let-client>
         <tr>
             <td>{{ client.id }}</td>
-            <td>{{ client.clientType == ClientType.PRIVATE ? client.firstName + " " +  client.lastName : client.companyName }}</td>
+            <td>
+                <a [routerLink]= "['/clients', client.id]">
+                    {{ client.clientType == ClientType.PRIVATE ? client.firstName + " " + client.lastName : client.companyName }}
+                </a>
+                </td>
             <td>{{ client.clientType}}</td>
             <td>{{ client.contact === null ? null : client.contact.telephone }}</td>
             <td>{{ client.contact === null ? null : client.contact.email }}</td>
