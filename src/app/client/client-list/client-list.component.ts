@@ -5,10 +5,10 @@ import {Subscription} from "rxjs";
 
 @Component({
     selector: 'clients-list',
-    templateUrl: './clients-list.component.html',
-    styleUrls: ['./clients-list.component.less']
+    templateUrl: './client-list.component.html',
+    styleUrls: ['./client-list.component.less']
 })
-export class ClientsListComponent implements OnInit, OnDestroy {
+export class ClientListComponent implements OnInit, OnDestroy {
     private clientSubscription!: Subscription;
     protected readonly ClientType = ClientType;
 
