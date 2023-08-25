@@ -5,24 +5,38 @@ export enum ClientType {
 
 export interface Address {
     city: string,
-    postCode: string | null,
-    street: string | null,
-    houseNumber: string | null,
-    flatNumber: string | null,
+    postCode?: string,
+    street: string,
+    houseNumber?: string,
+    flatNumber?: string,
 }
 
 export interface Contact {
-    email: string | null,
-    telephone: string | null,
-    address: Address | null,
+    email?: string,
+    telephone?: string,
+    address?: Address,
 }
 
 export interface Client {
     id: number,
-    firstName: string | null,
-    lastName: string | null,
-    companyName: string | null,
-    note: string | null,
+    firstName?: string,
+    lastName?: string,
+    companyName?: string,
+    note?: string,
     clientType: ClientType,
-    contact: Contact | null
+    contact?: Contact
+}
+
+export interface CreateClient {
+}
+
+export interface CreateCorporateClient extends CreateClient {
+    clientType: ClientType,
+    companyName: string
+}
+
+export interface CreatePrivateClient extends CreateClient {
+    clientType: ClientType,
+    firstName: string,
+    lastName: string
 }

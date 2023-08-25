@@ -1,12 +1,14 @@
-import {Client} from "../client";
+import {Client, CreateClient} from "../client";
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
-import {catchError, Observable, tap, throwError} from "rxjs";
+import {catchError, Observable, throwError} from "rxjs";
 import {Injectable} from "@angular/core";
 
 export abstract class ClientService {
     abstract getClients(): Observable<Client[]>;
 
     abstract getClient(clientId: number): Observable<Client>;
+
+    abstract createClient(client: CreateClient): Observable<any>;
 }
 
 @Injectable()
@@ -18,16 +20,20 @@ export class ClientServiceImpl implements ClientService {
 
     getClients(): Observable<Client[]> {
         return this.httpClient.get<Client[]>(this.clientUrl).pipe(
-            tap(data => console.log("All clients: " + JSON.stringify(data))),
             catchError(this.handleError)
         );
     }
 
     getClient(clientId: number): Observable<Client> {
         return this.httpClient.get<Client>(`${this.clientUrl}/${clientId}`).pipe(
-            tap(data => console.log("Client: " + JSON.stringify(data))),
             catchError(this.handleError)
         );
+    }
+
+    createClient(client: CreateClient): Observable<Client> {
+        return this.httpClient.post<Client>(this.clientUrl, client).pipe(
+            catchError(this.handleError)
+        )
     }
 
     private handleError(error: HttpErrorResponse) {

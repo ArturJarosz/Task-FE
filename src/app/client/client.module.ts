@@ -9,11 +9,20 @@ import {RouterModule} from "@angular/router";
 import {CardModule} from "primeng/card";
 import {PanelModule} from "primeng/panel";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import { AddClientComponent } from './add-client/add-client.component';
+import {DialogModule} from "primeng/dialog";
+import {ButtonModule} from "primeng/button";
+import {DropdownModule} from "primeng/dropdown";
+import {FormsModule} from "@angular/forms";
+import {InputTextModule} from "primeng/inputtext";
+import {KeyFilterModule} from "primeng/keyfilter";
+import {RippleModule} from "primeng/ripple";
 
 @NgModule({
     declarations: [
         ClientListComponent,
-        ClientDetailComponent
+        ClientDetailComponent,
+        AddClientComponent
     ],
     imports: [
         BrowserAnimationsModule,
@@ -25,7 +34,14 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
         RouterModule.forChild([
             {path: 'clients', component: ClientListComponent},
             {path: 'clients/:id', component: ClientDetailComponent}
-        ])
+        ]),
+        DialogModule,
+        ButtonModule,
+        DropdownModule,
+        FormsModule,
+        InputTextModule,
+        KeyFilterModule,
+        RippleModule
     ],
     exports: [
         ClientListComponent

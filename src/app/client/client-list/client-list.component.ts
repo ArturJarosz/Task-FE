@@ -11,10 +11,10 @@ import {Subscription} from "rxjs";
 export class ClientListComponent implements OnInit, OnDestroy {
     private clientSubscription!: Subscription;
     protected readonly ClientType = ClientType;
+    showComponent: boolean = false;
 
     errorMessage: string = 'a';
     clients: Client[] = [];
-
 
     constructor(private clientService: ClientService) {
     }
@@ -28,5 +28,13 @@ export class ClientListComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.clientSubscription.unsubscribe();
+    }
+
+    onClick() {
+        this.showComponent = !this.showComponent;
+    }
+
+    onNotify(event: boolean) {
+        this.showComponent = !this.showComponent;
     }
 }
