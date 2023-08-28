@@ -1,0 +1,57 @@
+<p-dialog header="Add new client" [(visible)]="visible" appendTo="body" [modal]="true" [style]="{ width: '50vw'}"
+          (onHide)="onClose()">
+    <ng-template pTemplate="header">
+        <div class="flex flex-column gap-2">
+            <h1 class="m-0 text-900 font-semibold text-xl line-height-3">Add new client</h1>
+        </div>
+    </ng-template>
+    <div>
+        <p-dropdown [options]="clientTypes" [(ngModel)]="clientType">
+        </p-dropdown>
+        <div>
+            <form class="flex flex-column gap-3 mt-3" [ngSwitch]="clientType">
+                <div class="flex gap-3" *ngSwitchCase="ClientType.PRIVATE">
+                    <div class="w-full">
+                        <label for="firstName" class="block mb-1 text-color text-base">First Name</label>
+                        <span class="p-input-icon-left w-full">
+                            <i class="pi pi-pencil"></i>
+                            <input name="firstName" type="text" [(ngModel)]="firstName" class="w-full" id="firstName"
+                                   pInputText
+                                   placeholder="first name"/>
+                        </span>
+                    </div>
+                    <div class="w-full">
+                        <label for="lastName" class="block mb-1 text-color text-base">Last Name</label>
+                        <span class="p-input-icon-left w-full">
+                            <i class="pi pi-pencil"></i>
+                            <input name="lastName" type="text" [(ngModel)]="lastName" class="w-full" id="lastName"
+                                   pInputText
+                                   placeholder="last name"/>
+                        </span>
+                    </div>
+                </div>
+                <div class="flex gap-3" *ngSwitchCase="ClientType.CORPORATE">
+                    <div class="w-full">
+                        <label for="companyName" class="block mb-1 text-color text-base">Company Name</label>
+                        <span class="p-input-icon-left w-full">
+                            <i class="pi pi-pencil"></i>
+                            <input name="companyName" type="text" [(ngModel)]="companyName" class="w-full"
+                                   id="companyName"
+                                   pInputText
+                                   placeholder="company name"/>
+                        </span>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <div class="flex gap-3 justify-content-end border-top-1 surface-border pt-5">
+            <p-button label="Cancel" styleClass="p-button-outlined p-button-secondary"
+                      (onClick)="onCancel()"></p-button>
+            <p-button label="Save" styleClass="p-button-outlined" [disabled]="!isSaveEnabled()"
+                      (onClick)="onSave()"></p-button>
+        </div>
+    </ng-template>
+</p-dialog>
