@@ -8,6 +8,9 @@ import {ClientModule} from './client/client.module';
 import {MainComponent} from './main/main.component'
 import {RouterModule} from "@angular/router";
 import {MenubarModule} from "primeng/menubar";
+import {StyleClassModule} from "primeng/styleclass";
+import {RippleModule} from "primeng/ripple";
+import {InputTextModule} from "primeng/inputtext";
 
 @NgModule({
     declarations: [
@@ -23,7 +26,10 @@ import {MenubarModule} from "primeng/menubar";
             {path: '', redirectTo: 'home', pathMatch: 'full'},
             {path: '**', redirectTo: 'home', pathMatch: 'full'}
         ]),
-        MenubarModule
+        MenubarModule,
+        StyleClassModule,
+        RippleModule,
+        InputTextModule
     ],
     providers: [],
     bootstrap: [AppComponent]
