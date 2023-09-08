@@ -1,42 +1,54 @@
+import {FormControl, FormGroup} from "@angular/forms";
+
 export enum ClientType {
     PRIVATE = "PRIVATE",
     CORPORATE = "CORPORATE",
 }
 
 export interface Address {
-    city: string,
-    postCode?: string,
-    street: string,
-    houseNumber?: string,
-    flatNumber?: string,
+    city?: string | null,
+    postCode?: string | null,
+    street?: string | null,
+    houseNumber?: string | null,
+    flatNumber?: string | null,
+}
+
+export type AddressForm = {
+    city: FormControl<string | null>,
+    postCode: FormControl<string | null>,
+    street: FormControl<string | null>,
+    houseNumber: FormControl<string | null>,
+    flatNumber: FormControl<string | null>,
 }
 
 export interface Contact {
-    email?: string,
-    telephone?: string,
-    address?: Address,
+    email?: string | null,
+    telephone?: string | null,
+    address?: Address | null,
+}
+
+export interface ContactForm {
+    email: FormControl<string | null>,
+    telephone: FormControl<string | null>,
+    address: FormGroup<AddressForm>,
 }
 
 export interface Client {
-    id: number,
-    firstName?: string,
-    lastName?: string,
-    companyName?: string,
-    note?: string,
+    id?: number | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    companyName?: string | null,
+    note?: string | null,
     clientType: ClientType,
-    contact?: Contact
+    contact?: Contact | null
 }
 
-export interface CreateClient {
-}
-
-export interface CreateCorporateClient extends CreateClient {
-    clientType: ClientType,
-    companyName: string
-}
-
-export interface CreatePrivateClient extends CreateClient {
-    clientType: ClientType,
-    firstName: string,
-    lastName: string
+export interface ClientForm {
+    id?: FormControl<number>,
+    firstName: FormControl<string | null>,
+    lastName: FormControl<string | null>,
+    companyName: FormControl<string | null>,
+    note: FormControl<string | null>,
+    clientType: FormControl<ClientType>,
+    contact: FormGroup<ContactForm>
 }

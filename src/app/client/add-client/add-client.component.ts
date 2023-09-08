@@ -1,6 +1,8 @@
 import {Component, EventEmitter, Injectable, Input, OnInit, Output} from '@angular/core';
-import {ClientType, CreateClient} from "../client";
+import {Client, ClientType} from "../client";
 import {ClientService} from "../service/client.service";
+import {FormGroup, Validators} from "@angular/forms";
+import {ClientFormProvider} from "./client-form-provider";
 import {HttpStatusCode} from "@angular/common/http";
 
 @Injectable({
@@ -16,19 +18,47 @@ export class AddClientComponent implements OnInit {
     visible = false;
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
+
     clientTypes!: String[];
-    clientType!: ClientType;
-    firstName!: string;
-    lastName!: string;
-    companyName!: string;
+    clientForm!: FormGroup;
 
     protected readonly ClientType = ClientType;
 
-    constructor(private _clientService: ClientService) {
+    constructor(private clientService: ClientService, private clientFormProvider: ClientFormProvider) {
+        this.initClientGroup();
+    }
+
+    initClientGroup(): void {
+        this.clientForm = this.clientFormProvider.getClientFormGroup();
+    }
+
+    updateClientValidators(clientType: ClientType): void {
+        const firstNameControl = this.clientForm.get('firstName');
+        const lastNameControl = this.clientForm.get('lastName');
+        const companyNameControl = this.clientForm.get('companyName');
+        if (clientType === ClientType.CORPORATE) {
+            firstNameControl?.clearValidators();
+            lastNameControl?.clearValidators();
+            companyNameControl?.setValidators(Validators.required);
+        }
+        if (clientType === ClientType.PRIVATE) {
+            firstNameControl?.setValidators(Validators.required);
+            lastNameControl?.setValidators(Validators.required);
+            companyNameControl?.clearValidators();
+        }
+        firstNameControl?.updateValueAndValidity();
+        lastNameControl?.updateValueAndValidity();
+        companyNameControl?.updateValueAndValidity();
     }
 
     ngOnInit(): void {
         this.initClientTypes();
+        this.clientForm.get('clientType')
+            ?.valueChanges
+            .subscribe(clientType => {
+                console.log(clientType);
+                this.updateClientValidators(clientType);
+            })
     }
 
     onClose(): void {
@@ -36,7 +66,8 @@ export class AddClientComponent implements OnInit {
     }
 
     initClientTypes() {
-        this.clientTypes = Object.values(ClientType).filter(value => typeof value === 'string') as string[];
+        this.clientTypes = Object.values(ClientType)
+            .filter(value => true) as string[];
     }
 
     onCancel() {
@@ -46,58 +77,59 @@ export class AddClientComponent implements OnInit {
 
     onSave() {
         this.visible = false;
-        let client: CreateClient;
+        let client: Client;
         client = this.createClient();
-        this._clientService.createClient(client).subscribe({
-                next: response => {
-                    if (response.status === HttpStatusCode.Created) {
-                    }
-                },
-                error: error => console.log(error),
-            }
-        );
+        this.clientService.createClient(client)
+            .subscribe({
+                    next: response => {
+                        if (response.status === HttpStatusCode.Created) {
+                        }
+                    },
+                    error: error => console.log(error),
+                }
+            );
     }
 
     private createClient() {
-        let client: CreateClient;
-        switch (this.clientType) {
-            case ClientType.CORPORATE: {
-                client = {
-                    clientType: ClientType.CORPORATE,
-                    companyName: this.companyName.trim()
-                }
-                break;
+        let client: Client;
+        if (this.clientForm.get('clientType')?.value === ClientType.PRIVATE) {
+            client = {
+                clientType: ClientType.PRIVATE,
+                firstName: this.clientForm.get('firstName')?.value,
+                lastName: this.clientForm.get('lastName')?.value
             }
-            case ClientType.PRIVATE: {
-                client = {
-                    clientType: ClientType.PRIVATE,
-                    firstName: this.firstName.trim(),
-                    lastName: this.lastName.trim()
-                }
-                break;
+        } else {
+            client = {
+                clientType: ClientType.CORPORATE,
+                companyName: this.clientForm.get('companyName')?.value
             }
         }
-        console.log(`client: ${JSON.stringify(client)}`)
+        client.contact = {};
+        let contactForm = this.clientForm.get('contact');
+        if (contactForm) {
+            client.contact.email = contactForm.get('email')?.value;
+            client.contact.telephone = contactForm.get('telephone')?.value;
+            let addressForm = contactForm.get('address');
+            client.contact.address = {};
+            if (addressForm) {
+                client.contact.address.city = addressForm.get('city')?.value;
+                client.contact.address.postCode = addressForm.get('postCode')?.value;
+                client.contact.address.street = addressForm.get('street')?.value;
+                client.contact.address.houseNumber = addressForm.get('houseNumber')?.value;
+                client.contact.address.flatNumber = addressForm.get('flatNumber')?.value;
+            }
+
+        }
+        client.note = this.clientForm.get('note')?.value;
         return client;
     }
 
     isSaveEnabled(): boolean {
-        if (!this.clientType) {
-            return false;
-        }
-        if (this.clientType === ClientType.PRIVATE && this.firstName && this.lastName && this.firstName.trim() && this.lastName.trim()) {
-            return true;
-        }
-        if (this.clientType === ClientType.CORPORATE && this.companyName && this.companyName.trim()) {
-            return true;
-        }
-        return false;
+        return this.clientForm.valid;
     }
 
     resetFields() {
-        this.companyName = "";
-        this.firstName = "";
-        this.lastName = "";
+        this.clientForm = this.clientFormProvider.getClientFormGroup();
     }
 
 }

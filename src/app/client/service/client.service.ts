@@ -1,4 +1,4 @@
-import {Client, CreateClient} from "../client";
+import {Client} from "../client";
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {catchError, Observable, throwError} from "rxjs";
 import {Injectable} from "@angular/core";
@@ -8,7 +8,7 @@ export abstract class ClientService {
 
     abstract getClient(clientId: number): Observable<Client>;
 
-    abstract createClient(client: CreateClient): Observable<any>;
+    abstract createClient(client: Client): Observable<any>;
 }
 
 @Injectable()
@@ -30,7 +30,7 @@ export class ClientServiceImpl implements ClientService {
         );
     }
 
-    createClient(client: CreateClient): Observable<Client> {
+    createClient(client: Client): Observable<Client> {
         return this.httpClient.post<Client>(this.clientUrl, client).pipe(
             catchError(this.handleError)
         )

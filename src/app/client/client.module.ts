@@ -13,16 +13,21 @@ import { AddClientComponent } from './add-client/add-client.component';
 import {DialogModule} from "primeng/dialog";
 import {ButtonModule} from "primeng/button";
 import {DropdownModule} from "primeng/dropdown";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {InputTextModule} from "primeng/inputtext";
 import {KeyFilterModule} from "primeng/keyfilter";
 import {RippleModule} from "primeng/ripple";
+import {InputTextareaModule} from "primeng/inputtextarea";
+import {AppModule} from "../app.module";
+import {WrapperComponent} from "../shared/wrapper/wrapper.component";
+import {DividerModule} from "primeng/divider";
 
 @NgModule({
     declarations: [
         ClientListComponent,
         ClientDetailComponent,
-        AddClientComponent
+        AddClientComponent,
+        WrapperComponent
     ],
     imports: [
         BrowserAnimationsModule,
@@ -41,7 +46,10 @@ import {RippleModule} from "primeng/ripple";
         FormsModule,
         InputTextModule,
         KeyFilterModule,
-        RippleModule
+        RippleModule,
+        ReactiveFormsModule,
+        InputTextareaModule,
+        DividerModule
     ],
     exports: [
         ClientListComponent
