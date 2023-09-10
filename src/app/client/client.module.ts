@@ -18,6 +18,8 @@ import {DividerModule} from "primeng/divider";
 import {SharedModule} from "../shared/shared.module";
 import {AddClientComponent} from "./add-client";
 import {ClientRestService, ClientRestServiceImpl} from "./service/client-rest.service";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {ConfirmationService} from "primeng/api";
 
 @NgModule({
     declarations: [
@@ -44,13 +46,15 @@ import {ClientRestService, ClientRestServiceImpl} from "./service/client-rest.se
         RippleModule,
         InputTextareaModule,
         DividerModule,
-        SharedModule
+        SharedModule,
+        ConfirmDialogModule
     ],
     exports: [
         ClientListComponent
     ],
     providers: [
-        {provide: ClientRestService, useClass: ClientRestServiceImpl}
+        {provide: ClientRestService, useClass: ClientRestServiceImpl},
+        {provide: ConfirmationService, useClass: ConfirmationService}
     ]
 })
 export class ClientModule {

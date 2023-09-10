@@ -9,6 +9,8 @@ export abstract class ClientRestService {
     abstract getClient(clientId: number): Observable<Client>;
 
     abstract createClient(client: Client): Observable<any>;
+
+    abstract deleteClient(clientId: number): Observable<void>;
 }
 
 @Injectable()
@@ -37,6 +39,12 @@ export class ClientRestServiceImpl implements ClientRestService {
             .pipe(
                 catchError(this.handleError)
             )
+    }
+
+    deleteClient(clientId: number): Observable<void> {
+        return this.httpClient.delete<void>(`${this.clientUrl}/${clientId}`).pipe(
+            catchError(this.handleError)
+        )
     }
 
     private handleError(error: HttpErrorResponse) {
