@@ -1,0 +1,25 @@
+<wrapper [title]="'Architects'">p-5
+    <div wrapper-body>
+        <p-table [value]="architects">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Id</th>
+                    <th>First name</th>
+                    <th>Last name</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-architect>
+                <tr>
+                    <td>{{architect.id}}</td>
+                    <td>{{architect.firstName}}</td>
+                    <td>{{architect.lastName}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    <div wrapper-buttons>
+    </div>
+</wrapper>
+
+
+

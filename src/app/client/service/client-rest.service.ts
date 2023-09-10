@@ -3,7 +3,7 @@ import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {catchError, Observable, throwError} from "rxjs";
 import {Injectable} from "@angular/core";
 
-export abstract class ClientService {
+export abstract class ClientRestService {
     abstract getClients(): Observable<Client[]>;
 
     abstract getClient(clientId: number): Observable<Client>;
@@ -12,28 +12,31 @@ export abstract class ClientService {
 }
 
 @Injectable()
-export class ClientServiceImpl implements ClientService {
+export class ClientRestServiceImpl implements ClientRestService {
     private clientUrl: string = 'http://0.0.0.0:8100/clients';
 
     constructor(private httpClient: HttpClient) {
     }
 
     getClients(): Observable<Client[]> {
-        return this.httpClient.get<Client[]>(this.clientUrl).pipe(
-            catchError(this.handleError)
-        );
+        return this.httpClient.get<Client[]>(this.clientUrl)
+            .pipe(
+                catchError(this.handleError)
+            );
     }
 
     getClient(clientId: number): Observable<Client> {
-        return this.httpClient.get<Client>(`${this.clientUrl}/${clientId}`).pipe(
-            catchError(this.handleError)
-        );
+        return this.httpClient.get<Client>(`${this.clientUrl}/${clientId}`)
+            .pipe(
+                catchError(this.handleError)
+            );
     }
 
     createClient(client: Client): Observable<Client> {
-        return this.httpClient.post<Client>(this.clientUrl, client).pipe(
-            catchError(this.handleError)
-        )
+        return this.httpClient.post<Client>(this.clientUrl, client)
+            .pipe(
+                catchError(this.handleError)
+            )
     }
 
     private handleError(error: HttpErrorResponse) {
