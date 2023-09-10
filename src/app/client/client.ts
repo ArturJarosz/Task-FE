@@ -13,7 +13,7 @@ export interface Address {
     flatNumber?: string | null,
 }
 
-export type AddressForm = {
+export interface AddressForm {
     city: FormControl<string | null>,
     postCode: FormControl<string | null>,
     street: FormControl<string | null>,

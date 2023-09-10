@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ClientService} from "../service/client.service";
+import {ClientRestService} from "../service/client-rest.service";
 import {ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
 import {Client, ClientType} from "../client";
@@ -34,7 +34,7 @@ export class ClientDetailComponent implements OnInit, OnDestroy {
     clientName: string | undefined;
     combinedStreetWithNumbers!: string;
 
-    constructor(private _clientService: ClientService, private _route: ActivatedRoute) {
+    constructor(private _clientService: ClientRestService, private _route: ActivatedRoute) {
     }
 
     ngOnInit(): void {

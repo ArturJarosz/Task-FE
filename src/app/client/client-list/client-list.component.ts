@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Client, ClientType} from "../client";
-import {ClientService} from "../service/client.service";
+import {ClientRestService} from "../service/client-rest.service";
 import {Subscription} from "rxjs";
 
 @Component({
@@ -13,17 +13,18 @@ export class ClientListComponent implements OnInit, OnDestroy {
     protected readonly ClientType = ClientType;
     showComponent: boolean = false;
 
-    errorMessage: string = 'a';
+    errorMessage: string = '';
     clients: Client[] = [];
 
-    constructor(private clientService: ClientService) {
+    constructor(private clientService: ClientRestService) {
     }
 
     ngOnInit(): void {
-        this.clientSubscription = this.clientService.getClients().subscribe({
-            next: clients => this.clients = clients,
-            error: error => this.errorMessage = error
-        });
+        this.clientSubscription = this.clientService.getClients()
+            .subscribe({
+                next: clients => this.clients = clients,
+                error: error => this.errorMessage = error
+            });
     }
 
     ngOnDestroy(): void {

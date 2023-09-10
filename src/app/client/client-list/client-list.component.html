@@ -1,4 +1,4 @@
-<wrapper [title]="'Clients'">p-5
+<wrapper [title]="'Clients'">
     <div wrapper-body>
         <p-table [value]="clients" [tableStyle]="{ 'min-width': '50rem' }">
             <ng-template pTemplate="header">
@@ -11,10 +11,10 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-client>
-                <tr>
+                <tr [routerLink]= "['/clients', client.id]" class="cursor-pointer">
                     <td>{{ client.id }}</td>
                     <td>
-                        <a [routerLink]= "['/clients', client.id]">
+                        <a >
                             {{ client.clientType == ClientType.PRIVATE ? client.firstName + " " + client.lastName : client.companyName }}
                         </a>
                     </td>
@@ -23,13 +23,11 @@
                     <td>{{ client?.contact ? client?.contact?.email : null }}</td>
                 </tr>
             </ng-template>
-
         </p-table>
     </div>
     <div wrapper-buttons>
         <button pButton pRipple label="Add new client" (click)="onClick()" icon="pi pi-plus"></button>
     </div>
-
     <app-add-client [visible]="showComponent" (notify)="onNotify($event)"></app-add-client>
 </wrapper>
 

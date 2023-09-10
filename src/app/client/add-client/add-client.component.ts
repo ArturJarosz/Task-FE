@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Injectable, Input, OnInit, Output} from '@angular/core';
 import {Client, ClientType} from "../client";
-import {ClientService} from "../service/client.service";
+import {ClientRestService} from "../service/client-rest.service";
 import {FormGroup, Validators} from "@angular/forms";
 import {ClientFormProvider} from "./client-form-provider";
 import {HttpStatusCode} from "@angular/common/http";
@@ -24,7 +24,7 @@ export class AddClientComponent implements OnInit {
 
     protected readonly ClientType = ClientType;
 
-    constructor(private clientService: ClientService, private clientFormProvider: ClientFormProvider) {
+    constructor(private clientService: ClientRestService, private clientFormProvider: ClientFormProvider) {
         this.initClientGroup();
     }
 

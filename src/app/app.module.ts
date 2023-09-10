@@ -11,6 +11,8 @@ import {MenubarModule} from "primeng/menubar";
 import {StyleClassModule} from "primeng/styleclass";
 import {RippleModule} from "primeng/ripple";
 import {InputTextModule} from "primeng/inputtext";
+import {ArchitectModule} from "./architect/architect.module";
+import {SharedModule} from "./shared/shared.module";
 
 @NgModule({
     declarations: [
@@ -20,6 +22,7 @@ import {InputTextModule} from "primeng/inputtext";
     imports: [
         BrowserModule,
         AppRoutingModule,
+        ArchitectModule,
         ClientModule,
         RouterModule.forRoot([
             {path: 'home', component: MainComponent},
@@ -29,7 +32,8 @@ import {InputTextModule} from "primeng/inputtext";
         MenubarModule,
         StyleClassModule,
         RippleModule,
-        InputTextModule
+        InputTextModule,
+        SharedModule
     ],
     providers: [],
     bootstrap: [AppComponent]
