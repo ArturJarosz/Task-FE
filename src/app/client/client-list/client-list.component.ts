@@ -2,7 +2,8 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Client, ClientType} from "../client";
 import {ClientRestService} from "../service/client-rest.service";
 import {Subscription} from "rxjs";
-import {ConfirmationService} from "primeng/api";
+import {ConfirmationService, MessageService} from "primeng/api";
+import {MessageSeverity} from "../../shared";
 
 @Component({
     selector: 'clients-list',
@@ -17,7 +18,7 @@ export class ClientListComponent implements OnInit, OnDestroy {
     errorMessage: string = '';
     clients: Client[] = [];
 
-    constructor(private clientService: ClientRestService, private confirmationService: ConfirmationService) {
+    constructor(private clientService: ClientRestService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     }
 
     ngOnInit(): void {
@@ -45,15 +46,19 @@ export class ClientListComponent implements OnInit, OnDestroy {
             header: `Confirm client delete ${name}.`,
             icon: "pi pi-info-circle text-red-300",
             accept: () => {
-                event.stopPropagation();
                 this.clientService.deleteClient(client.id!)
                     .subscribe({
-                        next: value => this.confirmationService.close(),
-                        error: error => this.errorMessage = error
+                        next: value => {
+                            this.confirmationService.close();
+                            this.messageService.add({
+                                severity: MessageSeverity.SUCCESS,
+                                summary: 'Client removed.',
+                                detail: `Client ${name} was successfully removed.`
+                            })
+                        }
                     })
             },
             reject: () => {
-                event.stopPropagation();
                 this.confirmationService.close();
             }
         })

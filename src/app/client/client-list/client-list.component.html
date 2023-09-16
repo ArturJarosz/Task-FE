@@ -12,9 +12,9 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-client>
-                <tr [routerLink]="['/clients', client.id]" class="cursor-pointer">
+                <tr>
                     <td>{{ client.id }}</td>
-                    <td>
+                    <td [routerLink]="['/clients', client.id]" class="cursor-pointer">
                         <a>
                             {{ client.clientType == ClientType.PRIVATE ? client.firstName + " " + client.lastName : client.companyName }}
                         </a>
@@ -22,11 +22,7 @@
                     <td>
                         <p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}"
                                          class="overlay-dialog"></p-confirmDialog>
-                        <button class="p-button-rounded p-button-danger" style="width: calc(0.7 * 2.357rem); height: calc(0.7 * 2.357rem);"
-                                (click)="deleteClientClick($event, client)"
-                                pButton pRipple icon="pi pi-times">
-                            <!--<i class="p-button-rounded pi pi-times text-500 text-xs text-red-200 hover:text-900 hover:text-red-600 hover:text-900"></i>-->
-                        </button>
+                        <button pButton pRipple class="p-button-text p-button-plain p-button-rounded" icon="pi pi-times" (click)="deleteClientClick($event, client)"></button>
                     </td>
                     <td>{{ client.clientType}}</td>
                     <td>{{ client?.contact ? client?.contact?.telephone : null }}</td>

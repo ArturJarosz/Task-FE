@@ -13,6 +13,7 @@ import {RippleModule} from "primeng/ripple";
 import {InputTextModule} from "primeng/inputtext";
 import {ArchitectModule} from "./architect/architect.module";
 import {SharedModule} from "./shared/shared.module";
+import {ToastModule} from "primeng/toast";
 
 @NgModule({
     declarations: [
@@ -33,7 +34,8 @@ import {SharedModule} from "./shared/shared.module";
         StyleClassModule,
         RippleModule,
         InputTextModule,
-        SharedModule
+        SharedModule,
+        ToastModule
     ],
     providers: [],
     bootstrap: [AppComponent]

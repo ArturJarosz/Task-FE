@@ -19,7 +19,7 @@ import {SharedModule} from "../shared/shared.module";
 import {AddClientComponent} from "./add-client";
 import {ClientRestService, ClientRestServiceImpl} from "./service/client-rest.service";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
-import {ConfirmationService} from "primeng/api";
+import {ConfirmationService, MessageService} from "primeng/api";
 
 @NgModule({
     declarations: [
@@ -54,7 +54,8 @@ import {ConfirmationService} from "primeng/api";
     ],
     providers: [
         {provide: ClientRestService, useClass: ClientRestServiceImpl},
-        {provide: ConfirmationService, useClass: ConfirmationService}
+        {provide: ConfirmationService, useClass: ConfirmationService},
+        {provide: MessageService, useClass: MessageService}
     ]
 })
 export class ClientModule {

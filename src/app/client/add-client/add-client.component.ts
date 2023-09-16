@@ -1,9 +1,20 @@
 import {Component, EventEmitter, Injectable, Input, OnInit, Output} from '@angular/core';
-import {Client, ClientType} from "../client";
+import {
+    Client,
+    FIRST_NAME,
+    ClientType,
+    LAST_NAME,
+    COMPANY_NAME,
+    CLIENT_TYPE,
+    CONTACT,
+    EMAIL,
+    TELEPHONE, ADDRESS, CITY, POST_CODE, STREET, HOUSE_NUMBER, FLAT_NUMBER, NOTE
+} from "../client";
 import {ClientRestService} from "../service/client-rest.service";
 import {FormGroup, Validators} from "@angular/forms";
 import {ClientFormProvider} from "./client-form-provider";
-import {HttpStatusCode} from "@angular/common/http";
+import {MessageService} from "primeng/api";
+import {MessageSeverity} from "../../shared";
 
 @Injectable({
     providedIn: 'root',
@@ -24,7 +35,7 @@ export class AddClientComponent implements OnInit {
 
     protected readonly ClientType = ClientType;
 
-    constructor(private clientService: ClientRestService, private clientFormProvider: ClientFormProvider) {
+    constructor(private clientService: ClientRestService, private clientFormProvider: ClientFormProvider, private messageService: MessageService) {
         this.initClientGroup();
     }
 
@@ -33,9 +44,9 @@ export class AddClientComponent implements OnInit {
     }
 
     updateClientValidators(clientType: ClientType): void {
-        const firstNameControl = this.clientForm.get('firstName');
-        const lastNameControl = this.clientForm.get('lastName');
-        const companyNameControl = this.clientForm.get('companyName');
+        const firstNameControl = this.clientForm.get(FIRST_NAME);
+        const lastNameControl = this.clientForm.get(LAST_NAME);
+        const companyNameControl = this.clientForm.get(COMPANY_NAME);
         if (clientType === ClientType.CORPORATE) {
             firstNameControl?.clearValidators();
             lastNameControl?.clearValidators();
@@ -53,10 +64,9 @@ export class AddClientComponent implements OnInit {
 
     ngOnInit(): void {
         this.initClientTypes();
-        this.clientForm.get('clientType')
+        this.clientForm.get(CLIENT_TYPE)
             ?.valueChanges
             .subscribe(clientType => {
-                console.log(clientType);
                 this.updateClientValidators(clientType);
             })
     }
@@ -82,45 +92,49 @@ export class AddClientComponent implements OnInit {
         this.clientService.createClient(client)
             .subscribe({
                     next: response => {
-                        if (response.status === HttpStatusCode.Created) {
-                        }
-                    },
-                    error: error => console.log(error),
+                        let clientName = client.clientType === ClientType.PRIVATE ? `${client.firstName} ${client.lastName}` : client.companyName;
+                        this.messageService.add({
+                            severity: MessageSeverity.SUCCESS,
+                            summary: "Client created.",
+                            detail: `Client ${clientName} has been successfully created.`
+
+                        })
+                    }
                 }
             );
     }
 
     private createClient() {
         let client: Client;
-        if (this.clientForm.get('clientType')?.value === ClientType.PRIVATE) {
+        if (this.clientForm.get(CLIENT_TYPE)?.value === ClientType.PRIVATE) {
             client = {
                 clientType: ClientType.PRIVATE,
-                firstName: this.clientForm.get('firstName')?.value,
-                lastName: this.clientForm.get('lastName')?.value
+                firstName: this.clientForm.get(FIRST_NAME)?.value,
+                lastName: this.clientForm.get(LAST_NAME)?.value
             }
         } else {
             client = {
                 clientType: ClientType.CORPORATE,
-                companyName: this.clientForm.get('companyName')?.value
+                companyName: this.clientForm.get(COMPANY_NAME)?.value
             }
         }
         client.contact = {};
-        let contactForm = this.clientForm.get('contact');
+        let contactForm = this.clientForm.get(CONTACT);
         if (contactForm) {
-            client.contact.email = contactForm.get('email')?.value;
-            client.contact.telephone = contactForm.get('telephone')?.value;
-            let addressForm = contactForm.get('address');
+            client.contact.email = contactForm.get(EMAIL)?.value;
+            client.contact.telephone = contactForm.get(TELEPHONE)?.value;
+            let addressForm = contactForm.get(ADDRESS);
             client.contact.address = {};
             if (addressForm) {
-                client.contact.address.city = addressForm.get('city')?.value;
-                client.contact.address.postCode = addressForm.get('postCode')?.value;
-                client.contact.address.street = addressForm.get('street')?.value;
-                client.contact.address.houseNumber = addressForm.get('houseNumber')?.value;
-                client.contact.address.flatNumber = addressForm.get('flatNumber')?.value;
+                client.contact.address.city = addressForm.get(CITY)?.value;
+                client.contact.address.postCode = addressForm.get(POST_CODE)?.value;
+                client.contact.address.street = addressForm.get(STREET)?.value;
+                client.contact.address.houseNumber = addressForm.get(HOUSE_NUMBER)?.value;
+                client.contact.address.flatNumber = addressForm.get(FLAT_NUMBER)?.value;
             }
 
         }
-        client.note = this.clientForm.get('note')?.value;
+        client.note = this.clientForm.get(NOTE)?.value;
         return client;
     }
 

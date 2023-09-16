@@ -3,6 +3,7 @@ import {WrapperComponent} from "./wrapper/wrapper.component";
 import {ReactiveFormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
 import {SharedModule as SharedPrimeNgModule} from "primeng/api";
+import {ToastModule} from "primeng/toast";
 
 @NgModule({
     declarations: [
@@ -11,12 +12,14 @@ import {SharedModule as SharedPrimeNgModule} from "primeng/api";
     imports: [
         ReactiveFormsModule,
         HttpClientModule,
-        SharedPrimeNgModule
+        SharedPrimeNgModule,
+        ToastModule
     ],
     exports: [
         ReactiveFormsModule,
         WrapperComponent,
-        SharedPrimeNgModule
+        SharedPrimeNgModule,
+        ToastModule,
     ]
 })
 export class SharedModule {
