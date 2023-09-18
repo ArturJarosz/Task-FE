@@ -9,8 +9,8 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-architect>
-                <tr>
-                    <td>{{architect.id}}</td>
+                <tr [routerLink]="['/architects', architect.id]" class="cursor-pointer">
+                    <td><a>{{architect.id}}</a></td>
                     <td>{{architect.firstName}}</td>
                     <td>{{architect.lastName}}</td>
                 </tr>
