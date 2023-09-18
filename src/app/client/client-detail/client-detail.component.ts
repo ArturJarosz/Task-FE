@@ -11,6 +11,7 @@ import {Client, ClientType} from "../client";
 })
 export class ClientDetailComponent implements OnInit, OnDestroy {
     noteCardLabel: string = "Note";
+    pageTitle = "Client profile";
 
     // main info labels
     clientIdLabel: string = "ID:"
@@ -34,13 +35,13 @@ export class ClientDetailComponent implements OnInit, OnDestroy {
     clientName: string | undefined;
     combinedStreetWithNumbers!: string;
 
-    constructor(private _clientService: ClientRestService, private _route: ActivatedRoute) {
+    constructor(private clientService: ClientRestService, private route: ActivatedRoute) {
     }
 
     ngOnInit(): void {
-        let maybeNumber = this._route.snapshot.paramMap.get("id");
+        let maybeNumber = this.route.snapshot.paramMap.get("id");
         this.clientId = Number(maybeNumber);
-        this.clientSubscription = this._clientService.getClient(this.clientId).subscribe({
+        this.clientSubscription = this.clientService.getClient(this.clientId).subscribe({
             next: client => {
                 this.client = client;
                 this.resolveClientName();
