@@ -24,6 +24,10 @@ export class AppComponent implements OnInit{
             {
                 label: "Architects",
                 routerLink: "/architects"
+            },
+            {
+                label: "Projects",
+                routerLink: "/projects"
             }
         ]
     }

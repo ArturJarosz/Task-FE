@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Architect} from "../model/architect";
 import {Subscription} from "rxjs";
-import {ArchitectRestService} from "../service/architect-rest.service";
+import {ArchitectRestService} from ".././rest/architect-rest.service";
 import {MessageService} from "primeng/api";
 import {MessageSeverity} from "../../shared";
 

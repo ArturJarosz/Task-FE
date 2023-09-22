@@ -14,6 +14,7 @@ import {InputTextModule} from "primeng/inputtext";
 import {ArchitectModule} from "./architect/architect.module";
 import {SharedModule} from "./shared/shared.module";
 import {ToastModule} from "primeng/toast";
+import {ProjectModule} from "./project/project.module";
 
 @NgModule({
     declarations: [
@@ -25,6 +26,7 @@ import {ToastModule} from "primeng/toast";
         AppRoutingModule,
         ArchitectModule,
         ClientModule,
+        ProjectModule,
         RouterModule.forRoot([
             {path: 'home', component: MainComponent},
             {path: '', redirectTo: 'home', pathMatch: 'full'},

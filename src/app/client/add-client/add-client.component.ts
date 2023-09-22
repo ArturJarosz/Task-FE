@@ -10,7 +10,7 @@ import {
     EMAIL,
     TELEPHONE, ADDRESS, CITY, POST_CODE, STREET, HOUSE_NUMBER, FLAT_NUMBER, NOTE
 } from "../client";
-import {ClientRestService} from "../service/client-rest.service";
+import {ClientRestService} from ".././rest/client-rest.service";
 import {FormGroup, Validators} from "@angular/forms";
 import {ClientFormProvider} from "./client-form-provider";
 import {MessageService} from "primeng/api";
