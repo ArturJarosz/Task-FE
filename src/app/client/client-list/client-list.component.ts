@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Client, ClientType} from "../client";
-import {ClientRestService} from "../service/client-rest.service";
+import {ClientRestService} from ".././rest/client-rest.service";
 import {Subscription} from "rxjs";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {MessageSeverity} from "../../shared";

@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ClientRestService} from "../service/client-rest.service";
+import {ClientRestService} from ".././rest/client-rest.service";
 import {ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
 import {Client, ClientType} from "../client";

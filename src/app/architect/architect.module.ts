@@ -4,7 +4,7 @@ import {ArchitectListComponent} from "./architect-list/architect-list.component"
 import {ButtonModule} from "primeng/button";
 import {RippleModule} from "primeng/ripple";
 import {TableModule} from "primeng/table";
-import {ArchitectRestService, ArchitectRestServiceImpl} from "./service/architect-rest.service";
+import {ArchitectRestService, ArchitectRestServiceImpl} from "././rest/architect-rest.service";
 import {SharedModule} from "../shared/shared.module";
 import { ArchitectDetailComponent } from './architect-detail/architect-detail.component';
 import {DialogModule} from "primeng/dialog";

@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
-import {ArchitectRestService} from "../service/architect-rest.service";
+import {ArchitectRestService} from ".././rest/architect-rest.service";
 import {Subscription} from "rxjs";
 import {Architect} from "../model/architect";
 

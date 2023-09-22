@@ -17,7 +17,7 @@ import {InputTextareaModule} from "primeng/inputtextarea";
 import {DividerModule} from "primeng/divider";
 import {SharedModule} from "../shared/shared.module";
 import {AddClientComponent} from "./add-client";
-import {ClientRestService, ClientRestServiceImpl} from "./service/client-rest.service";
+import {ClientRestService, ClientRestServiceImpl} from "././rest/client-rest.service";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ConfirmationService, MessageService} from "primeng/api";
 
