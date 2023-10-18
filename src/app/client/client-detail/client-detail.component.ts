@@ -1,8 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ClientRestService} from ".././rest/client-rest.service";
 import {ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
 import {Client, ClientType} from "../client";
+import {Store} from "@ngrx/store";
+import {ClientState, getClient} from "../state/client.state";
+import {loadClient} from "../state/client.action";
 
 @Component({
     selector: 'app-client-detail',
@@ -31,23 +33,21 @@ export class ClientDetailComponent implements OnInit, OnDestroy {
 
     clientId!: number;
     clientSubscription!: Subscription;
-    client: Client | undefined;
+    client!: Client | null;
     clientName: string | undefined;
     combinedStreetWithNumbers!: string;
 
-    constructor(private clientService: ClientRestService, private route: ActivatedRoute) {
+    constructor(private route: ActivatedRoute, private clientStore: Store<ClientState>) {
     }
 
     ngOnInit(): void {
         let maybeNumber = this.route.snapshot.paramMap.get("id");
         this.clientId = Number(maybeNumber);
-        this.clientSubscription = this.clientService.getClient(this.clientId).subscribe({
-            next: client => {
-                this.client = client;
-                this.resolveClientName();
-                this.resolveCombinedStreet();
-            }
-        })
+        this.clientStore.dispatch(loadClient({clientId: this.clientId}));
+        this.clientSubscription = this.clientStore.select(getClient)
+            .subscribe({
+                next: client => this.client = client
+            })
     }
 
     ngOnDestroy(): void {

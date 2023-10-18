@@ -17,9 +17,14 @@ import {InputTextareaModule} from "primeng/inputtextarea";
 import {DividerModule} from "primeng/divider";
 import {SharedModule} from "../shared/shared.module";
 import {AddClientComponent} from "./add-client";
-import {ClientRestService, ClientRestServiceImpl} from "././rest/client-rest.service";
+import {ClientRestService, ClientRestServiceImpl} from "./rest/client-rest.service";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ConfirmationService, MessageService} from "primeng/api";
+import {StoreModule} from "@ngrx/store";
+import {StoreName} from "../shared";
+import {clientReducer} from "./state/client.reducer";
+import {EffectsModule} from "@ngrx/effects";
+import {ClientEffects} from "./state/client.effect";
 
 @NgModule({
     declarations: [
@@ -47,7 +52,9 @@ import {ConfirmationService, MessageService} from "primeng/api";
         InputTextareaModule,
         DividerModule,
         SharedModule,
-        ConfirmDialogModule
+        ConfirmDialogModule,
+        StoreModule.forFeature(StoreName.CLIENT, clientReducer),
+        EffectsModule.forFeature([ClientEffects])
     ],
     exports: [
         ClientListComponent

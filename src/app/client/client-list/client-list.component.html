@@ -4,7 +4,7 @@
             <ng-template pTemplate="header">
                 <tr>
                     <th>Id</th>
-                    <th>Name</th>
+                    <th>Name</th>ch
                     <th></th>
                     <th>Type</th>
                     <th>Telephone</th>
@@ -34,7 +34,7 @@
     <div wrapper-buttons>
         <button pButton pRipple label="Add new client" (click)="onClick()" icon="pi pi-plus"></button>
     </div>
-    <app-add-client [visible]="showComponent" (notify)="onNotify($event)"></app-add-client>
+    <app-add-client [visible]="showComponent" (notify)="onNotify($event)" (reloadClients)="reloadClients()"></app-add-client>
 </wrapper>
 
 

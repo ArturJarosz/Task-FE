@@ -1,32 +1,34 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Client, ClientType} from "../client";
-import {ClientRestService} from ".././rest/client-rest.service";
 import {Subscription} from "rxjs";
-import {ConfirmationService, MessageService} from "primeng/api";
-import {MessageSeverity} from "../../shared";
+import {ConfirmationService} from "primeng/api";
+import {Store} from "@ngrx/store";
+import {ClientState, getClients} from "../state/client.state";
+import {loadClients, removeClient} from "../state/client.action";
 
 @Component({
     selector: 'clients-list',
     templateUrl: './client-list.component.html',
-    styleUrls: ['./client-list.component.less']
+    styleUrls: ['./client-list.component.less',]
 })
 export class ClientListComponent implements OnInit, OnDestroy {
     private clientSubscription!: Subscription;
     protected readonly ClientType = ClientType;
     showComponent: boolean = false;
-
     errorMessage: string = '';
-    clients: Client[] = [];
+    clients!: Client[];
 
-    constructor(private clientService: ClientRestService, private confirmationService: ConfirmationService, private messageService: MessageService) {
+    constructor(private confirmationService: ConfirmationService, private clientStore: Store<ClientState>) {
     }
 
     ngOnInit(): void {
-        this.clientSubscription = this.clientService.getClients()
+        this.clientStore.dispatch(loadClients());
+        this.clientSubscription = this.clientStore.select(getClients)
             .subscribe({
                 next: clients => this.clients = clients,
                 error: error => this.errorMessage = error
-            });
+            })
+
     }
 
     ngOnDestroy(): void {
@@ -46,17 +48,7 @@ export class ClientListComponent implements OnInit, OnDestroy {
             header: `Confirm client delete ${name}.`,
             icon: "pi pi-info-circle text-red-300",
             accept: () => {
-                this.clientService.deleteClient(client.id!)
-                    .subscribe({
-                        next: value => {
-                            this.confirmationService.close();
-                            this.messageService.add({
-                                severity: MessageSeverity.SUCCESS,
-                                summary: 'Client removed.',
-                                detail: `Client ${name} was successfully removed.`
-                            })
-                        }
-                    })
+                this.clientStore.dispatch(removeClient({clientId: Number(client.id)}))
             },
             reject: () => {
                 this.confirmationService.close();
@@ -66,5 +58,9 @@ export class ClientListComponent implements OnInit, OnDestroy {
 
     onNotify(event: boolean) {
         this.showComponent = !this.showComponent;
+    }
+
+    reloadClients() {
+        this.clientStore.dispatch(loadClients());
     }
 }

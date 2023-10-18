@@ -1,20 +1,27 @@
 import {Component, EventEmitter, Injectable, Input, OnInit, Output} from '@angular/core';
 import {
+    ADDRESS,
+    CITY,
     Client,
-    FIRST_NAME,
-    ClientType,
-    LAST_NAME,
-    COMPANY_NAME,
     CLIENT_TYPE,
+    ClientType,
+    COMPANY_NAME,
     CONTACT,
     EMAIL,
-    TELEPHONE, ADDRESS, CITY, POST_CODE, STREET, HOUSE_NUMBER, FLAT_NUMBER, NOTE
+    FIRST_NAME,
+    FLAT_NUMBER,
+    HOUSE_NUMBER,
+    LAST_NAME,
+    NOTE,
+    POST_CODE,
+    STREET,
+    TELEPHONE
 } from "../client";
-import {ClientRestService} from ".././rest/client-rest.service";
 import {FormGroup, Validators} from "@angular/forms";
 import {ClientFormProvider} from "./client-form-provider";
-import {MessageService} from "primeng/api";
-import {MessageSeverity} from "../../shared";
+import {ClientState} from "../state/client.state";
+import {Store} from "@ngrx/store";
+import {createClient} from "../state/client.action";
 
 @Injectable({
     providedIn: 'root',
@@ -29,13 +36,15 @@ export class AddClientComponent implements OnInit {
     visible = false;
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
+    @Output()
+    reloadClients = new EventEmitter<void>();
 
     clientTypes!: String[];
     clientForm!: FormGroup;
 
     protected readonly ClientType = ClientType;
 
-    constructor(private clientService: ClientRestService, private clientFormProvider: ClientFormProvider, private messageService: MessageService) {
+    constructor(private clientFormProvider: ClientFormProvider, private clientStore: Store<ClientState>) {
         this.initClientGroup();
     }
 
@@ -89,19 +98,8 @@ export class AddClientComponent implements OnInit {
         this.visible = false;
         let client: Client;
         client = this.createClient();
-        this.clientService.createClient(client)
-            .subscribe({
-                    next: response => {
-                        let clientName = client.clientType === ClientType.PRIVATE ? `${client.firstName} ${client.lastName}` : client.companyName;
-                        this.messageService.add({
-                            severity: MessageSeverity.SUCCESS,
-                            summary: "Client created.",
-                            detail: `Client ${clientName} has been successfully created.`
-
-                        })
-                    }
-                }
-            );
+        this.clientStore.dispatch(createClient({client: client}));
+        this.reloadClients.emit();
     }
 
     private createClient() {
