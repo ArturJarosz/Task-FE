@@ -1,9 +1,9 @@
 import {Client} from "../client";
-import {HttpClient, HttpErrorResponse} from "@angular/common/http";
-import {catchError, Observable, throwError} from "rxjs";
+import {HttpClient} from "@angular/common/http";
+import {catchError, Observable} from "rxjs";
 import {Injectable} from "@angular/core";
 import {MessageService} from "primeng/api";
-import {MessageSeverity} from "../../shared";
+import {AbstractRestService} from "../../shared/rest/abstract-rest.service";
 
 export abstract class ClientRestService {
     abstract getClients(): Observable<Client[]>;
@@ -16,55 +16,40 @@ export abstract class ClientRestService {
 }
 
 @Injectable()
-export class ClientRestServiceImpl implements ClientRestService {
+export class ClientRestServiceImpl extends AbstractRestService implements ClientRestService {
     private clientUrl: string = 'http://0.0.0.0:8100/clients';
 
     constructor(private httpClient: HttpClient, private messageService: MessageService) {
+        super()
     }
 
     getClients(): Observable<Client[]> {
+        console.log("loading clients");
         return this.httpClient.get<Client[]>(this.clientUrl)
             .pipe(
-                catchError(error => this.handleError(error, this))
+                catchError(error => this.handleError(error, this.messageService))
             );
     }
 
     getClient(clientId: number): Observable<Client> {
         return this.httpClient.get<Client>(`${this.clientUrl}/${clientId}`)
             .pipe(
-                catchError(error => this.handleError(error, this))
+                catchError(error => this.handleError(error, this.messageService))
             );
     }
 
     createClient(client: Client): Observable<Client> {
+        console.log("create client");
         return this.httpClient.post<Client>(this.clientUrl, client)
             .pipe(
-                catchError(error => this.handleError(error, this))
+                catchError(error => this.handleError(error, this.messageService))
             )
     }
 
     deleteClient(clientId: number): Observable<void> {
-        return this.httpClient.delete<void>(`${this.clientUrl}/${clientId}`).pipe(
-            catchError(error => this.handleError(error, this))
-        )
+        return this.httpClient.delete<void>(`${this.clientUrl}/${clientId}`)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            )
     }
-
-    handleError(error: HttpErrorResponse, that: ClientRestServiceImpl) {
-        let errorMessage = '';
-        if (error.error instanceof ErrorEvent) {
-            errorMessage = `An error occurred: ${error.error.message}`;
-        } else {
-            errorMessage = `Response code: ${error.status}, Error: ${error.error.message ? error.error.message : error.message}`;
-        }
-
-        that.messageService.add({
-            severity: MessageSeverity.ERROR,
-            summary: "Error",
-            detail: errorMessage,
-
-        })
-        return throwError(() => errorMessage);
-    }
-
-
 }

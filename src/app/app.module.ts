@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {isDevMode, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 
 import {AppRoutingModule} from './app-routing.module';
@@ -15,6 +15,9 @@ import {ArchitectModule} from "./architect/architect.module";
 import {SharedModule} from "./shared/shared.module";
 import {ToastModule} from "primeng/toast";
 import {ProjectModule} from "./project/project.module";
+import {StoreModule} from '@ngrx/store';
+import {EffectsModule} from '@ngrx/effects';
+import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 
 @NgModule({
     declarations: [
@@ -37,7 +40,10 @@ import {ProjectModule} from "./project/project.module";
         RippleModule,
         InputTextModule,
         SharedModule,
-        ToastModule
+        ToastModule,
+        StoreModule.forRoot({}, {}),
+        EffectsModule.forRoot([]),
+        StoreDevtoolsModule.instrument({name: "TASK app", maxAge: 25, logOnly: !isDevMode()})
     ],
     providers: [],
     bootstrap: [AppComponent]
