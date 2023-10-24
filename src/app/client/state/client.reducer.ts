@@ -5,7 +5,6 @@ import {createClientSuccess, loadClientsSuccess, loadClientSuccess} from "./clie
 export const clientReducer = createReducer<ClientState>(
     initialState,
     on(loadClientsSuccess, (state, action): ClientState => {
-        console.log("clients size: " + action.clients.length);
         return {
             ...state,
             error: '',

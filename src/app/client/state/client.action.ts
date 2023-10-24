@@ -3,21 +3,21 @@ import {Client} from "../client";
 
 const CLIENTS = "[CLIENTS]"
 
-const LOAD_CLIENTS = `[${CLIENTS}] Load clients`;
-const LOAD_CLIENTS_SUCCESS = `[${CLIENTS}] Load clients success`;
-const LOAD_CLIENTS_ERROR = `[${CLIENTS}] Load clients error`;
+const LOAD_CLIENTS = `${CLIENTS} Load clients`;
+const LOAD_CLIENTS_SUCCESS = `${CLIENTS} Load clients success`;
+const LOAD_CLIENTS_ERROR = `${CLIENTS} Load clients error`;
 
-const LOAD_CLIENT = `[${CLIENTS}] Load client`;
-const LOAD_CLIENT_SUCCESS = `[${CLIENTS}] Load client success`;
-const LOAD_CLIENT_ERROR = `[${CLIENTS}] Load client error`;
+const LOAD_CLIENT = `${CLIENTS} Load client`;
+const LOAD_CLIENT_SUCCESS = `${CLIENTS} Load client success`;
+const LOAD_CLIENT_ERROR = `${CLIENTS} Load client error`;
 
-const CREATE_CLIENT = `[${CLIENTS}] Create client`;
-const CREATE_CLIENT_SUCCESS = `[${CLIENTS}] Create client success`;
-const CREATE_CLIENT_ERROR = `[${CLIENTS}] Create client error`;
+const CREATE_CLIENT = `${CLIENTS} Create client`;
+const CREATE_CLIENT_SUCCESS = `${CLIENTS} Create client success`;
+const CREATE_CLIENT_ERROR = `${CLIENTS} Create client error`;
 
-const REMOVE_CLIENT = `[${CLIENTS}] Remove client`;
-const REMOVE_CLIENT_SUCCESS = `[${CLIENTS}] Remove client success`;
-const REMOVE_CLIENT_ERROR = `[${CLIENTS}] Remove client error`;
+const REMOVE_CLIENT = `${CLIENTS} Remove client`;
+const REMOVE_CLIENT_SUCCESS = `${CLIENTS} Remove client success`;
+const REMOVE_CLIENT_ERROR = `${CLIENTS} Remove client error`;
 
 export const loadClients = createAction(LOAD_CLIENTS);
 export const loadClientsSuccess = createAction(LOAD_CLIENTS_SUCCESS, props<{ clients: Client[] }>());

@@ -3,8 +3,7 @@ import {Client, ClientType} from "../client";
 import {Subscription} from "rxjs";
 import {ConfirmationService} from "primeng/api";
 import {Store} from "@ngrx/store";
-import {ClientState, getClients} from "../state/client.state";
-import {loadClients, removeClient} from "../state/client.action";
+import {ClientState, getClients, loadClients, removeClient} from "../state";
 
 @Component({
     selector: 'clients-list',

@@ -3,25 +3,21 @@ import {Client} from "../client";
 import {createFeatureSelector, createSelector} from "@ngrx/store";
 import {Features} from "../../features";
 
-export const CLIENT_FEATURE_NAME = "client";
-
 export interface ClientState extends AppState {
     error: string;
     clients: Client[];
-    client: Client | null,
-    currentClientId: number | null;
+    client: Client | null
 }
 
 export const initialState: ClientState = {
     error: '',
     clients: [],
-    client: null,
-    currentClientId: null
+    client: null
 }
 
 // selectors
 
-const getClientFeatureState = createFeatureSelector<ClientState>(Features.Client);
+const getClientFeatureState = createFeatureSelector<ClientState>(Features.CLIENT);
 
 export const getClients = createSelector(
     getClientFeatureState,

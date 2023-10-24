@@ -47,7 +47,7 @@ export class ClientDetailComponent implements OnInit, OnDestroy {
         this.clientSubscription = this.clientStore.select(getClient)
             .subscribe({
                 next: client => this.client = client
-            })
+            });
     }
 
     ngOnDestroy(): void {

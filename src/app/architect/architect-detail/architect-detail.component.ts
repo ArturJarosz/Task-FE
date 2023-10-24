@@ -1,8 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
-import {ArchitectRestService} from ".././rest/architect-rest.service";
 import {Subscription} from "rxjs";
 import {Architect} from "../model/architect";
+import {Store} from "@ngrx/store";
+import {ArchitectState, getArchitect} from "../state/architect.state";
+import {loadArchitect} from "../state/architect.action";
 
 @Component({
     selector: 'app-architect-detail',
@@ -18,22 +20,19 @@ export class ArchitectDetailComponent implements OnInit, OnDestroy {
 
     architectId!: number;
     architectSubscription!: Subscription
-    architect: Architect | undefined;
+    architect!: Architect | null;
 
-    constructor(private route: ActivatedRoute, private architectRestService: ArchitectRestService) {
+    constructor(private route: ActivatedRoute, private architectStore: Store<ArchitectState>) {
     }
 
     ngOnInit(): void {
         let maybeNumber = this.route.snapshot.paramMap.get("id");
         this.architectId = Number(maybeNumber);
-        console.log(`architect id: ${this.architectId}`);
-        this.architectSubscription = this.architectRestService.getArchitect(this.architectId)
+        this.architectStore.dispatch(loadArchitect({architectId: this.architectId}));
+        this.architectSubscription = this.architectStore.select(getArchitect)
             .subscribe({
-                next: architect => {
-                    this.architect = architect;
-                }
-            })
-        console.log(JSON.stringify(this.architect));
+                next: architect => this.architect = architect
+            });
     }
 
     ngOnDestroy(): void {
