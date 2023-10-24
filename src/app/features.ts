@@ -1,3 +1,4 @@
 export enum Features {
-    Client = 'client'
+    CLIENT = 'client',
+    ARCHITECT = 'architect'
 }

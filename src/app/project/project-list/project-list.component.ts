@@ -20,7 +20,6 @@ export class ProjectListComponent implements OnInit, OnDestroy {
             .subscribe({
                 next: projects => {
                     this.projects = projects;
-                    console.log(JSON.stringify(projects))
                 }
             })
     }

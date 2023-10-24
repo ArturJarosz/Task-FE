@@ -21,10 +21,9 @@ import {ClientRestService, ClientRestServiceImpl} from "./rest/client-rest.servi
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {StoreModule} from "@ngrx/store";
-import {StoreName} from "../shared";
-import {clientReducer} from "./state/client.reducer";
+import {clientReducer, ClientEffects} from "./state";
 import {EffectsModule} from "@ngrx/effects";
-import {ClientEffects} from "./state/client.effect";
+import {Features} from "../features";
 
 @NgModule({
     declarations: [
@@ -53,7 +52,7 @@ import {ClientEffects} from "./state/client.effect";
         DividerModule,
         SharedModule,
         ConfirmDialogModule,
-        StoreModule.forFeature(StoreName.CLIENT, clientReducer),
+        StoreModule.forFeature(Features.CLIENT, clientReducer),
         EffectsModule.forFeature([ClientEffects])
     ],
     exports: [

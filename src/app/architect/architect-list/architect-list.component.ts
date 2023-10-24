@@ -1,9 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Architect} from "../model/architect";
 import {Subscription} from "rxjs";
-import {ArchitectRestService} from ".././rest/architect-rest.service";
-import {MessageService} from "primeng/api";
-import {MessageSeverity} from "../../shared";
+import {ArchitectState, getArchitects} from "../state/architect.state";
+import {Store} from "@ngrx/store";
+import {loadArchitects} from "../state/architect.action";
 
 @Component({
     selector: 'app-architect-list',
@@ -14,20 +14,14 @@ export class ArchitectListComponent implements OnInit, OnDestroy {
     private architectsSubscription!: Subscription;
     architects!: Architect[];
 
-    constructor(private architectRestService: ArchitectRestService, private messageService: MessageService) {
+    constructor(private architectStore: Store<ArchitectState>) {
     }
 
     ngOnInit(): void {
-        this.architectsSubscription = this.architectRestService.getArchitects()
+        this.architectStore.dispatch(loadArchitects());
+        this.architectsSubscription = this.architectStore.select(getArchitects)
             .subscribe({
-                next: architects => this.architects = architects,
-                error: error => {
-                    this.messageService.add({
-                        severity: MessageSeverity.ERROR,
-                        summary: 'Error loading clients.',
-                        detail: `Client list cannot be loaded. Error: ${JSON.stringify(error)}`
-                    })
-                }
+                next: architects => this.architects = architects
             });
     }
 
