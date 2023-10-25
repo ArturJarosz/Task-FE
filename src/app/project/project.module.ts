@@ -8,6 +8,11 @@ import {SharedModule} from "../shared/shared.module";
 import {TableModule} from "primeng/table";
 import {RouterModule} from "@angular/router";
 import {ProjectRestService, ProjectRestServiceImpl} from "./rest/project-rest.service";
+import {StoreModule} from "@ngrx/store";
+import {Features} from "../features";
+import {projectReducer} from "./state/project.reducer";
+import {EffectsModule} from "@ngrx/effects";
+import {ProjectEffects} from "./state/project.effect";
 
 @NgModule({
     declarations: [
@@ -25,7 +30,9 @@ import {ProjectRestService, ProjectRestServiceImpl} from "./rest/project-rest.se
         SharedModule,
         RouterModule.forChild([
             {path: 'projects', component: ProjectListComponent}
-        ])
+        ]),
+        StoreModule.forFeature(Features.PROJECT, projectReducer),
+        EffectsModule.forFeature([ProjectEffects])
     ],
     providers: [
         {provide: ProjectRestService, useClass: ProjectRestServiceImpl}

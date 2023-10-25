@@ -1,4 +1,5 @@
 export enum Features {
     CLIENT = 'client',
-    ARCHITECT = 'architect'
+    ARCHITECT = 'architect',
+    PROJECT = 'project'
 }

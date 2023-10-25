@@ -1,7 +1,7 @@
 import {createAction, props} from "@ngrx/store";
 import {Client} from "../client";
 
-const CLIENTS = "[CLIENTS]"
+const CLIENTS = "[CLIENTS]";
 
 const LOAD_CLIENTS = `${CLIENTS} Load clients`;
 const LOAD_CLIENTS_SUCCESS = `${CLIENTS} Load clients success`;

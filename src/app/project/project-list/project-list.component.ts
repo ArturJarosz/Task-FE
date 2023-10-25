@@ -1,7 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from "rxjs";
 import {Project} from "../project";
-import {ProjectRestService} from "../rest/project-rest.service";
+import {Store} from "@ngrx/store";
+import {getProjects, loadProjects, ProjectState} from "../state";
 
 @Component({
     selector: 'app-project-list',
@@ -12,15 +13,14 @@ export class ProjectListComponent implements OnInit, OnDestroy {
     private projectSubscription!: Subscription;
     projects: Project[] = [];
 
-    constructor(private projectRestService: ProjectRestService) {
+    constructor(private projectStore: Store<ProjectState>) {
     }
 
     ngOnInit(): void {
-        this.projectSubscription = this.projectRestService.getProjects()
+        this.projectStore.dispatch(loadProjects());
+        this.projectSubscription = this.projectStore.select(getProjects)
             .subscribe({
-                next: projects => {
-                    this.projects = projects;
-                }
+                next: projects => this.projects = projects
             })
     }
 
