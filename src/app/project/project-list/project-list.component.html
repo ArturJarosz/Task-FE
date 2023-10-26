@@ -15,10 +15,10 @@
                 <tr>
                     <td>{{ project.id }}</td>
                     <td>{{ project.name}}</td>
-                    <td>{{ project.type }}</td>
+                    <td>{{ getProjectTypeLabel(project.type) }}</td>
                     <td>{{ project.architect.firstName + ' ' + project.architect.lastName}}</td>
                     <td>{{ project.client.firstName + ' ' + project.client.lastName}}</td>
-                    <td>{{ project.status }}</td>
+                    <td>{{ getProjectStatusLabel(project.status) }}</td>
                 </tr>
             </ng-template>
         </p-table>

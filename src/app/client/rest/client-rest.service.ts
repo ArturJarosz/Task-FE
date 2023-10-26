@@ -4,6 +4,7 @@ import {catchError, Observable} from "rxjs";
 import {Injectable} from "@angular/core";
 import {MessageService} from "primeng/api";
 import {AbstractRestService} from "../../shared/rest/abstract-rest.service";
+import {environment} from "../../../environments/environment";
 
 export abstract class ClientRestService {
     abstract getClients(): Observable<Client[]>;
@@ -17,7 +18,7 @@ export abstract class ClientRestService {
 
 @Injectable()
 export class ClientRestServiceImpl extends AbstractRestService implements ClientRestService {
-    private clientUrl: string = 'http://0.0.0.0:8100/clients';
+    private clientUrl: string = `${environment.baseUrl}/clients`;
 
     constructor(private httpClient: HttpClient, private messageService: MessageService) {
         super()

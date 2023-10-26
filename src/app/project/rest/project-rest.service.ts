@@ -4,6 +4,7 @@ import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {MessageService} from "primeng/api";
 import {AbstractRestService} from "../../shared/rest/abstract-rest.service";
+import {environment} from "../../../environments/environment";
 
 export abstract class ProjectRestService {
     abstract getProjects(): Observable<Project[]>;
@@ -11,7 +12,7 @@ export abstract class ProjectRestService {
 
 @Injectable()
 export class ProjectRestServiceImpl extends AbstractRestService implements ProjectRestService {
-    private projectUrl: string = 'http://0.0.0.0:8100/projects';
+    private projectUrl: string = `${environment.baseUrl}/projects`;
 
     constructor(private httpClient: HttpClient, private messageService: MessageService) {
         super();
