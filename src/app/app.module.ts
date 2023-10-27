@@ -18,6 +18,7 @@ import {ProjectModule} from "./project/project.module";
 import {StoreModule} from '@ngrx/store';
 import {EffectsModule} from '@ngrx/effects';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
+import {ContractorModule} from "./contractor/contractor.module";
 
 @NgModule({
     declarations: [
@@ -30,6 +31,7 @@ import {StoreDevtoolsModule} from '@ngrx/store-devtools';
         ArchitectModule,
         ClientModule,
         ProjectModule,
+        ContractorModule,
         RouterModule.forRoot([
             {path: 'home', component: MainComponent},
             {path: '', redirectTo: 'home', pathMatch: 'full'},

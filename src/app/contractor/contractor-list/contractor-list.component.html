@@ -1,0 +1,23 @@
+<wrapper [title]="pageTitle">
+    <div wrapper-body>
+        <p-table [value]="contractors">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-contractor>
+                <tr>
+                    <td>{{contractor.id}}</td>
+                    <td>{{contractor.name}}</td>
+                    <td>{{getLabelFromCategory(contractor.category)}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    <div wrapper-buttons>
+
+    </div>
+</wrapper>

@@ -18,8 +18,8 @@ import {ConfigurationEntry} from "../../shared/configuration/model/configuration
 export class ProjectListComponent implements OnInit, OnDestroy {
     private projectSubscription!: Subscription;
     projects: Project[] = [];
-    projectTypes!: ConfigurationEntry[];
-    projectStatuses!: ConfigurationEntry[];
+    projectTypes: ConfigurationEntry[] = [];
+    projectStatuses: ConfigurationEntry[] = [];
 
     constructor(private projectStore: Store<ProjectState>, private configurationStore: Store<ConfigurationState>) {
     }
@@ -42,6 +42,7 @@ export class ProjectListComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.projectSubscription.unsubscribe();
+
     }
 
     getProjectTypeLabel(type: string): string {
