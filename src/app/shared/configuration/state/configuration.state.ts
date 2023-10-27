@@ -26,3 +26,8 @@ export const getProjectStatusConfiguration = createSelector(
     getConfigurationFeatureState,
     state => state.configuration!.projectStatuses
 )
+
+export const getContractorTypeConfiguration = createSelector(
+    getConfigurationFeatureState,
+    state => state.configuration!.contractorTypes
+)

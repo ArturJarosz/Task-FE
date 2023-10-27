@@ -11,7 +11,7 @@ import {Store} from "@ngrx/store";
 })
 export class ArchitectListComponent implements OnInit, OnDestroy {
     private architectsSubscription!: Subscription;
-    architects!: Architect[];
+    architects: Architect[] = []
 
     constructor(private architectStore: Store<ArchitectState>) {
     }
