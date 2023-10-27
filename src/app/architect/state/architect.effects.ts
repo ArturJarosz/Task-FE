@@ -14,7 +14,7 @@ import {catchError, map, mergeMap, of} from "rxjs";
 import {MessageSeverity} from "../../shared";
 
 @Injectable()
-export class ArchitectEffect {
+export class ArchitectEffects {
     constructor(private actions$: Actions, private architectRestService: ArchitectRestService, private messageService: MessageService) {
     }
 
