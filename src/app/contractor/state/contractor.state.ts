@@ -4,7 +4,7 @@ import {createFeatureSelector, createSelector} from "@ngrx/store";
 import {Features} from "../../features";
 
 export interface ContractorState extends AppState {
-    contractors: Contractor[]
+    contractors: Contractor[];
 }
 
 export const initialState: ContractorState = {

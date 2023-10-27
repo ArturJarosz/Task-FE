@@ -15,7 +15,7 @@ import {NgIf, NgSwitchCase} from "@angular/common";
 import {StoreModule} from "@ngrx/store";
 import {Features} from "../features";
 import {EffectsModule} from "@ngrx/effects";
-import {architectReducer, ArchitectEffect} from "./state";
+import {architectReducer, ArchitectEffects} from "./state";
 
 @NgModule({
     declarations: [
@@ -38,7 +38,7 @@ import {architectReducer, ArchitectEffect} from "./state";
         NgIf,
         NgSwitchCase,
         StoreModule.forFeature(Features.ARCHITECT, architectReducer),
-        EffectsModule.forFeature([ArchitectEffect])
+        EffectsModule.forFeature([ArchitectEffects])
     ],
     providers: [
         {provide: ArchitectRestService, useClass: ArchitectRestServiceImpl}

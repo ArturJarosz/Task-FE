@@ -19,6 +19,7 @@ import {StoreModule} from '@ngrx/store';
 import {EffectsModule} from '@ngrx/effects';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {ContractorModule} from "./contractor/contractor.module";
+import {SupplierModule} from "./supplier/supplier.module";
 
 @NgModule({
     declarations: [
@@ -32,6 +33,7 @@ import {ContractorModule} from "./contractor/contractor.module";
         ClientModule,
         ProjectModule,
         ContractorModule,
+        SupplierModule,
         RouterModule.forRoot([
             {path: 'home', component: MainComponent},
             {path: '', redirectTo: 'home', pathMatch: 'full'},

@@ -12,7 +12,7 @@ import {StoreModule} from "@ngrx/store";
 import {Features} from "../features";
 import {projectReducer} from "./state/project.reducer";
 import {EffectsModule} from "@ngrx/effects";
-import {ProjectEffects} from "./state/project.effect";
+import {ProjectEffects} from "./state/project.effects";
 
 @NgModule({
     declarations: [

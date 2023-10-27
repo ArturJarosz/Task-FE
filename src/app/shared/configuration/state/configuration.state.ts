@@ -31,3 +31,8 @@ export const getContractorTypeConfiguration = createSelector(
     getConfigurationFeatureState,
     state => state.configuration!.contractorTypes
 )
+
+export const getSupplierTypeConfiguration = createSelector(
+    getConfigurationFeatureState,
+    state => state.configuration!.supplierTypes
+)
