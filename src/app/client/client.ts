@@ -54,7 +54,7 @@ export interface Client {
     lastName?: string | null,
     companyName?: string | null,
     note?: string | null,
-    clientType: ClientType,
+    clientType: string,
     contact?: Contact | null
 }
 
@@ -64,6 +64,6 @@ export interface ClientForm {
     lastName: FormControl<string | null>,
     companyName: FormControl<string | null>,
     note: FormControl<string | null>,
-    clientType: FormControl<ClientType>,
+    clientType: FormControl<string>,
     contact: FormGroup<ContactForm>
 }

@@ -19,9 +19,15 @@ import {
 } from "../client";
 import {FormGroup, Validators} from "@angular/forms";
 import {ClientFormProvider} from "./client-form-provider";
-import {ClientState} from "../state/client.state";
+import {ClientState, createClient} from "../state";
 import {Store} from "@ngrx/store";
-import {createClient} from "../state/client.action";
+import {
+    ConfigurationState,
+    getClientTypeConfiguration
+} from "../../shared/configuration/state";
+import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
+
+const DEFAULT_CLIENT_TYPE = ClientType.PRIVATE.toString();
 
 @Injectable({
     providedIn: 'root',
@@ -39,29 +45,31 @@ export class AddClientComponent implements OnInit {
     @Output()
     reloadClients = new EventEmitter<void>();
 
-    clientTypes!: String[];
+    clientTypes: ConfigurationEntry[] = [];
+    clientTypesLabels: string[] = [];
     clientForm!: FormGroup;
+    privateClientLabel: string = "";
+    corporateClientLabel: string = "";
 
     protected readonly ClientType = ClientType;
 
-    constructor(private clientFormProvider: ClientFormProvider, private clientStore: Store<ClientState>) {
-        this.initClientGroup();
+    constructor(private clientFormProvider: ClientFormProvider, private clientStore: Store<ClientState>, private configurationStore: Store<ConfigurationState>) {
     }
 
     initClientGroup(): void {
-        this.clientForm = this.clientFormProvider.getClientFormGroup();
+        this.clientForm = this.clientFormProvider.getClientFormGroup(this.getIdFromLabel(DEFAULT_CLIENT_TYPE));
     }
 
-    updateClientValidators(clientType: ClientType): void {
+    updateClientValidators(clientType: string): void {
         const firstNameControl = this.clientForm.get(FIRST_NAME);
         const lastNameControl = this.clientForm.get(LAST_NAME);
         const companyNameControl = this.clientForm.get(COMPANY_NAME);
-        if (clientType === ClientType.CORPORATE) {
+        if (clientType === this.corporateClientLabel) {
             firstNameControl?.clearValidators();
             lastNameControl?.clearValidators();
             companyNameControl?.setValidators(Validators.required);
         }
-        if (clientType === ClientType.PRIVATE) {
+        if (clientType === this.privateClientLabel) {
             firstNameControl?.setValidators(Validators.required);
             lastNameControl?.setValidators(Validators.required);
             companyNameControl?.clearValidators();
@@ -73,10 +81,11 @@ export class AddClientComponent implements OnInit {
 
     ngOnInit(): void {
         this.initClientTypes();
+        this.initClientGroup();
         this.clientForm.get(CLIENT_TYPE)
             ?.valueChanges
             .subscribe(clientType => {
-                this.updateClientValidators(clientType);
+                this.updateClientValidators(clientType.id);
             })
     }
 
@@ -85,8 +94,15 @@ export class AddClientComponent implements OnInit {
     }
 
     initClientTypes() {
-        this.clientTypes = Object.values(ClientType)
-            .filter(value => true) as string[];
+        this.configurationStore.select(getClientTypeConfiguration)
+            .subscribe({
+                next: clientTypes => {
+                    this.clientTypes = clientTypes;
+                    this.clientTypesLabels = clientTypes.map(entry => entry.label)
+                }
+            })
+        this.privateClientLabel = this.getIdFromLabel(ClientType.PRIVATE.toString());
+        this.corporateClientLabel = this.getIdFromLabel(ClientType.CORPORATE.toString());
     }
 
     onCancel() {
@@ -104,15 +120,15 @@ export class AddClientComponent implements OnInit {
 
     private createClient() {
         let client: Client;
-        if (this.clientForm.get(CLIENT_TYPE)?.value === ClientType.PRIVATE) {
+        if (this.clientForm.get(CLIENT_TYPE)?.value === this.privateClientLabel) {
             client = {
-                clientType: ClientType.PRIVATE,
+                clientType: ClientType.PRIVATE.toString(),
                 firstName: this.clientForm.get(FIRST_NAME)?.value,
                 lastName: this.clientForm.get(LAST_NAME)?.value
             }
         } else {
             client = {
-                clientType: ClientType.CORPORATE,
+                clientType: ClientType.CORPORATE.toString(),
                 companyName: this.clientForm.get(COMPANY_NAME)?.value
             }
         }
@@ -141,7 +157,12 @@ export class AddClientComponent implements OnInit {
     }
 
     resetFields() {
-        this.clientForm = this.clientFormProvider.getClientFormGroup();
+        this.clientForm = this.clientFormProvider.getClientFormGroup(this.getIdFromLabel(DEFAULT_CLIENT_TYPE));
+    }
+
+    getIdFromLabel(id: string): string {
+        let maybeLabel = this.clientTypes.find(element => element.id === id)?.label;
+        return maybeLabel ? maybeLabel : id;
     }
 
 }
