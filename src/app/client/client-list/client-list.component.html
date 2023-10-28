@@ -24,7 +24,7 @@
                                          class="overlay-dialog"></p-confirmDialog>
                         <button pButton pRipple class="p-button-text p-button-plain" icon="pi pi-times" (click)="deleteClientClick($event, client)"></button>
                     </td>
-                    <td>{{ client.clientType}}</td>
+                    <td>{{ getLabelFromType(client.clientType)}}</td>
                     <td>{{ client?.contact ? client?.contact?.telephone : null }}</td>
                     <td>{{ client?.contact ? client?.contact?.email : null }}</td>
                 </tr>

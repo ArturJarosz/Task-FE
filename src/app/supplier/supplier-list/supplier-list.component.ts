@@ -5,7 +5,6 @@ import {Supplier} from "../model/supplier";
 import {getSuppliers, loadSuppliers, SupplierState} from "../state";
 import {Store} from "@ngrx/store";
 import {ConfigurationState, getSupplierTypeConfiguration} from "../../shared/configuration/state";
-import {loadContractors} from "../../contractor/state";
 
 @Component({
     selector: 'app-supplier-list',

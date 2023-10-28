@@ -4,6 +4,8 @@ import {Subscription} from "rxjs";
 import {ConfirmationService} from "primeng/api";
 import {Store} from "@ngrx/store";
 import {ClientState, getClients, loadClients, removeClient} from "../state";
+import {ConfigurationState, getClientTypeConfiguration} from "../../shared/configuration/state";
+import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 
 @Component({
     selector: 'clients-list',
@@ -12,12 +14,14 @@ import {ClientState, getClients, loadClients, removeClient} from "../state";
 })
 export class ClientListComponent implements OnInit, OnDestroy {
     private clientSubscription!: Subscription;
+    private clientTypesSubscription!: Subscription;
     protected readonly ClientType = ClientType;
     showComponent: boolean = false;
     errorMessage: string = '';
     clients!: Client[];
+    clientTypes: ConfigurationEntry[] = [];
 
-    constructor(private confirmationService: ConfirmationService, private clientStore: Store<ClientState>) {
+    constructor(private confirmationService: ConfirmationService, private clientStore: Store<ClientState>, private configurationStore: Store<ConfigurationState>) {
     }
 
     ngOnInit(): void {
@@ -27,11 +31,15 @@ export class ClientListComponent implements OnInit, OnDestroy {
                 next: clients => this.clients = clients,
                 error: error => this.errorMessage = error
             })
-
+        this.clientTypesSubscription = this.configurationStore.select(getClientTypeConfiguration)
+            .subscribe({
+                next: clientTypes => this.clientTypes = clientTypes
+            })
     }
 
     ngOnDestroy(): void {
         this.clientSubscription.unsubscribe();
+        this.clientTypesSubscription.unsubscribe();
     }
 
     onClick() {
@@ -61,5 +69,10 @@ export class ClientListComponent implements OnInit, OnDestroy {
 
     reloadClients() {
         this.clientStore.dispatch(loadClients());
+    }
+
+    getLabelFromType(type: string): string {
+        let maybeLabel = this.clientTypes.find(element => element.id === type)?.label;
+        return maybeLabel ? maybeLabel : type;
     }
 }
