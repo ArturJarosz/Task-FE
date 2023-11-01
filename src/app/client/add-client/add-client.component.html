@@ -8,11 +8,11 @@
     </ng-template>
     <div>
         <form [formGroup]="clientForm">
-            <p-dropdown [options]="clientTypesLabels" formControlName="clientType">
+            <p-dropdown [options]="clientTypes" formControlName="clientType" optionLabel="label" optionValue="id">
             </p-dropdown>
             <div class="flex flex-column gap-3 mt-3 border-top-1 surface-border pt-2"
                  [ngSwitch]="clientForm.get('clientType')?.value">
-                <div class="flex gap-3" *ngSwitchCase="privateClientLabel">
+                <div class="flex gap-3" *ngSwitchCase="ClientType.PRIVATE.toString()">
                     <div class="w-6">
                         <label for="firstName" class="block mb-1 text-color text-base">First Name</label>
                         <span class="p-input-icon-left w-full">
@@ -42,7 +42,7 @@
                         </span>
                     </div>
                 </div>
-                <div class="flex gap-3" *ngSwitchCase="corporateClientLabel">
+                <div class="flex gap-3" *ngSwitchCase="ClientType.CORPORATE.toString()">
                     <div class="w-full">
                         <label for="companyName" class="block mb-1 text-color text-base">Company Name</label>
                         <span class="p-input-icon-left w-full">

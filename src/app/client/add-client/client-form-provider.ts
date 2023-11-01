@@ -2,6 +2,8 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {AddressForm, ClientForm, ContactForm} from "../client";
 import {Injectable} from "@angular/core";
 
+const DEFAULT_CLIENT_TYPE = "PRIVATE";
+
 @Injectable({
     providedIn: 'root',
 })
@@ -17,7 +19,7 @@ export class ClientFormProvider {
             lastName: this.formBuilder.control<string>('', [Validators.required]),
             companyName: this.formBuilder.control<string>(''),
             note: this.formBuilder.control<string>(''),
-            clientType: this.formBuilder.nonNullable.control<string>(defaultLabel, [Validators.required]),
+            clientType: this.formBuilder.nonNullable.control<string>(DEFAULT_CLIENT_TYPE, [Validators.required]),
             contact: this.getContactFormGroup()
         })
     }

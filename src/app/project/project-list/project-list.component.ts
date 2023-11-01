@@ -20,6 +20,7 @@ export class ProjectListComponent implements OnInit, OnDestroy {
     projects: Project[] = [];
     projectTypes: ConfigurationEntry[] = [];
     projectStatuses: ConfigurationEntry[] = [];
+    showComponent: boolean = false;
 
     constructor(private projectStore: Store<ProjectState>, private configurationStore: Store<ConfigurationState>) {
     }
@@ -53,6 +54,14 @@ export class ProjectListComponent implements OnInit, OnDestroy {
     getProjectStatusLabel(type: string): string {
         let maybeLabel = this.projectStatuses.find(element => element.id === type)?.label;
         return maybeLabel ? maybeLabel : type;
+    }
+
+    onClick() {
+        this.showComponent = !this.showComponent;
+    }
+
+    onNotify(event: boolean) {
+        this.showComponent = !this.showComponent;
     }
 
 }

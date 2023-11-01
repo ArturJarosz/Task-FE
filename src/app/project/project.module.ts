@@ -10,13 +10,17 @@ import {RouterModule} from "@angular/router";
 import {ProjectRestService, ProjectRestServiceImpl} from "./rest/project-rest.service";
 import {StoreModule} from "@ngrx/store";
 import {Features} from "../features";
-import {projectReducer} from "./state/project.reducer";
+import {projectReducer, ProjectEffects} from "./state";
 import {EffectsModule} from "@ngrx/effects";
-import {ProjectEffects} from "./state/project.effects";
+import {AddProjectComponent} from "./add-project/add-project.component";
+import {DialogModule} from "primeng/dialog";
+import {DropdownModule} from "primeng/dropdown";
+import {InputTextModule} from "primeng/inputtext";
 
 @NgModule({
     declarations: [
-        ProjectListComponent
+        ProjectListComponent,
+        AddProjectComponent
     ],
     imports: [
         CommonModule,
@@ -32,7 +36,10 @@ import {ProjectEffects} from "./state/project.effects";
             {path: 'projects', component: ProjectListComponent}
         ]),
         StoreModule.forFeature(Features.PROJECT, projectReducer),
-        EffectsModule.forFeature([ProjectEffects])
+        EffectsModule.forFeature([ProjectEffects]),
+        DialogModule,
+        DropdownModule,
+        InputTextModule
     ],
     providers: [
         {provide: ProjectRestService, useClass: ProjectRestServiceImpl}
