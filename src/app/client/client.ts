@@ -49,13 +49,14 @@ export interface ContactForm {
 }
 
 export interface Client {
-    id?: number | null,
-    firstName?: string | null,
-    lastName?: string | null,
-    companyName?: string | null,
-    note?: string | null,
+    id?: number,
+    firstName?: string,
+    lastName?: string,
+    companyName?: string,
+    note?: string,
     clientType: string,
-    contact?: Contact | null
+    contact?: Contact | null,
+    resolvedName?: string
 }
 
 export interface ClientForm {

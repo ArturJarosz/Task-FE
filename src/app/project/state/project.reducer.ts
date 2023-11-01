@@ -1,6 +1,6 @@
 import {createReducer, on} from "@ngrx/store";
 import {initialState, ProjectState} from "./project.state";
-import {loadProjectsSuccess} from "./project.action";
+import {createProjectSuccess, loadProjectsSuccess} from "./project.action";
 
 export const projectReducer = createReducer<ProjectState>(
     initialState,
@@ -9,6 +9,13 @@ export const projectReducer = createReducer<ProjectState>(
             ...state,
             error: '',
             projects: action.projects
+        }
+    }),
+
+    on(createProjectSuccess, (state, action): ProjectState => {
+        return {
+            ...state,
+            error: ''
         }
     })
 )

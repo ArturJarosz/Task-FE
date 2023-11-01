@@ -46,3 +46,12 @@ export interface ProjectContract {
     projectValue: number,
     status: ContractStatus
 }
+
+export interface ProjectCreate {
+    id?: number;
+    name: string;
+    architectId: number;
+    clientId: number;
+    type: string;
+    offerValue: number;
+}
