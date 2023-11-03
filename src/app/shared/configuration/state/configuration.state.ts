@@ -52,3 +52,8 @@ export const getClientTypeConfiguration = createSelector(
     getConfigurationFeatureState,
     state => state.configuration.clientTypes
 )
+
+export const getContractStatusConfiguration = createSelector(
+    getConfigurationFeatureState,
+    state => state.configuration.contractStatuses
+)

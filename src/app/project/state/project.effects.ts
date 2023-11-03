@@ -5,12 +5,13 @@ import {Injectable} from "@angular/core";
 import {
     createProject,
     createProjectError,
-    createProjectSuccess,
+    createProjectSuccess, loadProject, loadProjectError,
     loadProjects, loadProjectsError,
-    loadProjectsSuccess
+    loadProjectsSuccess, loadProjectSuccess
 } from "./project.action";
 import {catchError, map, mergeMap, of} from "rxjs";
 import {MessageSeverity} from "../../shared";
+import {loadClientError} from "../../client/state";
 
 @Injectable()
 export class ProjectEffects {
@@ -33,6 +34,24 @@ export class ProjectEffects {
             ))
         )
     });
+
+    loadProject$ = createEffect(() => {
+        return this.actions$.pipe(
+            ofType(loadProject),
+            mergeMap(action => this.projectRestService.getProject(action.projectId)
+                .pipe(
+                    map(project => loadProjectSuccess({project: project})),
+                    catchError(error => {
+                        this.messageService.add({
+                            severity: MessageSeverity.ERROR,
+                            summary: `Error loading project.`,
+                            detail: `There was a problem with loading project with id ${action.projectId}.`
+                        });
+                        return of(loadProjectError({error: error}))
+                    })
+                ))
+        )
+    })
 
     createProject$ = createEffect(() => {
         return this.actions$.pipe(

@@ -50,7 +50,6 @@ import {Features} from "../features";
         RippleModule,
         InputTextareaModule,
         DividerModule,
-        SharedModule,
         ConfirmDialogModule,
         StoreModule.forFeature(Features.CLIENT, clientReducer),
         EffectsModule.forFeature([ClientEffects])

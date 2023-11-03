@@ -16,24 +16,26 @@ import {AddProjectComponent} from "./add-project/add-project.component";
 import {DialogModule} from "primeng/dialog";
 import {DropdownModule} from "primeng/dropdown";
 import {InputTextModule} from "primeng/inputtext";
+import {ProjectListShellComponent} from "./project-list-shell/project-list-shell.component";
+import {ProjectDetailComponent} from "./project-detail/project-detail.component";
 
 @NgModule({
     declarations: [
         ProjectListComponent,
-        AddProjectComponent
+        AddProjectComponent,
+        ProjectListShellComponent,
+        ProjectDetailComponent
     ],
     imports: [
+        SharedModule,
         CommonModule,
         ButtonModule,
         ConfirmDialogModule,
         RippleModule,
-        SharedModule,
-        SharedModule,
         TableModule,
-        SharedModule,
-        SharedModule,
         RouterModule.forChild([
-            {path: 'projects', component: ProjectListComponent}
+            {path: 'projects', component: ProjectListShellComponent},
+            {path: 'projects/:id', component: ProjectDetailComponent}
         ]),
         StoreModule.forFeature(Features.PROJECT, projectReducer),
         EffectsModule.forFeature([ProjectEffects]),

@@ -1,0 +1,16 @@
+<wrapper [title]="'Projects'">
+    <div wrapper-body>
+        <project-list [projects]="projects$ | async"
+                      [projectTypes]="projectTypes$ | async"
+                      [projectStatuses]="projectStatuses$ | async">
+        </project-list>
+    </div>
+    <div wrapper-buttons>
+        <button pButton pRipple label="Add new project" (click)="onClick()" icon="pi pi-plus"></button>
+    </div>
+    <app-add-project [visible]="showComponent" (notify)="onNotify($event)" (refreshProjects)="refreshProjects()"></app-add-project>
+</wrapper>
+
+
+
+

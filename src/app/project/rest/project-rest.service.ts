@@ -9,6 +9,8 @@ import {environment} from "../../../environments/environment";
 export abstract class ProjectRestService {
     abstract getProjects(): Observable<Project[]>;
 
+    abstract getProject(projectId: number): Observable<Project>;
+
     abstract createProject(projectCreate: ProjectCreate): Observable<Project>;
 }
 
@@ -27,10 +29,18 @@ export class ProjectRestServiceImpl extends AbstractRestService implements Proje
             );
     }
 
+    getProject(projectId: number): Observable<Project> {
+        return this.httpClient.get<Project>(`${this.projectUrl}/${projectId}`)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            );
+    }
+
     createProject(projectCreate: ProjectCreate): Observable<Project> {
         return this.httpClient.post<Project>(this.projectUrl, projectCreate)
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))
             );
     }
+
 }

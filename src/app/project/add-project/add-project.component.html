@@ -27,7 +27,6 @@
                                         formControlName="type" class="w-full" appendTo="body" id="type">
                             </p-dropdown>
                         </span>
-
                     </div>
                 </div>
             </div>
@@ -47,7 +46,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="flex flex-column gap-3 mt-3 border-top-1 surface-border pt-2">
                 <div class="flex gap-3">
                     <div class="w-full">
@@ -64,6 +62,21 @@
                 </div>
             </div>
         </form>
+    </div>
+    <div>
+        name: {{addProjectForm.get('name')?.value}}, is valid: {{addProjectForm.get('name')?.valid}}
+    </div>
+    <div>
+        type: {{addProjectForm.get('type')?.value}}, is valid: {{addProjectForm.get('type')?.valid}}
+    </div>
+    <div>
+        clientId: {{addProjectForm.get('clientId')?.value}}, is valid: {{addProjectForm.get('clientId')?.valid}}
+    </div>
+    <div>
+        architectId: {{addProjectForm.get('architectId')?.value}}, is valid: {{addProjectForm.get('architectId')?.valid}}
+    </div>
+    <div>
+        offerValue: {{addProjectForm.get('offerValue')?.value}}, is valid: {{addProjectForm.get('offerValue')?.valid}}
     </div>
     <ng-template pTemplate="footer">
         <div class="flex gap-3 justify-content-end border-top-1 surface-border pt-5">

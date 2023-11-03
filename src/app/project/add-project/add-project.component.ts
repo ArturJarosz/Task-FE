@@ -22,6 +22,8 @@ export class AddProjectComponent implements OnInit, OnDestroy {
     visible = false;
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
+    @Output()
+    refreshProjects: EventEmitter<void> = new EventEmitter<void>();
 
     header: string = "Add new project";
 
@@ -41,7 +43,6 @@ export class AddProjectComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.initializeValues();
-        this.initializeValidators();
     }
 
     private initializeValues() {
@@ -70,11 +71,13 @@ export class AddProjectComponent implements OnInit, OnDestroy {
             })
 
         this.addProjectForm = this.addProjectFormProvider.getAddProjectForm();
+        this.addProjectForm.patchValue({
+            type: this.projectTypes[0]?.id,
+            architectId: this.architects[0]?.id,
+            clientId: this.clients[0]?.id
+        })
     }
 
-    initializeValidators(): void {
-
-    }
 
     ngOnDestroy(): void {
         this.clientsSubscription.unsubscribe();
@@ -83,17 +86,18 @@ export class AddProjectComponent implements OnInit, OnDestroy {
 
     onCancel(): void {
         this.visible = false;
-        this.resetFields();
+        //this.resetFields();
     }
 
     onSave(): void {
         this.visible = false;
         let project: ProjectCreate = this.createProject();
         this.projectStore.dispatch(createProject({projectCreate: project}));
+        this.refreshProjects.emit();
     }
 
     onClose(): void {
-        this.resetFields();
+        //this.resetFields();
         this.notify.emit(false);
     }
 
