@@ -18,7 +18,7 @@ export enum ProjectType {
 }
 
 export interface Project {
-    id?: string | null,
+    id: number,
     client: Client,
     architect: Architect,
     name: string,
@@ -42,9 +42,13 @@ export enum ContractStatus {
 }
 
 export interface ProjectContract {
-    id?: string | null,
-    projectValue: number,
-    status: ContractStatus
+    id: number,
+    offerValue: number,
+    status: ContractStatus,
+    signingDate: Date,
+    startDate: Date,
+    endDate: Date,
+    deadline: Date,
 }
 
 export interface ProjectCreate {

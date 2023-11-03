@@ -3,8 +3,7 @@ import {ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
 import {Client, ClientType} from "../client";
 import {Store} from "@ngrx/store";
-import {ClientState, getClient} from "../state/client.state";
-import {loadClient} from "../state/client.action";
+import {ClientState, getClient, loadClient} from "../state";
 
 @Component({
     selector: 'app-client-detail',

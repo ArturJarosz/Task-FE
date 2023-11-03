@@ -1,5 +1,5 @@
 export interface Architect {
-    id?: number | null,
+    id?: number,
     firstName: string,
     lastName: string,
     resolvedName: string

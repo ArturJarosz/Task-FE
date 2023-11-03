@@ -1,30 +1,23 @@
-<wrapper [title]="'Projects'">
-    <div wrapper-body>
-        <p-table [value]="projects" [tableStyle]="{ 'min-width': '50rem' }">
-            <ng-template pTemplate="header">
-                <tr>
-                    <th>Id</th>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Architect</th>
-                    <th>Client</th>
-                    <th>Status</th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-project>
-                <tr>
-                    <td>{{ project.id }}</td>
-                    <td>{{ project.name}}</td>
-                    <td>{{ getProjectTypeLabel(project.type) }}</td>
-                    <td>{{ project.architect.firstName + ' ' + project.architect.lastName}}</td>
-                    <td>{{ project.client.firstName + ' ' + project.client.lastName}}</td>
-                    <td>{{ getProjectStatusLabel(project.status) }}</td>
-                </tr>
-            </ng-template>
-        </p-table>
-    </div>
-    <div wrapper-buttons>
-        <button pButton pRipple label="Add new project" (click)="onClick()" icon="pi pi-plus"></button>
-    </div>
-    <app-add-project [visible]="showComponent" (notify)="onNotify($event)"></app-add-project>
-</wrapper>
+<p-table [value]="projects!" [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Architect</th>
+            <th>Client</th>
+            <th>Status</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-project>
+        <tr [routerLink]="['/projects', project.id]" class="cursor-pointer">
+            <td>{{ project.id }}</td>
+            <td>{{ project.name}}</td>
+            <td>{{ getProjectTypeLabel(project.type) }}</td>
+            <td>{{ project.architect.firstName + ' ' + project.architect.lastName}}</td>
+            <td>{{ project.client.firstName + ' ' + project.client.lastName}}</td>
+            <td>{{ getProjectStatusLabel(project.status) }}</td>
+        </tr>
+    </ng-template>
+</p-table>
+

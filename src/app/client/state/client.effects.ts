@@ -2,13 +2,18 @@ import {Injectable} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {ClientRestService} from "../rest/client-rest.service";
 import {
-    createClient, createClientError, createClientSuccess,
+    createClient,
+    createClientError,
+    createClientSuccess,
     loadClient,
     loadClientError,
     loadClients,
     loadClientsError,
     loadClientsSuccess,
-    loadClientSuccess, removeClient, removeClientError, removeClientSuccess
+    loadClientSuccess,
+    removeClient,
+    removeClientError,
+    removeClientSuccess
 } from "./client.action";
 import {catchError, map, mergeMap, of} from "rxjs";
 import {MessageService} from "primeng/api";
@@ -16,7 +21,8 @@ import {MessageSeverity} from "../../shared";
 
 @Injectable()
 export class ClientEffects {
-    constructor(private actions$: Actions, private clientRestService: ClientRestService, private messageService: MessageService) {
+    constructor(private actions$: Actions, private clientRestService: ClientRestService,
+                private messageService: MessageService) {
     };
 
     loadClients$ = createEffect(() => {
@@ -44,8 +50,7 @@ export class ClientEffects {
             ofType(loadClient),
             mergeMap(action => this.clientRestService.getClient(action.clientId)
                 .pipe(
-                    map(client => loadClientSuccess({client: client})
-                    ),
+                    map(client => loadClientSuccess({client: client})),
                     catchError(error => {
                         this.messageService.add({
                             severity: MessageSeverity.ERROR,
