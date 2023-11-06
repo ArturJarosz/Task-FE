@@ -18,6 +18,7 @@ export class ProjectDetailFormProvider {
             clientId: this.formBuilder.nonNullable.control<number>(0, [Validators.required]),
             type: this.formBuilder.nonNullable.control<string>('',[Validators.required]),
             status: this.formBuilder.nonNullable.control<ProjectStatus>(ProjectStatus.TO_DO, [Validators.required]),
+            note: this.formBuilder.control<string>(''),
             contract: contractForm
         });
         return projectForm;
@@ -36,7 +37,7 @@ export class ProjectDetailFormProvider {
     }
 }
 
-interface ProjectContractForm {
+export interface ProjectContractForm {
     id: FormControl<number>,
     offerValue: FormControl<number>,
     status: FormControl<ContractStatus>,
@@ -53,5 +54,6 @@ export interface ProjectCreateForm {
     clientId: FormControl<number>,
     type: FormControl<string>,
     contract: FormGroup<ProjectContractForm>,
-    status: FormControl<ProjectStatus>
+    status: FormControl<ProjectStatus>,
+    note: FormControl<string | null>
 }

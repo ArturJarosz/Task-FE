@@ -18,12 +18,17 @@ import {DropdownModule} from "primeng/dropdown";
 import {InputTextModule} from "primeng/inputtext";
 import {ProjectListShellComponent} from "./project-list-shell/project-list-shell.component";
 import {ProjectDetailComponent} from "./project-detail/project-detail.component";
+import {ProjectDetailShellComponent} from "./project-detail-shell/project-detail-shell.component";
+import {CalendarModule} from "primeng/calendar";
+import {ContractRestService, ContractRestServiceImpl} from "./rest/contract-rest.service";
+import {ContractStatusService, ContractStatusServiceImpl} from "./contract-status/contract-status.service";
 
 @NgModule({
     declarations: [
         ProjectListComponent,
         AddProjectComponent,
         ProjectListShellComponent,
+        ProjectDetailShellComponent,
         ProjectDetailComponent
     ],
     imports: [
@@ -35,16 +40,19 @@ import {ProjectDetailComponent} from "./project-detail/project-detail.component"
         TableModule,
         RouterModule.forChild([
             {path: 'projects', component: ProjectListShellComponent},
-            {path: 'projects/:id', component: ProjectDetailComponent}
+            {path: 'projects/:id', component: ProjectDetailShellComponent}
         ]),
         StoreModule.forFeature(Features.PROJECT, projectReducer),
         EffectsModule.forFeature([ProjectEffects]),
         DialogModule,
         DropdownModule,
-        InputTextModule
+        InputTextModule,
+        CalendarModule
     ],
     providers: [
-        {provide: ProjectRestService, useClass: ProjectRestServiceImpl}
+        {provide: ProjectRestService, useClass: ProjectRestServiceImpl},
+        {provide: ContractRestService, useClass: ContractRestServiceImpl},
+        {provide: ContractStatusService, useClass: ContractStatusServiceImpl},
     ]
 })
 export class ProjectModule {

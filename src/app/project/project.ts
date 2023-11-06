@@ -29,7 +29,8 @@ export interface Project {
     deadLine: Date,
     note: string | null,
     status: ProjectStatus,
-    contract: ProjectContract
+    contract: ProjectContract,
+    nextStatuses: ProjectStatus[]
 }
 
 export enum ContractStatus {
@@ -42,13 +43,14 @@ export enum ContractStatus {
 }
 
 export interface ProjectContract {
-    id: number,
+    id?: number,
     offerValue: number,
     status: ContractStatus,
-    signingDate: Date,
-    startDate: Date,
-    endDate: Date,
-    deadline: Date,
+    signingDate?: Date | null,
+    startDate?: Date | null,
+    endDate?: Date | null,
+    deadline?: Date | null,
+    nextStatuses?: ContractStatus[]
 }
 
 export interface ProjectCreate {

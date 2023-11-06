@@ -9,6 +9,7 @@ import {StoreModule} from "@ngrx/store";
 import {Features} from "../features";
 import {configurationReducer, ConfigurationEffects} from "./configuration/state";
 import {EffectsModule} from "@ngrx/effects";
+import {NgIf} from "@angular/common";
 
 @NgModule({
     declarations: [
@@ -20,7 +21,8 @@ import {EffectsModule} from "@ngrx/effects";
         SharedPrimeNgModule,
         ToastModule,
         StoreModule.forFeature(Features.CONFIGURATION, configurationReducer),
-        EffectsModule.forFeature([ConfigurationEffects])
+        EffectsModule.forFeature([ConfigurationEffects]),
+        NgIf
     ],
     exports: [
         ReactiveFormsModule,

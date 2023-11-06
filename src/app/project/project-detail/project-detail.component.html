@@ -1,33 +1,39 @@
-<wrapper [title]="pageTitle">
+<wrapper [title]="project?.name! + ',&nbsp;'" [secondaryTitle]="resolvedProjectTypeLabel">
     <div wrapper-body>
         <div>
             <form [formGroup]="projectDetailsForm">
-                <div class="lg:px-6 md:px-4 px-4 py-2 ng-star-inserted surface-border" formGroupName="contract">
-                    <span class="text-xl text-900 font-medium">Contract details</span>
+                <div class="lg:px-4 md:px-4 px-4 py-2 ng-star-inserted surface-border" formGroupName="contract">
+                    <div class="flex flex-column lg:flex-row lg:justify-content-between align-items-center justify-content-center">
+                        <span class="text-xl text-900 font-medium">Contract details</span>
+                        <div class="mt-4 lg:mt-0">
+                            <button pButton pRipple label="Update" [disabled]="!shouldUpdateContract()" (click)="onContractUpdate()"></button>
+                        </div>
+                    </div>
+
                     <div class="grid grid-nogutter surface-border pt-1">
                         <div class="col-12 md:col-6 p-2">
                             <div class="text-500 font-medium mb-2">Project value</div>
-                            <div formControlName="offerValue" id="offerValue">{{projectDetailsForm.get('contract')?.get('offerValue')?.value}}</div>
+                            <div id="value">{{projectDetailsForm.get(['contract', 'offerValue'])?.value}}</div>
                         </div>
                         <div class="col-12 md:col-6 p-2">
                             <div class="text-500 font-medium mb-2">Status</div>
-                            <div id="contractStatus">{{resolvedContractStatusLabel}}</div>
+                            <p-dropdown formControlName="status" [options]="availableContractStatuses" optionLabel="label" optionValue="id"></p-dropdown>
                         </div>
                     </div>
                     <div class="grid grid-nogutter surface-border pt-1">
                         <div class="col-12 md:col-6 p-2">
                             <div class="text-500 font-medium mb-2">Signing date</div>
-                            <input formControlName="signingDate" id="signingDate" pInputText [readOnly]="true">
+                            <p-calendar formControlName="signingDate" id="signingDate"></p-calendar>
                         </div>
                         <div class="col-12 md:col-6 p-2">
                             <div class="text-500 font-medium mb-2">Deadline</div>
-                            <input formControlName="deadline" id="deadline" pInputText [readOnly]="true">
+                            <p-calendar formControlName="deadline" id="deadline"></p-calendar>
                         </div>
                     </div>
                     <div class="grid grid-nogutter surface-border pt-1">
                         <div class="col-12 md:col-6 p-2">
                             <div class="text-500 font-medium mb-2">Start date</div>
-                            <input formControlName="startDate" id="startDate" pInputText [readOnly]="true">
+                            <p-calendar formControlName="startDate" id="startDate"></p-calendar>
                         </div>
                         <div class="col-12 md:col-6 p-2">
                             <div class="text-500 font-medium mb-2">End date</div>
@@ -35,16 +41,21 @@
                         </div>
                     </div>
                 </div>
-                <div class="lg:px-6 md:px-4 px-4 py-2 ng-star-inserted surface-border">
-                    <span class="text-xl text-900 font-medium">Project details</span>
+                <div class="lg:px-4 md:px-4 px-4 py-2 ng-star-inserted surface-border">
+                    <div class="flex flex-column lg:flex-row lg:justify-content-between align-items-center justify-content-center">
+                        <span class="text-xl text-900 font-medium">Project details</span>
+                        <div class="mt-4 lg:mt-0">
+                            <button pButton pRipple label="Update" [disabled]="!shouldUpdateProject()" (click)="onProjectUpdate()"></button>
+                        </div>
+                    </div>
                     <div class="grid grid-nogutter surface-border pt-1">
                         <div class="col-12 md:col-6 p-2">
                             <div class="text-500 font-medium mb-2">Project name</div>
-                            <input formControlName="projectName" id="projectName" pInputText [readOnly]="true">
+                            <input formControlName="name" id="name" pInputText>
                         </div>
                         <div class="col-12 md:col-6 p-2">
                             <div class="text-500 font-medium mb-2">Project status</div>
-                            <div id="projectStatus">{{resolvedProjectStatusLabel}}</div>
+                            <p-dropdown formControlName="status" [options]="availableProjectStatuses" optionLabel="label" optionValue="id"></p-dropdown>
                         </div>
                     </div>
                     <div class="grid grid-nogutter surface-border pt-1">
