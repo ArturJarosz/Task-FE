@@ -7,4 +7,6 @@ import {Component, Input} from "@angular/core";
 export class WrapperComponent {
     @Input()
     title!: string;
+    @Input()
+    secondaryTitle: string | null = null;
 }
