@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  task-fe:
+    image: azjarosz/task-fe:${APP_VERSION}
+    build:
+      context: ../
+      dockerfile: task-fe.Dockerfile
+    container_name: task-fe
+    ports:
+      - ${FE_PORT}:80

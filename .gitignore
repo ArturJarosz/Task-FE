@@ -43,3 +43,6 @@ Thumbs.db
 
 # Angular
 .angular/*
+
+# Docker
+/docker/env/local.env
