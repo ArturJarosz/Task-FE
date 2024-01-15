@@ -1,5 +1,6 @@
 <div class="min-h-screen flex flex-column surface-ground">
-    <div class="surface-overlay py-3 px-6 flex align-items-center justify-content-between relative lg:static">
+    <p-toast></p-toast>
+    <div class="surface-overlay py-3 px-4 flex align-items-center justify-content-between relative lg:static">
         <a pRipple class="cursor-pointer inline-flex align-items-center justify-content-center lg:hidden text-700" pStyleClass="#app-sidebar-12" enterClass="hidden" enterActiveClass="fadeinleft" leaveToClass="hidden" leaveActiveClass="fadeoutleft" [hideOnOutsideClick]="true">
             <i class="pi pi-bars text-4xl"></i>
         </a>
@@ -37,9 +38,33 @@
                                     </a>
                                 </li>
                                 <li [routerLinkActive]="['active', 'bg-purple-50', 'text-purple-500', 'border-purple-500', 'border-right-2']">
+                                    <a pRipple class="flex align-items-center cursor-pointer p-3 text-700 hover:surface-100 transition-duration-150 transition-colors border-right-2 border-transparent" [routerLink]="'/projects'">
+                                        <i class="pi pi-file-edit mr-2"></i>
+                                        <span class="font-medium">Projects</span>
+                                    </a>
+                                </li>
+                                <li [routerLinkActive]="['active', 'bg-purple-50', 'text-purple-500', 'border-purple-500', 'border-right-2']">
+                                    <a pRipple class="flex align-items-center cursor-pointer p-3 text-700 hover:surface-100 transition-duration-150 transition-colors border-right-2 border-transparent" [routerLink]="'/architects'">
+                                        <i class="pi pi-users mr-2"></i>
+                                        <span class="font-medium">Architects</span>
+                                    </a>
+                                </li>
+                                <li [routerLinkActive]="['active', 'bg-purple-50', 'text-purple-500', 'border-purple-500', 'border-right-2']">
                                     <a pRipple class="flex align-items-center cursor-pointer p-3 text-700 hover:surface-100 transition-duration-150 transition-colors border-right-2 border-transparent" [routerLink]="'/clients'">
                                         <i class="pi pi-users mr-2"></i>
                                         <span class="font-medium">Clients</span>
+                                    </a>
+                                </li>
+                                <li [routerLinkActive]="['active', 'bg-purple-50', 'text-purple-500', 'border-purple-500', 'border-right-2']">
+                                    <a pRipple class="flex align-items-center cursor-pointer p-3 text-700 hover:surface-100 transition-duration-150 transition-colors border-right-2 border-transparent" [routerLink]="'/contractors'">
+                                        <i class="pi pi-users mr-2"></i>
+                                        <span class="font-medium">Contractors</span>
+                                    </a>
+                                </li>
+                                <li [routerLinkActive]="['active', 'bg-purple-50', 'text-purple-500', 'border-purple-500', 'border-right-2']">
+                                    <a pRipple class="flex align-items-center cursor-pointer p-3 text-700 hover:surface-100 transition-duration-150 transition-colors border-right-2 border-transparent" [routerLink]="'/suppliers'">
+                                        <i class="pi pi-users mr-2"></i>
+                                        <span class="font-medium">Suppliers</span>
                                     </a>
                                 </li>
                             </ul>
@@ -54,7 +79,7 @@
             </div>
         </div>
         <div class="flex flex-column flex-auto">
-            <div class="border-2 border-dashed surface-border border-round surface-section flex-auto lg:ml-5">
+            <div class="flex-auto lg:ml-5">
                 <router-outlet></router-outlet>
             </div>
         </div>

@@ -1,7 +1,30 @@
 import {Component, EventEmitter, Injectable, Input, OnInit, Output} from '@angular/core';
-import {ClientType, CreateClient} from "../client";
-import {ClientService} from "../service/client.service";
-import {HttpStatusCode} from "@angular/common/http";
+import {
+    ADDRESS,
+    CITY,
+    Client,
+    CLIENT_TYPE,
+    ClientType,
+    COMPANY_NAME,
+    CONTACT,
+    EMAIL,
+    FIRST_NAME,
+    FLAT_NUMBER,
+    HOUSE_NUMBER,
+    LAST_NAME,
+    NOTE,
+    POST_CODE,
+    STREET,
+    TELEPHONE
+} from "../client";
+import {FormGroup, Validators} from "@angular/forms";
+import {ClientFormProvider} from "./client-form-provider";
+import {ClientState, createClient} from "../state";
+import {Store} from "@ngrx/store";
+import {ConfigurationState, getClientTypeConfiguration} from "../../shared/configuration/state";
+import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
+
+const DEFAULT_CLIENT_TYPE = ClientType.PRIVATE.toString();
 
 @Injectable({
     providedIn: 'root',
@@ -16,19 +39,49 @@ export class AddClientComponent implements OnInit {
     visible = false;
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
-    clientTypes!: String[];
-    clientType!: ClientType;
-    firstName!: string;
-    lastName!: string;
-    companyName!: string;
+    @Output()
+    reloadClients = new EventEmitter<void>();
+
+    clientTypes: ConfigurationEntry[] = [];
+    clientForm!: FormGroup;
 
     protected readonly ClientType = ClientType;
 
-    constructor(private _clientService: ClientService) {
+    constructor(private clientFormProvider: ClientFormProvider, private clientStore: Store<ClientState>,
+                private configurationStore: Store<ConfigurationState>) {
     }
 
     ngOnInit(): void {
         this.initClientTypes();
+        this.initClientGroup();
+        this.clientForm.get(CLIENT_TYPE)
+            ?.valueChanges
+            .subscribe(clientType => {
+                this.updateClientValidators(clientType.id);
+            })
+    }
+
+    initClientGroup(): void {
+        this.clientForm = this.clientFormProvider.getClientFormGroup(this.getIdFromLabel(DEFAULT_CLIENT_TYPE));
+    }
+
+    updateClientValidators(clientType: string): void {
+        const firstNameControl = this.clientForm.get(FIRST_NAME);
+        const lastNameControl = this.clientForm.get(LAST_NAME);
+        const companyNameControl = this.clientForm.get(COMPANY_NAME);
+        if (clientType === ClientType.CORPORATE.toString()) {
+            firstNameControl?.clearValidators();
+            lastNameControl?.clearValidators();
+            companyNameControl?.setValidators(Validators.required);
+        }
+        if (clientType === ClientType.PRIVATE.toString()) {
+            firstNameControl?.setValidators(Validators.required);
+            lastNameControl?.setValidators(Validators.required);
+            companyNameControl?.clearValidators();
+        }
+        firstNameControl?.updateValueAndValidity();
+        lastNameControl?.updateValueAndValidity();
+        companyNameControl?.updateValueAndValidity();
     }
 
     onClose(): void {
@@ -36,7 +89,12 @@ export class AddClientComponent implements OnInit {
     }
 
     initClientTypes() {
-        this.clientTypes = Object.values(ClientType).filter(value => typeof value === 'string') as string[];
+        this.configurationStore.select(getClientTypeConfiguration)
+            .subscribe({
+                next: clientTypes => {
+                    this.clientTypes = clientTypes;
+                }
+            })
     }
 
     onCancel() {
@@ -46,58 +104,56 @@ export class AddClientComponent implements OnInit {
 
     onSave() {
         this.visible = false;
-        let client: CreateClient;
-        client = this.createClient();
-        this._clientService.createClient(client).subscribe({
-                next: response => {
-                    if (response.status === HttpStatusCode.Created) {
-                    }
-                },
-                error: error => console.log(error),
-            }
-        );
+        let client: Client = this.createClient();
+        this.clientStore.dispatch(createClient({client: client}));
+        this.reloadClients.emit();
     }
 
     private createClient() {
-        let client: CreateClient;
-        switch (this.clientType) {
-            case ClientType.CORPORATE: {
-                client = {
-                    clientType: ClientType.CORPORATE,
-                    companyName: this.companyName.trim()
-                }
-                break;
+        let client: Client;
+        if (this.clientForm.get(CLIENT_TYPE)?.value === ClientType.PRIVATE.toString) {
+            client = {
+                clientType: ClientType.PRIVATE.toString(),
+                firstName: this.clientForm.get(FIRST_NAME)?.value,
+                lastName: this.clientForm.get(LAST_NAME)?.value
             }
-            case ClientType.PRIVATE: {
-                client = {
-                    clientType: ClientType.PRIVATE,
-                    firstName: this.firstName.trim(),
-                    lastName: this.lastName.trim()
-                }
-                break;
+        } else {
+            client = {
+                clientType: ClientType.CORPORATE.toString(),
+                companyName: this.clientForm.get(COMPANY_NAME)?.value
             }
         }
-        console.log(`client: ${JSON.stringify(client)}`)
+        client.contact = {};
+        let contactForm = this.clientForm.get(CONTACT);
+        if (contactForm) {
+            client.contact.email = contactForm.get(EMAIL)?.value;
+            client.contact.telephone = contactForm.get(TELEPHONE)?.value;
+            let addressForm = contactForm.get(ADDRESS);
+            client.contact.address = {};
+            if (addressForm) {
+                client.contact.address.city = addressForm.get(CITY)?.value;
+                client.contact.address.postCode = addressForm.get(POST_CODE)?.value;
+                client.contact.address.street = addressForm.get(STREET)?.value;
+                client.contact.address.houseNumber = addressForm.get(HOUSE_NUMBER)?.value;
+                client.contact.address.flatNumber = addressForm.get(FLAT_NUMBER)?.value;
+            }
+
+        }
+        client.note = this.clientForm.get(NOTE)?.value;
         return client;
     }
 
     isSaveEnabled(): boolean {
-        if (!this.clientType) {
-            return false;
-        }
-        if (this.clientType === ClientType.PRIVATE && this.firstName && this.lastName && this.firstName.trim() && this.lastName.trim()) {
-            return true;
-        }
-        if (this.clientType === ClientType.CORPORATE && this.companyName && this.companyName.trim()) {
-            return true;
-        }
-        return false;
+        return this.clientForm.valid;
     }
 
     resetFields() {
-        this.companyName = "";
-        this.firstName = "";
-        this.lastName = "";
+        this.clientForm = this.clientFormProvider.getClientFormGroup(this.getIdFromLabel(DEFAULT_CLIENT_TYPE));
+    }
+
+    getIdFromLabel(id: string): string {
+        let maybeLabel = this.clientTypes.find(element => element.id === id)?.label;
+        return maybeLabel ? maybeLabel : id;
     }
 
 }

@@ -1,32 +1,41 @@
-<p-table [value]="clients" [tableStyle]="{ 'min-width': '50rem' }">
-    <ng-template pTemplate="header">
-        <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Telephone</th>
-            <th>Email</th>
-        </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-client>
-        <tr>
-            <td>{{ client.id }}</td>
-            <td>
-                <a [routerLink]= "['/clients', client.id]">
-                    {{ client.clientType == ClientType.PRIVATE ? client.firstName + " " + client.lastName : client.companyName }}
-                </a>
-                </td>
-            <td>{{ client.clientType}}</td>
-            <td>{{ client?.contact ? null : client?.contact?.telephone }}</td>
-            <td>{{ client?.contact ? null : client?.contact?.email }}</td>
-        </tr>
-    </ng-template>
+<wrapper [title]="'Clients'">
+    <div wrapper-body>
+        <p-table [value]="clients" [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th></th>
+                    <th>Type</th>
+                    <th>Telephone</th>
+                    <th>Email</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-client>
+                <tr>
+                    <td>{{ client.id }}</td>
+                    <td [routerLink]="['/clients', client.id]" class="cursor-pointer">
+                        <a>
+                            {{ client.clientType == ClientType.PRIVATE ? client.firstName + " " + client.lastName : client.companyName }}
+                        </a>
+                    </td>
+                    <td>
+                        <p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}"
+                                         class="overlay-dialog"></p-confirmDialog>
+                        <button pButton pRipple class="p-button-text p-button-plain" icon="pi pi-times" (click)="deleteClientClick($event, client)"></button>
+                    </td>
+                    <td>{{ getLabelFromType(client.clientType)}}</td>
+                    <td>{{ client?.contact ? client?.contact?.telephone : null }}</td>
+                    <td>{{ client?.contact ? client?.contact?.email : null }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    <div wrapper-buttons>
+        <button pButton pRipple label="Add new client" (click)="onClick()" icon="pi pi-plus"></button>
+    </div>
+    <app-add-client [visible]="showComponent" (notify)="onNotify($event)" (reloadClients)="reloadClients()"></app-add-client>
+</wrapper>
 
-</p-table>
-<div>
-    <p-button label="Add new client" (click)="onClick()"></p-button>
-</div>
-
-<app-add-client [visible]="showComponent" (notify)="onNotify($event)"></app-add-client>
 
 

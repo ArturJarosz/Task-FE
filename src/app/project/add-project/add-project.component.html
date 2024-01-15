@@ -1,0 +1,89 @@
+<p-dialog header='header' [(visible)]="visible" appendTo="body" [modal]="true"
+          [style]="{ width: '50vw', 'max-width': '800px'}"
+          (onHide)="onClose()">
+    <ng-template pTemplate="header">
+        <div class="flex flex-column gap-2">
+            <h1 class="m-0 text-900 font-semibold text-xl line-height-3">{{header}}</h1>
+        </div>
+    </ng-template>
+    <div>
+        <form [formGroup]="addProjectForm">
+            <div class="flex flex-column gap-3 mt-3 border-top-1 surface-border pt-2">
+                <div class="flex gap-3">
+                    <div class="w-6">
+                        <label for="name" class="block mb-1 text-color text-base">Project name</label>
+                        <span class="p-input-icon-left w-full">
+                            <i class="pi pi-pencil"></i>
+                            <input type="text" class="w-full" id="name" formControlName="name"
+                                   pInputText placeholder="project name"
+                                   [ngClass]="{'is-invalid': (addProjectForm.get('name')?.touched || addProjectForm.get('name')?.dirty) && !addProjectForm.get('name')?.valid }"
+                            />
+                        </span>
+                    </div>
+                    <div class="w-6">
+                        <label for="type" class="block mb-1 text-color text-base">Type</label>
+                        <span style="width: 100%">
+                            <p-dropdown [options]="projectTypes" optionLabel="label" optionValue="id"
+                                        formControlName="type" class="w-full" appendTo="body" id="type">
+                            </p-dropdown>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-column gap-3 mt-3 border-top-1 surface-border pt-2">
+                <div class="flex gap-3">
+                    <div class="w-6">
+                        <label for="client" class="block mb-1 text-color text-base w-full">Client</label>
+                        <p-dropdown [options]="clients" optionLabel="resolvedName" optionValue="id"
+                                    formControlName="clientId" class="w-full" appendTo="body" id="client">
+                        </p-dropdown>
+                    </div>
+                    <div class="w-6">
+                        <label for="architect" class="block mb-1 text-color text-base w-full">Architect</label>
+                        <p-dropdown [options]="architects" optionLabel="resolvedName" optionValue="id"
+                                    formControlName="architectId" appendTo="body" id="architect">
+                        </p-dropdown>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-column gap-3 mt-3 border-top-1 surface-border pt-2">
+                <div class="flex gap-3">
+                    <div class="w-full">
+                        <label for="offerValue" class="block mb-1 text-color text-base">Value</label>
+                        <span class="p-input-icon-left w-full">
+                                <i class="pi pi-pencil"></i>
+                                <input type=number step=0.01 class="w-full" id="offerValue" formControlName="offerValue"
+                                       pInputText
+                                       placeholder="0.0"
+                                       [ngClass]="{'is-invalid': (addProjectForm.get('offerValue')?.touched || addProjectForm.get('offerValue')?.dirty) && !addProjectForm.get('offerValue')?.valid }"
+                                />
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div>
+        name: {{addProjectForm.get('name')?.value}}, is valid: {{addProjectForm.get('name')?.valid}}
+    </div>
+    <div>
+        type: {{addProjectForm.get('type')?.value}}, is valid: {{addProjectForm.get('type')?.valid}}
+    </div>
+    <div>
+        clientId: {{addProjectForm.get('clientId')?.value}}, is valid: {{addProjectForm.get('clientId')?.valid}}
+    </div>
+    <div>
+        architectId: {{addProjectForm.get('architectId')?.value}}, is valid: {{addProjectForm.get('architectId')?.valid}}
+    </div>
+    <div>
+        offerValue: {{addProjectForm.get('offerValue')?.value}}, is valid: {{addProjectForm.get('offerValue')?.valid}}
+    </div>
+    <ng-template pTemplate="footer">
+        <div class="flex gap-3 justify-content-end border-top-1 surface-border pt-5">
+            <p-button label="Cancel" styleClass="p-button-outlined p-button-secondary"
+                      (onClick)="onCancel()"></p-button>
+            <p-button label="Save" styleClass="p-button-outlined" [disabled]="!isSaveEnabled()"
+                      (onClick)="onSave()"></p-button>
+        </div>
+    </ng-template>
+</p-dialog>

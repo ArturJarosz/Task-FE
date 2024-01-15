@@ -1,0 +1,14 @@
+# VSC and intellij files
+/.vscode
+/.idea
+
+# local build artifacts
+/node_modules
+/.angular
+
+#docker related files
+/docker
+task-fe.Dockerfile
+
+# readme file
+README.md

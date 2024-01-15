@@ -1,0 +1,15 @@
+<div class="p-4">
+    <div class="flex flex-column lg:flex-row lg:justify-content-between align-items-center justify-content-center">
+        <div class="flex align-items-start flex-column md:flex-row text-4xl">
+            <div class="font-medium">{{title}}</div>
+            <div class="font-light text-500" *ngIf="secondaryTitle">{{secondaryTitle}}</div>
+        </div>
+        <div class="mt-4 lg:mt-0">
+            <ng-content select="[wrapper-buttons]"></ng-content>
+        </div>
+    </div>
+</div>
+<div class="surface-section px-4 py-4 md:px-4 lg:px-4 card">
+    <ng-content select="[wrapper-body]"></ng-content>
+</div>
+

@@ -1,8 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ClientService} from "../service/client.service";
 import {ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
 import {Client, ClientType} from "../client";
+import {Store} from "@ngrx/store";
+import {ClientState, getClient, loadClient} from "../state";
 
 @Component({
     selector: 'app-client-detail',
@@ -11,6 +12,7 @@ import {Client, ClientType} from "../client";
 })
 export class ClientDetailComponent implements OnInit, OnDestroy {
     noteCardLabel: string = "Note";
+    pageTitle = "Client profile";
 
     // main info labels
     clientIdLabel: string = "ID:"
@@ -30,23 +32,21 @@ export class ClientDetailComponent implements OnInit, OnDestroy {
 
     clientId!: number;
     clientSubscription!: Subscription;
-    client: Client | undefined;
+    client!: Client | null;
     clientName: string | undefined;
     combinedStreetWithNumbers!: string;
 
-    constructor(private _clientService: ClientService, private _route: ActivatedRoute) {
+    constructor(private route: ActivatedRoute, private clientStore: Store<ClientState>) {
     }
 
     ngOnInit(): void {
-        let maybeNumber = this._route.snapshot.paramMap.get("id");
+        let maybeNumber = this.route.snapshot.paramMap.get("id");
         this.clientId = Number(maybeNumber);
-        this.clientSubscription = this._clientService.getClient(this.clientId).subscribe({
-            next: client => {
-                this.client = client;
-                this.resolveClientName();
-                this.resolveCombinedStreet();
-            }
-        })
+        this.clientStore.dispatch(loadClient({clientId: this.clientId}));
+        this.clientSubscription = this.clientStore.select(getClient)
+            .subscribe({
+                next: client => this.client = client
+            });
     }
 
     ngOnDestroy(): void {
