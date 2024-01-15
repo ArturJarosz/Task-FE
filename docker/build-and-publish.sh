@@ -43,8 +43,8 @@ verifyMandatoryArgument "$LATEST" "Latest"
 echo "Environment set to $ENVIRONMENT"
 export ENV_FILE="./env/$ENVIRONMENT.env"
 
-# TODO: get version from package.json
-APP_VERSION="0.6.1-SNAPSHOT"
+APP_VERSION=$(node -e "console.log(require('../package.json').version);")
+echo "Version to build is ${APP_VERSION}"
 
 source "${ENV_FILE}"
 
