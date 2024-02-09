@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  baseUrl: 'task-backend'
+  baseUrl: 'BASE_URL'
 };

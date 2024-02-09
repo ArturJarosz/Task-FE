@@ -25,6 +25,7 @@ export class ClientRestServiceImpl extends AbstractRestService implements Client
     }
 
     getClients(): Observable<Client[]> {
+        console.log(`clients url: ${this.clientUrl}`);
         return this.httpClient.get<Client[]>(this.clientUrl)
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))
