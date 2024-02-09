@@ -13,7 +13,17 @@ RUN npm run build --prod
 FROM nginx:1.24-alpine
 
 COPY --from=build /application/dist/task-fe /usr/share/nginx/html
-COPY /nginx.conf /etc/nginx/conf.d/default.conf
+COPY /nginx.conf /etc/nginx/conf.d/default.conf.template
 
-EXPOSE 80
+RUN addgroup task && adduser --disabled-password task --ingroup task
+RUN mkdir /fe-app
 
+RUN chown -R task:task /fe-app
+WORKDIR /fe-app
+
+COPY --chown=task:task entrypoint.sh .
+RUN chmod +x entrypoint.sh
+
+USER task
+
+CMD "./entrypoint.sh"

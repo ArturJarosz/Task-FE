@@ -50,6 +50,7 @@ source "${ENV_FILE}"
 
 # build image
 echo "Building ${MODULE_NAME}:${APP_VERSION} image."
+echo "========================================================="
 docker compose --env-file "$ENV_FILE" build --no-cache --progress plain
 # checking build result
 buildResult=$?
