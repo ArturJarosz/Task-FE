@@ -1,0 +1,14 @@
+name: Test and publish docker image
+
+on:
+  push:
+    branches:
+      - develop
+      - 'release/**'
+
+jobs:
+  build_and_publish_docker_schema:
+    secrets: inherit
+    uses: arturjarosz/Task-FE/.github/workflows/build-and-publish.yml@TA-411
+    with:
+      latest: true
