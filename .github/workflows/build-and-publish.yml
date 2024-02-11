@@ -1,0 +1,38 @@
+name: Build and publish docker
+
+on:
+  workflow_call:
+    inputs:
+      latest:
+        type: boolean
+        required: true
+        default: true
+  workflow_dispatch:
+    inputs:
+      latest:
+        description: "Tag image as 'latest'."
+        type: boolean
+        default: true
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: docker login
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          # login to docker hub
+          docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
+      - name: building docker image of ${{inputs.chosen-module}}:${{inputs.latest}}
+        shell: bash
+        env:
+          FE_PORT: ${{ secrets.FE_PORT }}
+          BASE_URL: ${{ secrets.BASE_URL }}
+        run: |
+          cd docker
+          # adding permissions to execute script
+          chmod +x build-and-publish.sh
+          ./build-and-publish.sh -e github -l "${{inputs.latest}}" -p true
