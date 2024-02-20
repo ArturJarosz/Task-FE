@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {Project} from "../project";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
+import {Client, ClientType} from "../../client/client";
 
 @Component({
     selector: 'project-list',
@@ -24,5 +25,12 @@ export class ProjectListComponent {
     getProjectStatusLabel(type: string): string {
         let maybeLabel = this.projectStatuses!.find(element => element.id === type)?.label;
         return maybeLabel ? maybeLabel : type;
+    }
+
+    getClientName(client: Client) {
+        if (client.clientType === ClientType.CORPORATE) {
+            return client.companyName;
+        }
+        return `${client.firstName} ${client.lastName}`;
     }
 }

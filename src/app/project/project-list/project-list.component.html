@@ -15,7 +15,7 @@
             <td>{{ project.name}}</td>
             <td>{{ getProjectTypeLabel(project.type) }}</td>
             <td>{{ project.architect.firstName + ' ' + project.architect.lastName}}</td>
-            <td>{{ project.client.firstName + ' ' + project.client.lastName}}</td>
+            <td>{{ getClientName(project.client) }}</td>
             <td>{{ getProjectStatusLabel(project.status) }}</td>
         </tr>
     </ng-template>
