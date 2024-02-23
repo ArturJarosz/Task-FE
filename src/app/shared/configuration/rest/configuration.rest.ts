@@ -20,7 +20,6 @@ export class ConfigurationRestServiceImpl extends AbstractRestService implements
     }
 
     getConfiguration(): Observable<ApplicationConfiguration> {
-        console.log(`clients url: ${this.configurationUrl}`);
         return this.httpClient.get<ApplicationConfiguration>(this.configurationUrl)
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))

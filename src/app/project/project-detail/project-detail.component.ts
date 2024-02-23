@@ -156,7 +156,6 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        console.log("changes!!");
         this.fillFormData();
         // TODO: spytac Tomka...
         if (this.projectDetailsForm === undefined) {
@@ -213,7 +212,6 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
 
     createContract(): ProjectContract {
         let contract: ProjectContract;
-        console.log(`signingDate: ${JSON.stringify(this.projectDetailsForm.get("contract")?.value)}`)
         let contractForm: FormGroup<ProjectContractForm> = this.projectDetailsForm.get(
             'contract') as FormGroup<ProjectContractForm>;
         contract = {

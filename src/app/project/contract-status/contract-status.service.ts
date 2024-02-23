@@ -58,7 +58,6 @@ export class ContractStatusServiceImpl implements ContractStatusService {
 
     resolveContractStatusChange(contract: ProjectContract, oldStatus: ContractStatus): void {
         let transition = CONTRACT_FLOW[oldStatus.toString()][contract.status.toString()] as ContractStatusTransitions;
-        console.log(`contract data: ${JSON.stringify(contract)}`);
         switch (transition) {
             case ContractStatusTransitions.ACCEPT_OFFER:
                 this.projectState.dispatch(acceptOffer({contractId: contract.id!, contract: contract}));
