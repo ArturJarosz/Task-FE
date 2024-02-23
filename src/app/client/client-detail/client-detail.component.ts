@@ -47,25 +47,21 @@ export class ClientDetailComponent implements OnInit, OnDestroy {
             .subscribe({
                 next: client => this.client = client
             });
+        this.resolveCombinedStreet();
     }
 
     ngOnDestroy(): void {
         this.clientSubscription.unsubscribe();
     }
 
-    resolveClientName(): void {
-        if (this.client?.clientType === ClientType.PRIVATE) {
-            this.clientName = `${this.client.firstName} ${this.client.lastName}`;
-        } else {
-            this.clientName = `${this.client?.companyName}`;
-        }
-    }
-
     resolveCombinedStreet() {
         if (!this.client?.contact || !this.client.contact?.address || !this.client?.contact) {
             this.combinedStreetWithNumbers = "";
         } else {
-            this.combinedStreetWithNumbers = `${this.client?.contact?.address?.street} ${this.client?.contact?.address?.houseNumber}/ ${this.client?.contact?.address?.flatNumber}`;
+            this.combinedStreetWithNumbers = `${this.client?.contact?.address?.street} ${this.client?.contact?.address?.houseNumber}`;
+            if (this.client?.contact.address.flatNumber) {
+                this.combinedStreetWithNumbers = this.combinedStreetWithNumbers + `/${this.client?.contact?.address?.flatNumber}`;
+            }
         }
     }
 
