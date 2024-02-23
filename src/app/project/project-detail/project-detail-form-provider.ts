@@ -29,10 +29,10 @@ export class ProjectDetailFormProvider {
             id: this.formBuilder.nonNullable.control<number>(0, [Validators.required]),
             offerValue: this.formBuilder.nonNullable.control<number>(0, [Validators.required]),
             status: this.formBuilder.nonNullable.control<ContractStatus>(ContractStatus.OFFER, [Validators.required]),
-            signingDate: new FormControl<Date | null>(null),
-            startDate: new FormControl<Date | null>(null),
-            endDate: new FormControl<Date | null>(null),
-            deadline: new FormControl<Date | null>(null)
+            signingDate: this.formBuilder.nonNullable.control<Date>(new Date()),
+            startDate: this.formBuilder.nonNullable.control(new Date()),
+            endDate: this.formBuilder.nonNullable.control(new Date()),
+            deadline: this.formBuilder.nonNullable.control(new Date())
         })
     }
 }
@@ -41,10 +41,10 @@ export interface ProjectContractForm {
     id: FormControl<number>,
     offerValue: FormControl<number>,
     status: FormControl<ContractStatus>,
-    signingDate: FormControl<Date| null>,
-    startDate: FormControl<Date| null>,
-    endDate: FormControl<Date | null>,
-    deadline: FormControl<Date| null>,
+    signingDate?: FormControl<Date>,
+    startDate?: FormControl<Date>,
+    endDate?: FormControl<Date>,
+    deadline?: FormControl<Date>,
 }
 
 export interface ProjectCreateForm {

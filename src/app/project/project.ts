@@ -46,10 +46,10 @@ export interface ProjectContract {
     id?: number,
     offerValue: number,
     status: ContractStatus,
-    signingDate?: Date | null,
-    startDate?: Date | null,
-    endDate?: Date | null,
-    deadline?: Date | null,
+    signingDate?: Date,
+    startDate?: Date,
+    endDate?: Date,
+    deadline?: Date,
     nextStatuses?: ContractStatus[]
 }
 
