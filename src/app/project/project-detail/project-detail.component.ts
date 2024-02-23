@@ -72,23 +72,31 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
         if (this.projectDetailsForm === undefined) {
             return;
         }
+        if (!this.project) {
+            return;
+        }
         this.projectDetailsForm.patchValue({
-            id: this.project?.id,
-            name: this.project?.name,
-            type: this.project?.type,
-            architectId: this.project?.architect.id,
-            clientId: this.project?.client.id,
-            status: this.project?.status,
+            id: this.project.id,
+            name: this.project.name,
+            type: this.project.type,
+            architectId: this.project.architect.id,
+            clientId: this.project.client.id,
+            status: this.project.status,
             contract: {
-                id: this.project?.contract.id,
-                offerValue: this.project?.contract.offerValue,
-                status: this.project?.contract.status,
-                signingDate: this.project?.contract.signingDate,
-                startDate: this.project?.contract.startDate,
-                endDate: this.project?.contract.endDate,
-                deadline: this.project?.contract.deadline
+                id: this.project.contract.id,
+                offerValue: this.project.contract.offerValue,
+                status: this.project.contract.status,
+                signingDate: this.project.contract.signingDate ? new Date(
+                    this.project.contract.signingDate) : undefined,
+                startDate: this.project.contract.startDate ? new Date(this.project.contract.startDate) : undefined,
+                endDate: this.project.contract.endDate ? new Date(this.project.contract.endDate) : undefined,
+                deadline: this.project.contract.deadline ? new Date(this.project.contract.deadline) : undefined
             }
         })
+    }
+
+    patchValueIfExists() {
+
     }
 
     resolveLabels() {
@@ -215,6 +223,7 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
             signingDate: contractForm.get('signingDate')!.value,
             startDate: contractForm.get('startDate')!.value,
             deadline: contractForm.get('deadline')!.value,
+            endDate: contractForm.get("endDate")!.value
         }
         return contract;
     }
