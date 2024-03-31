@@ -1,6 +1,6 @@
 import {createReducer, on} from "@ngrx/store";
 import {ClientState, initialState} from "./client.state";
-import {createClientSuccess, loadClientsSuccess, loadClientSuccess} from "./client.action";
+import {createClientSuccess, loadClientsSuccess, loadClientSuccess, removeClientSuccess} from "./client.action";
 
 export const clientReducer = createReducer<ClientState>(
     initialState,
@@ -8,7 +8,8 @@ export const clientReducer = createReducer<ClientState>(
         return {
             ...state,
             error: '',
-            clients: action.clients
+            clients: action.clients,
+            clientsNeedRefresh: false
         }
     }),
     on(loadClientSuccess, (state, action): ClientState => {
@@ -22,7 +23,16 @@ export const clientReducer = createReducer<ClientState>(
     on(createClientSuccess, (state, action): ClientState => {
         return {
             ...state,
-            error: ''
+            error: '',
+            clientsNeedRefresh: true
+        }
+    }),
+
+    on(removeClientSuccess, (state, action): ClientState => {
+        return {
+            ...state,
+            error: '',
+            clientsNeedRefresh: true
         }
     })
 )

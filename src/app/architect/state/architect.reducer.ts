@@ -17,5 +17,5 @@ export const architectReducer = createReducer<ArchitectState>(
             error: '',
             architect: action.architect
         }
-    }),
+    })
 )

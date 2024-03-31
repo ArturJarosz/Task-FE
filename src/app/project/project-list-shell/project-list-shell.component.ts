@@ -1,12 +1,12 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {Store} from "@ngrx/store";
-import {getProjects, loadProjects, ProjectState} from "../state";
+import {getProjects, getProjectsNeedRefresh, loadProjects, ProjectState} from "../state";
 import {
     ConfigurationState,
     getProjectStatusConfiguration,
     getProjectTypeConfiguration
 } from "../../shared/configuration/state";
-import {Observable} from "rxjs";
+import {Observable, Subscription} from "rxjs";
 import {Project} from "../project";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 
@@ -16,7 +16,8 @@ import {ConfigurationEntry} from "../../shared/configuration/model/configuration
     styleUrls: ['./project-list-shell.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProjectListShellComponent implements OnInit {
+export class ProjectListShellComponent implements OnInit, OnDestroy {
+    private projectsNeedRefreshSubscription!: Subscription;
     projects$!: Observable<Project[]>;
     projectTypes$!: Observable<ConfigurationEntry[]>;
     projectStatuses$!: Observable<ConfigurationEntry[]>;
@@ -30,6 +31,14 @@ export class ProjectListShellComponent implements OnInit {
         this.projects$ = this.projectStore.select(getProjects);
         this.projectTypes$ = this.configurationStore.select(getProjectTypeConfiguration);
         this.projectStatuses$ = this.configurationStore.select(getProjectStatusConfiguration);
+        this.projectsNeedRefreshSubscription = this.projectStore.select(getProjectsNeedRefresh).subscribe({
+            next: needRefresh => {
+                if (needRefresh) {
+                    this.refreshProjects();
+                }
+            },
+            error: error => console.log(error)
+        })
     }
 
     onClick() {
@@ -43,6 +52,10 @@ export class ProjectListShellComponent implements OnInit {
     refreshProjects() {
         this.projectStore.dispatch(loadProjects());
         this.projects$ = this.projectStore.select(getProjects);
+    }
+
+    ngOnDestroy() {
+        this.projectsNeedRefreshSubscription.unsubscribe();
     }
 
 }

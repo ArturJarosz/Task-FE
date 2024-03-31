@@ -19,14 +19,16 @@ export const projectReducer = createReducer<ProjectState>(
         return {
             ...state,
             error: '',
-            projects: action.projects
+            projects: action.projects,
+            projectNeedRefresh: false
         }
     }),
 
     on(createProjectSuccess, (state, action): ProjectState => {
         return {
             ...state,
-            error: ''
+            error: '',
+            projectNeedRefresh: true
         }
     }),
 
@@ -41,49 +43,56 @@ export const projectReducer = createReducer<ProjectState>(
     on(acceptOfferSuccess, (state, action): ProjectState => {
         return {
             ...state,
-            error: ''
+            error: '',
+            projectNeedRefresh: true
         }
     }),
 
     on(completeContractSuccess, (state, action): ProjectState => {
         return {
             ...state,
-            error: ''
+            error: '',
+            projectNeedRefresh: true
         }
     }),
 
     on(makeNewOfferSuccess, (state, action): ProjectState => {
         return {
             ...state,
-            error: ''
+            error: '',
+            projectNeedRefresh: true
         }
     }),
 
     on(rejectOfferSuccess, (state, action): ProjectState => {
         return {
             ...state,
-            error: ''
+            error: '',
+            projectNeedRefresh: true
         }
     }),
 
     on(resumeContractSuccess, (state, action): ProjectState => {
         return {
             ...state,
-            error: ''
+            error: '',
+            projectNeedRefresh: true
         }
     }),
 
     on(signContractSuccess, (state, action): ProjectState => {
         return {
             ...state,
-            error: ''
+            error: '',
+            projectNeedRefresh: true
         }
     }),
 
     on(terminateContractSuccess, (state, action): ProjectState => {
         return {
             ...state,
-            error: ''
+            error: '',
+            projectNeedRefresh: true
         }
     }),
 )
