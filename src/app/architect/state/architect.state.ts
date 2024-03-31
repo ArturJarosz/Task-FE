@@ -7,13 +7,17 @@ export interface ArchitectState extends AppState {
     error: string;
     architects: Architect[];
     architect: Architect | null;
+    architectsNeedRefresh: boolean;
 }
 
 export const initialState: ArchitectState = {
     error: '',
     architects: [],
-    architect: null
+    architect: null,
+    architectsNeedRefresh: false
 }
+
+// selectors
 
 const getArchitectFeatureState = createFeatureSelector<ArchitectState>(Features.ARCHITECT);
 
@@ -25,4 +29,9 @@ export const getArchitects = createSelector(
 export const getArchitect = createSelector(
     getArchitectFeatureState,
     state => state.architect
+)
+
+export const architectsNeedRefresh = createSelector(
+    getArchitectFeatureState,
+    state => state.architectsNeedRefresh
 )

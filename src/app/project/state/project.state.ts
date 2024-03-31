@@ -6,13 +6,15 @@ import {Features} from "../../features";
 export interface ProjectState extends AppState {
     error: string;
     projects: Project[],
-    project: Project | null
+    project: Project | null,
+    projectNeedRefresh: boolean
 }
 
 export const initialState: ProjectState = {
     error: '',
     projects: [],
-    project: null
+    project: null,
+    projectNeedRefresh: false
 }
 
 // selectors
@@ -27,4 +29,9 @@ export const getProjects = createSelector(
 export const getProject = createSelector(
     getProjectFeatureState,
     state => state.project
+)
+
+export const getProjectsNeedRefresh = createSelector(
+    getProjectFeatureState,
+    state => state.projectNeedRefresh
 )

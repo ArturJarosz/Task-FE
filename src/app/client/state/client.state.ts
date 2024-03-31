@@ -6,13 +6,15 @@ import {Features} from "../../features";
 export interface ClientState extends AppState {
     error: string;
     clients: Client[];
-    client: Client | null
+    client: Client | null,
+    clientsNeedRefresh: boolean,
 }
 
 export const initialState: ClientState = {
     error: '',
     clients: [],
-    client: null
+    client: null,
+    clientsNeedRefresh: false
 }
 
 // selectors
@@ -27,4 +29,9 @@ export const getClients = createSelector(
 export const getClient = createSelector(
     getClientFeatureState,
     state => state.client
+)
+
+export const getClientsNeedRefresh = createSelector(
+    getClientFeatureState,
+    state => state.clientsNeedRefresh
 )
