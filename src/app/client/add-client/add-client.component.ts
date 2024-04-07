@@ -57,7 +57,6 @@ export class AddClientComponent implements OnInit {
         this.clientForm.get(CLIENT_TYPE)
             ?.valueChanges
             .subscribe(clientType => {
-                console.log("-- Add client init method");
                 this.updateClientValidators(clientType.id);
             })
     }
@@ -105,20 +104,13 @@ export class AddClientComponent implements OnInit {
 
     onSave() {
         this.visible = false;
-        console.log(this.clientForm);
         let client: Client = this.createClient();
         this.clientStore.dispatch(createClient({client: client}));
         this.reloadClients.emit();
-        console.log("-- Emitting reload clients.");
     }
 
     private createClient() {
         let client: Client;
-        console.log("client type: " + this.clientForm.get(CLIENT_TYPE)?.value)
-        console.log("enum type: " + ClientType.PRIVATE)
-        console.log("checking client type: " + (this.clientForm.get(CLIENT_TYPE)?.value === ClientType.PRIVATE))
-        console.log("checking client type: " + (this.clientForm.get(CLIENT_TYPE)?.value == ClientType.PRIVATE))
-
         if (this.clientForm.get(CLIENT_TYPE)?.value === ClientType.PRIVATE) {
             client = {
                 clientType: ClientType.PRIVATE.toString(),

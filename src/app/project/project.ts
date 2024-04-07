@@ -1,5 +1,6 @@
 import {Client} from "../client/client";
 import {Architect} from "../architect/model/architect";
+import {Stage} from "../stage/stage";
 
 export enum ProjectStatus {
     TO_DO = "TO_DO",
@@ -30,7 +31,8 @@ export interface Project {
     note: string | null,
     status: ProjectStatus,
     contract: ProjectContract,
-    nextStatuses: ProjectStatus[]
+    nextStatuses: ProjectStatus[],
+    stages: Stage[]
 }
 
 export enum ContractStatus {

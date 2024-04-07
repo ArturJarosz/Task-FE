@@ -39,8 +39,6 @@ export class ClientRestServiceImpl extends AbstractRestService implements Client
     }
 
     createClient(client: Client): Observable<Client> {
-        console.log(" rest client");
-        console.log(client);
         return this.httpClient.post<Client>(this.clientUrl, client)
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))

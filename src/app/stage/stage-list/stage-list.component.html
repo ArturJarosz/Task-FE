@@ -1,0 +1,19 @@
+<p-table [value]="stages!" [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Status</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-stage>
+        <tr [routerLink]="['/projects', stage.id]" class="cursor-pointer">
+            <td>{{ stage.id }}</td>
+            <td>{{ stage.name }}</td>
+            <td>{{ getStageLabelType(stage.type) }}</td>
+            <td>{{ getStageStatusLabel(stage.status) }}</td>
+        </tr>
+    </ng-template>
+</p-table>
+

@@ -20,7 +20,7 @@ export const projectReducer = createReducer<ProjectState>(
             ...state,
             error: '',
             projects: action.projects,
-            projectNeedRefresh: false
+            projectsNeedRefresh: false
         }
     }),
 
@@ -28,7 +28,7 @@ export const projectReducer = createReducer<ProjectState>(
         return {
             ...state,
             error: '',
-            projectNeedRefresh: true
+            projectsNeedRefresh: true
         }
     }),
 
@@ -44,7 +44,7 @@ export const projectReducer = createReducer<ProjectState>(
         return {
             ...state,
             error: '',
-            projectNeedRefresh: true
+            projectsNeedRefresh: true
         }
     }),
 
@@ -52,7 +52,7 @@ export const projectReducer = createReducer<ProjectState>(
         return {
             ...state,
             error: '',
-            projectNeedRefresh: true
+            projectsNeedRefresh: true
         }
     }),
 
@@ -60,7 +60,7 @@ export const projectReducer = createReducer<ProjectState>(
         return {
             ...state,
             error: '',
-            projectNeedRefresh: true
+            projectsNeedRefresh: true
         }
     }),
 
@@ -68,7 +68,7 @@ export const projectReducer = createReducer<ProjectState>(
         return {
             ...state,
             error: '',
-            projectNeedRefresh: true
+            projectsNeedRefresh: true
         }
     }),
 
@@ -76,7 +76,7 @@ export const projectReducer = createReducer<ProjectState>(
         return {
             ...state,
             error: '',
-            projectNeedRefresh: true
+            projectsNeedRefresh: true
         }
     }),
 
@@ -84,7 +84,7 @@ export const projectReducer = createReducer<ProjectState>(
         return {
             ...state,
             error: '',
-            projectNeedRefresh: true
+            projectsNeedRefresh: true
         }
     }),
 
@@ -92,7 +92,7 @@ export const projectReducer = createReducer<ProjectState>(
         return {
             ...state,
             error: '',
-            projectNeedRefresh: true
+            projectsNeedRefresh: true
         }
     }),
 )
