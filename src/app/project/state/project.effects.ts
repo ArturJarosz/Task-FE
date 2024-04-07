@@ -68,7 +68,8 @@ export class ProjectEffects {
             mergeMap(action => this.projectRestService.getProject(action.projectId)
                 .pipe(
                     map(project => {
-                        return loadProjectSuccess({project: project})
+                        project.stages.sort((a, b) => a.id - b.id);
+                        return loadProjectSuccess({project: project});
                     }),
                     catchError(error => {
                         this.messageService.add({

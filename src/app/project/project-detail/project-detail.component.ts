@@ -17,6 +17,7 @@ import {ArchitectState, loadArchitects} from "../../architect/state";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {cloneDeep} from 'lodash';
 import {ContractStatusService} from "../contract-status/contract-status.service";
+import {Observable, of} from "rxjs";
 
 @Component({
     selector: 'project-detail',
@@ -66,6 +67,7 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
         this.initialProjectForm = cloneDeep(this.projectDetailsForm);
         this.resolveLabels();
         this.resolveAvailableStatuses();
+
     }
 
     fillFormData(): void {
@@ -75,6 +77,7 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
         if (!this.project) {
             return;
         }
+
         this.projectDetailsForm.patchValue({
             id: this.project.id,
             name: this.project.name,
@@ -225,5 +228,4 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
         }
         return contract;
     }
-
 }

@@ -30,7 +30,6 @@ export class ClientListComponent implements OnInit, OnDestroy {
         this.clientSubscription = this.clientStore.select(getClients)
             .subscribe({
                 next: clients => {
-                    console.log(`number of clients: ${clients.length}`)
                     this.clients = clients
                 },
                 error: error => this.errorMessage = error
@@ -45,7 +44,6 @@ export class ClientListComponent implements OnInit, OnDestroy {
             .subscribe({
                 next: needsRefresh => {
                     if (needsRefresh) {
-                        console.log("needs refresh changed");
                         this.refreshClients();
                     }
                 }
@@ -68,7 +66,6 @@ export class ClientListComponent implements OnInit, OnDestroy {
 
     deleteClientClick(event: MouseEvent, client: Client) {
         // stop propagating row event
-        console.log("delete client");
         event.stopPropagation();
         let name = client.clientType === ClientType.PRIVATE ? `${client.firstName} ${client.lastName}` : `${client.companyName}`;
         this.confirmationService.confirm({
@@ -76,7 +73,6 @@ export class ClientListComponent implements OnInit, OnDestroy {
             header: `Confirm client delete ${name}.`,
             icon: "pi pi-info-circle text-red-300",
             accept: () => {
-                console.log("...deleting//..")
                 this.clientStore.dispatch(removeClient({clientId: Number(client.id)}))
                 this.confirmationService.close();
                 this.refreshClients();

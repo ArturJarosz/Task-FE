@@ -12,7 +12,7 @@ displayHelpForCompose() {
     echo "  -v      version:"
     echo "          - version of the application to run, like 1.0.0 or 0.5.0-SNAPSHOT"
     echo "  -h      display this help"
-    echo "Example: $0 local 0.6.2-SNAPSHOT full"
+    echo "Example: $0 local 0.6.5-SNAPSHOT full"
 }
 
 displayHelpForBuild() {

@@ -4,5 +4,6 @@ export enum Features {
     PROJECT = 'project',
     CONFIGURATION = 'configuration',
     CONTRACTOR = 'contractor',
-    SUPPLIER = 'supplier'
+    SUPPLIER = 'supplier',
+    STAGE = 'stage'
 }

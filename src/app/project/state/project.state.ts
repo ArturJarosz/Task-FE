@@ -4,17 +4,17 @@ import {createFeatureSelector, createSelector} from "@ngrx/store";
 import {Features} from "../../features";
 
 export interface ProjectState extends AppState {
-    error: string;
+    error: string,
     projects: Project[],
     project: Project | null,
-    projectNeedRefresh: boolean
+    projectsNeedRefresh: boolean
 }
 
 export const initialState: ProjectState = {
     error: '',
     projects: [],
     project: null,
-    projectNeedRefresh: false
+    projectsNeedRefresh: false
 }
 
 // selectors
@@ -33,5 +33,5 @@ export const getProject = createSelector(
 
 export const getProjectsNeedRefresh = createSelector(
     getProjectFeatureState,
-    state => state.projectNeedRefresh
+    state => state.projectsNeedRefresh
 )

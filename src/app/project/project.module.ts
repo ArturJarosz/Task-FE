@@ -10,7 +10,7 @@ import {RouterModule} from "@angular/router";
 import {ProjectRestService, ProjectRestServiceImpl} from "./rest/project-rest.service";
 import {StoreModule} from "@ngrx/store";
 import {Features} from "../features";
-import {projectReducer, ProjectEffects} from "./state";
+import {ProjectEffects, projectReducer} from "./state";
 import {EffectsModule} from "@ngrx/effects";
 import {AddProjectComponent} from "./add-project/add-project.component";
 import {DialogModule} from "primeng/dialog";
@@ -22,6 +22,11 @@ import {ProjectDetailShellComponent} from "./project-detail-shell/project-detail
 import {CalendarModule} from "primeng/calendar";
 import {ContractRestService, ContractRestServiceImpl} from "./rest/contract-rest.service";
 import {ContractStatusService, ContractStatusServiceImpl} from "./contract-status/contract-status.service";
+import {TabViewModule} from "primeng/tabview";
+import {DragDropModule} from "primeng/dragdrop";
+import {AccordionModule} from "primeng/accordion";
+import {InputTextareaModule} from "primeng/inputtextarea";
+import {StageModule} from "../stage/stage.module";
 
 @NgModule({
     declarations: [
@@ -47,12 +52,17 @@ import {ContractStatusService, ContractStatusServiceImpl} from "./contract-statu
         DialogModule,
         DropdownModule,
         InputTextModule,
-        CalendarModule
+        CalendarModule,
+        TabViewModule,
+        DragDropModule,
+        AccordionModule,
+        InputTextareaModule,
+        StageModule
     ],
     providers: [
         {provide: ProjectRestService, useClass: ProjectRestServiceImpl},
         {provide: ContractRestService, useClass: ContractRestServiceImpl},
-        {provide: ContractStatusService, useClass: ContractStatusServiceImpl},
+        {provide: ContractStatusService, useClass: ContractStatusServiceImpl}
     ]
 })
 export class ProjectModule {
