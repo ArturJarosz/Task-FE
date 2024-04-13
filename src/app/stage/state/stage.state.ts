@@ -26,6 +26,11 @@ export const getStages = createSelector(
     state => state.stages
 )
 
+export const getStage = createSelector(
+    getStageFeatureState,
+    state => state.stage
+)
+
 export const getStagesNeedRefresh = createSelector(
     getStageFeatureState,
     state => state.stagesNeedRefresh
