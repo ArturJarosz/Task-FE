@@ -6,6 +6,7 @@ import {Features} from "../../../features";
 export interface ConfigurationState extends AppState {
     error: string;
     configuration: ApplicationConfiguration;
+    needRefresh: boolean
 }
 
 export const initialState: ConfigurationState = {
@@ -21,12 +22,18 @@ export const initialState: ConfigurationState = {
         taskStatuses: [],
         taskTypes: [],
         clientTypes: []
-    }
+    },
+    needRefresh: true
 }
 
 // selectors
 
 export const getConfigurationFeatureState = createFeatureSelector<ConfigurationState>(Features.CONFIGURATION);
+
+export const getNeedRefresh = createSelector(
+    getConfigurationFeatureState,
+    state => state.needRefresh
+)
 
 export const getProjectTypeConfiguration = createSelector(
     getConfigurationFeatureState,
@@ -56,4 +63,14 @@ export const getClientTypeConfiguration = createSelector(
 export const getContractStatusConfiguration = createSelector(
     getConfigurationFeatureState,
     state => state.configuration.contractStatuses
+)
+
+export const getStageStatusConfiguration = createSelector(
+    getConfigurationFeatureState,
+    state => state.configuration.stageStatuses
+)
+
+export const getStageTypeConfiguration = createSelector(
+    getConfigurationFeatureState,
+    state => state.configuration.stageTypes
 )

@@ -5,7 +5,14 @@ import {MessageService} from "primeng/api";
 
 import {catchError, map, mergeMap, of} from "rxjs";
 import {MessageSeverity} from "../../shared";
-import {loadStagesForProject, loadStagesForProjectError, loadStagesForProjectSuccess} from "./stage.action";
+import {
+    loadStage,
+    loadStageError,
+    loadStagesForProject,
+    loadStagesForProjectError,
+    loadStagesForProjectSuccess,
+    loadStageSuccess
+} from "./stage.action";
 
 @Injectable()
 export class StageEffects {
@@ -28,6 +35,27 @@ export class StageEffects {
                             detail: `There was a problem loading stages for project with id ${action.projectId}.`
                         });
                         return of(loadStagesForProjectError({error: error}))
+                    })
+                )
+            )
+        )
+    });
+
+    loadStage$ = createEffect(() => {
+        return this.actions$.pipe(
+            ofType(loadStage),
+            mergeMap(action => this.stageRestService.getStage(action.projectId, action.stageId)
+                .pipe(
+                    map(stage => {
+                        return loadStageSuccess({stage: stage})
+                    }),
+                    catchError(error => {
+                        this.messageService.add({
+                            severity: MessageSeverity.ERROR,
+                            summary: `Error loading stage.`,
+                            detail: `There was a problem with id ${action.stageId} for project with id ${action.projectId}.`
+                        });
+                        return of(loadStageError({error: error}))
                     })
                 )
             )

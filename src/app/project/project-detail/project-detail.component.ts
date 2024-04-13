@@ -17,7 +17,6 @@ import {ArchitectState, loadArchitects} from "../../architect/state";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {cloneDeep} from 'lodash';
 import {ContractStatusService} from "../contract-status/contract-status.service";
-import {Observable, of} from "rxjs";
 
 @Component({
     selector: 'project-detail',
@@ -96,10 +95,6 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
                 deadline: this.project.contract.deadline ? new Date(this.project.contract.deadline) : undefined
             }
         })
-    }
-
-    patchValueIfExists() {
-
     }
 
     resolveLabels() {

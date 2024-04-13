@@ -8,7 +8,7 @@
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-stage>
-        <tr [routerLink]="['/projects', stage.id]" class="cursor-pointer">
+        <tr [routerLink]="['/projects', projectId, 'stages', stage.id]" class="cursor-pointer">
             <td>{{ stage.id }}</td>
             <td>{{ stage.name }}</td>
             <td>{{ getStageLabelType(stage.type) }}</td>

@@ -57,5 +57,4 @@ export class ProjectListShellComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.projectsNeedRefreshSubscription.unsubscribe();
     }
-
 }

@@ -8,7 +8,8 @@ export const configurationReducer = createReducer<ConfigurationState>(
         return {
             ...state,
             error: '',
-            configuration: action.configuration
+            configuration: action.configuration,
+            needRefresh: false
         }
     })
 )

@@ -8,6 +8,8 @@ import {MessageService} from "primeng/api";
 
 export abstract class StageRestService {
     abstract getStagesForProject(projectId: number): Observable<Stage[]>;
+
+    abstract getStage(projectId: number, stageId: number): Observable<Stage>;
 }
 
 @Injectable()
@@ -20,6 +22,13 @@ export class StageRestServiceImpl extends AbstractRestService implements StageRe
 
     getStagesForProject(projectId: number): Observable<Stage[]> {
         return this.httpClient.get<Stage[]>(`${this.projectsUrl}/${projectId}/stages`)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            );
+    }
+
+    getStage(projectId: number, stageId: number): Observable<Stage> {
+        return this.httpClient.get<Stage>(`${this.projectsUrl}/${projectId}/stages/${stageId}`)
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))
             );

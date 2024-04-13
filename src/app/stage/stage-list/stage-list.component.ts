@@ -14,6 +14,8 @@ export class StageListComponent {
     stageTypes: ConfigurationEntry[] | null = [];
     @Input()
     stageStatuses: ConfigurationEntry[] | null = [];
+    @Input()
+    projectId: number = 0;
 
     getStageLabelType(type: string): string {
         let maybeLabel = this.stageTypes?.find(element => element.id === type)?.label;

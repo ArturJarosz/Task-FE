@@ -1,6 +1,6 @@
 import {createReducer, on} from "@ngrx/store";
 import {initialState, StageState} from "./stage.state";
-import {loadStagesForProjectSuccess} from "./stage.action";
+import {loadStagesForProjectSuccess, loadStageSuccess} from "./stage.action";
 
 export const stageReducer = createReducer<StageState>(
     initialState,
@@ -9,6 +9,15 @@ export const stageReducer = createReducer<StageState>(
             ...state,
             error: '',
             stages: action.stages,
+            stagesNeedRefresh: false
+        }
+    }),
+
+    on (loadStageSuccess, (state, action): StageState => {
+        return {
+            ...state,
+            error: '',
+            stage: action.stage,
             stagesNeedRefresh: false
         }
     })
