@@ -3,30 +3,30 @@
         <p-accordion [multiple]="true">
             <p-accordionTab [selected]="true" header="Stage details" class="text-xl text-900 font-medium">
                 <form [formGroup]="stageDetailsForm" >
-                    <div class="grid grid-nogutter surface-border pt-1">
-                        <div class="col-12 md:col-4 p-1">
+                    <div class="grid grid-nogutter surface-border pt-1 col-12 ">
+                        <div class="md:col-4 p-1">
                             <div class="text-500 font-medium mb-1">Stage name</div>
                             <input formControlName="name" id="name" pInputText>
                         </div>
-                        <div class="col-12 md:col-4 p-1">
+                        <div class="md:col-4 p-1">
                             <div class="text-500 font-medium mb-1">Type</div>
                             <div class="p-1" id="type">{{resolvedTypeLabel}}</div>
                         </div>
-                        <div class="col-12 md:col-4 p-1">
+                        <div class="md:col-4 p-1">
                             <div class="text-500 font-medium mb-1">Status</div>
                             <div class="p-1" id="status">{{resolvedStatusLabel}}</div>
                         </div>
                     </div>
-                    <div class="grid grid-nogutter surface-border pt-1">
-                        <div class="col-12 md:col-4 p-1">
+                    <div class="grid grid-nogutter surface-border pt-1 col-12 ">
+                        <div class="md:col-4 p-1">
                             <div class="text-500 font-medium mb-1">Start date</div>
                             <p-calendar formControlName="startDate" id="startDate"></p-calendar>
                         </div>
-                        <div class="col-12 md:col-4 p-1">
+                        <div class="md:col-4 p-1">
                             <div class="text-500 font-medium mb-1">Start date</div>
                             <p-calendar formControlName="deadline" id="deadline"></p-calendar>
                         </div>
-                        <div class="col-12 md:col-4 p-1">
+                        <div class="md:col-4 p-1">
                             <div class="text-500 font-medium mb-1">Start date</div>
                             <p-calendar formControlName="endDate" id="endDate"></p-calendar>
                         </div>
