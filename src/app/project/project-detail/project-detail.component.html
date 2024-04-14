@@ -5,36 +5,33 @@
                 <p-accordionTab [selected]="true" header="Contract details" class="text-xl text-900 font-medium">
                     <div class="lg:px-2 md:px-2 px-2 py-1 ng-star-inserted surface-border" formGroupName="contract">
                         <div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
-                            <div class="mt-4 lg:mt-0">
-                                <button pButton pRipple label="Update" [disabled]="!shouldUpdateContract()"
-                                        (click)="onContractUpdate()"></button>
-                            </div>
+                            <p-button icon="pi pi-arrow-down" [disabled]="!shouldUpdateContract()" (click)="onContractUpdate()" [outlined]="true" [rounded]="true" class="update-button transition-colors transition-duration-300"></p-button>
                         </div>
-                        <div class="grid grid-nogutter surface-border pt-1">
-                            <div class="col-12 md:col-4 p-1">
+                        <div class="grid grid-nogutter surface-border pt-1 col-12">
+                            <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium mb-1">Project value</div>
                                 <div id="value">{{ projectDetailsForm.get(['contract', 'offerValue'])?.value | currency: 'PLN ':false:'4.2-2' }}</div>
                             </div>
-                            <div class="col-12 md:col-4 p-1">
+                            <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium mb-1">Status</div>
                                 <p-dropdown formControlName="status" [options]="availableContractStatuses"
                                             optionLabel="label" optionValue="id"></p-dropdown>
                             </div>
-                            <div class="col-12 md:col-4 p-1">
+                            <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium mb-1">Signing date</div>
                                 <p-calendar formControlName="signingDate" id="signingDate"></p-calendar>
                             </div>
                         </div>
-                        <div class="grid grid-nogutter surface-border pt-1">
-                            <div class="col-12 md:col-4 p-1">
+                        <div class="grid grid-nogutter surface-border pt-1 col-12">
+                            <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium mb-1">Deadline</div>
                                 <p-calendar formControlName="deadline" id="deadline"></p-calendar>
                             </div>
-                            <div class="col-12 md:col-4 p-1">
+                            <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium mb-1">Start date</div>
                                 <p-calendar formControlName="startDate" id="startDate"></p-calendar>
                             </div>
-                            <div class="col-12 md:col-4 p-1">
+                            <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium mb-1">End date</div>
                                 <p-calendar formControlName="endDate" id="endDate"></p-calendar>
                             </div>
@@ -42,34 +39,31 @@
                     </div>
                 </p-accordionTab>
                 <p-accordionTab [selected]="true" header="Project details" class="text-xl text-900 font-medium">
-                    <div class="lg:px-3 md:px-3 px-3 py-1 ng-star-inserted surface-border">
+                    <div class="lg:px-2 md:px-2 px-2 py-1 ng-star-inserted surface-border">
                         <div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
-                            <div class="mt-4 lg:mt-0">
-                                <button pButton pRipple label="Update" [disabled]="!shouldUpdateProject()"
-                                        (click)="onProjectUpdate()"></button>
-                            </div>
+                            <p-button icon="pi pi-arrow-down" [disabled]="!shouldUpdateProject()" (click)="onProjectUpdate()" [outlined]="true" [rounded]="true" class="update-button transition-colors transition-duration-300"></p-button>
                         </div>
-                        <div class="grid grid-nogutter surface-border">
-                            <div class="col-12 md:col-4 p-1">
+                        <div class="grid grid-nogutter surface-border pt-1 col-12">
+                            <div class="col-4 p-1">
                                 <div class="text-500 font-medium mb-1">Project name</div>
                                 <input formControlName="name" id="name" pInputText>
                             </div>
-                            <div class="col-12 md:col-4 p-1">
+                            <div class="col-4 p-1">
                                 <div class="text-500 font-medium mb-1">Project status</div>
                                 <p-dropdown formControlName="status" [options]="availableProjectStatuses"
                                             optionLabel="label" optionValue="id"></p-dropdown>
                             </div>
-                            <div class="col-12 md:col-4 p-1">
+                            <div class="col-4 p-1">
                                 <div class="text-500 font-medium mb-1">Leading architect</div>
                                 <div id="architect">{{ architectName }}</div>
                             </div>
                         </div>
-                        <div class="grid grid-nogutter surface-border pt-1">
-                            <div class="col-12 md:col-4 p-1">
+                        <div class="grid grid-nogutter surface-border pt-1 col-12">
+                            <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium mb-1">Client</div>
                                 <div id="client">{{ clientName }}</div>
                             </div>
-                            <div class="col-12 md:col-8 p-1">
+                            <div class="md:col-8 p-1">
                                 <div class="text-500 font-medium mb-1">Note</div>
                                 <textarea formControlName="note" id="note" type="text" pInputTextarea rows="2"
                                           [autoResize]="true"></textarea>

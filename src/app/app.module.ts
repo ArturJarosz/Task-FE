@@ -47,7 +47,8 @@ import {SupplierModule} from "./supplier/supplier.module";
         ToastModule,
         StoreModule.forRoot({}, {}),
         EffectsModule.forRoot([]),
-        StoreDevtoolsModule.instrument({name: "TASK app", maxAge: 25, logOnly: !isDevMode()})
+        StoreDevtoolsModule.instrument({name: "TASK app", maxAge: 25, logOnly: !isDevMode()}),
+        StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() })
     ],
     providers: [],
     bootstrap: [AppComponent]
