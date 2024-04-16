@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {Client} from "../../client/client";
+import {Client} from "../../client/model/client";
 import {Architect} from "../../architect/model/architect";
 import {FormGroup} from "@angular/forms";
 import {AddProjectFormProvider} from "./add-project-form-provider.service";
@@ -10,7 +10,7 @@ import {createProject, ProjectState} from "../state";
 import {Subscription} from "rxjs";
 import {ConfigurationState, getProjectTypeConfiguration, loadConfiguration} from "../../shared/configuration/state";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
-import {ProjectCreate} from "../project";
+import {ProjectCreate} from "../model/project";
 
 @Component({
     selector: 'app-add-project',

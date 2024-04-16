@@ -1,5 +1,5 @@
 import {createAction, props} from "@ngrx/store";
-import {Project, ProjectContract, ProjectCreate} from "../project";
+import {Project, ProjectContract, ProjectCreate} from "../model/project";
 
 const PROJECTS = "[PROJECTS]";
 const PROJECT_CONTRACT = "[PROJECT CONTRACT]";

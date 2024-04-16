@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from "rxjs";
-import {Stage} from "../stage";
+import {Stage} from "../model/stage";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {ActivatedRoute} from "@angular/router";
 import {getStage, loadStage, StageState} from "../state";

@@ -1,5 +1,5 @@
 import {catchError, Observable} from "rxjs";
-import {Project, ProjectCreate} from "../project";
+import {Project, ProjectCreate} from "../model/project";
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {MessageService} from "primeng/api";

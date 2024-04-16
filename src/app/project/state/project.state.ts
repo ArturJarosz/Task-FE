@@ -1,5 +1,5 @@
 import {AppState} from "../../state/app.store";
-import {Project} from "../project";
+import {Project} from "../model/project";
 import {createFeatureSelector, createSelector} from "@ngrx/store";
 import {Features} from "../../features";
 

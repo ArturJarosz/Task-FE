@@ -27,6 +27,7 @@ import {DragDropModule} from "primeng/dragdrop";
 import {AccordionModule} from "primeng/accordion";
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {StageModule} from "../stage/stage.module";
+import {FinanceModule} from "../finance/finance.module";
 
 @NgModule({
     declarations: [
@@ -57,7 +58,8 @@ import {StageModule} from "../stage/stage.module";
         DragDropModule,
         AccordionModule,
         InputTextareaModule,
-        StageModule
+        StageModule,
+        FinanceModule
     ],
     providers: [
         {provide: ProjectRestService, useClass: ProjectRestServiceImpl},

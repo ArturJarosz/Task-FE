@@ -1,5 +1,5 @@
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {AddressForm, ClientForm, ContactForm} from "../client";
+import {AddressForm, ClientForm, ContactForm} from "../model/client";
 import {Injectable} from "@angular/core";
 
 const DEFAULT_CLIENT_TYPE = "PRIVATE";

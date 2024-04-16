@@ -1,5 +1,5 @@
 import {createAction, props} from "@ngrx/store";
-import {Stage} from "../stage";
+import {Stage} from "../model/stage";
 
 const STAGES = "[STAGES]";
 

@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Client, ClientType} from "../client";
+import {Client, ClientType} from "../model/client";
 import {Subscription} from "rxjs";
 import {ConfirmationService} from "primeng/api";
 import {Store} from "@ngrx/store";

@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Stage} from "../stage";
+import {Stage} from "../model/stage";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {FormGroup} from "@angular/forms";
 import {StageDetailFormProvider, StageForm} from "./stage-detail-form-provider";

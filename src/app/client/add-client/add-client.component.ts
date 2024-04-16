@@ -16,7 +16,7 @@ import {
     POST_CODE,
     STREET,
     TELEPHONE
-} from "../client";
+} from "../model/client";
 import {FormGroup, Validators} from "@angular/forms";
 import {ClientFormProvider} from "./client-form-provider";
 import {ClientState, createClient} from "../state";

@@ -21,8 +21,7 @@
                     </td>
                     <td>
                         <p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}" class="overlay-dialog"></p-confirmDialog>
-                        <button pButton pRipple class="p-button-text p-button-plain" icon="pi pi-times" (click)="deleteClientClick($event, client)"></button>
-
+                        <button pButton pRipple class="p-button-text p-button-plain p-0" icon="pi pi-times" (click)="deleteClientClick($event, client)" size="small"></button>
                     </td>
                     <td>{{ getLabelFromType(client.clientType) }}</td>
                     <td>{{ client?.contact ? client?.contact?.telephone : null }}</td>

@@ -78,6 +78,12 @@
                     </stage-list>
                 </div>
             </p-accordionTab>
+            <p-accordionTab [selected]="true" header="Costs" class="text-xl text-900 font-medium">
+                <div *ngIf="project">
+                    <cost-list [costs]="project.costs">
+                    </cost-list>
+                </div>
+            </p-accordionTab>
         </p-accordion>
     </div>
     <div wrapper-buttons>

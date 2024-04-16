@@ -1,4 +1,4 @@
-import {Client} from "../client";
+import {Client} from "../model/client";
 import {HttpClient} from "@angular/common/http";
 import {catchError, Observable} from "rxjs";
 import {Injectable} from "@angular/core";

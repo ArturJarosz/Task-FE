@@ -1,5 +1,5 @@
 import {createAction, props} from "@ngrx/store";
-import {Client} from "../client";
+import {Client} from "../model/client";
 
 const CLIENTS = "[CLIENTS]";
 
