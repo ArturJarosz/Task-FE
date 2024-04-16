@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {getProject, loadProject, ProjectState} from "../state";
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
-import {Project} from "../project";
+import {Project} from "../model/project";
 import {Architect} from "../../architect/model/architect";
 import {ArchitectState, getArchitects} from "../../architect/state";
 import {

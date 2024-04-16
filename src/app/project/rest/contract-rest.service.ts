@@ -1,4 +1,4 @@
-import {ProjectContract} from "../project";
+import {ProjectContract} from "../model/project";
 import {catchError, Observable} from "rxjs";
 import {AbstractRestService} from "../../shared/rest/abstract-rest.service";
 import {environment} from "../../../environments/environment";

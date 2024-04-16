@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
-import {ContractStatus, ProjectStatus} from "../project";
+import {ContractStatus, ProjectStatus} from "../model/project";
 
 @Injectable({
     providedIn: 'root'

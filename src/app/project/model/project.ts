@@ -1,6 +1,7 @@
-import {Client} from "../client/client";
-import {Architect} from "../architect/model/architect";
-import {Stage} from "../stage/stage";
+import {Client} from "../../client/model/client";
+import {Architect} from "../../architect/model/architect";
+import {Stage} from "../../stage/model/stage";
+import {Cost} from "../../finance/module/finance";
 
 export enum ProjectStatus {
     TO_DO = "TO_DO",
@@ -32,7 +33,8 @@ export interface Project {
     status: ProjectStatus,
     contract: ProjectContract,
     nextStatuses: ProjectStatus[],
-    stages: Stage[]
+    stages: Stage[],
+    costs: Cost[],
 }
 
 export enum ContractStatus {

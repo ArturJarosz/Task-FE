@@ -1,5 +1,5 @@
 import {catchError, Observable} from "rxjs";
-import {Stage} from "../stage";
+import {Stage} from "../model/stage";
 import {AbstractRestService} from "../../shared/rest/abstract-rest.service";
 import {Injectable} from "@angular/core";
 import {environment} from "../../../environments/environment";

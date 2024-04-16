@@ -1,4 +1,4 @@
-import {Stage} from "../stage";
+import {Stage} from "../model/stage";
 import {Component, Input} from "@angular/core";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 

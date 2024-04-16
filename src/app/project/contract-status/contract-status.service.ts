@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {ContractStatus, ProjectContract} from "../project";
+import {ContractStatus, ProjectContract} from "../model/project";
 import {Store} from "@ngrx/store";
 import {
     acceptOffer,

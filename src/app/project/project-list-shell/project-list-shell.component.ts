@@ -7,7 +7,7 @@ import {
     getProjectTypeConfiguration
 } from "../../shared/configuration/state";
 import {Observable, Subscription} from "rxjs";
-import {Project} from "../project";
+import {Project} from "../model/project";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 
 @Component({

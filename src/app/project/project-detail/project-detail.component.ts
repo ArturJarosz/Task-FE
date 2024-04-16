@@ -8,7 +8,7 @@ import {
     SimpleChanges
 } from '@angular/core';
 import {Store} from "@ngrx/store";
-import {ContractStatus, Project, ProjectContract, ProjectStatus} from "../project";
+import {ContractStatus, Project, ProjectContract, ProjectStatus} from "../model/project";
 import {FormGroup} from "@angular/forms";
 import {ProjectContractForm, ProjectCreateForm, ProjectDetailFormProvider} from "./project-detail-form-provider";
 import {ConfigurationState, loadConfiguration} from "../../shared/configuration/state";
