@@ -10,7 +10,7 @@
                         <div class="grid grid-nogutter surface-border pt-1 col-12">
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium mb-1">Project value</div>
-                                <div id="value">{{ projectDetailsForm.get(['contract', 'offerValue'])?.value | currency: 'PLN ':false:'4.2-2' }}</div>
+                                <div id="value">{{ projectDetailsForm.get(['contract', 'offerValue'])?.value | currency: ' ':false:'4.2-2' }}</div>
                             </div>
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium mb-1">Status</div>
@@ -74,14 +74,12 @@
             </form>
             <p-accordionTab [selected]="true" header="Stages" class="text-xl text-900 font-medium">
                 <div *ngIf="project">
-                    <stage-list [stages]="project.stages" [projectId]="project.id">
-                    </stage-list>
+                    <stage-list-shell [stages]="project.stages" [projectId]="project.id"></stage-list-shell>
                 </div>
             </p-accordionTab>
             <p-accordionTab [selected]="true" header="Costs" class="text-xl text-900 font-medium">
                 <div *ngIf="project">
-                    <cost-list [costs]="project.costs">
-                    </cost-list>
+                    <cost-list-shell [projectId]="project.id" [costs]="project.costs"></cost-list-shell>
                 </div>
             </p-accordionTab>
         </p-accordion>

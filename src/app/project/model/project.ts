@@ -1,7 +1,7 @@
 import {Client} from "../../client/model/client";
 import {Architect} from "../../architect/model/architect";
 import {Stage} from "../../stage/model/stage";
-import {Cost} from "../../finance/module/finance";
+import {Cost} from "../../finance/./model/finance";
 
 export enum ProjectStatus {
     TO_DO = "TO_DO",

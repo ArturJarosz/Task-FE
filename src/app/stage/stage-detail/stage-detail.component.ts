@@ -26,7 +26,6 @@ export class StageDetailComponent implements OnInit {
 
     initialStageForm!: FormGroup<StageForm>;
 
-
     constructor(private formProvider: StageDetailFormProvider, private configurationStore: Store<ConfigurationState>) {
     }
 
@@ -35,14 +34,9 @@ export class StageDetailComponent implements OnInit {
         this.stageDetailsForm = this.formProvider.getStageDetailForm();
         this.fillFormData();
         this.resolveLabels();
-
     }
 
     private fillFormData() {
-        if (this.stageDetailsForm === undefined) {
-            return;
-        }
-
         if (!this.stage) {
             return;
         }

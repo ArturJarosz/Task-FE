@@ -5,5 +5,6 @@ export enum Features {
     CONFIGURATION = 'configuration',
     CONTRACTOR = 'contractor',
     SUPPLIER = 'supplier',
-    STAGE = 'stage'
+    STAGE = 'stage',
+    COST = 'cost'
 }

@@ -21,7 +21,8 @@ export const initialState: ConfigurationState = {
         stageTypes: [],
         taskStatuses: [],
         taskTypes: [],
-        clientTypes: []
+        clientTypes: [],
+        costCategories: []
     },
     needRefresh: true
 }
@@ -73,4 +74,9 @@ export const getStageStatusConfiguration = createSelector(
 export const getStageTypeConfiguration = createSelector(
     getConfigurationFeatureState,
     state => state.configuration.stageTypes
+)
+
+export const getCostCategories = createSelector(
+    getConfigurationFeatureState,
+    state => state.configuration.costCategories
 )
