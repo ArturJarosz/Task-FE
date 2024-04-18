@@ -31,7 +31,7 @@ export class ClientDetailComponent implements OnInit, OnDestroy {
     streetLabel: string = "Street";
 
     clientId!: number;
-    clientSubscription!: Subscription;
+    clientSubscription$!: Subscription;
     client!: Client | null;
     clientName: string | undefined;
     combinedStreetWithNumbers!: string;
@@ -43,7 +43,7 @@ export class ClientDetailComponent implements OnInit, OnDestroy {
         let maybeNumber = this.route.snapshot.paramMap.get("id");
         this.clientId = Number(maybeNumber);
         this.clientStore.dispatch(loadClient({clientId: this.clientId}));
-        this.clientSubscription = this.clientStore.select(getClient)
+        this.clientSubscription$ = this.clientStore.select(getClient)
             .subscribe({
                 next: client => this.client = client
             });
@@ -51,7 +51,7 @@ export class ClientDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.clientSubscription.unsubscribe();
+        this.clientSubscription$.unsubscribe();
     }
 
     resolveCombinedStreet() {

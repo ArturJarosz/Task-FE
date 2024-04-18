@@ -1,6 +1,6 @@
 import {createReducer, on} from "@ngrx/store";
 import {initialState, SupplierState} from "./supplier.state";
-import {loadSuppliersSuccess} from "./supplier.actions";
+import {createSupplierSuccess, loadSuppliersSuccess} from "./supplier.actions";
 
 export const supplierReducer = createReducer<SupplierState>(
     initialState,
@@ -8,6 +8,12 @@ export const supplierReducer = createReducer<SupplierState>(
         return {
             ...state,
             suppliers: action.suppliers
+        }
+    }),
+    on(createSupplierSuccess, (state, action): SupplierState => {
+        return {
+            ...state,
+            supplier: action.supplier
         }
     })
 )

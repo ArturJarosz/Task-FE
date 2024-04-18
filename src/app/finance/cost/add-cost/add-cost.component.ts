@@ -31,10 +31,6 @@ export class AddCostComponent implements OnInit, OnDestroy {
                 private configurationStore: Store<ConfigurationState>) {
     }
 
-    ngOnDestroy(): void {
-        this.costCategoriesSubscription$.unsubscribe();
-    }
-
     ngOnInit(): void {
         this.configurationStore.dispatch(loadConfiguration());
         this.costCategoriesSubscription$ = this.configurationStore.select(getCostCategories)
@@ -45,13 +41,14 @@ export class AddCostComponent implements OnInit, OnDestroy {
         this.addCostForm = this.addCostFormProvider.getAddCostForm();
     }
 
-    private initializeValues() {
-
+    ngOnDestroy(): void {
+        this.costCategoriesSubscription$.unsubscribe();
     }
 
     onClose(): void {
         this.resetFields();
         this.notify.emit(false);
+        this.visible = false;
     }
 
     onCancel(): void {

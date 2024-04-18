@@ -55,7 +55,7 @@ export class AddClientComponent implements OnInit {
         this.initClientTypes();
         this.initClientGroup();
         this.clientForm.get(CLIENT_TYPE)
-            ?.valueChanges
+            ?.valueChanges!
             .subscribe(clientType => {
                 this.updateClientValidators(clientType.id);
             })

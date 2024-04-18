@@ -20,7 +20,7 @@ export class AddCostFormProvider {
             date: this.formBuilder.nonNullable.control<Date>(new Date(), [Validators.required]),
             hasInvoice: this.formBuilder.nonNullable.control<boolean>(false, [Validators.required]),
             paid: this.formBuilder.nonNullable.control<boolean>(false, [Validators.required]),
-            note: this.formBuilder.control('')
+            note: this.formBuilder.control<string>('')
         })
     }
 }
