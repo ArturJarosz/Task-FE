@@ -15,12 +15,14 @@ import {AccordionModule} from "primeng/accordion";
 import {DropdownModule} from "primeng/dropdown";
 import {InputTextModule} from "primeng/inputtext";
 import {CalendarModule} from "primeng/calendar";
+import { StageListShellComponent } from './stage-list-shell/stage-list-shell.component';
 
 @NgModule({
     declarations: [
         StageListComponent,
         StageDetailComponent,
-        StageDetailShellComponent
+        StageDetailShellComponent,
+        StageListShellComponent
     ],
     imports: [
         TableModule,
@@ -38,7 +40,8 @@ import {CalendarModule} from "primeng/calendar";
         CalendarModule
     ],
     exports: [
-        StageListComponent
+        StageListComponent,
+        StageListShellComponent
     ],
     providers: [
         {provide: StageRestService, useClass: StageRestServiceImpl}

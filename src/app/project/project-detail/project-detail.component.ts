@@ -17,6 +17,7 @@ import {ArchitectState, loadArchitects} from "../../architect/state";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {cloneDeep} from 'lodash';
 import {ContractStatusService} from "../contract-status/contract-status.service";
+import {resolveLabel} from "../../shared/utils/label-utils";
 
 @Component({
     selector: 'project-detail',
@@ -35,6 +36,8 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
     contractStatuses: ConfigurationEntry[] | null = [];
     @Input()
     projectTypes: ConfigurationEntry[] | null = [];
+    @Input()
+    costCategories: ConfigurationEntry[] | null = [];
 
     projectDetailsForm!: FormGroup<ProjectCreateForm>;
     resolvedProjectStatusLabel: string = '';
@@ -106,13 +109,13 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
         }
         if (this.contractStatuses && this.contractStatuses.length > 0 && this.projectDetailsForm.get(
             ['contract', 'status'])?.value) {
-            this.resolvedContractStatusLabel = this.resolveLabel(this.projectDetailsForm.get('contract')
+            this.resolvedContractStatusLabel = resolveLabel(this.projectDetailsForm.get('contract')
                 ?.get('status')
                 ?.value
                 .toString(), this.contractStatuses!);
         }
         if (this.projectTypes && this.projectTypes.length > 0 && this.projectDetailsForm.get('type')?.value) {
-            this.resolvedProjectTypeLabel = this.resolveLabel(this.projectDetailsForm.get('type')
+            this.resolvedProjectTypeLabel = resolveLabel(this.projectDetailsForm.get('type')
                 ?.value
                 .toString(), this.projectTypes!)
         }
@@ -121,13 +124,6 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
         this.clientName = client?.firstName ? `${client?.firstName} ${client?.lastName}` : `${client?.companyName}`;
     }
 
-    resolveLabel(id: string | undefined, entries: ConfigurationEntry[]): string {
-        if (!id) {
-            return '';
-        }
-        let maybeLabel = entries.find(element => element.id === id)?.label;
-        return maybeLabel ? maybeLabel : id;
-    }
 
     resolveAvailableStatuses() {
         this.availableProjectStatuses = [];

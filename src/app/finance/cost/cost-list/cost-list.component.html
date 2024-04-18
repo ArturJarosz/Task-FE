@@ -9,10 +9,10 @@
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-cost>
-        <tr class="cursor-pointer">
+        <tr [routerLink]="['/projects', projectId, 'costs', cost.id]"  class="cursor-pointer">
             <td>{{ cost.id }}</td>
             <td>{{ cost.name }}</td>
-            <td>{{ cost.category }}</td>
+            <td>{{ getCostCategoryLabel(cost.category) }}</td>
             <td>{{ cost.date }}</td>
             <td>{{ cost.value | currency: ' ':false:'2.2-2' }}</td>
         </tr>

@@ -9,7 +9,7 @@ import {
     ConfigurationState,
     getContractStatusConfiguration,
     getProjectStatusConfiguration,
-    getProjectTypeConfiguration
+    getProjectTypeConfiguration, getStageStatusConfiguration, getStageTypeConfiguration
 } from "../../shared/configuration/state";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {ActivatedRoute} from "@angular/router";
