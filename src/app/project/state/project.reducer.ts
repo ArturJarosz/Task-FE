@@ -6,12 +6,13 @@ import {
     createProjectSuccess,
     loadProjectsSuccess,
     loadProjectSuccess,
-    makeNewOfferSuccess,
+    makeNewOfferSuccess, projectNeedsRefresh,
     rejectOfferSuccess,
     resumeContractSuccess,
     signContractSuccess,
     terminateContractSuccess
 } from "./project.action";
+import {ProjectStatus} from "../model/project";
 
 export const projectReducer = createReducer<ProjectState>(
     initialState,
@@ -20,7 +21,8 @@ export const projectReducer = createReducer<ProjectState>(
             ...state,
             error: '',
             projects: action.projects,
-            projectsNeedRefresh: false
+            projectsNeedRefresh: false,
+            projectNeedsRefresh: false
         }
     }),
 
@@ -36,7 +38,8 @@ export const projectReducer = createReducer<ProjectState>(
         return {
             ...state,
             error: '',
-            project: action.project
+            project: action.project,
+            projectNeedsRefresh: false
         }
     }),
 
@@ -93,6 +96,14 @@ export const projectReducer = createReducer<ProjectState>(
             ...state,
             error: '',
             projectsNeedRefresh: true
+        }
+    }),
+
+    on(projectNeedsRefresh, (state, action): ProjectState => {
+        return {
+            ...state,
+            error: '',
+            projectNeedsRefresh: true
         }
     }),
 )

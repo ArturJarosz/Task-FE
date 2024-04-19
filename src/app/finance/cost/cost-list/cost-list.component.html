@@ -1,4 +1,4 @@
-<p-table [value]="costs!" [tableStyle]="{ 'min-width': '50rem' }">
+<p-table class="pt-3" [value]="costs!" [tableStyle]="{ 'min-width': '50rem' }">
     <ng-template pTemplate="header">
         <tr>
             <th>Id</th>
@@ -9,7 +9,7 @@
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-cost>
-        <tr [routerLink]="['/projects', projectId, 'costs', cost.id]"  class="cursor-pointer">
+        <tr [routerLink]="['/projects', projectId, 'costs', cost.id]" class="cursor-pointer">
             <td>{{ cost.id }}</td>
             <td>{{ cost.name }}</td>
             <td>{{ getCostCategoryLabel(cost.category) }}</td>
@@ -18,5 +18,7 @@
         </tr>
     </ng-template>
 </p-table>
+
+
 
 

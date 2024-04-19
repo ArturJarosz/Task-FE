@@ -5,6 +5,7 @@ import {Supplier} from "../model/supplier";
 import {getSuppliers, loadSuppliers, SupplierState} from "../state";
 import {Store} from "@ngrx/store";
 import {ConfigurationState, getSupplierTypeConfiguration} from "../../shared/configuration/state";
+import {resolveLabel} from "../../shared/utils/label-utils";
 
 @Component({
     selector: 'app-supplier-list',
@@ -37,8 +38,7 @@ export class SupplierListComponent implements OnInit, OnDestroy {
     }
 
     getLabelFromCategory(category: string): string {
-        let maybeLabel = this.supplierTypes.find(element => element.id === category)?.label;
-        return maybeLabel ? maybeLabel : category;
+        return resolveLabel(category, this.supplierTypes);
     }
 
 }

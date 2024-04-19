@@ -4,13 +4,14 @@ export enum CostCategory {
 }
 
 export interface Cost {
-    id : number,
+    id?: number,
     name: string,
     date: Date,
     category: CostCategory,
     value: number,
     note: string | null,
     hasInvoice: boolean,
-    payable: boolean,
+    payable?: boolean,
     paid: boolean
 }
+

@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {Project} from "../model/project";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {Client, ClientType} from "../../client/model/client";
+import {resolveLabel} from "../../shared/utils/label-utils";
 
 @Component({
     selector: 'project-list',
@@ -18,13 +19,11 @@ export class ProjectListComponent {
     projectStatuses: ConfigurationEntry[] | null = [];
 
     getProjectTypeLabel(type: string): string {
-        let maybeLabel = this.projectTypes!.find(element => element.id === type)?.label;
-        return maybeLabel ? maybeLabel : type;
+        return resolveLabel(type, this.projectTypes);
     }
 
     getProjectStatusLabel(type: string): string {
-        let maybeLabel = this.projectStatuses!.find(element => element.id === type)?.label;
-        return maybeLabel ? maybeLabel : type;
+        return resolveLabel(type, this.projectStatuses);
     }
 
     getClientName(client: Client) {

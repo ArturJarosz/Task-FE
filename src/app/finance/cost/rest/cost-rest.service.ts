@@ -8,6 +8,8 @@ import {environment} from "../../../../environments/environment";
 
 export abstract class CostRestService {
     abstract getCost(projectId: number, costId: number): Observable<Cost>;
+
+    abstract createCost(projectId: number, cost: Cost): Observable<Cost>;
 }
 
 @Injectable()
@@ -19,8 +21,14 @@ export class CostRestServiceImpl extends AbstractRestService implements CostRest
     }
 
     getCost(projectId: number, costId: number): Observable<Cost> {
-        console.log("getting cost");
         return this.httpClient.get<Cost>(`${this.projectsUrl}/costs/${costId}`)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            );
+    }
+
+    createCost(projectId: number, cost: Cost): Observable<Cost> {
+        return this.httpClient.post<Cost>(`${this.projectsUrl}/${projectId}/costs`, cost)
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))
             );

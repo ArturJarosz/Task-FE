@@ -5,6 +5,7 @@ import {Subscription} from "rxjs";
 import {Contractor} from "../model/contractor";
 import {ConfigurationState, getContractorTypeConfiguration} from "../../shared/configuration/state";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
+import {resolveLabel} from "../../shared/utils/label-utils";
 
 @Component({
     selector: 'app-contractor-list',
@@ -37,7 +38,6 @@ export class ContractorListComponent implements OnInit, OnDestroy {
     }
 
     getLabelFromCategory(category: string): string {
-        let maybeLabel = this.contractorTypes.find(element => element.id === category)?.label;
-        return maybeLabel ? maybeLabel : category;
+        return resolveLabel(category, this.contractorTypes);
     }
 }
