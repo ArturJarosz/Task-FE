@@ -1,6 +1,7 @@
 import {Stage} from "../model/stage";
 import {Component, Input} from "@angular/core";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
+import {resolveLabel} from "../../shared/utils/label-utils";
 
 @Component({
     selector: 'stage-list',
@@ -18,12 +19,10 @@ export class StageListComponent {
     projectId: number = 0;
 
     getStageLabelType(type: string): string {
-        let maybeLabel = this.stageTypes?.find(element => element.id === type)?.label;
-        return maybeLabel ? maybeLabel : type;
+        return resolveLabel(type, this.stageTypes);
     }
 
     getStageStatusLabel(type: string): string {
-        let maybeLabel = this.stageStatuses?.find(element => element.id === type)?.label;
-        return maybeLabel ? maybeLabel : type;
+        return resolveLabel(type, this.stageStatuses);
     }
 }

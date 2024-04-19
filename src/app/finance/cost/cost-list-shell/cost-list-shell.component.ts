@@ -18,10 +18,20 @@ export class CostListShellComponent implements OnInit {
     @Input()
     costCategories$!: Observable<ConfigurationEntry[]>;
 
+    showAddCostComponent: boolean = false;
+
     constructor(private configurationStore: Store<ConfigurationState>) {
     }
 
     ngOnInit(): void {
         this.costCategories$ = this.configurationStore.select(getCostCategories);
+    }
+
+    onClick() {
+        this.showAddCostComponent = true;
+    }
+
+    onNotify(event: boolean) {
+        this.showAddCostComponent = false;
     }
 }

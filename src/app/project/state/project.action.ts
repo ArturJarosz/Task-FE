@@ -46,6 +46,8 @@ const TERMINATE_CONTRACT = `${PROJECT_CONTRACT} Terminate contract`;
 const TERMINATE_CONTRACT_SUCCESS = `${PROJECT_CONTRACT} Terminate contract success`;
 const TERMINATE_CONTRACT_ERROR = `${PROJECT_CONTRACT} Terminate contract error`;
 
+const PROJECT_NEEDS_REFRESH = `${PROJECTS} Project needs refresh`;
+
 
 export const loadProjects = createAction(LOAD_PROJECTS);
 export const loadProjectsSuccess = createAction(LOAD_PROJECTS_SUCCESS, props<{ projects: Project[] }>());
@@ -86,4 +88,6 @@ export const signContractError = createAction(SING_CONTRACT_ERROR, props<{ error
 export const terminateContract = createAction(TERMINATE_CONTRACT, props<{ contractId: number, contract: ProjectContract }>());
 export const terminateContractSuccess = createAction(TERMINATE_CONTRACT_SUCCESS, props<{ contract: ProjectContract }>());
 export const terminateContractError = createAction(TERMINATE_CONTRACT_ERROR, props<{ error: string }>());
+
+export const projectNeedsRefresh = createAction(PROJECT_NEEDS_REFRESH);
 

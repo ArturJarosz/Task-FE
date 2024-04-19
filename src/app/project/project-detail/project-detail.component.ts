@@ -103,7 +103,7 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
     resolveLabels() {
         // TODO: spytać Tomka jak lepiej to ograć i jak rozwiązać brak danych przy przeloadowaniu strony
         if (this.projectStatuses && this.projectStatuses.length > 0 && this.projectDetailsForm.get('status')?.value) {
-            this.resolvedProjectStatusLabel = this.resolveLabel(this.projectDetailsForm.get('status')
+            this.resolvedProjectStatusLabel = resolveLabel(this.projectDetailsForm.get('status')
                 ?.value
                 .toString(), this.projectStatuses!);
         }

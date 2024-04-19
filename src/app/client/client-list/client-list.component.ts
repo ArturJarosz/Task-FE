@@ -6,6 +6,7 @@ import {Store} from "@ngrx/store";
 import {ClientState, getClients, getClientsNeedRefresh, loadClients, removeClient} from "../state";
 import {ConfigurationState, getClientTypeConfiguration} from "../../shared/configuration/state";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
+import {resolveLabel} from "../../shared/utils/label-utils";
 
 @Component({
     selector: 'clients-list',
@@ -88,7 +89,6 @@ export class ClientListComponent implements OnInit, OnDestroy {
     }
 
     getLabelFromType(type: string): string {
-        let maybeLabel = this.clientTypes.find(element => element.id === type)?.label;
-        return maybeLabel ? maybeLabel : type;
+        return resolveLabel(type, this.clientTypes);
     }
 }

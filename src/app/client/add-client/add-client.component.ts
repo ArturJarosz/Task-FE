@@ -23,6 +23,7 @@ import {ClientState, createClient} from "../state";
 import {Store} from "@ngrx/store";
 import {ConfigurationState, getClientTypeConfiguration} from "../../shared/configuration/state";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
+import {resolveLabel} from "../../shared/utils/label-utils";
 
 const DEFAULT_CLIENT_TYPE = ClientType.PRIVATE.toString();
 
@@ -152,8 +153,7 @@ export class AddClientComponent implements OnInit {
     }
 
     getIdFromLabel(id: string): string {
-        let maybeLabel = this.clientTypes.find(element => element.id === id)?.label;
-        return maybeLabel ? maybeLabel : id;
+        return resolveLabel(id, this.clientTypes);
     }
 
 }

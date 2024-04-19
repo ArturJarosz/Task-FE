@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {getProject, loadProject, ProjectState} from "../state";
+import {getProject, getProjectNeedsRefresh, loadProject, projectNeedsRefresh, ProjectState} from "../state";
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
 import {Project} from "../model/project";
@@ -25,6 +25,7 @@ export class ProjectDetailShellComponent implements OnInit {
     projectTypes$!: Observable<ConfigurationEntry[]>;
     projectStatuses$!: Observable<ConfigurationEntry[]>;
     contractStatuses$!: Observable<ConfigurationEntry[]>;
+    projectNeedsRefresh$!: Observable<boolean>;
 
     projectId: number = 0;
 
@@ -43,5 +44,18 @@ export class ProjectDetailShellComponent implements OnInit {
         this.projectTypes$ = this.configurationStore.select(getProjectTypeConfiguration);
         this.projectStatuses$ = this.configurationStore.select(getProjectStatusConfiguration);
         this.contractStatuses$ = this.configurationStore.select(getContractStatusConfiguration);
+        this.projectNeedsRefresh$ = this.projectStore.select(getProjectNeedsRefresh);
+
+        this.projectNeedsRefresh$.subscribe({
+            next: needsRefresh => {
+                if (needsRefresh) {
+                    this.refreshProject();
+                }
+            }
+        })
+    }
+
+    private refreshProject() {
+        this.projectStore.dispatch(loadProject({projectId: this.projectId}));
     }
 }

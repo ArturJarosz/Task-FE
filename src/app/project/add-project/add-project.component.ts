@@ -82,11 +82,12 @@ export class AddProjectComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.clientsSubscription.unsubscribe();
         this.architectsSubscription.unsubscribe();
+        this.projectTypesSubscription.unsubscribe();
     }
 
     onCancel(): void {
         this.visible = false;
-        //this.resetFields();
+        this.resetFields();
     }
 
     onSave(): void {
@@ -97,8 +98,8 @@ export class AddProjectComponent implements OnInit, OnDestroy {
     }
 
     onClose(): void {
-        //this.resetFields();
         this.notify.emit(false);
+        this.resetFields();
     }
 
     isSaveEnabled(): boolean {

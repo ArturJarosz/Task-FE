@@ -17,6 +17,9 @@ import {CalendarModule} from "primeng/calendar";
 import {InputSwitchModule} from "primeng/inputswitch";
 import {InputTextareaModule} from "primeng/inputtextarea";
 import { CostListShellComponent } from './cost/cost-list-shell/cost-list-shell.component';
+import { AddCostComponent } from './cost/add-cost/add-cost.component';
+import {DialogModule} from "primeng/dialog";
+import {DropdownModule} from "primeng/dropdown";
 
 @NgModule({
     declarations: [
@@ -24,6 +27,7 @@ import { CostListShellComponent } from './cost/cost-list-shell/cost-list-shell.c
         CostListComponent,
         CostDetailComponent,
         CostListShellComponent,
+        AddCostComponent,
     ],
     imports: [
         CommonModule,
@@ -38,7 +42,9 @@ import { CostListShellComponent } from './cost/cost-list-shell/cost-list-shell.c
         InputTextModule,
         CalendarModule,
         InputSwitchModule,
-        InputTextareaModule
+        InputTextareaModule,
+        DialogModule,
+        DropdownModule
     ],
     exports: [
         CostListComponent,

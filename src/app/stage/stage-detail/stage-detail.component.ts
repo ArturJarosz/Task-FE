@@ -5,6 +5,7 @@ import {FormGroup} from "@angular/forms";
 import {StageDetailFormProvider, StageForm} from "./stage-detail-form-provider";
 import {ConfigurationState, loadConfiguration} from "../../shared/configuration/state";
 import {Store} from "@ngrx/store";
+import {resolveLabel} from "../../shared/utils/label-utils";
 
 @Component({
     selector: 'stage-detail',
@@ -54,19 +55,12 @@ export class StageDetailComponent implements OnInit {
     }
 
     private resolveLabels() {
-        if (this.stageStatuses && this.stageStatuses.length > 0 && this.stageDetailsForm.get('status')?.value) {
-            this.resolvedStatusLabel = this.resolveLabel(this.stageDetailsForm.get('status')?.value, this.stageStatuses)
+        if (this.stageDetailsForm.get('status')?.value) {
+            this.resolvedStatusLabel = resolveLabel(this.stageDetailsForm.get('status')?.value, this.stageStatuses)
         }
-        if (this.stageTypes && this.stageTypes.length > 0 && this.stageDetailsForm.get('type')?.value) {
-            this.resolvedTypeLabel = this.resolveLabel(this.stageDetailsForm.get('type')?.value, this.stageTypes)
+        if (this.stageDetailsForm.get('type')?.value) {
+            this.resolvedTypeLabel = resolveLabel(this.stageDetailsForm.get('type')?.value, this.stageTypes)
         }
     }
 
-    private resolveLabel(id: string | undefined, entries: ConfigurationEntry[]): string {
-        if (!id) {
-            return '';
-        }
-        let maybeLabel = entries.find(element => element.id === id)?.label;
-        return maybeLabel ? maybeLabel : id;
-    }
 }
