@@ -1,7 +1,7 @@
 import {AppState} from "../../../state/app.store";
-import {Cost} from "../../model/finance";
 import {createFeatureSelector, createSelector} from "@ngrx/store";
 import {Features} from "../../../features";
+import {Cost} from "../../../generated/models/cost";
 
 export interface CostState extends AppState {
     error: string,

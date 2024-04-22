@@ -1,10 +1,10 @@
-import {Client} from "../model/client";
 import {HttpClient} from "@angular/common/http";
 import {catchError, Observable} from "rxjs";
 import {Injectable} from "@angular/core";
 import {MessageService} from "primeng/api";
 import {AbstractRestService} from "../../shared/rest/abstract-rest.service";
 import {environment} from "../../../environments/environment";
+import {Client} from "../../generated/models/client";
 
 export abstract class ClientRestService {
     abstract getClients(): Observable<Client[]>;

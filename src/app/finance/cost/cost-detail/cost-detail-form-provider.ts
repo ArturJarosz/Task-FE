@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
-import {CostCategory} from "../../model/finance";
+import {CostCategory} from "../../../generated/models/cost-category";
 
 @Injectable({
     providedIn: 'root'

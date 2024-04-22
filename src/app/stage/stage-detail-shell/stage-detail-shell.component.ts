@@ -1,15 +1,15 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Observable} from "rxjs";
-import {Stage} from "../model/stage";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {ActivatedRoute} from "@angular/router";
-import {getStage, loadStage, StageState} from "../state";
+import {getStage, getStagesNeedRefresh, loadStage, refreshStage, StageState} from "../state";
 import {Store} from "@ngrx/store";
 import {
     ConfigurationState,
     getStageStatusConfiguration,
     getStageTypeConfiguration
 } from "../../shared/configuration/state";
+import {Stage} from "../../generated/models/stage";
 
 @Component({
     selector: 'stage-detail-shell',
@@ -20,6 +20,7 @@ export class StageDetailShellComponent implements OnInit {
     stage$!: Observable<Stage | null>;
     stageTypes$!: Observable<ConfigurationEntry[]>;
     stageStatuses$!: Observable<ConfigurationEntry[]>;
+    stageNeedsRefresh$!: Observable<boolean>;
 
     projectId: number = 0;
     stageId: number = 0;
@@ -39,5 +40,22 @@ export class StageDetailShellComponent implements OnInit {
 
         this.stageTypes$ = this.configurationStore.select(getStageTypeConfiguration);
         this.stageStatuses$ = this.configurationStore.select(getStageStatusConfiguration);
+
+        this.stageNeedsRefresh$ = this.stageStore.select(getStagesNeedRefresh);
+
+        this.stageNeedsRefresh$.subscribe({
+            next: needsRefresh => {
+                if (needsRefresh) {
+                    console.log("refreshing stage");
+                    this.refreshStage();
+                }
+            }
+        })
     }
+
+    protected refreshStage() {
+        this.stageStore.dispatch(loadStage({projectId: this.projectId, stageId: this.stageId}));
+        console.log("refreshing stage!");
+    }
+
 }

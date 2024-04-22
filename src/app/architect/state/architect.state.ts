@@ -1,7 +1,7 @@
 import {AppState} from "../../state/app.store";
-import {Architect} from "../model/architect";
 import {createFeatureSelector, createSelector} from "@ngrx/store";
 import {Features} from "../../features";
+import {Architect} from "../../generated/models/architect";
 
 export interface ArchitectState extends AppState {
     error: string;

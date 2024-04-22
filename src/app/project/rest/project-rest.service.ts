@@ -1,10 +1,11 @@
 import {catchError, Observable} from "rxjs";
-import {Project, ProjectCreate} from "../model/project";
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {MessageService} from "primeng/api";
 import {AbstractRestService} from "../../shared/rest/abstract-rest.service";
 import {environment} from "../../../environments/environment";
+import {ProjectCreate} from "../../generated/models/project-create";
+import {Project} from "../../generated/models/project";
 
 export abstract class ProjectRestService {
     abstract getProjects(): Observable<Project[]>;

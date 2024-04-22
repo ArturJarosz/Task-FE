@@ -1,5 +1,7 @@
 import {createAction, props} from "@ngrx/store";
-import {Project, ProjectContract, ProjectCreate} from "../model/project";
+import {Project} from "../../generated/models/project";
+import {ProjectCreate} from "../../generated/models/project-create";
+import {Contract} from "../../generated/models/contract";
 
 const PROJECTS = "[PROJECTS]";
 const PROJECT_CONTRACT = "[PROJECT CONTRACT]";
@@ -61,32 +63,32 @@ export const createProject = createAction(CREATE_PROJECT, props<{ projectCreate:
 export const createProjectSuccess = createAction(CREATE_PROJECT_SUCCESS, props<{ project: Project }>());
 export const createProjectError = createAction(CREATE_PROJECT_ERROR, props<{ error: string }>());
 
-export const acceptOffer = createAction(ACCEPT_OFFER, props<{ contractId: number, contract: ProjectContract }>());
-export const acceptOfferSuccess = createAction(ACCEPT_OFFER_SUCCESS, props<{ contract: ProjectContract }>());
+export const acceptOffer = createAction(ACCEPT_OFFER, props<{ contractId: number, contract: Contract }>());
+export const acceptOfferSuccess = createAction(ACCEPT_OFFER_SUCCESS, props<{ contract: Contract }>());
 export const acceptOfferError = createAction(ACCEPT_OFFER_ERROR, props<{ error: string }>());
 
-export const completeContract = createAction(COMPLETE_CONTRACT, props<{ contractId: number, contract: ProjectContract }>());
-export const completeContractSuccess = createAction(COMPLETE_CONTRACT_SUCCESS, props<{ contract: ProjectContract }>());
+export const completeContract = createAction(COMPLETE_CONTRACT, props<{ contractId: number, contract: Contract }>());
+export const completeContractSuccess = createAction(COMPLETE_CONTRACT_SUCCESS, props<{ contract: Contract }>());
 export const completeContractError = createAction(COMPLETE_CONTRACT_ERROR, props<{ error: string }>());
 
-export const makeNewOffer = createAction(MAKE_NEW_OFFER, props<{ contractId: number, contract: ProjectContract }>());
-export const makeNewOfferSuccess = createAction(MAKE_NEW_OFFER_SUCCESS, props<{ contract: ProjectContract }>());
+export const makeNewOffer = createAction(MAKE_NEW_OFFER, props<{ contractId: number, contract: Contract }>());
+export const makeNewOfferSuccess = createAction(MAKE_NEW_OFFER_SUCCESS, props<{ contract: Contract }>());
 export const makeNewOfferError = createAction(MAKE_NEW_OFFER_ERROR, props<{ error: string }>());
 
-export const rejectOffer = createAction(REJECT_OFFER, props<{ contractId: number, contract: ProjectContract }>());
-export const rejectOfferSuccess = createAction(REJECT_OFFER_SUCCESS, props<{ contract: ProjectContract }>());
+export const rejectOffer = createAction(REJECT_OFFER, props<{ contractId: number, contract: Contract }>());
+export const rejectOfferSuccess = createAction(REJECT_OFFER_SUCCESS, props<{ contract: Contract }>());
 export const rejectOfferError = createAction(REJECT_OFFER_ERROR, props<{ error: string }>());
 
-export const resumeContract = createAction(RESUME_CONTRACT, props<{ contractId: number, contract: ProjectContract }>());
-export const resumeContractSuccess = createAction(RESUME_CONTRACT_SUCCESS, props<{ contract: ProjectContract }>());
+export const resumeContract = createAction(RESUME_CONTRACT, props<{ contractId: number, contract: Contract }>());
+export const resumeContractSuccess = createAction(RESUME_CONTRACT_SUCCESS, props<{ contract: Contract }>());
 export const resumeContractError = createAction(RESUME_CONTRACT_ERROR, props<{ error: string }>());
 
-export const signContract = createAction(SING_CONTRACT, props<{ contractId: number, contract: ProjectContract }>());
-export const signContractSuccess = createAction(SING_CONTRACT_SUCCESS, props<{ contract: ProjectContract }>());
+export const signContract = createAction(SING_CONTRACT, props<{ contractId: number, contract: Contract }>());
+export const signContractSuccess = createAction(SING_CONTRACT_SUCCESS, props<{ contract: Contract }>());
 export const signContractError = createAction(SING_CONTRACT_ERROR, props<{ error: string }>());
 
-export const terminateContract = createAction(TERMINATE_CONTRACT, props<{ contractId: number, contract: ProjectContract }>());
-export const terminateContractSuccess = createAction(TERMINATE_CONTRACT_SUCCESS, props<{ contract: ProjectContract }>());
+export const terminateContract = createAction(TERMINATE_CONTRACT, props<{ contractId: number, contract: Contract }>());
+export const terminateContractSuccess = createAction(TERMINATE_CONTRACT_SUCCESS, props<{ contract: Contract }>());
 export const terminateContractError = createAction(TERMINATE_CONTRACT_ERROR, props<{ error: string }>());
 
 export const projectNeedsRefresh = createAction(PROJECT_NEEDS_REFRESH);

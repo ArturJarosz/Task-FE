@@ -1,7 +1,7 @@
-import {Stage} from "../model/stage";
 import {Component, Input} from "@angular/core";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {resolveLabel} from "../../shared/utils/label-utils";
+import {Stage} from "../../generated/models/stage";
 
 @Component({
     selector: 'stage-list',

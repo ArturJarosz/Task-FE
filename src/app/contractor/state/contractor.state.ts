@@ -1,7 +1,7 @@
 import {AppState} from "../../state/app.store";
-import {Contractor} from "../model/contractor";
 import {createFeatureSelector, createSelector} from "@ngrx/store";
 import {Features} from "../../features";
+import {Contractor} from "../../generated/models/contractor";
 
 export interface ContractorState extends AppState {
     contractors: Contractor[];

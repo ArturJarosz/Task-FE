@@ -1,18 +1,18 @@
 import {Component, OnInit} from '@angular/core';
-import {getProject, getProjectNeedsRefresh, loadProject, projectNeedsRefresh, ProjectState} from "../state";
+import {getProject, getProjectNeedsRefresh, loadProject, ProjectState} from "../state";
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
-import {Project} from "../model/project";
-import {Architect} from "../../architect/model/architect";
 import {ArchitectState, getArchitects} from "../../architect/state";
 import {
     ConfigurationState,
     getContractStatusConfiguration,
     getProjectStatusConfiguration,
-    getProjectTypeConfiguration, getStageStatusConfiguration, getStageTypeConfiguration
+    getProjectTypeConfiguration
 } from "../../shared/configuration/state";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {ActivatedRoute} from "@angular/router";
+import {Architect} from "../../generated/models/architect";
+import {Project} from "../../generated/models/project";
 
 @Component({
     selector: 'app-project-detail-shell',

@@ -2,7 +2,7 @@
     <p-button icon="pi pi-plus" (onClick)="onClick()" [rounded]="true" class="add-button transition-colors transition-duration-300"></p-button>
 </div>
 <div class="pt-3">
-    <cost-list [costs]="costs" [projectId]="projectId" [costCategories]="costCategories$ | async">
+    <cost-list [costs]="costs!" [projectId]="projectId" [costCategories]="costCategories$ | async">
     </cost-list>
 </div>
 <app-add-cost [visible]="showAddCostComponent" [projectId]="projectId" (notify)="onNotify($event)"></app-add-cost>

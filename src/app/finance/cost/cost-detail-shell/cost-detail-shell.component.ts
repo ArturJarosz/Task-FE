@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from "rxjs";
-import {Cost} from "../.././model/finance";
 import {ConfigurationEntry} from "../../../shared/configuration/model/configuration";
 import {ActivatedRoute} from "@angular/router";
 import {CostState, getCost, loadCost} from "../state";
 import {Store} from "@ngrx/store";
 import {ConfigurationState, getCostCategories} from "../../../shared/configuration/state";
+import {Cost} from "../../../generated/models/cost";
 
 @Component({
     selector: 'cost-detail-shell',

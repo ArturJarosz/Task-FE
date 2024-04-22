@@ -1,5 +1,5 @@
 import {createAction, props} from "@ngrx/store";
-import {Supplier} from "../model/supplier";
+import {Supplier} from "../../generated/models/supplier";
 
 const SUPPLIER = '[SUPPLIERS]';
 

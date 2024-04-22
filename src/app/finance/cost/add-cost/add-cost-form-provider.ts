@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
-import {CostCategory} from "../../model/finance";
+import {CostCategory} from "../../../generated/models";
 
 const DEFAULT_COST_CATEGORY = CostCategory.FUEL;
 
@@ -19,7 +19,8 @@ export class AddCostFormProvider {
             value: this.formBuilder.nonNullable.control<number>(0.0, [Validators.required]),
             date: this.formBuilder.nonNullable.control<Date>(new Date(), [Validators.required]),
             hasInvoice: this.formBuilder.nonNullable.control<boolean>(false, [Validators.required]),
-            paid: this.formBuilder.nonNullable.control<boolean>(false, [Validators.required])
+            paid: this.formBuilder.nonNullable.control<boolean>(false, [Validators.required]),
+            note: this.formBuilder.control('')
         })
     }
 }
@@ -30,5 +31,6 @@ interface AddCostForm {
     value: FormControl<number>,
     date: FormControl<Date>,
     hasInvoice: FormControl<boolean>,
-    paid: FormControl<boolean>
+    paid: FormControl<boolean>,
+    note: FormControl<string | null>
 }

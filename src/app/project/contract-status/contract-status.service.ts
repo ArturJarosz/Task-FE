@@ -1,5 +1,4 @@
 import {Injectable} from "@angular/core";
-import {ContractStatus, ProjectContract} from "../model/project";
 import {Store} from "@ngrx/store";
 import {
     acceptOffer,
@@ -11,6 +10,8 @@ import {
     signContract,
     terminateContract
 } from "../state";
+import {ContractStatus} from "../../generated/models/contract-status";
+import {Contract} from "../../generated/models/contract";
 
 enum ContractStatusTransitions {
     REJECT_OFFER = "REJECT_OFFER",
@@ -46,7 +47,7 @@ let CONTRACT_FLOW: any = {
 }
 
 export abstract class ContractStatusService {
-    abstract resolveContractStatusChange(contract: ProjectContract, oldStatus: ContractStatus): void;
+    abstract resolveContractStatusChange(contract: Contract, oldStatus: ContractStatus): void;
 }
 
 // TODO: TA-379 To be removed when contact status API is simplified
@@ -56,8 +57,8 @@ export class ContractStatusServiceImpl implements ContractStatusService {
     constructor(private projectState: Store<ProjectState>) {
     }
 
-    resolveContractStatusChange(contract: ProjectContract, oldStatus: ContractStatus): void {
-        let transition = CONTRACT_FLOW[oldStatus.toString()][contract.status.toString()] as ContractStatusTransitions;
+    resolveContractStatusChange(contract: Contract, oldStatus: ContractStatus): void {
+        let transition = CONTRACT_FLOW[oldStatus.toString()][contract.status!.toString()] as ContractStatusTransitions;
         switch (transition) {
             case ContractStatusTransitions.ACCEPT_OFFER:
                 this.projectState.dispatch(acceptOffer({contractId: contract.id!, contract: contract}));

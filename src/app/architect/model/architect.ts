@@ -1,6 +1,5 @@
-export interface Architect {
-    id?: number,
-    firstName: string,
-    lastName: string,
+import {Architect} from "../../generated/models/architect";
+
+export interface ArchitectFormModel extends Architect{
     resolvedName: string
 }
