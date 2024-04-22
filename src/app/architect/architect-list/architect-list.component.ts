@@ -1,8 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Architect} from "../model/architect";
 import {Subscription} from "rxjs";
 import {ArchitectState, getArchitects, loadArchitects} from "../state";
 import {Store} from "@ngrx/store";
+import {Architect} from "../../generated/models/architect";
 
 @Component({
     selector: 'app-architect-list',

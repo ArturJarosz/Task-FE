@@ -1,10 +1,10 @@
 import {catchError, Observable} from "rxjs";
-import {Architect} from "../model/architect";
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {MessageService} from "primeng/api";
 import {AbstractRestService} from "../../shared/rest/abstract-rest.service";
 import {environment} from "../../../environments/environment";
+import {Architect} from "../../generated/models/architect";
 
 export abstract class ArchitectRestService {
     abstract getArchitects(): Observable<Architect[]>;

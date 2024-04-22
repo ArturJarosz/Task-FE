@@ -1,31 +1,23 @@
-import {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    Input,
-    OnChanges,
-    OnInit,
-    SimpleChanges
-} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {Store} from "@ngrx/store";
-import {ContractStatus, Project, ProjectContract, ProjectStatus} from "../model/project";
 import {FormGroup} from "@angular/forms";
 import {ProjectContractForm, ProjectCreateForm, ProjectDetailFormProvider} from "./project-detail-form-provider";
 import {ConfigurationState, loadConfiguration} from "../../shared/configuration/state";
-import {Architect} from "../../architect/model/architect";
 import {ArchitectState, loadArchitects} from "../../architect/state";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {cloneDeep} from 'lodash';
 import {ContractStatusService} from "../contract-status/contract-status.service";
 import {resolveLabel} from "../../shared/utils/label-utils";
+import {Architect} from "../../generated/models/architect";
+import {Project} from "../../generated/models/project";
+import {Contract, ContractStatus, ProjectStatus} from "../../generated/models";
 
 @Component({
     selector: 'project-detail',
     templateUrl: './project-detail.component.html',
-    styleUrls: ['./project-detail.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    styleUrls: ['./project-detail.component.less']
 })
-export class ProjectDetailComponent implements OnInit, OnChanges {
+export class ProjectDetailComponent implements OnInit {
     @Input()
     project!: Project | null;
     @Input()
@@ -84,18 +76,18 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
             id: this.project.id,
             name: this.project.name,
             type: this.project.type,
-            architectId: this.project.architect.id,
-            clientId: this.project.client.id,
+            architectId: this.project.architect!.id,
+            clientId: this.project.client!.id,
             status: this.project.status,
+            note: this.project.note,
             contract: {
-                id: this.project.contract.id,
-                offerValue: this.project.contract.offerValue,
-                status: this.project.contract.status,
-                signingDate: this.project.contract.signingDate ? new Date(
-                    this.project.contract.signingDate) : undefined,
-                startDate: this.project.contract.startDate ? new Date(this.project.contract.startDate) : undefined,
-                endDate: this.project.contract.endDate ? new Date(this.project.contract.endDate) : undefined,
-                deadline: this.project.contract.deadline ? new Date(this.project.contract.deadline) : undefined
+                id: this.project.contract!.id,
+                offerValue: this.project.contract!.offerValue,
+                status: this.project.contract!.status,
+                signingDate: this.project.contract!.signingDate ? this.project.contract!.signingDate : '',
+                startDate: this.project.contract!.startDate ? this.project.contract!.startDate : '',
+                endDate: this.project.contract!.endDate ? this.project.contract!.endDate : '',
+                deadline: this.project.contract!.deadline ? this.project.contract!.deadline : ''
             }
         })
     }
@@ -119,7 +111,7 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
                 ?.value
                 .toString(), this.projectTypes!)
         }
-        this.architectName = `${this.project?.architect.firstName} ${this.project?.architect.lastName}`;
+        this.architectName = `${this.project?.architect!.firstName} ${this.project?.architect!.lastName}`;
         let client = this.project?.client;
         this.clientName = client?.firstName ? `${client?.firstName} ${client?.lastName}` : `${client?.companyName}`;
     }
@@ -127,39 +119,26 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
 
     resolveAvailableStatuses() {
         this.availableProjectStatuses = [];
-        let currentProjectStatus = this.projectStatuses?.find(status => status.id === this.project?.status.toString())
+        let currentProjectStatus = this.projectStatuses?.find(status => status.id === this.project?.status!.toString())
         this.availableProjectStatuses.push(currentProjectStatus!);
         this.projectStatuses!.filter(
             entry => {
-                let index = this.project?.nextStatuses.indexOf(ProjectStatus[entry.id as keyof typeof ProjectStatus]);
+                let index = this.project?.nextStatuses!.indexOf(ProjectStatus[entry.id as keyof typeof ProjectStatus]);
                 return index != undefined && index > -1;
             })
             .forEach(entry => this.availableProjectStatuses.push(entry));
 
         this.availableContractStatuses = [];
         let currentContractStatus = this.contractStatuses?.find(
-            status => status.id === this.project?.contract.status.toString())
+            status => status.id === this.project?.contract!.status!.toString())
         this.availableContractStatuses.push(currentContractStatus!);
         this.contractStatuses!.filter(
             entry => {
-                let index = this.project?.contract.nextStatuses!.indexOf(
+                let index = this.project?.contract!.nextStatuses!.indexOf(
                     ContractStatus[entry.id as keyof typeof ContractStatus])
                 return index !== undefined && index > -1;
             })
             .forEach(entry => this.availableContractStatuses.push(entry));
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        this.fillFormData();
-        // TODO: spytac Tomka...
-        if (this.projectDetailsForm === undefined) {
-            return;
-        }
-        this.initialContractForm = cloneDeep(this.projectDetailsForm.get('contract') as FormGroup<ProjectContractForm>);
-        this.initialProjectForm = cloneDeep(this.projectDetailsForm);
-        this.resolveLabels();
-        this.resolveAvailableStatuses();
-        this.cd.detectChanges();
     }
 
     shouldUpdateContract(): boolean {
@@ -204,11 +183,10 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
 
     }
 
-    createContract(): ProjectContract {
-        let contract: ProjectContract;
+    createContract(): Contract {
         let contractForm: FormGroup<ProjectContractForm> = this.projectDetailsForm.get(
             'contract') as FormGroup<ProjectContractForm>;
-        contract = {
+        return {
             id: contractForm.get('id')?.value,
             offerValue: contractForm.get('offerValue')!.value,
             status: contractForm.get('status')!.value,
@@ -216,7 +194,6 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
             startDate: contractForm.get('startDate')!.value,
             deadline: contractForm.get('deadline')!.value,
             endDate: contractForm.get("endDate")!.value
-        }
-        return contract;
+        };
     }
 }

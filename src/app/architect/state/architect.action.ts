@@ -1,5 +1,5 @@
 import {createAction, props} from "@ngrx/store";
-import {Architect} from "../model/architect";
+import {Architect} from "../../generated/models/architect";
 
 const ARCHITECT = "[ARCHITECTS]";
 

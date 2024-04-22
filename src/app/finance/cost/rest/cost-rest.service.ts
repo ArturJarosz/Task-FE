@@ -1,10 +1,10 @@
 import {catchError, Observable} from "rxjs";
-import {Cost} from "../../model/finance";
 import {Injectable} from "@angular/core";
 import {AbstractRestService} from "../../../shared/rest/abstract-rest.service";
 import {HttpClient} from "@angular/common/http";
 import {MessageService} from "primeng/api";
 import {environment} from "../../../../environments/environment";
+import {Cost} from "../../../generated/models/cost";
 
 export abstract class CostRestService {
     abstract getCost(projectId: number, costId: number): Observable<Cost>;

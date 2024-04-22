@@ -1,5 +1,5 @@
 import {createAction, props} from "@ngrx/store";
-import {Cost} from "../../model/finance";
+import {Cost} from "../../../generated/models/cost";
 
 const COSTS = "[COSTS]";
 

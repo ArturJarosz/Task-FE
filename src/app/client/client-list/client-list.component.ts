@@ -1,5 +1,4 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Client, ClientType} from "../model/client";
 import {Subscription} from "rxjs";
 import {ConfirmationService} from "primeng/api";
 import {Store} from "@ngrx/store";
@@ -7,6 +6,7 @@ import {ClientState, getClients, getClientsNeedRefresh, loadClients, removeClien
 import {ConfigurationState, getClientTypeConfiguration} from "../../shared/configuration/state";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {resolveLabel} from "../../shared/utils/label-utils";
+import {Client, ClientType} from "../../generated/models";
 
 @Component({
     selector: 'clients-list',
@@ -17,11 +17,12 @@ export class ClientListComponent implements OnInit, OnDestroy {
     private clientSubscription!: Subscription;
     private clientsNeedsRefreshSubscription!: Subscription;
     private clientTypesSubscription!: Subscription;
-    protected readonly ClientType = ClientType;
     showComponent: boolean = false;
     errorMessage: string = '';
     clients!: Client[];
     clientTypes: ConfigurationEntry[] = [];
+
+    protected readonly ClientType = ClientType;
 
     constructor(private confirmationService: ConfirmationService, private clientStore: Store<ClientState>,
                 private configurationStore: Store<ConfigurationState>) {
@@ -91,4 +92,5 @@ export class ClientListComponent implements OnInit, OnDestroy {
     getLabelFromType(type: string): string {
         return resolveLabel(type, this.clientTypes);
     }
+
 }

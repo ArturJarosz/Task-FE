@@ -1,10 +1,10 @@
 import {catchError, Observable} from "rxjs";
-import {Stage} from "../model/stage";
 import {AbstractRestService} from "../../shared/rest/abstract-rest.service";
 import {Injectable} from "@angular/core";
 import {environment} from "../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
 import {MessageService} from "primeng/api";
+import {Stage} from "../../generated/models/stage";
 
 export abstract class StageRestService {
     abstract getStagesForProject(projectId: number): Observable<Stage[]>;

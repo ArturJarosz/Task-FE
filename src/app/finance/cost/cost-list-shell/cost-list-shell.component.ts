@@ -3,7 +3,7 @@ import {Observable} from "rxjs";
 import {ConfigurationEntry} from "../../../shared/configuration/model/configuration";
 import {Store} from "@ngrx/store";
 import {ConfigurationState, getCostCategories} from "../../../shared/configuration/state";
-import {Cost} from "../../model/finance";
+import {Cost} from "../../../generated/models/cost";
 
 @Component({
     selector: 'cost-list-shell',
@@ -14,7 +14,7 @@ export class CostListShellComponent implements OnInit {
     @Input()
     projectId: number = 0;
     @Input()
-    costs: Cost[] | null = [];
+    costs: Array<Cost> | null = [];
     @Input()
     costCategories$!: Observable<ConfigurationEntry[]>;
 

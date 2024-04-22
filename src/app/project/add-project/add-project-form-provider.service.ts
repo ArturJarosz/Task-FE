@@ -15,7 +15,8 @@ export class AddProjectFormProvider {
             architectId: this.formBuilder.nonNullable.control<number>(0, [Validators.required]),
             clientId: this.formBuilder.nonNullable.control<number>(0, [Validators.required]),
             type: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
-            offerValue: this.formBuilder.nonNullable.control<number>(0, [Validators.required])
+            offerValue: this.formBuilder.nonNullable.control<number>(0, [Validators.required]),
+            note: this.formBuilder.control<string>('')
         })
     }
 }
@@ -25,5 +26,6 @@ interface AddProjectForm {
     architectId: FormControl<number>,
     clientId: FormControl<number>,
     type: FormControl<string>,
-    offerValue: FormControl<number>
+    offerValue: FormControl<number>,
+    note: FormControl<string | null>
 }

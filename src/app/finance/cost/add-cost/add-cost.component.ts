@@ -5,8 +5,8 @@ import {CostState, createCost} from "../state";
 import {ConfigurationState, getCostCategories, loadConfiguration} from "../../../shared/configuration/state";
 import {ConfigurationEntry} from "../../../shared/configuration/model/configuration";
 import {Subscription} from "rxjs";
-import {Cost} from "../../model/finance";
 import {FormGroup} from "@angular/forms";
+import {Cost} from "../../../generated/models/cost";
 
 @Component({
     selector: 'app-add-cost',
@@ -71,7 +71,7 @@ export class AddCostComponent implements OnInit, OnDestroy {
         cost = {
             name: this.addCostForm.get('name')?.value,
             category: this.addCostForm.get('category')?.value,
-            date: new Date(this.addCostForm.get('date')?.value),
+            date: this.addCostForm.get('date')?.value,
             value: this.addCostForm.get('value')?.value,
             hasInvoice: this.addCostForm.get('hasInvoice')?.value,
             paid: this.addCostForm.get('paid')?.value,

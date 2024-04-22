@@ -1,0 +1,7 @@
+{
+    "input": "../../Task/core/src/main/resources/openapi/openapi-spec.yml",
+    "output": "../src/app/generated",
+    "ignoreUnusedModels": false,
+    "services": false,
+    "enumStyle": "upper"
+}

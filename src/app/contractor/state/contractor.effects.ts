@@ -5,7 +5,6 @@ import {MessageService} from "primeng/api";
 import {loadContractors, loadContractorsError, loadContractorsSuccess} from "./contractor.action";
 import {catchError, map, mergeMap, of} from "rxjs";
 import {MessageSeverity} from "../../shared";
-import {loadArchitectsError} from "../../architect/state";
 
 @Injectable()
 export class ContractorEffects {

@@ -1,11 +1,11 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Stage} from "../model/stage";
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {FormGroup} from "@angular/forms";
 import {StageDetailFormProvider, StageForm} from "./stage-detail-form-provider";
 import {ConfigurationState, loadConfiguration} from "../../shared/configuration/state";
 import {Store} from "@ngrx/store";
 import {resolveLabel} from "../../shared/utils/label-utils";
+import {Stage} from "../../generated/models/stage";
 
 @Component({
     selector: 'stage-detail',
@@ -20,6 +20,8 @@ export class StageDetailComponent implements OnInit {
     stageStatuses: ConfigurationEntry[] | null = [];
     @Input()
     stageTypes: ConfigurationEntry[] | null = [];
+    @Output()
+    refresh: EventEmitter<null> = new EventEmitter<null>();
 
     stageDetailsForm!: FormGroup<StageForm>;
     resolvedStatusLabel: string = '';
@@ -31,8 +33,11 @@ export class StageDetailComponent implements OnInit {
     }
 
     ngOnInit(): void {
+
         this.configurationStore.dispatch(loadConfiguration());
         this.stageDetailsForm = this.formProvider.getStageDetailForm();
+        console.log(`---  stage id: ${this.stage?.id}`)
+        console.log(`---  stage name: ${this.stage?.name}`)
         this.fillFormData();
         this.resolveLabels();
     }

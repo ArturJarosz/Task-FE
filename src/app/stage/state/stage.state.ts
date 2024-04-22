@@ -1,7 +1,7 @@
 import {AppState} from "../../state/app.store";
-import {Stage} from "../model/stage";
 import {createFeatureSelector, createSelector} from "@ngrx/store";
 import {Features} from "../../features";
+import {Stage} from "../../generated/models/stage";
 
 export interface StageState extends AppState {
     error: string,
@@ -14,7 +14,7 @@ export const initialState: StageState = {
     error: '',
     stages: [],
     stage: null,
-    stagesNeedRefresh: false
+    stagesNeedRefresh: true
 }
 
 // selectors

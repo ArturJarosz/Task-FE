@@ -1,11 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from "rxjs";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
-import {Supplier} from "../model/supplier";
 import {getSuppliers, loadSuppliers, SupplierState} from "../state";
 import {Store} from "@ngrx/store";
 import {ConfigurationState, getSupplierTypeConfiguration} from "../../shared/configuration/state";
 import {resolveLabel} from "../../shared/utils/label-utils";
+import {Supplier} from "../../generated/models/supplier";
 
 @Component({
     selector: 'app-supplier-list',

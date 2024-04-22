@@ -1,7 +1,7 @@
 import {AppState} from "../../state/app.store";
-import {Supplier} from "../model/supplier";
 import {createFeatureSelector, createSelector} from "@ngrx/store";
 import {Features} from "../../features";
+import {Supplier} from "../../generated/models/supplier";
 
 export interface SupplierState extends AppState {
     suppliers: Supplier[];

@@ -1,7 +1,7 @@
 import {AppState} from "../../state/app.store";
-import {Project} from "../model/project";
 import {createFeatureSelector, createSelector} from "@ngrx/store";
 import {Features} from "../../features";
+import {Project} from "../../generated/models/project";
 
 export interface ProjectState extends AppState {
     error: string,
@@ -15,8 +15,8 @@ export const initialState: ProjectState = {
     error: '',
     projects: [],
     project: null,
-    projectsNeedRefresh: false,
-    projectNeedsRefresh: false
+    projectsNeedRefresh: true,
+    projectNeedsRefresh: true
 }
 
 // selectors
@@ -37,7 +37,6 @@ export const getProjectsNeedRefresh = createSelector(
     getProjectFeatureState,
     state => state.projectsNeedRefresh
 )
-
 
 export const getProjectNeedsRefresh = createSelector(
     getProjectFeatureState,

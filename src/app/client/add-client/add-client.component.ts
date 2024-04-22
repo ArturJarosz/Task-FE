@@ -2,9 +2,7 @@ import {Component, EventEmitter, Injectable, Input, OnInit, Output} from '@angul
 import {
     ADDRESS,
     CITY,
-    Client,
     CLIENT_TYPE,
-    ClientType,
     COMPANY_NAME,
     CONTACT,
     EMAIL,
@@ -24,6 +22,7 @@ import {Store} from "@ngrx/store";
 import {ConfigurationState, getClientTypeConfiguration} from "../../shared/configuration/state";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {resolveLabel} from "../../shared/utils/label-utils";
+import {Client, ClientType} from "../../generated/models";
 
 const DEFAULT_CLIENT_TYPE = ClientType.PRIVATE.toString();
 
@@ -111,18 +110,14 @@ export class AddClientComponent implements OnInit {
     }
 
     private createClient() {
-        let client: Client;
+        let client: Client = {clientType: ClientType.PRIVATE, contact: {}};
         if (this.clientForm.get(CLIENT_TYPE)?.value === ClientType.PRIVATE) {
-            client = {
-                clientType: ClientType.PRIVATE.toString(),
-                firstName: this.clientForm.get(FIRST_NAME)?.value,
-                lastName: this.clientForm.get(LAST_NAME)?.value
-            }
+            client.clientType = ClientType.PRIVATE;
+            client.firstName = this.clientForm.get(FIRST_NAME)?.value;
+            client.lastName = this.clientForm.get(LAST_NAME)?.value;
         } else {
-            client = {
-                clientType: ClientType.CORPORATE.toString(),
-                companyName: this.clientForm.get(COMPANY_NAME)?.value
-            }
+            client.clientType = ClientType.CORPORATE;
+            client.companyName = this.clientForm.get(COMPANY_NAME)?.value;
         }
         client.contact = {};
         let contactForm = this.clientForm.get(CONTACT);
@@ -130,13 +125,13 @@ export class AddClientComponent implements OnInit {
             client.contact.email = contactForm.get(EMAIL)?.value;
             client.contact.telephone = contactForm.get(TELEPHONE)?.value;
             let addressForm = contactForm.get(ADDRESS);
-            client.contact.address = {};
+            client.contact.address = {city: ""};
             if (addressForm) {
-                client.contact.address.city = addressForm.get(CITY)?.value;
-                client.contact.address.postCode = addressForm.get(POST_CODE)?.value;
-                client.contact.address.street = addressForm.get(STREET)?.value;
-                client.contact.address.houseNumber = addressForm.get(HOUSE_NUMBER)?.value;
-                client.contact.address.flatNumber = addressForm.get(FLAT_NUMBER)?.value;
+                client.contact.address!.city = addressForm.get(CITY)?.value;
+                client.contact.address!.postCode = addressForm.get(POST_CODE)?.value;
+                client.contact.address!.street = addressForm.get(STREET)?.value;
+                client.contact.address!.houseNumber = addressForm.get(HOUSE_NUMBER)?.value;
+                client.contact.address!.flatNumber = addressForm.get(FLAT_NUMBER)?.value;
             }
 
         }

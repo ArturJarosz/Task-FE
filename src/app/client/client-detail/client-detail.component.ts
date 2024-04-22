@@ -1,9 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
-import {Client, ClientType} from "../model/client";
 import {Store} from "@ngrx/store";
 import {ClientState, getClient, loadClient} from "../state";
+import {Client, ClientType} from "../../generated/models";
 
 @Component({
     selector: 'app-client-detail',

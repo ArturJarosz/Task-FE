@@ -1,11 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Cost} from "../../model/finance";
 import {ConfigurationEntry} from "../../../shared/configuration/model/configuration";
 import {FormGroup} from "@angular/forms";
 import {CostDetailFormProvider, CostForm} from "./cost-detail-form-provider";
 import {ConfigurationState, loadConfiguration} from "../../../shared/configuration/state";
 import {Store} from "@ngrx/store";
 import {resolveLabel} from "../../../shared/utils/label-utils";
+import {Cost} from "../../../generated/models/cost";
 
 @Component({
     selector: 'cost-detail',

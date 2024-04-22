@@ -1,4 +1,5 @@
 import {FormControl, FormGroup} from "@angular/forms";
+import {Client} from "../../generated/models/client";
 
 export const FIRST_NAME: string = "firstName";
 export const LAST_NAME: string = "lastName";
@@ -15,19 +16,6 @@ export const HOUSE_NUMBER: string = "houseNumber";
 export const FLAT_NUMBER:string = "flatNumber";
 export const NOTE:string = "note";
 
-export enum ClientType {
-    PRIVATE = "PRIVATE",
-    CORPORATE = "CORPORATE",
-}
-
-export interface Address {
-    city?: string | null,
-    postCode?: string | null,
-    street?: string | null,
-    houseNumber?: string | null,
-    flatNumber?: string | null,
-}
-
 export interface AddressForm {
     city: FormControl<string | null>,
     postCode: FormControl<string | null>,
@@ -36,26 +24,13 @@ export interface AddressForm {
     flatNumber: FormControl<string | null>,
 }
 
-export interface Contact {
-    email?: string | null,
-    telephone?: string | null,
-    address?: Address | null,
-}
-
 export interface ContactForm {
     email: FormControl<string | null>,
     telephone: FormControl<string | null>,
     address: FormGroup<AddressForm>,
 }
 
-export interface Client {
-    id?: number,
-    firstName?: string,
-    lastName?: string,
-    companyName?: string,
-    note?: string,
-    clientType: string,
-    contact?: Contact | null,
+export interface ClientFormModel extends Client {
     resolvedName?: string
 }
 

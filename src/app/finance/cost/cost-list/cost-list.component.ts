@@ -1,8 +1,8 @@
 import {Component, Input} from '@angular/core';
 
-import {Cost} from "../../model/finance";
 import {ConfigurationEntry} from "../../../shared/configuration/model/configuration";
 import {resolveLabel} from "../../../shared/utils/label-utils";
+import {Cost} from "../../../generated/models/cost";
 
 @Component({
     selector: 'cost-list',
@@ -11,7 +11,7 @@ import {resolveLabel} from "../../../shared/utils/label-utils";
 })
 export class CostListComponent {
     @Input()
-    costs: Cost[] | null = [];
+    costs: Array<Cost> | null = [];
     @Input()
     projectId: number = 0;
     @Input()

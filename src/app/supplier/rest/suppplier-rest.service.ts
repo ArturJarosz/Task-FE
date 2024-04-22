@@ -1,10 +1,10 @@
 import {catchError, Observable} from "rxjs";
-import {Supplier} from "../model/supplier";
 import {Injectable} from "@angular/core";
 import {AbstractRestService} from "../../shared/rest/abstract-rest.service";
 import {HttpClient} from "@angular/common/http";
 import {MessageService} from "primeng/api";
 import {environment} from "../../../environments/environment";
+import {Supplier} from "../../generated/models/supplier";
 
 export abstract class SupplierRestService {
     abstract getSuppliers(): Observable<Supplier[]>;

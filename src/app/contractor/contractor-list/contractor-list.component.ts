@@ -2,10 +2,10 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ContractorState, getContractors, loadContractors} from "../state";
 import {Store} from "@ngrx/store";
 import {Subscription} from "rxjs";
-import {Contractor} from "../model/contractor";
 import {ConfigurationState, getContractorTypeConfiguration} from "../../shared/configuration/state";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {resolveLabel} from "../../shared/utils/label-utils";
+import {Contractor} from "../../generated/models/contractor";
 
 @Component({
     selector: 'app-contractor-list',

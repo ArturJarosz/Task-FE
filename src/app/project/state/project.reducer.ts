@@ -12,7 +12,6 @@ import {
     signContractSuccess,
     terminateContractSuccess
 } from "./project.action";
-import {ProjectStatus} from "../model/project";
 
 export const projectReducer = createReducer<ProjectState>(
     initialState,

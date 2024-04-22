@@ -1,6 +1,4 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {Client} from "../../client/model/client";
-import {Architect} from "../../architect/model/architect";
 import {FormGroup} from "@angular/forms";
 import {AddProjectFormProvider} from "./add-project-form-provider.service";
 import {ClientState, getClients, loadClients} from "../../client/state";
@@ -10,7 +8,9 @@ import {createProject, ProjectState} from "../state";
 import {Subscription} from "rxjs";
 import {ConfigurationState, getProjectTypeConfiguration, loadConfiguration} from "../../shared/configuration/state";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
-import {ProjectCreate} from "../model/project";
+import {ArchitectFormModel} from "../../architect/model/architect";
+import {ClientFormModel} from "../../client/model/client";
+import {ProjectCreate} from "../../generated/models/project-create";
 
 @Component({
     selector: 'app-add-project',
@@ -28,9 +28,9 @@ export class AddProjectComponent implements OnInit, OnDestroy {
     header: string = "Add new project";
 
     clientsSubscription!: Subscription;
-    clients: Client[] = [];
+    clients: ClientFormModel[] = [];
     architectsSubscription!: Subscription;
-    architects: Architect[] = [];
+    architects: ArchitectFormModel[] = [];
     projectTypesSubscription!: Subscription;
     projectTypes: ConfigurationEntry[] = [];
     addProjectForm!: FormGroup;
@@ -52,7 +52,8 @@ export class AddProjectComponent implements OnInit, OnDestroy {
                 next: clients => {
                     this.clients = JSON.parse(JSON.stringify(clients));
                     this.clients.forEach(
-                        client => client.resolvedName = client.firstName ? `${client.firstName} ${client.lastName}` : client.companyName)
+                        client => client.resolvedName = client.firstName ? `${client.firstName} ${client.lastName}` : client.companyName);
+                    this.setFormDefaultValues();
                 }
             });
         this.architectStore.dispatch(loadArchitects());
@@ -61,21 +62,31 @@ export class AddProjectComponent implements OnInit, OnDestroy {
                 next: architects => {
                     this.architects = JSON.parse(JSON.stringify(architects));
                     this.architects.forEach(
-                        architect => architect.resolvedName = `${architect.firstName} ${architect.lastName}`)
+                        architect => architect.resolvedName = `${architect.firstName} ${architect.lastName}`);
+                    this.setFormDefaultValues();
                 }
             })
         this.configurationStore.dispatch(loadConfiguration());
         this.projectTypesSubscription = this.configurationStore.select(getProjectTypeConfiguration)
             .subscribe({
-                next: projectTypes => this.projectTypes = projectTypes
+                next: projectTypes => {
+                    this.projectTypes = projectTypes;
+                    this.setFormDefaultValues();
+                }
             })
 
-        this.addProjectForm = this.addProjectFormProvider.getAddProjectForm();
-        this.addProjectForm.patchValue({
-            type: this.projectTypes[0]?.id,
-            architectId: this.architects[0]?.id,
-            clientId: this.clients[0]?.id
-        })
+        this.setEmptyForm();
+        this.setFormDefaultValues();
+    }
+
+    setFormDefaultValues() {
+        if (this.clients && this.clients.length > 0 && this.architects && this.architects.length > 0 && this.projectTypes && this.projectTypes.length > 0 && this.addProjectForm) {
+            this.addProjectForm.patchValue({
+                type: this.projectTypes[0]?.id,
+                architectId: this.architects[0]?.id,
+                clientId: this.clients[0]?.id
+            })
+        }
     }
 
 
@@ -87,7 +98,7 @@ export class AddProjectComponent implements OnInit, OnDestroy {
 
     onCancel(): void {
         this.visible = false;
-        this.resetFields();
+        this.setEmptyForm();
     }
 
     onSave(): void {
@@ -99,14 +110,14 @@ export class AddProjectComponent implements OnInit, OnDestroy {
 
     onClose(): void {
         this.notify.emit(false);
-        this.resetFields();
+        this.setEmptyForm();
     }
 
     isSaveEnabled(): boolean {
         return this.addProjectForm.valid;
     }
 
-    resetFields(): void {
+    setEmptyForm(): void {
         this.addProjectForm = this.addProjectFormProvider.getAddProjectForm();
     }
 

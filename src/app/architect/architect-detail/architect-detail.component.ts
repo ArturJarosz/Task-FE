@@ -1,10 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
-import {Architect} from "../model/architect";
 import {Store} from "@ngrx/store";
-import {ArchitectState, getArchitect} from "../state/architect.state";
-import {loadArchitect} from "../state/architect.action";
+import {ArchitectState, getArchitect} from "../state";
+import {loadArchitect} from "../state";
+import {Architect} from "../../generated/models/architect";
 
 @Component({
     selector: 'app-architect-detail',
