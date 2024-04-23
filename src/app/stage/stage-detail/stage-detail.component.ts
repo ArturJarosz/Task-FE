@@ -12,14 +12,13 @@ import {Stage} from "../../generated/models/stage";
     templateUrl: './stage-detail.component.html',
     styleUrls: ['./stage-detail.component.less']
 })
-export class StageDetailComponent implements OnInit {
-
+export class StageDetailComponent implements OnInit, OnChanges {
     @Input()
     stage!: Stage | null;
     @Input()
-    stageStatuses: ConfigurationEntry[] | null = [];
+    stageStatuses!: ConfigurationEntry[] | null;
     @Input()
-    stageTypes: ConfigurationEntry[] | null = [];
+    stageTypes!: ConfigurationEntry[] | null;
     @Output()
     refresh: EventEmitter<null> = new EventEmitter<null>();
 
@@ -33,17 +32,19 @@ export class StageDetailComponent implements OnInit {
     }
 
     ngOnInit(): void {
-
         this.configurationStore.dispatch(loadConfiguration());
         this.stageDetailsForm = this.formProvider.getStageDetailForm();
-        console.log(`---  stage id: ${this.stage?.id}`)
-        console.log(`---  stage name: ${this.stage?.name}`)
-        this.fillFormData();
-        this.resolveLabels();
     }
 
-    private fillFormData() {
-        if (!this.stage) {
+    ngOnChanges({stage, stageStatuses, stageTypes}: SimpleChanges): void {
+        if (this.stage && stage) {
+            this.fillFormData();
+            this.resolveLabels();
+        }
+    }
+
+    private fillFormData(): void {
+        if (!this.stage || this.stageDetailsForm === undefined) {
             return;
         }
 
@@ -60,11 +61,11 @@ export class StageDetailComponent implements OnInit {
     }
 
     private resolveLabels() {
-        if (this.stageDetailsForm.get('status')?.value) {
-            this.resolvedStatusLabel = resolveLabel(this.stageDetailsForm.get('status')?.value, this.stageStatuses)
+        if (this.stage?.status) {
+            this.resolvedStatusLabel = resolveLabel(this.stage.status, this.stageStatuses)
         }
-        if (this.stageDetailsForm.get('type')?.value) {
-            this.resolvedTypeLabel = resolveLabel(this.stageDetailsForm.get('type')?.value, this.stageTypes)
+        if (this.stage?.type) {
+            this.resolvedTypeLabel = resolveLabel(this.stage.type, this.stageTypes)
         }
     }
 

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {ConfigurationEntry} from "../../../shared/configuration/model/configuration";
 import {FormGroup} from "@angular/forms";
 import {CostDetailFormProvider, CostForm} from "./cost-detail-form-provider";
@@ -12,11 +12,11 @@ import {Cost} from "../../../generated/models/cost";
     templateUrl: './cost-detail.component.html',
     styleUrl: './cost-detail.component.less'
 })
-export class CostDetailComponent implements OnInit {
+export class CostDetailComponent implements OnInit, OnChanges {
     @Input()
     cost!: Cost | null;
     @Input()
-    costCategories: ConfigurationEntry[] | null = [];
+    costCategories!: ConfigurationEntry[] | null;
 
     costDetailsForm!: FormGroup<CostForm>;
     resolvedCategoryLabel: string = '';
@@ -27,8 +27,13 @@ export class CostDetailComponent implements OnInit {
     ngOnInit(): void {
         this.configurationStore.dispatch(loadConfiguration());
         this.costDetailsForm = this.formProvider.getCostDetailForm();
-        this.fillFormData();
-        this.resolveLabels();
+    }
+
+    ngOnChanges({cost, costCategories}: SimpleChanges): void {
+        if (cost && this.cost) {
+            this.fillFormData();
+            this.resolveLabels();
+        }
     }
 
     private fillFormData() {
