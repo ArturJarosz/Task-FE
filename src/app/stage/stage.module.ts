@@ -6,7 +6,7 @@ import {RouterLink, RouterModule} from "@angular/router";
 import {StageDetailComponent} from "./stage-detail/stage-detail.component";
 import {StageDetailShellComponent} from "./stage-detail-shell/stage-detail-shell.component";
 import {SharedModule} from "../shared/shared.module";
-import {AsyncPipe} from "@angular/common";
+import {AsyncPipe, NgIf} from "@angular/common";
 import {StoreModule} from "@ngrx/store";
 import {Features} from "../features";
 import {StageEffects, stageReducer} from "./state";
@@ -15,14 +15,14 @@ import {AccordionModule} from "primeng/accordion";
 import {DropdownModule} from "primeng/dropdown";
 import {InputTextModule} from "primeng/inputtext";
 import {CalendarModule} from "primeng/calendar";
-import { StageListShellComponent } from './stage-list-shell/stage-list-shell.component';
+import {StageListShellComponent} from './stage-list-shell/stage-list-shell.component';
 
 @NgModule({
     declarations: [
         StageListComponent,
-        StageDetailComponent,
+        StageListShellComponent,
         StageDetailShellComponent,
-        StageListShellComponent
+        StageDetailComponent
     ],
     imports: [
         TableModule,
@@ -37,7 +37,8 @@ import { StageListShellComponent } from './stage-list-shell/stage-list-shell.com
         AccordionModule,
         DropdownModule,
         InputTextModule,
-        CalendarModule
+        CalendarModule,
+        NgIf
     ],
     exports: [
         StageListComponent,

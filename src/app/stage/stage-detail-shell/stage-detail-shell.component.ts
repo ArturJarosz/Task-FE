@@ -46,7 +46,6 @@ export class StageDetailShellComponent implements OnInit {
         this.stageNeedsRefresh$.subscribe({
             next: needsRefresh => {
                 if (needsRefresh) {
-                    console.log("refreshing stage");
                     this.refreshStage();
                 }
             }
@@ -55,7 +54,6 @@ export class StageDetailShellComponent implements OnInit {
 
     protected refreshStage() {
         this.stageStore.dispatch(loadStage({projectId: this.projectId, stageId: this.stageId}));
-        console.log("refreshing stage!");
     }
 
 }

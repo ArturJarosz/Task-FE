@@ -14,7 +14,7 @@
             <td>{{ cost.name }}</td>
             <td>{{ getCostCategoryLabel(cost.category) }}</td>
             <td>{{ cost.date }}</td>
-            <td>{{ cost.value | currency: ' ':false:'2.2-2' }}</td>
+            <td>{{ cost.value | currency: ' ':'code':'2.2-2' }}</td>
         </tr>
     </ng-template>
 </p-table>

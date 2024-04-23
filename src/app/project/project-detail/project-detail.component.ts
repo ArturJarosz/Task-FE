@@ -1,9 +1,9 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Store} from "@ngrx/store";
 import {FormGroup} from "@angular/forms";
 import {ProjectContractForm, ProjectCreateForm, ProjectDetailFormProvider} from "./project-detail-form-provider";
-import {ConfigurationState, loadConfiguration} from "../../shared/configuration/state";
-import {ArchitectState, loadArchitects} from "../../architect/state";
+import {ConfigurationState} from "../../shared/configuration/state";
+import {ArchitectState} from "../../architect/state";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {cloneDeep} from 'lodash';
 import {ContractStatusService} from "../contract-status/contract-status.service";
@@ -15,21 +15,22 @@ import {Contract, ContractStatus, ProjectStatus} from "../../generated/models";
 @Component({
     selector: 'project-detail',
     templateUrl: './project-detail.component.html',
-    styleUrls: ['./project-detail.component.less']
+    styleUrls: ['./project-detail.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProjectDetailComponent implements OnInit {
+export class ProjectDetailComponent implements OnInit, OnChanges {
     @Input()
     project!: Project | null;
     @Input()
-    architects: Architect[] | null = [];
+    architects!: Architect[] | null;
     @Input()
-    projectStatuses: ConfigurationEntry[] | null = [];
+    projectStatuses!: ConfigurationEntry[] | null;
     @Input()
-    contractStatuses: ConfigurationEntry[] | null = [];
+    contractStatuses!: ConfigurationEntry[] | null;
     @Input()
-    projectTypes: ConfigurationEntry[] | null = [];
+    projectTypes!: ConfigurationEntry[] | null;
     @Input()
-    costCategories: ConfigurationEntry[] | null = [];
+    costCategories!: ConfigurationEntry[] | null;
 
     projectDetailsForm!: FormGroup<ProjectCreateForm>;
     resolvedProjectStatusLabel: string = '';
@@ -47,28 +48,32 @@ export class ProjectDetailComponent implements OnInit {
     constructor(private formProvider: ProjectDetailFormProvider,
                 private configurationStore: Store<ConfigurationState>,
                 private architectStore: Store<ArchitectState>,
-                private contractService: ContractStatusService, private cd: ChangeDetectorRef) {
+                private contractService: ContractStatusService) {
     }
 
     ngOnInit(): void {
-        this.architectStore.dispatch(loadArchitects());
-        this.configurationStore.dispatch(loadConfiguration());
-
         this.projectDetailsForm = this.formProvider.getProjectDetailForm();
-        this.fillFormData();
-        // TODO: spytac Tomka czy da rade to jakos inaczej ogarnac, niz kopiowac przed deep copy i porownywac
         this.initialContractForm = cloneDeep(this.projectDetailsForm.get('contract') as FormGroup<ProjectContractForm>);
         this.initialProjectForm = cloneDeep(this.projectDetailsForm);
-        this.resolveLabels();
-        this.resolveAvailableStatuses();
+    }
 
+    ngOnChanges({
+                    project,
+                    architects,
+                    projectStatuses,
+                    contractStatuses,
+                    projectTypes,
+                    costCategories
+                }: SimpleChanges): void {
+        if (this.project && project) {
+            this.resolveLabels();
+            this.resolveAvailableStatuses();
+            this.fillFormData();
+        }
     }
 
     fillFormData(): void {
-        if (this.projectDetailsForm === undefined) {
-            return;
-        }
-        if (!this.project) {
+        if (this.projectDetailsForm === undefined || !this.project) {
             return;
         }
 
@@ -92,34 +97,28 @@ export class ProjectDetailComponent implements OnInit {
         })
     }
 
+
     resolveLabels() {
-        // TODO: spytać Tomka jak lepiej to ograć i jak rozwiązać brak danych przy przeloadowaniu strony
-        if (this.projectStatuses && this.projectStatuses.length > 0 && this.projectDetailsForm.get('status')?.value) {
-            this.resolvedProjectStatusLabel = resolveLabel(this.projectDetailsForm.get('status')
-                ?.value
-                .toString(), this.projectStatuses!);
+        if (this.projectStatuses && this.projectStatuses.length > 0 && this.project?.status) {
+            this.resolvedProjectStatusLabel = resolveLabel(this.project.status.toString(), this.projectStatuses!)
         }
-        if (this.contractStatuses && this.contractStatuses.length > 0 && this.projectDetailsForm.get(
-            ['contract', 'status'])?.value) {
-            this.resolvedContractStatusLabel = resolveLabel(this.projectDetailsForm.get('contract')
-                ?.get('status')
-                ?.value
-                .toString(), this.contractStatuses!);
+        if (this.contractStatuses && this.contractStatuses.length > 0 && this.project?.contract?.status) {
+            this.resolvedContractStatusLabel = resolveLabel(this.project.contract.status.toString(),
+                this.contractStatuses!);
         }
-        if (this.projectTypes && this.projectTypes.length > 0 && this.projectDetailsForm.get('type')?.value) {
-            this.resolvedProjectTypeLabel = resolveLabel(this.projectDetailsForm.get('type')
-                ?.value
-                .toString(), this.projectTypes!)
+        if (this.projectTypes && this.projectTypes.length > 0 && this.project?.type) {
+            this.resolvedProjectTypeLabel = resolveLabel(this.project.type.toString(), this.projectTypes!)
         }
+
         this.architectName = `${this.project?.architect!.firstName} ${this.project?.architect!.lastName}`;
         let client = this.project?.client;
         this.clientName = client?.firstName ? `${client?.firstName} ${client?.lastName}` : `${client?.companyName}`;
     }
 
-
     resolveAvailableStatuses() {
         this.availableProjectStatuses = [];
-        let currentProjectStatus = this.projectStatuses?.find(status => status.id === this.project?.status!.toString())
+        let currentProjectStatus = this.projectStatuses!.find(
+            (status) => status.id === this.project?.status!.toString())
         this.availableProjectStatuses.push(currentProjectStatus!);
         this.projectStatuses!.filter(
             entry => {
@@ -129,7 +128,7 @@ export class ProjectDetailComponent implements OnInit {
             .forEach(entry => this.availableProjectStatuses.push(entry));
 
         this.availableContractStatuses = [];
-        let currentContractStatus = this.contractStatuses?.find(
+        let currentContractStatus = this.contractStatuses!.find(
             status => status.id === this.project?.contract!.status!.toString())
         this.availableContractStatuses.push(currentContractStatus!);
         this.contractStatuses!.filter(
@@ -176,7 +175,6 @@ export class ProjectDetailComponent implements OnInit {
     onContractUpdate(): void {
         let contract = this.createContract();
         this.contractService.resolveContractStatusChange(contract, this.initialContractForm.get('status')?.value!);
-        this.cd.detectChanges();
     }
 
     onProjectUpdate(): void {

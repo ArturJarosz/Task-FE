@@ -1,13 +1,13 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {getProject, getProjectNeedsRefresh, loadProject, ProjectState} from "../state";
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
-import {ArchitectState, getArchitects} from "../../architect/state";
+import {ArchitectState, getArchitects, loadArchitects} from "../../architect/state";
 import {
     ConfigurationState,
     getContractStatusConfiguration,
     getProjectStatusConfiguration,
-    getProjectTypeConfiguration
+    getProjectTypeConfiguration, loadConfiguration
 } from "../../shared/configuration/state";
 import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {ActivatedRoute} from "@angular/router";
@@ -17,7 +17,8 @@ import {Project} from "../../generated/models/project";
 @Component({
     selector: 'app-project-detail-shell',
     templateUrl: './project-detail-shell.component.html',
-    styleUrls: ['./project-detail-shell.component.less']
+    styleUrls: ['./project-detail-shell.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProjectDetailShellComponent implements OnInit {
     architects$!: Observable<Architect[]>;
@@ -37,7 +38,10 @@ export class ProjectDetailShellComponent implements OnInit {
     ngOnInit(): void {
         let maybeProjectId = this.route.snapshot.paramMap.get('id');
         this.projectId = Number(maybeProjectId);
+
         this.projectStore.dispatch(loadProject({projectId: this.projectId}));
+        this.architectsStore.dispatch(loadArchitects());
+        this.configurationStore.dispatch(loadConfiguration());
 
         this.architects$ = this.architectsStore.select(getArchitects);
         this.project$ = this.projectStore.select(getProject);
@@ -58,4 +62,5 @@ export class ProjectDetailShellComponent implements OnInit {
     private refreshProject() {
         this.projectStore.dispatch(loadProject({projectId: this.projectId}));
     }
+
 }
