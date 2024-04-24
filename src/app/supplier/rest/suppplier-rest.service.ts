@@ -8,6 +8,8 @@ import {Supplier} from "../../generated/models/supplier";
 
 export abstract class SupplierRestService {
     abstract getSuppliers(): Observable<Supplier[]>;
+
+    abstract createSupplier(supplier: Supplier): Observable<Supplier>;
 }
 
 @Injectable()
@@ -23,5 +25,12 @@ export class SupplierRestServiceImpl extends AbstractRestService implements Supp
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))
             );
+    }
+
+    createSupplier(supplier: Supplier): Observable<Supplier> {
+        return this.httpClient.post<Supplier>(this.supplierUrl, supplier)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            )
     }
 }

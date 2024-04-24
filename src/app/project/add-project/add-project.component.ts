@@ -27,11 +27,11 @@ export class AddProjectComponent implements OnInit, OnDestroy {
 
     header: string = "Add new project";
 
-    clientsSubscription!: Subscription;
+    clientsSubscription$!: Subscription;
     clients: ClientFormModel[] = [];
-    architectsSubscription!: Subscription;
+    architectsSubscription$!: Subscription;
     architects: ArchitectFormModel[] = [];
-    projectTypesSubscription!: Subscription;
+    projectTypesSubscription$!: Subscription;
     projectTypes: ConfigurationEntry[] = [];
     addProjectForm!: FormGroup;
 
@@ -47,7 +47,7 @@ export class AddProjectComponent implements OnInit, OnDestroy {
 
     private initializeValues() {
         this.clientStore.dispatch(loadClients());
-        this.clientsSubscription = this.clientStore.select(getClients)
+        this.clientsSubscription$ = this.clientStore.select(getClients)
             .subscribe({
                 next: clients => {
                     this.clients = JSON.parse(JSON.stringify(clients));
@@ -57,7 +57,7 @@ export class AddProjectComponent implements OnInit, OnDestroy {
                 }
             });
         this.architectStore.dispatch(loadArchitects());
-        this.architectsSubscription = this.architectStore.select(getArchitects)
+        this.architectsSubscription$ = this.architectStore.select(getArchitects)
             .subscribe({
                 next: architects => {
                     this.architects = JSON.parse(JSON.stringify(architects));
@@ -67,7 +67,7 @@ export class AddProjectComponent implements OnInit, OnDestroy {
                 }
             })
         this.configurationStore.dispatch(loadConfiguration());
-        this.projectTypesSubscription = this.configurationStore.select(getProjectTypeConfiguration)
+        this.projectTypesSubscription$ = this.configurationStore.select(getProjectTypeConfiguration)
             .subscribe({
                 next: projectTypes => {
                     this.projectTypes = projectTypes;
@@ -91,9 +91,9 @@ export class AddProjectComponent implements OnInit, OnDestroy {
 
 
     ngOnDestroy(): void {
-        this.clientsSubscription.unsubscribe();
-        this.architectsSubscription.unsubscribe();
-        this.projectTypesSubscription.unsubscribe();
+        this.clientsSubscription$.unsubscribe();
+        this.architectsSubscription$.unsubscribe();
+        this.projectTypesSubscription$.unsubscribe();
     }
 
     onCancel(): void {

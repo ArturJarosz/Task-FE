@@ -14,9 +14,9 @@ import {Client, ClientType} from "../../generated/models";
     styleUrls: ['./client-list.component.less',]
 })
 export class ClientListComponent implements OnInit, OnDestroy {
-    private clientSubscription!: Subscription;
-    private clientsNeedsRefreshSubscription!: Subscription;
-    private clientTypesSubscription!: Subscription;
+    private clientSubscription$!: Subscription;
+    private clientsNeedsRefreshSubscription$!: Subscription;
+    private clientTypesSubscription$!: Subscription;
     showComponent: boolean = false;
     errorMessage: string = '';
     clients!: Client[];
@@ -29,22 +29,22 @@ export class ClientListComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.clientSubscription = this.clientStore.select(getClients)
+        this.clientSubscription$ = this.clientStore.select(getClients)
             .subscribe({
-                next: clients => {
+                next: (clients: Client[]) => {
                     this.clients = clients
                 },
-                error: error => this.errorMessage = error
+                error: (error: string) => this.errorMessage = error
             })
         this.clientStore.dispatch(loadClients());
         this.refreshClients();
-        this.clientTypesSubscription = this.configurationStore.select(getClientTypeConfiguration)
+        this.clientTypesSubscription$ = this.configurationStore.select(getClientTypeConfiguration)
             .subscribe({
-                next: clientTypes => this.clientTypes = clientTypes
+                next: (clientTypes: ConfigurationEntry[]) => this.clientTypes = clientTypes
             })
-        this.clientsNeedsRefreshSubscription = this.clientStore.select(getClientsNeedRefresh)
+        this.clientsNeedsRefreshSubscription$ = this.clientStore.select(getClientsNeedRefresh)
             .subscribe({
-                next: needsRefresh => {
+                next: (needsRefresh: any) => {
                     if (needsRefresh) {
                         this.refreshClients();
                     }
@@ -57,9 +57,9 @@ export class ClientListComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.clientTypesSubscription.unsubscribe();
-        this.clientsNeedsRefreshSubscription.unsubscribe();
-        this.clientSubscription.unsubscribe();
+        this.clientTypesSubscription$.unsubscribe();
+        this.clientsNeedsRefreshSubscription$.unsubscribe();
+        this.clientSubscription$.unsubscribe();
     }
 
     onClick() {

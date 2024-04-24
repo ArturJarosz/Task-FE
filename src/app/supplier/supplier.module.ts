@@ -9,10 +9,17 @@ import {EffectsModule} from "@ngrx/effects";
 import {SupplierRestService, SupplierRestServiceImpl} from "./rest/suppplier-rest.service";
 import {SharedModule} from "../shared/shared.module";
 import {TableModule} from "primeng/table";
+import { AddSupplierComponent } from './add-supplier/add-supplier.component';
+import {ButtonModule} from "primeng/button";
+import {DialogModule} from "primeng/dialog";
+import {InputTextModule} from "primeng/inputtext";
+import {DropdownModule} from "primeng/dropdown";
+import {InputTextareaModule} from "primeng/inputtextarea";
 
 @NgModule({
     declarations: [
-        SupplierListComponent
+        SupplierListComponent,
+        AddSupplierComponent
     ],
     imports: [
         CommonModule,
@@ -22,7 +29,12 @@ import {TableModule} from "primeng/table";
         StoreModule.forFeature(Features.SUPPLIER, supplierReducer),
         EffectsModule.forFeature([SupplierEffects]),
         SharedModule,
-        TableModule
+        TableModule,
+        ButtonModule,
+        DialogModule,
+        InputTextModule,
+        DropdownModule,
+        InputTextareaModule
     ],
     providers: [
         {provide: SupplierRestService, useClass: SupplierRestServiceImpl}

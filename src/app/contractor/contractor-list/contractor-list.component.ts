@@ -13,7 +13,7 @@ import {Contractor} from "../../generated/models/contractor";
     styleUrls: ['./contractor-list.component.less']
 })
 export class ContractorListComponent implements OnInit, OnDestroy {
-    private contractorsSubscription!: Subscription;
+    private contractorsSubscription$!: Subscription;
     contractors: Contractor[] = [];
     pageTitle = "Contractors";
     contractorTypes: ConfigurationEntry[] = [];
@@ -23,7 +23,7 @@ export class ContractorListComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.contractorState.dispatch(loadContractors());
-        this.contractorsSubscription = this.contractorState.select(getContractors)
+        this.contractorsSubscription$ = this.contractorState.select(getContractors)
             .subscribe({
                 next: contractors => this.contractors = contractors
             });
@@ -34,7 +34,7 @@ export class ContractorListComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.contractorsSubscription.unsubscribe();
+        this.contractorsSubscription$.unsubscribe();
     }
 
     getLabelFromCategory(category: string): string {

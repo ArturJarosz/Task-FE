@@ -10,7 +10,7 @@ import {Architect} from "../../generated/models/architect";
     styleUrls: ['./architect-list.component.less']
 })
 export class ArchitectListComponent implements OnInit, OnDestroy {
-    private architectsSubscription!: Subscription;
+    private architectsSubscription$!: Subscription;
     architects: Architect[] = []
 
     constructor(private architectStore: Store<ArchitectState>) {
@@ -18,14 +18,14 @@ export class ArchitectListComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.architectStore.dispatch(loadArchitects());
-        this.architectsSubscription = this.architectStore.select(getArchitects)
+        this.architectsSubscription$ = this.architectStore.select(getArchitects)
             .subscribe({
                 next: architects => this.architects = architects
             });
     }
 
     ngOnDestroy(): void {
-        this.architectsSubscription.unsubscribe();
+        this.architectsSubscription$.unsubscribe();
     }
 
 }
