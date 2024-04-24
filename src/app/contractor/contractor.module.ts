@@ -9,10 +9,17 @@ import {Features} from "../features";
 import {contractorReducer, ContractorEffects} from "./state";
 import {EffectsModule} from "@ngrx/effects";
 import {TableModule} from "primeng/table";
+import { AddContractorComponent } from './add-contractor/add-contractor.component';
+import {ButtonModule} from "primeng/button";
+import {DialogModule} from "primeng/dialog";
+import {DropdownModule} from "primeng/dropdown";
+import {InputTextModule} from "primeng/inputtext";
+import {InputTextareaModule} from "primeng/inputtextarea";
 
 @NgModule({
     declarations: [
-        ContractorListComponent
+        ContractorListComponent,
+        AddContractorComponent
     ],
     imports: [
         CommonModule,
@@ -22,7 +29,12 @@ import {TableModule} from "primeng/table";
         StoreModule.forFeature(Features.CONTRACTOR, contractorReducer),
         EffectsModule.forFeature([ContractorEffects]),
         SharedModule,
-        TableModule
+        TableModule,
+        ButtonModule,
+        DialogModule,
+        DropdownModule,
+        InputTextModule,
+        InputTextareaModule
     ],
     providers: [
         {provide: ContractorRestService, useClass: ContractorRestServiceImpl}

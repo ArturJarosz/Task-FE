@@ -23,6 +23,9 @@ export class SupplierListComponent implements OnInit, OnDestroy {
     showAddComponent: boolean = false;
 
     constructor(private supplierStore: Store<SupplierState>, private configurationStore: Store<ConfigurationState>) {
+    }
+
+    ngOnInit(): void {
         this.supplierStore.dispatch(loadSuppliers());
         this.suppliersSubscription$ = this.supplierStore.select(getSuppliers)
             .subscribe({
@@ -31,7 +34,7 @@ export class SupplierListComponent implements OnInit, OnDestroy {
         this.configurationStore.select(getSupplierTypeConfiguration)
             .subscribe({
                 next: (contractorTypes: ConfigurationEntry[]) => this.supplierTypes = contractorTypes
-            })
+            });
         this.suppliersNeedRefreshSubscription$ = this.supplierStore.select(getSuppliersNeedRefresh)
             .subscribe({
                 next: (suppliersNeedRefresh) => {
@@ -39,10 +42,7 @@ export class SupplierListComponent implements OnInit, OnDestroy {
                         this.refreshSuppliers();
                     }
                 }
-            })
-    }
-
-    ngOnInit(): void {
+            });
     }
 
     ngOnDestroy(): void {
@@ -64,6 +64,6 @@ export class SupplierListComponent implements OnInit, OnDestroy {
 
     onNotify($event: boolean) {
         this.showAddComponent = false;
-        this.supplierStore.dispatch(loadSuppliers());
+        this.refreshSuppliers();
     }
 }
