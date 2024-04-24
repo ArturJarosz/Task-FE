@@ -5,10 +5,14 @@ import {Contractor} from "../../generated/models/contractor";
 
 export interface ContractorState extends AppState {
     contractors: Contractor[];
+    contractor: Contractor | null;
+    contractorsNeedRefresh: boolean
 }
 
 export const initialState: ContractorState = {
-    contractors: []
+    contractors: [],
+    contractor: null,
+    contractorsNeedRefresh: true
 }
 
 const getContractorFeatureState = createFeatureSelector<ContractorState>(Features.CONTRACTOR);
@@ -16,4 +20,9 @@ const getContractorFeatureState = createFeatureSelector<ContractorState>(Feature
 export const getContractors = createSelector(
     getContractorFeatureState,
     state => state.contractors
+)
+
+export const getContractorsNeedRefresh = createSelector(
+    getContractorFeatureState,
+    state => state.contractorsNeedRefresh
 )

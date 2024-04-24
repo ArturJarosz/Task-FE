@@ -12,8 +12,8 @@ export class AddSupplierFormProvider {
     constructor(private formBuilder: FormBuilder) {
     }
 
-    public getAddSupplierFormGroup(): FormGroup<SupplierForm> {
-        return this.formBuilder.nonNullable.group<SupplierForm>({
+    public getAddSupplierFormGroup(): FormGroup<AddSupplierForm> {
+        return this.formBuilder.nonNullable.group<AddSupplierForm>({
             category: this.formBuilder.nonNullable.control<SupplierCategory>(DEFAULT_TYPE, [Validators.required]),
             email: this.formBuilder.control<string>(''),
             name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
@@ -23,7 +23,7 @@ export class AddSupplierFormProvider {
     }
 }
 
-interface SupplierForm {
+interface AddSupplierForm {
     category: FormControl<string>;
     email: FormControl<string | null>;
     name: FormControl<string>;
