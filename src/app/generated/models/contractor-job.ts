@@ -1,12 +1,12 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface ContractorJob {
-  contractorId: number;
-  hasInvoice: boolean;
+  contractorId?: number;
+  hasInvoice?: boolean;
   id?: number;
-  name: string;
+  name?: string;
   note?: string;
-  paid: boolean;
+  paid?: boolean;
   payable?: boolean;
-  value: number;
+  value?: number;
 }

@@ -16,6 +16,7 @@ import {DropdownModule} from "primeng/dropdown";
 import {InputTextModule} from "primeng/inputtext";
 import {CalendarModule} from "primeng/calendar";
 import {StageListShellComponent} from './stage-list-shell/stage-list-shell.component';
+import {TaskModule} from "../task/task.module";
 
 @NgModule({
     declarations: [
@@ -38,7 +39,8 @@ import {StageListShellComponent} from './stage-list-shell/stage-list-shell.compo
         DropdownModule,
         InputTextModule,
         CalendarModule,
-        NgIf
+        NgIf,
+        TaskModule
     ],
     exports: [
         StageListComponent,

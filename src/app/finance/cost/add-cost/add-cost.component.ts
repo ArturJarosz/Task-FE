@@ -3,13 +3,13 @@ import {AddCostFormProvider} from "./add-cost-form-provider";
 import {Store} from "@ngrx/store";
 import {CostState, createCost} from "../state";
 import {ConfigurationState, getCostCategories, loadConfiguration} from "../../../shared/configuration/state";
-import {ConfigurationEntry} from "../../../shared/configuration/model/configuration";
 import {Subscription} from "rxjs";
 import {FormGroup} from "@angular/forms";
 import {Cost} from "../../../generated/models/cost";
+import {ConfigurationEntry} from "../../../generated/models/configuration-entry";
 
 @Component({
-    selector: 'app-add-cost',
+    selector: 'add-cost',
     templateUrl: './add-cost.component.html',
     styleUrl: './add-cost.component.less'
 })

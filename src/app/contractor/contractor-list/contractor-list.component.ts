@@ -3,12 +3,12 @@ import {ContractorState, getContractors, getContractorsNeedRefresh, loadContract
 import {Store} from "@ngrx/store";
 import {Subscription} from "rxjs";
 import {ConfigurationState, getContractorTypeConfiguration} from "../../shared/configuration/state";
-import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Contractor} from "../../generated/models/contractor";
+import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 
 @Component({
-    selector: 'app-contractor-list',
+    selector: 'contractor-list',
     templateUrl: './contractor-list.component.html',
     styleUrls: ['./contractor-list.component.less']
 })
@@ -17,7 +17,7 @@ export class ContractorListComponent implements OnInit, OnDestroy {
     private contractorsNeedRefreshSubscription$!: Subscription;
     contractors: Contractor[] = [];
     pageTitle = "Contractors";
-    contractorTypes: ConfigurationEntry[] = [];
+    contractorTypes!: ConfigurationEntry[];
 
     protected showAddContractorComponent: boolean = false;
 

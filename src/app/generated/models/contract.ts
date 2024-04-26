@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-import { ContractStatus } from './contract-status';
+import { ContractStatus } from '../models/contract-status';
 export interface Contract {
   deadline?: string;
   endDate?: string;

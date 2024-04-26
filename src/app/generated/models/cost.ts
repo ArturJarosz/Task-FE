@@ -2,13 +2,13 @@
 /* eslint-disable */
 import { CostCategory } from '../models/cost-category';
 export interface Cost {
-  category: CostCategory;
-  date: string;
-  hasInvoice: boolean;
+  category?: CostCategory;
+  date?: string;
+  hasInvoice?: boolean;
   id?: number;
-  name: string;
+  name?: string;
   note?: string;
-  paid: boolean;
+  paid?: boolean;
   payable?: boolean;
-  value: number;
+  value?: number;
 }

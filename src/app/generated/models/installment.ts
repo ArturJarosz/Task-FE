@@ -1,11 +1,11 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface Installment {
-  hasInvoice: boolean;
+  hasInvoice?: boolean;
   id?: number;
   note?: string;
-  paid: boolean;
+  paid?: boolean;
   paymentDate?: string;
-  stageId: number;
-  value: number;
+  stageId?: number;
+  value?: number;
 }

@@ -1,7 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {resolveLabel} from "../../shared/utils/label-utils";
-import {Client, ClientType, Project} from "../../generated/models";
+import {Client, ClientType, ConfigurationEntry, Project} from "../../generated/models";
 
 @Component({
     selector: 'project-list',

@@ -20,9 +20,8 @@ import {ClientFormProvider} from "./client-form-provider";
 import {ClientState, createClient} from "../state";
 import {Store} from "@ngrx/store";
 import {ConfigurationState, getClientTypeConfiguration} from "../../shared/configuration/state";
-import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {resolveLabel} from "../../shared/utils/label-utils";
-import {Client, ClientType} from "../../generated/models";
+import {Client, ClientType, ConfigurationEntry} from "../../generated/models";
 
 const DEFAULT_CLIENT_TYPE = ClientType.PRIVATE.toString();
 
@@ -30,7 +29,7 @@ const DEFAULT_CLIENT_TYPE = ClientType.PRIVATE.toString();
     providedIn: 'root',
 })
 @Component({
-    selector: 'app-add-client',
+    selector: 'add-client',
     templateUrl: './add-client.component.html',
     styleUrls: ['./add-client.component.less'],
 })

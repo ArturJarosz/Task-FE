@@ -8,7 +8,7 @@
     <div wrapper-buttons>
         <p-button icon="pi pi-plus" (click)="onClick()" [rounded]="true" class="add-button transition-colors transition-duration-300"></p-button>
     </div>
-    <app-add-project [visible]="showComponent" (notify)="onNotify($event)" (refreshProjects)="refreshProjects()"></app-add-project>
+    <add-project [visible]="showComponent" (notify)="onNotify($event)" (refreshProjects)="refreshProjects()"></add-project>
 </wrapper>
 
 

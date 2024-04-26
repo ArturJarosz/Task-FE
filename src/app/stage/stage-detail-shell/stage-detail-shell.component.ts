@@ -1,6 +1,5 @@
 import {Component, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Observable} from "rxjs";
-import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {ActivatedRoute} from "@angular/router";
 import {getStage, getStagesNeedRefresh, loadStage, refreshStage, StageState} from "../state";
 import {Store} from "@ngrx/store";
@@ -10,6 +9,7 @@ import {
     getStageTypeConfiguration
 } from "../../shared/configuration/state";
 import {Stage} from "../../generated/models/stage";
+import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 
 @Component({
     selector: 'stage-detail-shell',

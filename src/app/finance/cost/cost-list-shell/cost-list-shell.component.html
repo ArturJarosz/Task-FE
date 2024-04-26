@@ -5,5 +5,5 @@
     <cost-list [costs]="costs!" [projectId]="projectId" [costCategories]="costCategories$ | async">
     </cost-list>
 </div>
-<app-add-cost [visible]="showAddCostComponent" [projectId]="projectId" (notify)="onNotify($event)"></app-add-cost>
+<add-cost [visible]="showAddCostComponent" [projectId]="projectId" (notify)="onNotify($event)"></add-cost>
 

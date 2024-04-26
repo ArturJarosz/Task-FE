@@ -6,7 +6,7 @@ import {ClientState, getClient, loadClient} from "../state";
 import {Client, ClientType} from "../../generated/models";
 
 @Component({
-    selector: 'app-client-detail',
+    selector: 'client-detail',
     templateUrl: './client-detail.component.html',
     styleUrls: ['./client-detail.component.less']
 })

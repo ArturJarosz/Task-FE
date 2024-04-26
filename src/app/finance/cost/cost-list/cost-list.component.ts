@@ -1,8 +1,8 @@
 import {Component, Input} from '@angular/core';
 
-import {ConfigurationEntry} from "../../../shared/configuration/model/configuration";
 import {resolveLabel} from "../../../shared/utils/label-utils";
 import {Cost} from "../../../generated/models/cost";
+import {ConfigurationEntry} from "../../../generated/models/configuration-entry";
 
 @Component({
     selector: 'cost-list',

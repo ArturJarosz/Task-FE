@@ -1,9 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Observable} from "rxjs";
-import {ConfigurationEntry} from "../../../shared/configuration/model/configuration";
 import {Store} from "@ngrx/store";
 import {ConfigurationState, getCostCategories} from "../../../shared/configuration/state";
 import {Cost} from "../../../generated/models/cost";
+import {ConfigurationEntry} from "../../../generated/models/configuration-entry";
 
 @Component({
     selector: 'cost-list-shell',

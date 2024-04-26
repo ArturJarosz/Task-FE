@@ -5,7 +5,7 @@ import {Store} from "@ngrx/store";
 import {Architect} from "../../generated/models/architect";
 
 @Component({
-    selector: 'app-architect-list',
+    selector: 'architect-list',
     templateUrl: './architect-list.component.html',
     styleUrls: ['./architect-list.component.less']
 })

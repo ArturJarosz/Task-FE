@@ -76,6 +76,16 @@ export const getStageTypeConfiguration = createSelector(
     state => state.configuration.stageTypes
 )
 
+export const getTaskTypeConfiguration = createSelector(
+    getConfigurationFeatureState,
+    state => state.configuration.taskTypes
+)
+
+export const getTaskStatusConfiguration = createSelector(
+    getConfigurationFeatureState,
+    state => state.configuration.taskStatuses
+)
+
 export const getCostCategories = createSelector(
     getConfigurationFeatureState,
     state => state.configuration.costCategories

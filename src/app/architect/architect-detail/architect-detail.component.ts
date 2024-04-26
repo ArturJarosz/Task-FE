@@ -7,7 +7,7 @@ import {loadArchitect} from "../state";
 import {Architect} from "../../generated/models/architect";
 
 @Component({
-    selector: 'app-architect-detail',
+    selector: 'architect-detail',
     templateUrl: './architect-detail.component.html',
     styleUrls: ['./architect-detail.component.less']
 })

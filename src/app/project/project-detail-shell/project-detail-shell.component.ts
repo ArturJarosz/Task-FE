@@ -9,13 +9,13 @@ import {
     getProjectStatusConfiguration,
     getProjectTypeConfiguration, loadConfiguration
 } from "../../shared/configuration/state";
-import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {ActivatedRoute} from "@angular/router";
 import {Architect} from "../../generated/models/architect";
 import {Project} from "../../generated/models/project";
+import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 
 @Component({
-    selector: 'app-project-detail-shell',
+    selector: 'project-detail-shell',
     templateUrl: './project-detail-shell.component.html',
     styleUrls: ['./project-detail-shell.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush

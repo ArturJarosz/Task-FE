@@ -1,0 +1,18 @@
+<p-table *ngIf="tasks" [value]="tasks" [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Status</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-task>
+        <tr>
+            <td>{{ task.id }}</td>
+            <td>{{ task.name }}</td>
+            <td>{{ getTypeLabel(task.type) }}</td>
+            <td>{{ getStatusLabel(task.status) }}</td>
+        </tr>
+    </ng-template>
+</p-table>

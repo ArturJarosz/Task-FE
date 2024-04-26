@@ -1,11 +1,11 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {FormGroup} from "@angular/forms";
 import {StageDetailFormProvider, StageForm} from "./stage-detail-form-provider";
 import {ConfigurationState, loadConfiguration} from "../../shared/configuration/state";
 import {Store} from "@ngrx/store";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Stage} from "../../generated/models/stage";
+import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 
 @Component({
     selector: 'stage-detail',
@@ -13,6 +13,8 @@ import {Stage} from "../../generated/models/stage";
     styleUrls: ['./stage-detail.component.less']
 })
 export class StageDetailComponent implements OnInit, OnChanges {
+    @Input()
+    projectId: number = 0;
     @Input()
     stage!: Stage | null;
     @Input()
