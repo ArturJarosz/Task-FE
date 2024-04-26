@@ -7,13 +7,13 @@ import {ArchitectState, getArchitects, loadArchitects} from "../../architect/sta
 import {createProject, ProjectState} from "../state";
 import {Subscription} from "rxjs";
 import {ConfigurationState, getProjectTypeConfiguration, loadConfiguration} from "../../shared/configuration/state";
-import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {ArchitectFormModel} from "../../architect/model/architect";
 import {ClientFormModel} from "../../client/model/client";
 import {ProjectCreate} from "../../generated/models/project-create";
+import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 
 @Component({
-    selector: 'app-add-project',
+    selector: 'add-project',
     templateUrl: './add-project.component.html',
     styleUrls: ['./add-project.component.less']
 })

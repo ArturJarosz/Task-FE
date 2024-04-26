@@ -4,13 +4,12 @@ import {FormGroup} from "@angular/forms";
 import {ProjectContractForm, ProjectCreateForm, ProjectDetailFormProvider} from "./project-detail-form-provider";
 import {ConfigurationState} from "../../shared/configuration/state";
 import {ArchitectState} from "../../architect/state";
-import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {cloneDeep} from 'lodash';
 import {ContractStatusService} from "../contract-status/contract-status.service";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Architect} from "../../generated/models/architect";
 import {Project} from "../../generated/models/project";
-import {Contract, ContractStatus, ProjectStatus} from "../../generated/models";
+import {ConfigurationEntry, Contract, ContractStatus, ProjectStatus} from "../../generated/models";
 
 @Component({
     selector: 'project-detail',

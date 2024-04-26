@@ -1,4 +1,4 @@
-<p-table [value]="stages!" [tableStyle]="{ 'min-width': '50rem' }">
+<p-table *ngIf="stages" [value]="stages" [tableStyle]="{ 'min-width': '50rem' }">
     <ng-template pTemplate="header">
         <tr>
             <th>Id</th>

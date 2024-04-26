@@ -1,5 +1,4 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {Observable} from "rxjs";
 import {Store} from "@ngrx/store";
 import {
@@ -8,6 +7,7 @@ import {
     getStageTypeConfiguration
 } from "../../shared/configuration/state";
 import {Stage} from "../../generated/models/stage";
+import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 
 @Component({
     selector: 'stage-list-shell',
@@ -16,7 +16,7 @@ import {Stage} from "../../generated/models/stage";
 })
 export class StageListShellComponent implements OnInit{
     @Input()
-    stages: Array<Stage> | null = [];
+    stages: Array<Stage> | null = null;
     @Input()
     projectId: number = 0;
 

@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-import { ContractorCategory } from './contractor-category';
+import { ContractorCategory } from '../models/contractor-category';
 export interface Contractor {
   category: ContractorCategory;
   email?: string;

@@ -1,7 +1,7 @@
 import {Component, Input} from "@angular/core";
-import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Stage} from "../../generated/models/stage";
+import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 
 @Component({
     selector: 'stage-list',
@@ -10,11 +10,11 @@ import {Stage} from "../../generated/models/stage";
 })
 export class StageListComponent {
     @Input()
-    stages: Stage[] | null = [];
+    stages!: Stage[] | null;
     @Input()
-    stageTypes: ConfigurationEntry[] | null = [];
+    stageTypes!: ConfigurationEntry[] | null;
     @Input()
-    stageStatuses: ConfigurationEntry[] | null = [];
+    stageStatuses!: ConfigurationEntry[] | null;
     @Input()
     projectId: number = 0;
 

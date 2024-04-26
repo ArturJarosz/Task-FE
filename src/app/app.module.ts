@@ -20,6 +20,7 @@ import {EffectsModule} from '@ngrx/effects';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {ContractorModule} from "./contractor/contractor.module";
 import {SupplierModule} from "./supplier/supplier.module";
+import {StageModule} from "./stage/stage.module";
 
 @NgModule({
     declarations: [
@@ -32,6 +33,7 @@ import {SupplierModule} from "./supplier/supplier.module";
         ArchitectModule,
         ClientModule,
         ProjectModule,
+        StageModule,
         ContractorModule,
         SupplierModule,
         RouterModule.forRoot([

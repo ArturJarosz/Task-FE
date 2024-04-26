@@ -9,7 +9,7 @@ import {Supplier} from "../../generated/models/supplier";
 import {createSupplier, SupplierState} from "../state";
 
 @Component({
-    selector: 'app-add-supplier',
+    selector: 'add-supplier',
     templateUrl: './add-supplier.component.html',
     styleUrl: './add-supplier.component.less'
 })

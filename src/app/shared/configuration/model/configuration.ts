@@ -1,7 +1,4 @@
-export interface ConfigurationEntry {
-    id: string,
-    label: string
-}
+import {ConfigurationEntry} from "../../../generated/models/configuration-entry";
 
 export interface ApplicationConfiguration {
     supplierTypes: ConfigurationEntry[],

@@ -1,11 +1,11 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {ConfigurationEntry} from "../../../shared/configuration/model/configuration";
 import {FormGroup} from "@angular/forms";
 import {CostDetailFormProvider, CostForm} from "./cost-detail-form-provider";
 import {ConfigurationState, loadConfiguration} from "../../../shared/configuration/state";
 import {Store} from "@ngrx/store";
 import {resolveLabel} from "../../../shared/utils/label-utils";
 import {Cost} from "../../../generated/models/cost";
+import {ConfigurationEntry} from "../../../generated/models/configuration-entry";
 
 @Component({
     selector: 'cost-detail',
@@ -44,7 +44,7 @@ export class CostDetailComponent implements OnInit, OnChanges {
         this.costDetailsForm.patchValue({
             id: this.cost.id,
             name: this.cost.name,
-            date: new Date(this.cost.date),
+            date: new Date(this.cost.date!),
             category: this.cost.category,
             value: this.cost.value,
             note: this.cost.note,

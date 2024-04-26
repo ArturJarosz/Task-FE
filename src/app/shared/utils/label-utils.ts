@@ -1,4 +1,4 @@
-import {ConfigurationEntry} from "../configuration/model/configuration";
+import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 
 export function resolveLabel(id: string | undefined, entries: ConfigurationEntry[] | null): string {
     if (!id) {

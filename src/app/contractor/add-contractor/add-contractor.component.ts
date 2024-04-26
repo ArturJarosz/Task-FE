@@ -14,7 +14,7 @@ import {ContractorState, createContractor} from "../state";
 import {Contractor} from "../../generated/models/contractor";
 
 @Component({
-    selector: 'app-add-contractor',
+    selector: 'add-contractor',
     templateUrl: './add-contractor.component.html',
     styleUrl: './add-contractor.component.less'
 })

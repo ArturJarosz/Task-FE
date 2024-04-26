@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-import { SupplierCategory } from './supplier-category';
+import { SupplierCategory } from '../models/supplier-category';
 export interface Supplier {
   category?: SupplierCategory;
   email?: string;

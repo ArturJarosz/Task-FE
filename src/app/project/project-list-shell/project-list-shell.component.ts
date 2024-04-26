@@ -7,8 +7,8 @@ import {
     getProjectTypeConfiguration
 } from "../../shared/configuration/state";
 import {Observable, Subscription} from "rxjs";
-import {ConfigurationEntry} from "../../shared/configuration/model/configuration";
 import {Project} from "../../generated/models/project";
+import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 
 @Component({
     selector: 'project-list-shell',
