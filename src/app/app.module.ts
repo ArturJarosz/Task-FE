@@ -21,6 +21,7 @@ import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {ContractorModule} from "./contractor/contractor.module";
 import {SupplierModule} from "./supplier/supplier.module";
 import {StageModule} from "./stage/stage.module";
+import {TaskModule} from "./task/task.module";
 
 @NgModule({
     declarations: [
@@ -34,6 +35,7 @@ import {StageModule} from "./stage/stage.module";
         ClientModule,
         ProjectModule,
         StageModule,
+        TaskModule,
         ContractorModule,
         SupplierModule,
         RouterModule.forRoot([

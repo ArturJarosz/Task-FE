@@ -1,8 +1,8 @@
-<wrapper [title]="stage?.name! + ',&nbsp;'" [secondaryTitle]="resolvedTypeLabel">
+<wrapper *ngIf="task" [title]="task.name + ',&nbsp;'" [secondaryTitle]="$resolvedTypeLabel()">
     <div wrapper-body>
         <p-accordion [multiple]="true">
-            <p-accordionTab [selected]="true" header="Stage details" class="text-xl text-900 font-medium">
-                <form [formGroup]="stageDetailsForm" >
+            <p-accordionTab [selected]="true" header="Task details" class="text-xl text-900 font-medium">
+                <form [formGroup]="taskDetailForm">
                     <div class="grid grid-nogutter surface-border pt-1 col-12 ">
                         <div class="md:col-4 p-1">
                             <div class="text-500 font-medium mb-1">Stage name</div>
@@ -10,42 +10,34 @@
                         </div>
                         <div class="md:col-4 p-1">
                             <div class="text-500 font-medium mb-1">Type</div>
-                            <div class="p-1" id="type">{{resolvedTypeLabel}}</div>
+                            <div class="p-1" id="type">{{ $resolvedTypeLabel() }}</div>
                         </div>
                         <div class="md:col-4 p-1">
-                            <div class="text-500 font-medium mb-1">Status</div>
-                            <div class="p-1" id="status">{{resolvedStatusLabel}}</div>
+                            <div class="text-500 font-medium mb-1">Type</div>
+                            <div class="p-1" id="status">{{ $resolvedStatusLabel() }}</div>
                         </div>
                     </div>
                     <div class="grid grid-nogutter surface-border pt-1 col-12 ">
-                        <div class="md:col-4 p-1">
+                        <div class="md:col-6 p-1">
                             <div class="text-500 font-medium mb-1">Start date</div>
                             <p-calendar formControlName="startDate" id="startDate"></p-calendar>
                         </div>
-                        <div class="md:col-4 p-1">
-                            <div class="text-500 font-medium mb-1">Deadline</div>
-                            <p-calendar formControlName="deadline" id="deadline"></p-calendar>
-                        </div>
-                        <div class="md:col-4 p-1">
+                        <div class="md:col-6 p-1">
                             <div class="text-500 font-medium mb-1">End date</div>
                             <p-calendar formControlName="endDate" id="endDate"></p-calendar>
                         </div>
                     </div>
+                    <div class="grid grid-nogutter surface-border pt-1 col-12 ">
+                        <div class="md:col-12 p-1">
+                            <div class="text-500 font-medium mb-1">Note</div>
+                            <textarea formControlName="note" id="note" type="text" pInputTextarea rows="2"
+                                      [autoResize]="true"></textarea>
+                        </div>
+                    </div>
                 </form>
             </p-accordionTab>
-            <p-accordionTab [selected]="true" header="Tasks" class="text-xl text-900 font-medium">
-                <div *ngIf="stage" class="lg:px-2 md:px-2 px-2 py-1 ng-star-inserted surface-border">
-                    <task-list-shell [tasks]="stage.tasks!" [stageId]="stage.id!" [projectId]="projectId">
-
-                    </task-list-shell>
-                </div>
-
-            </p-accordionTab>
         </p-accordion>
-
-
     </div>
     <div wrapper-buttons>
-
     </div>
 </wrapper>

@@ -28,6 +28,7 @@ import {AccordionModule} from "primeng/accordion";
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {StageModule} from "../stage/stage.module";
 import {FinanceModule} from "../finance/finance.module";
+import {TaskModule} from "../task/task.module";
 
 @NgModule({
     declarations: [
