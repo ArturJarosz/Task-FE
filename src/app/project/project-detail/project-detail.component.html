@@ -2,12 +2,12 @@
     <div wrapper-body>
         <p-accordion [multiple]="true">
             <form [formGroup]="projectDetailsForm">
-                <p-accordionTab [selected]="true" header="Contract details" class="text-xl text-900 font-medium">
+                <p-accordionTab [selected]="true" header="Contract details" class="text-900 font-medium">
                     <div class="lg:px-2 md:px-2 px-2 py-1 ng-star-inserted surface-border" formGroupName="contract">
                         <div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
                             <p-button icon="pi pi-arrow-down" [disabled]="!shouldUpdateContract()" (click)="onContractUpdate()" [outlined]="true" [rounded]="true" class="update-button transition-colors transition-duration-300"></p-button>
                         </div>
-                        <div class="grid grid-nogutter surface-border pt-1 col-12">
+                        <div class="grid grid-nogutter surface-border col-12 p-1">
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium mb-1">Project value</div>
                                 <div id="value">{{ projectDetailsForm.get(['contract', 'offerValue'])?.value | currency: ' ':'code':'4.2-2' }}</div>
@@ -22,7 +22,7 @@
                                 <p-calendar formControlName="signingDate" id="signingDate"></p-calendar>
                             </div>
                         </div>
-                        <div class="grid grid-nogutter surface-border pt-1 col-12">
+                        <div class="grid grid-nogutter surface-border col-12 p-1">
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium mb-1">Deadline</div>
                                 <p-calendar formControlName="deadline" id="deadline"></p-calendar>
@@ -38,12 +38,12 @@
                         </div>
                     </div>
                 </p-accordionTab>
-                <p-accordionTab [selected]="true" header="Project details" class="text-xl text-900 font-medium">
+                <p-accordionTab [selected]="true" header="Project details" class="text-900 font-medium">
                     <div class="lg:px-2 md:px-2 px-2 py-1 ng-star-inserted surface-border">
                         <div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
                             <p-button icon="pi pi-arrow-down" [disabled]="!shouldUpdateProject()" (click)="onProjectUpdate()" [outlined]="true" [rounded]="true" class="update-button transition-colors transition-duration-300"></p-button>
                         </div>
-                        <div class="grid grid-nogutter surface-border pt-1 col-12">
+                        <div class="grid grid-nogutter surface-border col-12 p-1">
                             <div class="col-4 p-1">
                                 <div class="text-500 font-medium mb-1">Project name</div>
                                 <input formControlName="name" pInputText>
@@ -58,7 +58,7 @@
                                 <div id="architect">{{ architectName }}</div>
                             </div>
                         </div>
-                        <div class="grid grid-nogutter surface-border pt-1 col-12">
+                        <div class="grid grid-nogutter surface-border col-12 p-1">
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium mb-1">Client</div>
                                 <div id="client">{{ clientName }}</div>
@@ -72,12 +72,12 @@
                     </div>
                 </p-accordionTab>
             </form>
-            <p-accordionTab [selected]="true" header="Stages" class="text-xl text-900 font-medium">
+            <p-accordionTab [selected]="true" header="Stages" class="text-900 font-medium">
                 <div *ngIf="project" class="lg:px-2 md:px-2 px-2 py-1 ng-star-inserted surface-border">
                     <stage-list-shell [stages]="project.stages!" [projectId]="project!.id!"></stage-list-shell>
                 </div>
             </p-accordionTab>
-            <p-accordionTab [selected]="true" header="Costs" class="text-xl text-900 font-medium">
+            <p-accordionTab [selected]="true" header="Costs" class="text-900 font-medium">
                 <div *ngIf="project" class="lg:px-2 md:px-2 px-2 py-1 ng-star-inserted surface-border">
                     <cost-list-shell [projectId]="project.id!" [costs]="project.costs!"></cost-list-shell>
                 </div>

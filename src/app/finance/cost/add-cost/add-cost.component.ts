@@ -23,7 +23,7 @@ export class AddCostComponent implements OnInit, OnDestroy {
 
     header: string = "Add new cost";
 
-    costCategoriesSubscription$!: Subscription;
+    costCategoriesSubscription!: Subscription;
     costCategories: ConfigurationEntry[] = [];
     addCostForm!: FormGroup;
 
@@ -33,7 +33,7 @@ export class AddCostComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.configurationStore.dispatch(loadConfiguration());
-        this.costCategoriesSubscription$ = this.configurationStore.select(getCostCategories)
+        this.costCategoriesSubscription = this.configurationStore.select(getCostCategories)
             .subscribe({
                 next: categories => this.costCategories = categories
             })
@@ -42,7 +42,7 @@ export class AddCostComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.costCategoriesSubscription$.unsubscribe();
+        this.costCategoriesSubscription.unsubscribe();
     }
 
     onClose(): void {

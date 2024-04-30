@@ -1,7 +1,19 @@
-<task-list
-        [tasks]="tasks"
-        [taskTypes]="taskTypes$ | async"
-        [taskStatuses]="taskStatuses$ | async"
-        [projectId]="projectId"
-        [stageId]="stageId">
-</task-list>
+<div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
+    <p-button icon="pi pi-plus" (onClick)="onClick()" [rounded]="true" class="add-button transition-colors transition-duration-300"></p-button>
+</div>
+<div class="pt-3">
+    <task-list
+            [tasks]="tasks"
+            [taskTypes]="taskTypes$ | async"
+            [taskStatuses]="taskStatuses$ | async"
+            [projectId]="projectId"
+            [stageId]="stageId">
+    </task-list>
+</div>
+<add-task
+    [visible]="showAddTaskComponent"
+    [projectId]="projectId"
+    [stageId]="stageId"
+    (notify)="onNotify($event)"
+>
+</add-task>

@@ -40,7 +40,12 @@ export class TaskDetailShellComponent implements OnInit {
         this.stageId = Number(maybeStageId);
         let maybeTaskId = this.route.snapshot.paramMap.get('taskId');
         this.taskId = Number(maybeTaskId);
-        this.taskStore.loadTask(this.projectId, this.stageId, this.taskId)
+
+        this.taskStore.setTaskId(this.taskId);
+        this.taskStore.setStageId(this.stageId);
+        this.taskStore.setProjectId(this.projectId);
+
+        this.taskStore.loadTaskRx({});
     }
 
 }

@@ -24,12 +24,21 @@ export class TaskListShellComponent implements OnInit {
 
     taskTypes$!: Observable<ConfigurationEntry[]>;
     taskStatuses$!: Observable<ConfigurationEntry[]>;
+    showAddTaskComponent: boolean = false;
 
     constructor(private configurationStore: Store<ConfigurationState>) {
+    }
+
+    ngOnInit(): void {
         this.taskTypes$ = this.configurationStore.select(getTaskTypeConfiguration);
         this.taskStatuses$ = this.configurationStore.select(getTaskStatusConfiguration);
     }
 
-    ngOnInit(): void {
+    onClick() {
+        this.showAddTaskComponent = true;
+    }
+
+    onNotify(event: boolean) {
+        this.showAddTaskComponent = false;
     }
 }

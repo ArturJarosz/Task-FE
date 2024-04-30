@@ -8,14 +8,15 @@ import {MessageService} from "primeng/api";
 
 export abstract class TaskRestService {
     abstract loadTask(projectId: number, stageId: number, taskId: number): Observable<Task>;
+
     abstract createTask(projectId: number, stageId: number, task: Task): Observable<Task>;
 
-    abstract task$: Observable<Task>;
 }
 
 @Injectable()
 export class TaskRestServiceImpl extends AbstractRestService implements TaskRestService {
     private projectsUrl: string = `${environment.baseUrl}/projects`;
+
 
     constructor(private httpClient: HttpClient, private messageService: MessageService) {
         super();
@@ -34,9 +35,4 @@ export class TaskRestServiceImpl extends AbstractRestService implements TaskRest
                 catchError(error => this.handleError(error, this.messageService))
             );
     }
-
-    task$ = this.httpClient.get<Task>(`${this.projectsUrl}`)
-        .pipe(
-            catchError(error => this.handleError(error, this.messageService))
-        );
 }
