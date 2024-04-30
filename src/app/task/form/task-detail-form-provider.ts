@@ -23,6 +23,15 @@ export class TaskDetailFormProvider {
             type: this.formBuilder.nonNullable.control<TaskType>(DEFAULT_TYPE),
             note: this.formBuilder.nonNullable.control('')
         });
+    };
+
+    public getAddTaskForm(): FormGroup<AddTaskForm> {
+        return this.formBuilder.nonNullable.group<AddTaskForm>({
+            name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
+            startDate: this.formBuilder.control<string>(''),
+            type: this.formBuilder.nonNullable.control<TaskType>(DEFAULT_TYPE),
+            note: this.formBuilder.control('')
+        })
     }
 }
 
@@ -34,7 +43,13 @@ export interface TaskForm {
     status: FormControl<TaskStatus>,
     type: FormControl<TaskType>,
     note: FormControl<string>
+}
 
+export interface AddTaskForm {
+    name: FormControl<string>,
+    startDate: FormControl<string | null>,
+    type: FormControl<TaskType>,
+    note: FormControl<string | null>
 }
 
 

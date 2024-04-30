@@ -3,11 +3,11 @@
           (onHide)="onClose()">
     <ng-template pTemplate="header">
         <div class="flex flex-column gap-2">
-            <h1 class="m-0 text-900 font-semibold text-xl line-height-3">{{ header }}</h1>
+            <h1 class="m-0 text-900 font-semibold line-height-3">{{ header }}</h1>
         </div>
     </ng-template>
     <form [formGroup]="addSupplierForm">
-        <div class="grid grid-nogutter surface-border pt-1 col-12">
+        <div class="grid grid-nogutter surface-border col-12 p-1">
             <div class="md:col-6 p-1">
                 <label for="name" class="block mb-1 text-color text-base">Name</label>
                 <span class="p-input-icon-left w-full">
@@ -25,7 +25,7 @@
                 </span>
             </div>
         </div>
-        <div class="grid grid-nogutter surface-border pt-1 col-12">
+        <div class="grid grid-nogutter surface-border col-12 p-1">
             <div class="md:col-6 p-1">
                 <label for="email" class="block mb-1 text-color text-base">Email</label>
                 <span class="p-input-icon-left w-full">
@@ -47,7 +47,7 @@
                 </span>
             </div>
         </div>
-        <div class="grid grid-nogutter surface-border pt-1 col-12">
+        <div class="grid grid-nogutter surface-border col-12 p-1">
             <div class="w-full">
                 <label for="note" class="block mb-1 text-color text-base">Note</label>
                 <span class="p-input-icon-left w-full">

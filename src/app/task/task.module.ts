@@ -12,6 +12,9 @@ import {AccordionModule} from "primeng/accordion";
 import {InputTextModule} from "primeng/inputtext";
 import {CalendarModule} from "primeng/calendar";
 import {InputTextareaModule} from "primeng/inputtextarea";
+import { AddTaskComponent } from './add-task/add-task.component';
+import {DialogModule} from "primeng/dialog";
+import {DropdownModule} from "primeng/dropdown";
 
 
 @NgModule({
@@ -19,7 +22,8 @@ import {InputTextareaModule} from "primeng/inputtextarea";
         TaskListComponent,
         TaskListShellComponent,
         TaskDetailComponent,
-        TaskDetailShellComponent
+        TaskDetailShellComponent,
+        AddTaskComponent
     ],
     exports: [
         TaskListShellComponent
@@ -34,7 +38,9 @@ import {InputTextareaModule} from "primeng/inputtextarea";
         AccordionModule,
         InputTextModule,
         CalendarModule,
-        InputTextareaModule
+        InputTextareaModule,
+        DialogModule,
+        DropdownModule
     ],
     providers: [
         {provide: TaskRestService, useClass: TaskRestServiceImpl}

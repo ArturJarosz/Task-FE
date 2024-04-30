@@ -1,7 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
-import { TaskStatus } from '../models/task-status';
-import { TaskType } from '../models/task-type';
+import { TaskStatus } from './task-status';
+import { TaskType } from './task-type';
 export interface Task {
   endDate?: string;
   id?: number;

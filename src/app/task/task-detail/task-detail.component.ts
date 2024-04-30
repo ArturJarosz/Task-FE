@@ -3,7 +3,7 @@ import {Task} from "../../generated/models/task";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {FormGroup} from "@angular/forms";
-import {TaskDetailFormProvider, TaskForm} from "./task-detail-form-provider";
+import {TaskDetailFormProvider, TaskForm} from "../form/task-detail-form-provider";
 
 @Component({
     selector: 'task-detail',
@@ -43,6 +43,7 @@ export class TaskDetailComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['task'] && this.task) {
+            this.taskDetailForm = this.formProvider.getTaskDetailForm();
             this.fillFormData();
         }
     }

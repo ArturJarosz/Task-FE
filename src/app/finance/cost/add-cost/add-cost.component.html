@@ -3,11 +3,11 @@
           (onHide)="onClose()">
     <ng-template pTemplate="header">
         <div class="flex flex-column gap-2">
-            <h1 class="m-0 text-900 font-semibold text-xl line-height-3">{{ header }}</h1>
+            <h1 class="m-0 text-900 font-semibold line-height-3">{{ header }}</h1>
         </div>
     </ng-template>
     <form [formGroup]="addCostForm">
-        <div class="grid grid-nogutter surface-border pt-1 col-12">
+        <div class="grid grid-nogutter surface-border col-12 p-1">
             <div class="md:col-4 p-1">
                 <label for="name" class="block mb-1 text-color text-base">Cost name</label>
                 <span class="p-input-icon-left w-full">
@@ -31,7 +31,7 @@
                 </span>
             </div>
         </div>
-        <div class="grid grid-nogutter surface-border pt-1 col-12 ">
+        <div class="grid grid-nogutter surface-border col-12 p-1 ">
             <div class="md:col-4 p-1">
                 <div class="text-500 font-medium mb-1">Date</div>
                 <p-calendar formControlName="date" id="date"></p-calendar>
@@ -45,9 +45,9 @@
                 <p-inputSwitch formControlName="hasInvoice" id="hasInvoice"></p-inputSwitch>
             </div>
         </div>
-        <div class="grid grid-nogutter surface-border pt-1 col-12 ">
+        <div class="grid grid-nogutter surface-border col-12 p-1 ">
             <div class="md:col-8 p-1">
-                <div class="text-500 font-medium mb-1 h-2rem">Note2</div>
+                <div class="text-500 font-medium mb-1 h-2rem">Note</div>
                 <textarea formControlName="note" id="note" type="text" pInputTextarea rows="2"
                           [autoResize]="true" style="height: 4rem;overflow: hidden;"></textarea>
             </div>
