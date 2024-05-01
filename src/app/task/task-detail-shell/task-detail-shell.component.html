@@ -1,5 +1,6 @@
 <task-detail
         [task]="$task()"
         [taskStatuses]="taskStatuses | async"
-        [taskTypes]="taskTypes | async">
+        [taskTypes]="taskTypes | async"
+        (updateStatusEvent)="updateTask($event)">
 </task-detail>
