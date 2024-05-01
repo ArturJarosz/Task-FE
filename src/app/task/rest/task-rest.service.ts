@@ -5,11 +5,17 @@ import {Task} from "../../generated/models/task";
 import {environment} from "../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
 import {MessageService} from "primeng/api";
+import {UpdateTaskStatus} from "../model/task";
 
 export abstract class TaskRestService {
     abstract loadTask(projectId: number, stageId: number, taskId: number): Observable<Task>;
 
     abstract createTask(projectId: number, stageId: number, task: Task): Observable<Task>;
+
+    abstract updateStatus(projectId: number, stageId: number, taskId: number,
+                          updateTaskStatusDto: UpdateTaskStatus): Observable<Task>
+
+    abstract updateTask(projectId: number, stageId: number, taskId: number, task: Task): Observable<Task>;
 
 }
 
@@ -31,6 +37,23 @@ export class TaskRestServiceImpl extends AbstractRestService implements TaskRest
 
     createTask(projectId: number, stageId: number, task: Task): Observable<Task> {
         return this.httpClient.post<Task>(`${this.projectsUrl}/${projectId}/stages/${stageId}/tasks`, task)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            );
+    }
+
+    updateStatus(projectId: number, stageId: number, taskId: number,
+                 updateTaskStatusDto: UpdateTaskStatus): Observable<Task> {
+        return this.httpClient.post<Task>(`${this.projectsUrl}/${projectId}/stages/${stageId}/tasks/${taskId}/status`,
+            updateTaskStatusDto)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            );
+    }
+
+    updateTask(projectId: number, stageId: number, taskId: number, task: Task): Observable<Task> {
+        return this.httpClient.put<Task>(`${this.projectsUrl}/${projectId}/stages/${stageId}/tasks/${taskId}`,
+            task)
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))
             );

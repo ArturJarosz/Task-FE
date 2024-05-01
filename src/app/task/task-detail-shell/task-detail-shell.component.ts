@@ -1,4 +1,4 @@
-import {Component, computed, inject, OnInit, Signal} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {TaskStore} from "../state/task.state";
 import {ActivatedRoute} from "@angular/router";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
@@ -10,6 +10,7 @@ import {
     loadConfiguration
 } from "../../shared/configuration/state";
 import {Observable} from "rxjs";
+import {UpdateTaskDto, UpdateTaskStatus} from "../model/task";
 
 @Component({
     selector: 'app-task-detail-shell',
@@ -24,8 +25,8 @@ export class TaskDetailShellComponent implements OnInit {
     readonly taskStore = inject(TaskStore);
     $task = this.taskStore.task;
 
-    taskStatuses! :Observable<ConfigurationEntry[]>;
-    taskTypes! :Observable<ConfigurationEntry[]>;
+    taskStatuses!: Observable<ConfigurationEntry[]>;
+    taskTypes!: Observable<ConfigurationEntry[]>;
 
     constructor(private route: ActivatedRoute, private configurationStore: Store<ConfigurationState>) {
         this.configurationStore.dispatch(loadConfiguration());
@@ -48,4 +49,16 @@ export class TaskDetailShellComponent implements OnInit {
         this.taskStore.loadTaskRx({});
     }
 
+    updateTask($event: UpdateTaskDto) {
+        if ($event.updateStatus) {
+            let updateStatusDto: UpdateTaskStatus = {
+                status: $event.task.status!
+            }
+            this.taskStore.updateStatus({updateStatusDto});
+        }
+        if ($event.updateData) {
+            let task = $event.task!;
+            this.taskStore.updateTask({task});
+        }
+    }
 }

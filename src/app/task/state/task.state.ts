@@ -9,6 +9,7 @@ import {Store} from "@ngrx/store";
 import {MessageService} from "primeng/api";
 import {MessageSeverity} from "../../shared";
 import {refreshStage} from "../../stage/state";
+import {UpdateTaskStatus} from "../model/task";
 
 
 export interface TaskState extends AppState {
@@ -87,6 +88,63 @@ export const TaskStore = signalStore(
                         )
                 })
             )
-        )
+        ),
+        updateStatus: rxMethod<{
+            updateStatusDto: UpdateTaskStatus
+        }>
+        (
+            pipe(
+                switchMap(({updateStatusDto}) => {
+                    return taskRestService.updateStatus(store.projectId()!, store.stageId()!, store.taskId()!,
+                        updateStatusDto)
+                        .pipe(
+                            tap(task => {
+                                stageStore.dispatch(refreshStage());
+                                messageService.add({
+                                    severity: MessageSeverity.SUCCESS,
+                                    summary: `Task status changed.`,
+                                    detail: `Status of task with id: ${task.id} was changed to ${task.status}.`
+                                });
+                            }),
+                            catchError(error => {
+                                messageService.add({
+                                    severity: MessageSeverity.ERROR,
+                                    summary: `Error changing task status.`,
+                                    detail: `There was problem with changing task status: ${error}.`
+                                });
+                                return of(error)
+                            })
+                        )
+                })
+            )
+        ),
+        updateTask: rxMethod<{
+            task: Task
+        }>
+        (
+            pipe(
+                switchMap(({task}) => {
+                    return taskRestService.updateTask(store.projectId()!, store.stageId()!, store.taskId()!, task)
+                        .pipe(
+                            tap(task => {
+                                stageStore.dispatch(refreshStage());
+                                messageService.add({
+                                    severity: MessageSeverity.SUCCESS,
+                                    summary: `Task updated.`,
+                                    detail: `Task with id: ${task.id} was updated.`
+                                });
+                            }),
+                            catchError(error => {
+                                messageService.add({
+                                    severity: MessageSeverity.ERROR,
+                                    summary: `Error updating task.`,
+                                    detail: `There was problem with updating task: ${error}.`
+                                });
+                                return of(error)
+                            })
+                        )
+                })
+            )
+        ),
     }))
 )

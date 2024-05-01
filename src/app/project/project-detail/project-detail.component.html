@@ -3,7 +3,7 @@
         <p-accordion [multiple]="true">
             <form [formGroup]="projectDetailsForm">
                 <p-accordionTab [selected]="true" header="Contract details" class="text-900 font-medium">
-                    <div class="lg:px-2 md:px-2 px-2 py-1 ng-star-inserted surface-border" formGroupName="contract">
+                    <div class="p-2 ng-star-inserted surface-border" formGroupName="contract">
                         <div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
                             <p-button icon="pi pi-arrow-down" [disabled]="!shouldUpdateContract()" (click)="onContractUpdate()" [outlined]="true" [rounded]="true" class="update-button transition-colors transition-duration-300"></p-button>
                         </div>

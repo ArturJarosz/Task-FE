@@ -56,8 +56,7 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
         this.initialProjectForm = cloneDeep(this.projectDetailsForm);
     }
 
-    ngOnChanges({
-                    project,
+    ngOnChanges({   project,
                     architects,
                     projectStatuses,
                     contractStatuses,
