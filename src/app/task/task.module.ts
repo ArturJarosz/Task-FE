@@ -15,6 +15,8 @@ import {InputTextareaModule} from "primeng/inputtextarea";
 import { AddTaskComponent } from './add-task/add-task.component';
 import {DialogModule} from "primeng/dialog";
 import {DropdownModule} from "primeng/dropdown";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {RippleModule} from "primeng/ripple";
 
 
 @NgModule({
@@ -40,7 +42,9 @@ import {DropdownModule} from "primeng/dropdown";
         CalendarModule,
         InputTextareaModule,
         DialogModule,
-        DropdownModule
+        DropdownModule,
+        ConfirmDialogModule,
+        RippleModule
     ],
     providers: [
         {provide: TaskRestService, useClass: TaskRestServiceImpl}

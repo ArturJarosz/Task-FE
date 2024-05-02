@@ -6,7 +6,7 @@ import {FormGroup} from "@angular/forms";
 import {TaskDetailFormProvider, TaskForm} from "../form/task-detail-form-provider";
 import {TaskStatus} from "../../generated/models/task-status";
 import {cloneDeep} from "lodash";
-import {UpdateTaskDto} from "../model/task";
+import {DeleteTaskDto, UpdateTaskDto} from "../model/task";
 
 @Component({
     selector: 'task-detail',
@@ -22,6 +22,8 @@ export class TaskDetailComponent implements OnInit, OnChanges {
     taskStatuses!: ConfigurationEntry[] | null;
     @Output()
     updateStatusEvent: EventEmitter<UpdateTaskDto> = new EventEmitter<UpdateTaskDto>();
+    @Output()
+    deleteTaskEVent: EventEmitter<DeleteTaskDto> = new EventEmitter<DeleteTaskDto>();
 
     availableTaskStatuses!: ConfigurationEntry[];
 
@@ -114,6 +116,10 @@ export class TaskDetailComponent implements OnInit, OnChanges {
             updateStatusDto.updateData = true;
         }
         this.updateStatusEvent.emit(updateStatusDto);
+    }
+
+    onDelete(): void {
+        this.deleteTaskEVent.emit({taskName: this.task!.name!, taskId: this.task!.id!});
     }
 
     createTask(): Task {
