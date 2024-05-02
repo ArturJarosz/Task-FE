@@ -1,7 +1,8 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Task} from "../../generated/models/task";
+import {DeleteTaskDto} from "../model/task";
 
 @Component({
     selector: 'task-list',
@@ -19,6 +20,8 @@ export class TaskListComponent {
     projectId: number = 0;
     @Input()
     stageId: number = 0;
+    @Output()
+    deleteTaskEVent: EventEmitter<DeleteTaskDto> = new EventEmitter<DeleteTaskDto>();
 
     getTypeLabel(type: string): string {
         return resolveLabel(type, this.taskTypes);
@@ -28,4 +31,8 @@ export class TaskListComponent {
         return resolveLabel(type, this.taskStatuses);
     }
 
+    deleteTask($event: MouseEvent, taskName: string, taskId: number) {
+        $event.stopPropagation();
+        this.deleteTaskEVent.emit({taskName: taskName, taskId: taskId});
+    }
 }

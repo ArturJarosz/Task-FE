@@ -35,15 +35,12 @@ export const TaskStore = signalStore(
                  messageService = inject(MessageService)) => ({
         setProjectId(projectId: number) {
             patchState(store, {projectId: projectId});
-            //taskRestService.setProjectId(projectId);
         },
         setStageId(stageId: number) {
             patchState(store, {stageId: stageId});
-            //taskRestService.setStageId(stageId)
         },
         setTaskId(taskId: number) {
             patchState(store, {taskId: taskId});
-            //taskRestService.setTaskId(taskId);
         },
 
         loadTaskRx: rxMethod<{}>(
@@ -139,6 +136,39 @@ export const TaskStore = signalStore(
                                     severity: MessageSeverity.ERROR,
                                     summary: `Error updating task.`,
                                     detail: `There was problem with updating task: ${error}.`
+                                });
+                                return of(error)
+                            })
+                        )
+                })
+            )
+        ),
+        deleteTask: rxMethod<{
+            projectId: number,
+            stageId: number,
+            taskId: number
+        }>
+        (
+            pipe(
+                switchMap(({projectId, stageId, taskId}) => {
+                    patchState(store, {projectId: projectId});
+                    patchState(store, {stageId: stageId});
+                    patchState(store, {taskId: taskId});
+                    return taskRestService.removeTask(store.projectId()!, store.stageId()!, store.taskId()!)
+                        .pipe(
+                            tap(task => {
+                                stageStore.dispatch(refreshStage());
+                                messageService.add({
+                                    severity: MessageSeverity.SUCCESS,
+                                    summary: `Task removed.`,
+                                    detail: `Task with id: ${store.taskId()!} was removed.`
+                                });
+                            }),
+                            catchError(error => {
+                                messageService.add({
+                                    severity: MessageSeverity.ERROR,
+                                    summary: `Error removing task.`,
+                                    detail: `There was problem with removing task: ${error}.`
                                 });
                                 return of(error)
                             })

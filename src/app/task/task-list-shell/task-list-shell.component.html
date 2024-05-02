@@ -7,13 +7,15 @@
             [taskTypes]="taskTypes$ | async"
             [taskStatuses]="taskStatuses$ | async"
             [projectId]="projectId"
-            [stageId]="stageId">
+            [stageId]="stageId"
+            (deleteTaskEVent)="onDelete($event)">
     </task-list>
+    <p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}" class="overlay-dialog"></p-confirmDialog>
 </div>
 <add-task
-    [visible]="showAddTaskComponent"
-    [projectId]="projectId"
-    [stageId]="stageId"
-    (notify)="onNotify($event)"
+        [visible]="showAddTaskComponent"
+        [projectId]="projectId"
+        [stageId]="stageId"
+        (notify)="onNotify($event)"
 >
 </add-task>

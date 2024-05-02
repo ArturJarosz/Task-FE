@@ -10,3 +10,8 @@ export interface UpdateTaskDto {
     updateStatus: boolean
     updateData: boolean
 }
+
+export interface DeleteTaskDto {
+    taskName: string,
+    taskId: number
+}

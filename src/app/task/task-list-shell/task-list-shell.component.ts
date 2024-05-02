@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, inject, Input, OnInit} from '@angular/core';
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {Observable} from "rxjs";
 import {Task} from "../../generated/models/task";
@@ -8,6 +8,9 @@ import {
     getTaskTypeConfiguration
 } from "../../shared/configuration/state";
 import {Store} from "@ngrx/store";
+import {ConfirmationService} from "primeng/api";
+import {TaskStore} from "../state/task.state";
+import {DeleteTaskDto} from "../model/task";
 
 @Component({
     selector: 'task-list-shell',
@@ -22,11 +25,13 @@ export class TaskListShellComponent implements OnInit {
     @Input()
     stageId: number = 0;
 
+    readonly taskStore = inject(TaskStore);
+
     taskTypes$!: Observable<ConfigurationEntry[]>;
     taskStatuses$!: Observable<ConfigurationEntry[]>;
     showAddTaskComponent: boolean = false;
 
-    constructor(private configurationStore: Store<ConfigurationState>) {
+    constructor(private configurationStore: Store<ConfigurationState>, private confirmationService: ConfirmationService) {
     }
 
     ngOnInit(): void {
@@ -40,5 +45,23 @@ export class TaskListShellComponent implements OnInit {
 
     onNotify(event: boolean) {
         this.showAddTaskComponent = false;
+    }
+
+    onDelete($event: DeleteTaskDto) {
+        let taskId = $event.taskId;
+        let projectId = this.projectId;
+        let stageId = this.stageId;
+        this.confirmationService.confirm({
+            message: `Do you want to delete task: ${$event}?`,
+            header: `Confirm task delete ${$event}.`,
+            icon: "pi pi-info-circle text-red-300",
+            accept: () => {
+                this.taskStore.deleteTask({projectId, stageId, taskId});
+                this.confirmationService.close();
+            },
+            reject: () => {
+                this.confirmationService.close();
+            }
+        });
     }
 }

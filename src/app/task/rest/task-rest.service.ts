@@ -17,6 +17,8 @@ export abstract class TaskRestService {
 
     abstract updateTask(projectId: number, stageId: number, taskId: number, task: Task): Observable<Task>;
 
+    abstract removeTask(projectId: number, stageId: number, taskId: number): Observable<void>;
+
 }
 
 @Injectable()
@@ -54,6 +56,13 @@ export class TaskRestServiceImpl extends AbstractRestService implements TaskRest
     updateTask(projectId: number, stageId: number, taskId: number, task: Task): Observable<Task> {
         return this.httpClient.put<Task>(`${this.projectsUrl}/${projectId}/stages/${stageId}/tasks/${taskId}`,
             task)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            );
+    }
+
+    removeTask(projectId: number, stageId: number, taskId: number): Observable<void> {
+        return this.httpClient.delete<void>(`${this.projectsUrl}/${projectId}/stages/${stageId}/tasks/${taskId}`)
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))
             );
