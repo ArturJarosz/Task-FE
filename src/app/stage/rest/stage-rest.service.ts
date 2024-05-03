@@ -10,6 +10,8 @@ export abstract class StageRestService {
     abstract getStagesForProject(projectId: number): Observable<Stage[]>;
 
     abstract getStage(projectId: number, stageId: number): Observable<Stage>;
+
+    abstract createStage(projectId: number, stage: Stage): Observable<Stage>;
 }
 
 @Injectable()
@@ -29,6 +31,13 @@ export class StageRestServiceImpl extends AbstractRestService implements StageRe
 
     getStage(projectId: number, stageId: number): Observable<Stage> {
         return this.httpClient.get<Stage>(`${this.projectsUrl}/${projectId}/stages/${stageId}`)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            );
+    }
+
+    createStage(projectId: number, stage: Stage): Observable<Stage> {
+        return this.httpClient.post(`${this.projectsUrl}/${projectId}/stages`, stage)
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))
             );

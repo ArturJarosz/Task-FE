@@ -9,7 +9,7 @@ const DEFAULT_TYPE = TaskType.CONCEPT;
 @Injectable({
     providedIn: 'root'
 })
-export class TaskDetailFormProvider {
+export class TaskFormProvider {
     constructor(private formBuilder: FormBuilder) {
     }
 

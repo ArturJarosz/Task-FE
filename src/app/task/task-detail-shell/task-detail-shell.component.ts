@@ -48,7 +48,7 @@ export class TaskDetailShellComponent implements OnInit {
         this.taskStore.setStageId(this.stageId);
         this.taskStore.setProjectId(this.projectId);
 
-        this.taskStore.loadTaskRx({});
+        this.taskStore.loadTask({});
     }
 
     updateTask($event: UpdateTaskDto) {

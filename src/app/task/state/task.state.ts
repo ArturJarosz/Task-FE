@@ -5,10 +5,9 @@ import {TaskRestService} from "../rest/task-rest.service";
 import {catchError, of, pipe, switchMap, tap} from "rxjs";
 import {Task} from "../../generated/models/task";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {Store} from "@ngrx/store";
 import {MessageService} from "primeng/api";
 import {MessageSeverity} from "../../shared";
-import {refreshStage} from "../../stage/state";
+import {StageStore} from "../../stage/state";
 import {UpdateTaskStatus} from "../model/task";
 
 
@@ -31,7 +30,7 @@ export const initialState: TaskState = {
 export const TaskStore = signalStore(
     {providedIn: 'root'},
     withState(initialState),
-    withMethods((store, taskRestService = inject(TaskRestService), stageStore = inject(Store<TaskState>),
+    withMethods((store, taskRestService = inject(TaskRestService), stageStore = inject(StageStore),
                  messageService = inject(MessageService)) => ({
         setProjectId(projectId: number) {
             patchState(store, {projectId: projectId});
@@ -43,7 +42,7 @@ export const TaskStore = signalStore(
             patchState(store, {taskId: taskId});
         },
 
-        loadTaskRx: rxMethod<{}>(
+        loadTask: rxMethod<{}>(
             pipe(
                 switchMap(() => {
                     return taskRestService.loadTask(store.projectId()!, store.stageId()!, store.taskId()!)
@@ -67,7 +66,8 @@ export const TaskStore = signalStore(
                     return taskRestService.createTask(projectId, stageId, task)
                         .pipe(
                             tap(task => {
-                                stageStore.dispatch(refreshStage());
+
+                                stageStore.refreshStage();
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
                                     summary: `Task created.`,
@@ -96,7 +96,7 @@ export const TaskStore = signalStore(
                         updateStatusDto)
                         .pipe(
                             tap(task => {
-                                stageStore.dispatch(refreshStage());
+                                stageStore.refreshStage();
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
                                     summary: `Task status changed.`,
@@ -124,7 +124,7 @@ export const TaskStore = signalStore(
                     return taskRestService.updateTask(store.projectId()!, store.stageId()!, store.taskId()!, task)
                         .pipe(
                             tap(task => {
-                                stageStore.dispatch(refreshStage());
+                                stageStore.refreshStage();
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
                                     summary: `Task updated.`,
@@ -157,7 +157,7 @@ export const TaskStore = signalStore(
                     return taskRestService.removeTask(store.projectId()!, store.stageId()!, store.taskId()!)
                         .pipe(
                             tap(task => {
-                                stageStore.dispatch(refreshStage());
+                                stageStore.refreshStage();
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
                                     summary: `Task removed.`,

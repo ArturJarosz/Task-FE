@@ -39,7 +39,7 @@ export class TaskListShellComponent implements OnInit {
         this.taskStatuses$ = this.configurationStore.select(getTaskStatusConfiguration);
     }
 
-    onClick() {
+    onAddTask() {
         this.showAddTaskComponent = true;
     }
 
