@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {FormGroup} from "@angular/forms";
-import {StageDetailFormProvider, StageForm} from "./stage-detail-form-provider";
+import {StageFormProvider, StageForm} from "../form/stage-form-provider";
 import {ConfigurationState, loadConfiguration} from "../../shared/configuration/state";
 import {Store} from "@ngrx/store";
 import {resolveLabel} from "../../shared/utils/label-utils";
@@ -30,7 +30,7 @@ export class StageDetailComponent implements OnInit, OnChanges {
 
     initialStageForm!: FormGroup<StageForm>;
 
-    constructor(private formProvider: StageDetailFormProvider, private configurationStore: Store<ConfigurationState>) {
+    constructor(private formProvider: StageFormProvider, private configurationStore: Store<ConfigurationState>) {
     }
 
     ngOnInit(): void {

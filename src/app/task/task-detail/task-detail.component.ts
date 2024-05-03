@@ -3,7 +3,7 @@ import {Task} from "../../generated/models/task";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {FormGroup} from "@angular/forms";
-import {TaskDetailFormProvider, TaskForm} from "../form/task-detail-form-provider";
+import {TaskFormProvider, TaskForm} from "../form/task-form-provider";
 import {TaskStatus} from "../../generated/models/task-status";
 import {cloneDeep} from "lodash";
 import {DeleteTaskDto, UpdateTaskDto} from "../model/task";
@@ -38,7 +38,7 @@ export class TaskDetailComponent implements OnInit, OnChanges {
     initialTaskDetailForm!: FormGroup<TaskForm>;
     fieldsToUpdate: string[] = ["name", "type", "startDate", "endDate", "note"];
 
-    constructor(private formProvider: TaskDetailFormProvider) {
+    constructor(private formProvider: TaskFormProvider) {
     }
 
     ngOnInit(): void {

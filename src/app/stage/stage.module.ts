@@ -6,10 +6,9 @@ import {RouterLink, RouterModule} from "@angular/router";
 import {StageDetailComponent} from "./stage-detail/stage-detail.component";
 import {StageDetailShellComponent} from "./stage-detail-shell/stage-detail-shell.component";
 import {SharedModule} from "../shared/shared.module";
-import {AsyncPipe, NgIf} from "@angular/common";
+import {AsyncPipe, NgClass, NgIf} from "@angular/common";
 import {StoreModule} from "@ngrx/store";
 import {Features} from "../features";
-import {StageEffects, stageReducer} from "./state";
 import {EffectsModule} from "@ngrx/effects";
 import {AccordionModule} from "primeng/accordion";
 import {DropdownModule} from "primeng/dropdown";
@@ -17,13 +16,17 @@ import {InputTextModule} from "primeng/inputtext";
 import {CalendarModule} from "primeng/calendar";
 import {StageListShellComponent} from './stage-list-shell/stage-list-shell.component';
 import {TaskModule} from "../task/task.module";
+import { AddStageComponent } from './add-stage/add-stage.component';
+import {DialogModule} from "primeng/dialog";
+import {InputTextareaModule} from "primeng/inputtextarea";
 
 @NgModule({
     declarations: [
         StageListComponent,
         StageListShellComponent,
         StageDetailShellComponent,
-        StageDetailComponent
+        StageDetailComponent,
+        AddStageComponent
     ],
     imports: [
         TableModule,
@@ -32,15 +35,16 @@ import {TaskModule} from "../task/task.module";
         ]),
         RouterLink,
         SharedModule,
-        StoreModule.forFeature(Features.STAGE, stageReducer),
-        EffectsModule.forFeature([StageEffects]),
         AsyncPipe,
         AccordionModule,
         DropdownModule,
         InputTextModule,
         CalendarModule,
         NgIf,
-        TaskModule
+        TaskModule,
+        DialogModule,
+        InputTextareaModule,
+        NgClass
     ],
     exports: [
         StageListComponent,

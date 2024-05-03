@@ -1,6 +1,18 @@
-<stage-list
-        [stages]="stages"
+<div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
+    <p-button icon="pi pi-plus" (onClick)="onAddStage()" [rounded]="true" class="add-button transition-colors transition-duration-300"></p-button>
+</div>
+<div class="pt-3">
+    <stage-list
+            [stages]="stages"
+            [projectId]="projectId"
+            [stageStatuses]="stageStatuses$ | async"
+            [stageTypes]="stageTypes$ | async">
+    </stage-list>
+</div>
+<add-stage
+        [visible]="showAddStageComponent"
         [projectId]="projectId"
-        [stageStatuses]="stageStatuses$ | async"
-        [stageTypes]="stageTypes$ | async">
-</stage-list>
+        (addStageNotify)="onNotify($event)"
+>
+</add-stage>
+

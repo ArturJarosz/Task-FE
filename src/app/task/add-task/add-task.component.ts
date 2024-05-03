@@ -5,7 +5,7 @@ import {Store} from "@ngrx/store";
 import {ConfigurationState, getTaskTypeConfiguration, loadConfiguration} from "../../shared/configuration/state";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {FormGroup} from "@angular/forms";
-import {TaskDetailFormProvider} from "../form/task-detail-form-provider";
+import {TaskFormProvider} from "../form/task-form-provider";
 import {Task} from "../../generated/models/task";
 
 @Component({
@@ -20,6 +20,7 @@ export class AddTaskComponent implements OnInit, OnDestroy {
     projectId!: number;
     @Input()
     stageId!: number;
+
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
@@ -31,7 +32,7 @@ export class AddTaskComponent implements OnInit, OnDestroy {
     taskTypes!: ConfigurationEntry[];
     addTaskForm!: FormGroup;
 
-    constructor(private configurationStore: Store<ConfigurationState>, private formProvider: TaskDetailFormProvider) {
+    constructor(private configurationStore: Store<ConfigurationState>, private formProvider: TaskFormProvider) {
 
     }
 
@@ -61,7 +62,6 @@ export class AddTaskComponent implements OnInit, OnDestroy {
     }
 
     onSave(): void {
-        console.log("save clicked");
         this.visible = false;
         let task: Task = this.createTask();
         this.taskStore.createTask({projectId: this.projectId, stageId: this.stageId, task: task});
