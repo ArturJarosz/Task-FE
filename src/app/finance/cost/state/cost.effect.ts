@@ -1,17 +1,19 @@
-import {Injectable} from "@angular/core";
+import {inject, Injectable} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {CostRestService} from "../rest/cost-rest.service";
 import {MessageService} from "primeng/api";
 import {createCost, createCostError, createCostSuccess, loadCost, loadCostError, loadCostSuccess} from "./cost.actions";
 import {catchError, map, mergeMap, of} from "rxjs";
 import {MessageSeverity} from "../../../shared";
-import {projectNeedsRefresh, ProjectState} from "../../../project/state";
+import {ProjectState, ProjectStore} from "../../../project/state";
 import {Store} from "@ngrx/store";
 
 @Injectable()
 export class CostEffect {
+    projectStore = inject(ProjectStore);
+
     constructor(private actions$: Actions, private costRestService: CostRestService,
-                private messageService: MessageService, private projectStore: Store<ProjectState>) {
+                private messageService: MessageService) {
     }
 
     loadCost$ = createEffect(() => {
@@ -41,7 +43,7 @@ export class CostEffect {
             mergeMap(action => this.costRestService.createCost(action.projectId, action.cost)
                 .pipe(
                     map(cost => {
-                        this.projectStore.dispatch(projectNeedsRefresh());
+                        this.projectStore.setProjectNeedsRefresh();
                         this.messageService.add({
                             severity: MessageSeverity.SUCCESS,
                             summary: `Cost created.`,

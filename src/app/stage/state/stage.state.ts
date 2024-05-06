@@ -1,5 +1,5 @@
 import {AppState} from "../../state/app.store";
-import {State, Store} from "@ngrx/store";
+import {Store} from "@ngrx/store";
 import {Stage} from "../../generated/models/stage";
 import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
@@ -8,7 +8,7 @@ import {inject} from "@angular/core";
 import {StageRestService} from "../rest/stage-rest.service";
 import {MessageService} from "primeng/api";
 import {MessageSeverity} from "../../shared";
-import {projectNeedsRefresh, ProjectState} from "../../project/state";
+import {ProjectState, ProjectStore} from "../../project/state";
 
 export interface StageState extends AppState {
     projectId: number | undefined,
@@ -34,7 +34,7 @@ export const StageStore = signalStore(
     {providedIn: 'root'},
     withState(initialState),
     withMethods((store, stageRestService = inject(StageRestService), messageService = inject(MessageService),
-                 projectStore = inject(Store<ProjectState>)) => ({
+                 projectStore = inject(ProjectStore)) => ({
         setProjectId(projectId: number) {
             patchState(store, {projectId: projectId});
         },
@@ -86,7 +86,7 @@ export const StageStore = signalStore(
         createStage: rxMethod<{ projectId: number,stage: Stage }>(
             pipe(
                 switchMap(({stage}) => {
-                    projectStore.dispatch(projectNeedsRefresh());
+                    projectStore.setProjectNeedsRefresh();
                     return stageRestService.createStage(store.projectId()!, stage)
                         .pipe(
                             tap(stage => {
