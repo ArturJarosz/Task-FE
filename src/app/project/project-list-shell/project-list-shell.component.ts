@@ -1,12 +1,12 @@
-import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect, inject, OnInit, Signal} from '@angular/core';
 import {Store} from "@ngrx/store";
-import {getProjects, getProjectsNeedRefresh, loadProjects, ProjectState} from "../state";
+import {ProjectState, ProjectStore} from "../state";
 import {
     ConfigurationState,
     getProjectStatusConfiguration,
     getProjectTypeConfiguration
 } from "../../shared/configuration/state";
-import {Observable, Subscription} from "rxjs";
+import {Observable} from "rxjs";
 import {Project} from "../../generated/models/project";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 
@@ -16,29 +16,26 @@ import {ConfigurationEntry} from "../../generated/models/configuration-entry";
     styleUrls: ['./project-list-shell.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProjectListShellComponent implements OnInit, OnDestroy {
-    private projectsNeedRefreshSubscription!: Subscription;
-    projects$!: Observable<Project[]>;
+export class ProjectListShellComponent implements OnInit {
     projectTypes$!: Observable<ConfigurationEntry[]>;
     projectStatuses$!: Observable<ConfigurationEntry[]>;
     showComponent: boolean = false;
 
-    constructor(private projectStore: Store<ProjectState>, private configurationStore: Store<ConfigurationState>) {
+    readonly projectStore = inject(ProjectStore);
+    $projects: Signal<Project[] | null> = this.projectStore.projects;
+    $projectsNeedRefresh: Signal<boolean | null> = this.projectStore.projectsNeedRefresh;
+
+    constructor(private projectStoreOld: Store<ProjectState>, private configurationStore: Store<ConfigurationState>) {
+        effect(() => {
+            if (this.$projectsNeedRefresh()) {
+                this.projectStore.loadProjects({})
+            }
+        });
     }
 
     ngOnInit(): void {
-        this.projectStore.dispatch(loadProjects());
-        this.projects$ = this.projectStore.select(getProjects);
         this.projectTypes$ = this.configurationStore.select(getProjectTypeConfiguration);
         this.projectStatuses$ = this.configurationStore.select(getProjectStatusConfiguration);
-        this.projectsNeedRefreshSubscription = this.projectStore.select(getProjectsNeedRefresh).subscribe({
-            next: needRefresh => {
-                if (needRefresh) {
-                    this.refreshProjects();
-                }
-            },
-            error: error => console.log(error)
-        })
     }
 
     onClick() {
@@ -49,12 +46,4 @@ export class ProjectListShellComponent implements OnInit, OnDestroy {
         this.showComponent = !this.showComponent;
     }
 
-    refreshProjects() {
-        this.projectStore.dispatch(loadProjects());
-        this.projects$ = this.projectStore.select(getProjects);
-    }
-
-    ngOnDestroy() {
-        this.projectsNeedRefreshSubscription.unsubscribe();
-    }
 }

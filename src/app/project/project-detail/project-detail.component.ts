@@ -1,15 +1,12 @@
-import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {Store} from "@ngrx/store";
+import {ChangeDetectionStrategy, Component, inject, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {FormGroup} from "@angular/forms";
 import {ProjectContractForm, ProjectCreateForm, ProjectDetailFormProvider} from "./project-detail-form-provider";
-import {ConfigurationState} from "../../shared/configuration/state";
-import {ArchitectState} from "../../architect/state";
 import {cloneDeep} from 'lodash';
-import {ContractStatusService} from "../contract-status/contract-status.service";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Architect} from "../../generated/models/architect";
 import {Project} from "../../generated/models/project";
 import {ConfigurationEntry, Contract, ContractStatus, ProjectStatus} from "../../generated/models";
+import {ContractStore} from "../contract-status/state/contract.store";
 
 @Component({
     selector: 'project-detail',
@@ -31,6 +28,8 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
     @Input()
     costCategories!: ConfigurationEntry[] | null;
 
+    contractStore = inject(ContractStore)
+
     projectDetailsForm!: FormGroup<ProjectCreateForm>;
     resolvedProjectStatusLabel: string = '';
     resolvedContractStatusLabel: string = '';
@@ -44,10 +43,7 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
     initialContractForm!: FormGroup<ProjectContractForm>;
     initialProjectForm!: FormGroup<ProjectCreateForm>;
 
-    constructor(private formProvider: ProjectDetailFormProvider,
-                private configurationStore: Store<ConfigurationState>,
-                private architectStore: Store<ArchitectState>,
-                private contractService: ContractStatusService) {
+    constructor(private formProvider: ProjectDetailFormProvider) {
     }
 
     ngOnInit(): void {
@@ -56,7 +52,8 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
         this.initialProjectForm = cloneDeep(this.projectDetailsForm);
     }
 
-    ngOnChanges({   project,
+    ngOnChanges({
+                    project,
                     architects,
                     projectStatuses,
                     contractStatuses,
@@ -64,6 +61,7 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
                     costCategories
                 }: SimpleChanges): void {
         if (this.project && project) {
+            this.contractStore.setContractId(this.project?.contract!.id!);
             this.resolveLabels();
             this.resolveAvailableStatuses();
             this.fillFormData();
@@ -74,7 +72,6 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
         if (this.projectDetailsForm === undefined || !this.project) {
             return;
         }
-
         this.projectDetailsForm.patchValue({
             id: this.project.id,
             name: this.project.name,
@@ -87,14 +84,13 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
                 id: this.project.contract!.id,
                 offerValue: this.project.contract!.offerValue,
                 status: this.project.contract!.status,
-                signingDate: this.project.contract!.signingDate ? this.project.contract!.signingDate : '',
-                startDate: this.project.contract!.startDate ? this.project.contract!.startDate : '',
-                endDate: this.project.contract!.endDate ? this.project.contract!.endDate : '',
-                deadline: this.project.contract!.deadline ? this.project.contract!.deadline : ''
+                signingDate: this.project.contract!.signingDate ? new Date(this.project.contract!.signingDate) : undefined,
+                startDate: this.project.contract!.startDate ? new Date(this.project.contract!.startDate) : undefined,
+                endDate: this.project.contract!.endDate ? new Date(this.project.contract!.endDate) : undefined,
+                deadline: this.project.contract!.deadline ? new Date(this.project.contract!.deadline) : undefined
             }
         })
     }
-
 
     resolveLabels() {
         if (this.projectStatuses && this.projectStatuses.length > 0 && this.project?.status) {
@@ -172,7 +168,7 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
 
     onContractUpdate(): void {
         let contract = this.createContract();
-        this.contractService.resolveContractStatusChange(contract, this.initialContractForm.get('status')?.value!);
+        this.contractStore.changeStatus({contract: contract});
     }
 
     onProjectUpdate(): void {
@@ -186,10 +182,10 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
             id: contractForm.get('id')?.value,
             offerValue: contractForm.get('offerValue')!.value,
             status: contractForm.get('status')!.value,
-            signingDate: contractForm.get('signingDate')!.value,
-            startDate: contractForm.get('startDate')!.value,
-            deadline: contractForm.get('deadline')!.value,
-            endDate: contractForm.get("endDate")!.value
+            signingDate: contractForm.get('signingDate')!.value ? contractForm.get('signingDate')!.value!.toISOString() : undefined,
+            startDate: contractForm.get('startDate')!.value ? contractForm.get('startDate')!.value!.toISOString() : undefined,
+            deadline: contractForm.get('deadline')!.value ? contractForm.get('deadline')!.value!.toISOString() : undefined,
+            endDate: contractForm.get("endDate")!.value ? contractForm.get('endDate')!.value!.toISOString() : undefined,
         };
     }
 }

@@ -8,19 +8,7 @@ import {Contract} from "../../generated/models/contract";
 
 export abstract class ContractRestService {
 
-    abstract rejectOffer(contractId: number, contract: Contract): Observable<Contract>;
-
-    abstract makeNewOffer(contractId: number, contract: Contract): Observable<Contract>;
-
-    abstract acceptOffer(contractId: number, contract: Contract): Observable<Contract>;
-
-    abstract sign(contractId: number, contract: Contract): Observable<Contract>;
-
-    abstract terminate(contractId: number, contract: Contract): Observable<Contract>;
-
-    abstract resume(contractId: number, contract: Contract): Observable<Contract>;
-
-    abstract complete(contractId: number, contract: Contract): Observable<Contract>;
+    abstract changeStatus(contractId: number, contract: Contract): Observable<Contract>;
 }
 
 @Injectable()
@@ -31,50 +19,8 @@ export class ContractRestServiceImpl extends AbstractRestService implements Cont
         super();
     }
 
-    acceptOffer(contractId: number, contract: Contract): Observable<Contract> {
-        return this.httpClient.post<Contract>(`${this.contractUrl}/${contractId}/accept-offer`, contract)
-            .pipe(
-                catchError(error => this.handleError(error, this.messageService))
-            );
-    }
-
-    complete(contractId: number, contract: Contract): Observable<Contract> {
-        return this.httpClient.post<Contract>(`${this.contractUrl}/${contractId}/complete`, contract)
-            .pipe(
-                catchError(error => this.handleError(error, this.messageService))
-            );
-    }
-
-    makeNewOffer(contractId: number, contract: Contract): Observable<Contract> {
-        return this.httpClient.post<Contract>(`${this.contractUrl}/${contractId}/new-offer`, contract)
-            .pipe(
-                catchError(error => this.handleError(error, this.messageService))
-            );
-    }
-
-    rejectOffer(contractId: number, contract: Contract): Observable<Contract> {
-        return this.httpClient.post<Contract>(`${this.contractUrl}/${contractId}/reject`, contract)
-            .pipe(
-                catchError(error => this.handleError(error, this.messageService))
-            );
-    }
-
-    resume(contractId: number, contract: Contract): Observable<Contract> {
-        return this.httpClient.post<Contract>(`${this.contractUrl}/${contractId}/resume`, contract)
-            .pipe(
-                catchError(error => this.handleError(error, this.messageService))
-            );
-    }
-
-    sign(contractId: number, contract: Contract): Observable<Contract> {
-        return this.httpClient.post<Contract>(`${this.contractUrl}/${contractId}/sign`, contract)
-            .pipe(
-                catchError(error => this.handleError(error, this.messageService))
-            );
-    }
-
-    terminate(contractId: number, contract: Contract): Observable<Contract> {
-        return this.httpClient.post<Contract>(`${this.contractUrl}/${contractId}/terminate`, contract)
+    changeStatus(contractId: number, contract: Contract): Observable<Contract> {
+        return this.httpClient.post<Contract>(`${this.contractUrl}/${contractId}/status`, contract)
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))
             );

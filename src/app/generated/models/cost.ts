@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-import { CostCategory } from '../models/cost-category';
+import { CostCategory } from './cost-category';
 export interface Cost {
   category?: CostCategory;
   date?: string;

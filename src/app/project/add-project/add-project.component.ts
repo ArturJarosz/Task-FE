@@ -1,10 +1,10 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormGroup} from "@angular/forms";
 import {AddProjectFormProvider} from "./add-project-form-provider.service";
 import {ClientState, getClients, loadClients} from "../../client/state";
 import {Store} from "@ngrx/store";
 import {ArchitectState, getArchitects, loadArchitects} from "../../architect/state";
-import {createProject, ProjectState} from "../state";
+import {ProjectStore} from "../state";
 import {Subscription} from "rxjs";
 import {ConfigurationState, getProjectTypeConfiguration, loadConfiguration} from "../../shared/configuration/state";
 import {ArchitectFormModel} from "../../architect/model/architect";
@@ -22,8 +22,6 @@ export class AddProjectComponent implements OnInit, OnDestroy {
     visible = false;
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
-    @Output()
-    refreshProjects: EventEmitter<void> = new EventEmitter<void>();
 
     header: string = "Add new project";
 
@@ -35,10 +33,11 @@ export class AddProjectComponent implements OnInit, OnDestroy {
     projectTypes: ConfigurationEntry[] = [];
     addProjectForm!: FormGroup;
 
+    readonly projectStore = inject(ProjectStore);
+
 
     constructor(private addProjectFormProvider: AddProjectFormProvider, private clientStore: Store<ClientState>,
-                private architectStore: Store<ArchitectState>, private projectStore: Store<ProjectState>,
-                private configurationStore: Store<ConfigurationState>) {
+                private architectStore: Store<ArchitectState>, private configurationStore: Store<ConfigurationState>) {
     }
 
     ngOnInit(): void {
@@ -104,8 +103,7 @@ export class AddProjectComponent implements OnInit, OnDestroy {
     onSave(): void {
         this.visible = false;
         let project: ProjectCreate = this.createProject();
-        this.projectStore.dispatch(createProject({projectCreate: project}));
-        this.refreshProjects.emit();
+        this.projectStore.createProject({projectCreate: project});
     }
 
     onClose(): void {

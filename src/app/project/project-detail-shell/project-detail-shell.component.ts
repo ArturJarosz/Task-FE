@@ -1,5 +1,5 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {getProject, getProjectNeedsRefresh, loadProject, ProjectState} from "../state";
+import {ChangeDetectionStrategy, Component, effect, inject, OnInit, Signal} from '@angular/core';
+import {ProjectState, ProjectStore} from "../state";
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
 import {ArchitectState, getArchitects, loadArchitects} from "../../architect/state";
@@ -7,7 +7,8 @@ import {
     ConfigurationState,
     getContractStatusConfiguration,
     getProjectStatusConfiguration,
-    getProjectTypeConfiguration, loadConfiguration
+    getProjectTypeConfiguration,
+    loadConfiguration
 } from "../../shared/configuration/state";
 import {ActivatedRoute} from "@angular/router";
 import {Architect} from "../../generated/models/architect";
@@ -22,45 +23,38 @@ import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 })
 export class ProjectDetailShellComponent implements OnInit {
     architects$!: Observable<Architect[]>;
-    project$!: Observable<Project | null>;
     projectTypes$!: Observable<ConfigurationEntry[]>;
     projectStatuses$!: Observable<ConfigurationEntry[]>;
     contractStatuses$!: Observable<ConfigurationEntry[]>;
-    projectNeedsRefresh$!: Observable<boolean>;
 
     projectId: number = 0;
 
-    constructor(private route: ActivatedRoute, private projectStore: Store<ProjectState>,
+    projectStore = inject(ProjectStore);
+    $project: Signal<Project | null> = this.projectStore.project!;
+    $projectNeedsRefresh: Signal<boolean> = this.projectStore.projectNeedsRefresh!;
+
+    constructor(private route: ActivatedRoute, private projectStoreOld: Store<ProjectState>,
                 private architectsStore: Store<ArchitectState>,
                 private configurationStore: Store<ConfigurationState>) {
+        effect(() => {
+            if (this.$projectNeedsRefresh()) {
+                this.projectStore.loadProject({});
+            }
+        })
     }
 
     ngOnInit(): void {
         let maybeProjectId = this.route.snapshot.paramMap.get('id');
         this.projectId = Number(maybeProjectId);
+        this.projectStore.setProjectId(this.projectId);
+        this.projectStore.loadProject({});
 
-        this.projectStore.dispatch(loadProject({projectId: this.projectId}));
         this.architectsStore.dispatch(loadArchitects());
         this.configurationStore.dispatch(loadConfiguration());
 
         this.architects$ = this.architectsStore.select(getArchitects);
-        this.project$ = this.projectStore.select(getProject);
         this.projectTypes$ = this.configurationStore.select(getProjectTypeConfiguration);
         this.projectStatuses$ = this.configurationStore.select(getProjectStatusConfiguration);
         this.contractStatuses$ = this.configurationStore.select(getContractStatusConfiguration);
-        this.projectNeedsRefresh$ = this.projectStore.select(getProjectNeedsRefresh);
-
-        this.projectNeedsRefresh$.subscribe({
-            next: needsRefresh => {
-                if (needsRefresh) {
-                    this.refreshProject();
-                }
-            }
-        })
     }
-
-    private refreshProject() {
-        this.projectStore.dispatch(loadProject({projectId: this.projectId}));
-    }
-
 }
