@@ -7,6 +7,7 @@ import {TaskFormProvider, TaskForm} from "../form/task-form-provider";
 import {TaskStatus} from "../../generated/models/task-status";
 import {cloneDeep} from "lodash";
 import {DeleteTaskDto, UpdateTaskDto} from "../model/task";
+import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
 
 @Component({
     selector: 'task-detail',
@@ -77,8 +78,8 @@ export class TaskDetailComponent implements OnInit, OnChanges {
         this.taskDetailForm.patchValue({
             id: this.task.id,
             name: this.task.name,
-            startDate: this.task.startDate,
-            endDate: this.task.endDate,
+            startDate: toDateIfExists(this.task.startDate!),
+            endDate: toDateIfExists(this.task.endDate!),
             status: this.task.status,
             type: this.task.type,
             note: this.task.note
@@ -126,8 +127,8 @@ export class TaskDetailComponent implements OnInit, OnChanges {
         let task: Task = {};
         task.status = this.taskDetailForm.value.status;
         task.name = this.taskDetailForm.value.name;
-        task.startDate = this.taskDetailForm.value.startDate;
-        task.endDate = this.taskDetailForm.value.endDate;
+        task.startDate = toTimeZoneString(this.taskDetailForm.value.startDate);
+        task.endDate = toTimeZoneString(this.taskDetailForm.value.endDate);
         task.type = this.taskDetailForm.value.type;
         task.note = this.taskDetailForm.value.note;
         return task;

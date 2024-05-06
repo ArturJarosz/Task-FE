@@ -6,6 +6,7 @@ import {Store} from "@ngrx/store";
 import {resolveLabel} from "../../../shared/utils/label-utils";
 import {Cost} from "../../../generated/models/cost";
 import {ConfigurationEntry} from "../../../generated/models/configuration-entry";
+import {toDateIfExists, toTimeZoneString} from "../../../shared/utils/date-utils";
 
 @Component({
     selector: 'cost-detail',
@@ -44,7 +45,7 @@ export class CostDetailComponent implements OnInit, OnChanges {
         this.costDetailsForm.patchValue({
             id: this.cost.id,
             name: this.cost.name,
-            date: new Date(this.cost.date!),
+            date: toDateIfExists(this.cost.date),
             category: this.cost.category,
             value: this.cost.value,
             note: this.cost.note,

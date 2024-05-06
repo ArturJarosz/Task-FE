@@ -29,7 +29,7 @@ export class StageFormProvider {
     public getAddStageForm(): FormGroup<AddStageForm> {
         return this.formBuilder.nonNullable.group<AddStageForm>({
             name: this.formBuilder.nonNullable.control<string>('',[Validators.required]),
-            deadline: this.formBuilder.nonNullable.control<string>(''),
+            deadline: this.formBuilder.nonNullable.control<Date>(new Date()),
             type: this.formBuilder.nonNullable.control<StageType>(DEFAULT_TYPE),
             note: this.formBuilder.control('')
         })
@@ -49,7 +49,7 @@ export interface StageForm {
 
 export interface AddStageForm {
     name: FormControl<string>,
-    deadline: FormControl<string>,
+    deadline: FormControl<Date>,
     type: FormControl<StageType>,
     note: FormControl<string | null>
 }

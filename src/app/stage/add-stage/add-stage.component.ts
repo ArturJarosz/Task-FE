@@ -12,6 +12,7 @@ import {
     loadConfiguration
 } from "../../shared/configuration/state";
 import {Stage} from "../../generated/models/stage";
+import {toTimeZoneString} from "../../shared/utils/date-utils";
 
 @Component({
     selector: 'add-stage',
@@ -82,7 +83,7 @@ export class AddStageComponent implements OnInit, OnDestroy {
             name: this.addStageForm.get('name')!.value,
             type: this.addStageForm.get('type')!.value,
             note: this.addStageForm.get('note')?.value!,
-            deadline: this.addStageForm.get('deadline')!.value
+            deadline: toTimeZoneString(this.addStageForm.get('deadline')!.value)
         };
         return stage;
     }
