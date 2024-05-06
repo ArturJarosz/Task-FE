@@ -7,6 +7,7 @@ import {Architect} from "../../generated/models/architect";
 import {Project} from "../../generated/models/project";
 import {ConfigurationEntry, Contract, ContractStatus, ProjectStatus} from "../../generated/models";
 import {ContractStore} from "../contract-status/state/contract.store";
+import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
 
 @Component({
     selector: 'project-detail',
@@ -84,10 +85,10 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
                 id: this.project.contract!.id,
                 offerValue: this.project.contract!.offerValue,
                 status: this.project.contract!.status,
-                signingDate: this.project.contract!.signingDate ? new Date(this.project.contract!.signingDate) : undefined,
-                startDate: this.project.contract!.startDate ? new Date(this.project.contract!.startDate) : undefined,
-                endDate: this.project.contract!.endDate ? new Date(this.project.contract!.endDate) : undefined,
-                deadline: this.project.contract!.deadline ? new Date(this.project.contract!.deadline) : undefined
+                signingDate: toDateIfExists(this.project.contract!.signingDate),
+                startDate: toDateIfExists(this.project.contract!.startDate),
+                endDate: toDateIfExists(this.project.contract!.endDate),
+                deadline: toDateIfExists(this.project.contract!.deadline)
             }
         })
     }
@@ -182,10 +183,10 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
             id: contractForm.get('id')?.value,
             offerValue: contractForm.get('offerValue')!.value,
             status: contractForm.get('status')!.value,
-            signingDate: contractForm.get('signingDate')!.value ? contractForm.get('signingDate')!.value!.toISOString() : undefined,
-            startDate: contractForm.get('startDate')!.value ? contractForm.get('startDate')!.value!.toISOString() : undefined,
-            deadline: contractForm.get('deadline')!.value ? contractForm.get('deadline')!.value!.toISOString() : undefined,
-            endDate: contractForm.get("endDate")!.value ? contractForm.get('endDate')!.value!.toISOString() : undefined,
+            signingDate: toTimeZoneString(contractForm.get('signingDate')?.value),
+            startDate: toTimeZoneString(contractForm.get('startDate')?.value),
+            deadline: toTimeZoneString(contractForm.get('deadline')?.value),
+            endDate: toTimeZoneString(contractForm.get("endDate")?.value),
         };
     }
 }

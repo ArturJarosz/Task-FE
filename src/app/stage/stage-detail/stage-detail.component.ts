@@ -6,6 +6,7 @@ import {Store} from "@ngrx/store";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Stage} from "../../generated/models/stage";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
+import {toDateIfExists} from "../../shared/utils/date-utils";
 
 @Component({
     selector: 'stage-detail',
@@ -55,9 +56,9 @@ export class StageDetailComponent implements OnInit, OnChanges {
             type: this.stage.type,
             status: this.stage.status,
             name: this.stage.name,
-            deadline: this.stage.deadline ? new Date(this.stage.deadline) : undefined,
-            startDate: this.stage.startDate ? new Date(this.stage.startDate) : undefined,
-            endDate: this.stage.endDate ? new Date(this.stage.endDate) : undefined,
+            deadline: toDateIfExists(this.stage.deadline),
+            startDate: toDateIfExists(this.stage.startDate),
+            endDate: toDateIfExists(this.stage.endDate),
             note: this.stage.note
         })
     }

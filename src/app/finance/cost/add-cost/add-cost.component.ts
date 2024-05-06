@@ -7,6 +7,7 @@ import {Subscription} from "rxjs";
 import {FormGroup} from "@angular/forms";
 import {Cost} from "../../../generated/models/cost";
 import {ConfigurationEntry} from "../../../generated/models/configuration-entry";
+import {toTimeZoneString} from "../../../shared/utils/date-utils";
 
 @Component({
     selector: 'add-cost',
@@ -68,7 +69,7 @@ export class AddCostComponent implements OnInit, OnDestroy {
         cost = {
             name: this.addCostForm.get('name')?.value,
             category: this.addCostForm.get('category')?.value,
-            date: this.addCostForm.get('date')?.value,
+            date: toTimeZoneString(this.addCostForm.get('date')?.value),
             value: this.addCostForm.get('value')?.value,
             hasInvoice: this.addCostForm.get('hasInvoice')?.value,
             paid: this.addCostForm.get('paid')?.value,

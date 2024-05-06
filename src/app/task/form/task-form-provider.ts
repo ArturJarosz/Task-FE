@@ -17,8 +17,8 @@ export class TaskFormProvider {
         return this.formBuilder.nonNullable.group<TaskForm>({
             id: this.formBuilder.nonNullable.control<number>(0, [Validators.required]),
             name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
-            startDate: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
-            endDate: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
+            startDate: this.formBuilder.nonNullable.control<Date>(new Date(), [Validators.required]),
+            endDate: this.formBuilder.nonNullable.control<Date>(new Date(), [Validators.required]),
             status: this.formBuilder.nonNullable.control<TaskStatus>(DEFAULT_STATUS),
             type: this.formBuilder.nonNullable.control<TaskType>(DEFAULT_TYPE),
             note: this.formBuilder.nonNullable.control('')
@@ -28,7 +28,7 @@ export class TaskFormProvider {
     public getAddTaskForm(): FormGroup<AddTaskForm> {
         return this.formBuilder.nonNullable.group<AddTaskForm>({
             name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
-            startDate: this.formBuilder.control<string>(''),
+            startDate: this.formBuilder.control<Date>(new Date()),
             type: this.formBuilder.nonNullable.control<TaskType>(DEFAULT_TYPE),
             note: this.formBuilder.control('')
         })
@@ -38,8 +38,8 @@ export class TaskFormProvider {
 export interface TaskForm {
     id: FormControl<number>;
     name: FormControl<string>;
-    startDate: FormControl<string>,
-    endDate: FormControl<string>;
+    startDate: FormControl<Date>,
+    endDate: FormControl<Date>;
     status: FormControl<TaskStatus>,
     type: FormControl<TaskType>,
     note: FormControl<string>
@@ -47,7 +47,7 @@ export interface TaskForm {
 
 export interface AddTaskForm {
     name: FormControl<string>,
-    startDate: FormControl<string | null>,
+    startDate: FormControl<Date | null>,
     type: FormControl<TaskType>,
     note: FormControl<string | null>
 }
