@@ -19,6 +19,8 @@ import {TaskModule} from "../task/task.module";
 import { AddStageComponent } from './add-stage/add-stage.component';
 import {DialogModule} from "primeng/dialog";
 import {InputTextareaModule} from "primeng/inputtextarea";
+import {RippleModule} from "primeng/ripple";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @NgModule({
     declarations: [
@@ -44,7 +46,9 @@ import {InputTextareaModule} from "primeng/inputtextarea";
         TaskModule,
         DialogModule,
         InputTextareaModule,
-        NgClass
+        NgClass,
+        RippleModule,
+        ConfirmDialogModule
     ],
     exports: [
         StageListComponent,

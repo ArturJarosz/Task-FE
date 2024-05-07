@@ -7,6 +7,7 @@ import {resolveLabel} from "../../shared/utils/label-utils";
 import {Stage} from "../../generated/models/stage";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {toDateIfExists} from "../../shared/utils/date-utils";
+import {DeleteStageDto} from "../model/stage";
 
 @Component({
     selector: 'stage-detail',
@@ -23,7 +24,7 @@ export class StageDetailComponent implements OnInit, OnChanges {
     @Input()
     stageTypes!: ConfigurationEntry[] | null;
     @Output()
-    refresh: EventEmitter<null> = new EventEmitter<null>();
+    deleteStageEvent: EventEmitter<DeleteStageDto>= new EventEmitter<DeleteStageDto>();
 
     stageDetailsForm!: FormGroup<StageForm>;
     resolvedStatusLabel: string = '';
@@ -72,4 +73,7 @@ export class StageDetailComponent implements OnInit, OnChanges {
         }
     }
 
+    onDelete(): void {
+        this.deleteStageEvent.emit({stageName: this.stage!.name!, stageId: this.stage!.id!});
+    }
 }

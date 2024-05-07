@@ -3,6 +3,7 @@
         <tr>
             <th>Id</th>
             <th>Name</th>
+            <th></th>
             <th>Type</th>
             <th>Status</th>
         </tr>
@@ -11,6 +12,9 @@
         <tr [routerLink]="['/projects', projectId, 'stages', stage.id]" class="cursor-pointer">
             <td>{{ stage.id }}</td>
             <td>{{ stage.name }}</td>
+            <td>
+                <button pButton pRipple class="p-button-text p-button-plain p-0" icon="pi pi-times" (click)="deleteTask($event, stage.name, stage.id)" size="small"></button>
+            </td>
             <td>{{ getStageLabelType(stage.type) }}</td>
             <td>{{ getStageStatusLabel(stage.status) }}</td>
         </tr>
