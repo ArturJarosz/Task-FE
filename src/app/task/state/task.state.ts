@@ -156,7 +156,7 @@ export const TaskStore = signalStore(
                     patchState(store, {taskId: taskId});
                     return taskRestService.removeTask(store.projectId()!, store.stageId()!, store.taskId()!)
                         .pipe(
-                            tap(task => {
+                            tap(() => {
                                 stageStore.refreshStage();
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,

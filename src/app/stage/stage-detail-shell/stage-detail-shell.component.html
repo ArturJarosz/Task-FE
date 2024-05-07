@@ -3,5 +3,6 @@
         [stageStatuses]="stageStatuses$ | async"
         [stageTypes]="stageTypes$ | async"
         [projectId]="projectId"
+        (deleteStageEvent)="deleteStage($event)"
 >
 </stage-detail>

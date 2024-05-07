@@ -109,5 +109,30 @@ export const StageStore = signalStore(
                 })
             )
         ),
+        deleteStage: rxMethod<{}>(
+            pipe(
+                switchMap(() => {
+                    return stageRestService.removeStage(store.projectId()!, store.stageId()!)
+                        .pipe(
+                            tap(() => {
+                                projectStore.setProjectNeedsRefresh();
+                                messageService.add({
+                                    severity: MessageSeverity.SUCCESS,
+                                    summary: `Stage removed.`,
+                                    detail: `Stage with id: ${store.stageId()!} was removed.`
+                                });
+                            }),
+                            catchError(error => {
+                                messageService.add({
+                                    severity: MessageSeverity.ERROR,
+                                    summary: `Error removing stage.`,
+                                    detail: `There was problem with removing stage: ${error}.`
+                                });
+                                return of(error)
+                            })
+                        )
+                })
+            )
+        ),
     }))
 )

@@ -1,6 +1,6 @@
 import {Component, effect, inject, OnInit, Signal} from '@angular/core';
 import {Observable} from "rxjs";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {StageState, StageStore} from "../state";
 import {Store} from "@ngrx/store";
 import {
@@ -10,6 +10,8 @@ import {
 } from "../../shared/configuration/state";
 import {Stage} from "../../generated/models/stage";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
+import {DeleteStageDto} from "../model/stage";
+import {ConfirmationService} from "primeng/api";
 
 @Component({
     selector: 'stage-detail-shell',
@@ -29,7 +31,8 @@ export class StageDetailShellComponent implements OnInit {
 
 
     constructor(private route: ActivatedRoute, private stageStoreOld: Store<StageState>,
-                private configurationStore: Store<ConfigurationState>) {
+                private configurationStore: Store<ConfigurationState>, private confirmationService: ConfirmationService,
+                private router: Router) {
         effect(() => {
             if (this.$stageNeedsRefresh()) {
                 this.stageStore.loadStage({});
@@ -52,4 +55,23 @@ export class StageDetailShellComponent implements OnInit {
         this.stageStore.loadStage({});
     }
 
+    deleteStage($event: DeleteStageDto) {
+        let projectId = this.projectId;
+        let stageId = this.stageId;
+        this.confirmationService.confirm({
+            message: `Do you want to delete stage ${stageId}?`,
+            header: `Confirm stage delete ${stageId}`,
+            icon: "pi pi-info-circle text-red-300",
+            accept: () => {
+                this.stageStore.setProjectId(projectId);
+                this.stageStore.setStageId(stageId);
+                this.stageStore.deleteStage({});
+                this.router.navigate([`/projects/${this.projectId}`]);
+                this.confirmationService.close();
+            },
+            reject: () => {
+                this.confirmationService.close();
+            }
+        })
+    }
 }
