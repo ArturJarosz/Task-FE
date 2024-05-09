@@ -10,7 +10,7 @@ import {
 } from "../../shared/configuration/state";
 import {Stage} from "../../generated/models/stage";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
-import {DeleteStageDto} from "../model/stage";
+import {StageDto} from "../model/stage";
 import {ConfirmationService} from "primeng/api";
 
 @Component({
@@ -55,7 +55,7 @@ export class StageDetailShellComponent implements OnInit {
         this.stageStore.loadStage({});
     }
 
-    deleteStage($event: DeleteStageDto) {
+    deleteStage($event: StageDto) {
         let projectId = this.projectId;
         let stageId = this.stageId;
         this.confirmationService.confirm({
@@ -74,4 +74,47 @@ export class StageDetailShellComponent implements OnInit {
             }
         })
     }
+
+    rejectStage($event: StageDto) {
+        let projectId = this.projectId;
+        let stageId = this.stageId;
+        this.confirmationService.confirm({
+            message: `Do you want to reject stage ${stageId}?`,
+            header: `Confirm stage reject ${stageId}`,
+            icon: "pi pi-info-circle text-red-300",
+            accept: () => {
+                this.stageStore.setProjectId(projectId);
+                this.stageStore.setStageId(stageId);
+                this.stageStore.rejectStage({});
+                this.confirmationService.close();
+            },
+            reject: () => {
+                this.confirmationService.close();
+            }
+        })
+    }
+
+    reopenStage($event: StageDto) {
+        let projectId = this.projectId;
+        let stageId = this.stageId;
+        this.confirmationService.confirm({
+            message: `Do you want to reopen stage ${stageId}?`,
+            header: `Confirm stage reopen ${stageId}`,
+            icon: "pi pi-info-circle text-red-300",
+            accept: () => {
+                this.stageStore.setProjectId(projectId);
+                this.stageStore.setStageId(stageId);
+                this.stageStore.reopenStage({});
+                this.confirmationService.close();
+            },
+            reject: () => {
+                this.confirmationService.close();
+            }
+        })
+    }
+
+    updateStage($event: Stage) {
+        this.stageStore.updateStage({stage: $event});
+    }
+
 }

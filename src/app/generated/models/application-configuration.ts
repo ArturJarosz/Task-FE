@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-import { ConfigurationEntry } from '../models/configuration-entry';
+import { ConfigurationEntry } from './configuration-entry';
 export interface ApplicationConfiguration {
   clientTypes?: Array<ConfigurationEntry>;
   contractStatuses?: Array<ConfigurationEntry>;

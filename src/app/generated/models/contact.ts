@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-import { Address } from '../models/address';
+import { Address } from './address';
 export interface Contact {
   address?: Address;
   email?: string;

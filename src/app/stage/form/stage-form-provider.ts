@@ -17,7 +17,7 @@ export class StageFormProvider {
         return this.formBuilder.nonNullable.group<StageForm>({
             id: this.formBuilder.nonNullable.control<number>(0, [Validators.required]),
             name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
-            type: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
+            type: this.formBuilder.nonNullable.control<StageType>(DEFAULT_TYPE, [Validators.required]),
             status: this.formBuilder.nonNullable.control<StageStatus>(StageStatus.TO_DO, [Validators.required]),
             startDate: this.formBuilder.nonNullable.control(new Date()),
             deadline: this.formBuilder.nonNullable.control(new Date()),
@@ -39,7 +39,7 @@ export class StageFormProvider {
 export interface StageForm {
     id: FormControl<number>,
     name: FormControl<string>,
-    type: FormControl<string>,
+    type: FormControl<StageType>,
     status: FormControl<StageStatus>,
     startDate: FormControl<Date>,
     deadline: FormControl<Date>,

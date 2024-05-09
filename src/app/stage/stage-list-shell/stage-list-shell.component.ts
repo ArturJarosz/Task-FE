@@ -9,7 +9,7 @@ import {
 import {Stage} from "../../generated/models/stage";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {StageStore} from "../state";
-import {DeleteStageDto} from "../model/stage";
+import {StageDto} from "../model/stage";
 import {ConfirmationService} from "primeng/api";
 import {Router} from "@angular/router";
 
@@ -48,7 +48,7 @@ export class StageListShellComponent implements OnInit {
         this.showAddStageComponent = false;
     }
 
-    onDelete($event: DeleteStageDto) {
+    onDelete($event: StageDto) {
         let projectId = this.projectId;
         let stageId = $event.stageId;
         this.confirmationService.confirm({

@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, Output} from "@angular/core";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Stage} from "../../generated/models/stage";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
-import {DeleteStageDto} from "../model/stage";
+import {StageDto} from "../model/stage";
 
 @Component({
     selector: 'stage-list',
@@ -19,7 +19,7 @@ export class StageListComponent {
     @Input()
     projectId: number = 0;
     @Output()
-    deleteStageEvent: EventEmitter<DeleteStageDto> = new EventEmitter<DeleteStageDto>();
+    deleteStageEvent: EventEmitter<StageDto> = new EventEmitter<StageDto>();
 
     getStageLabelType(type: string): string {
         return resolveLabel(type, this.stageTypes);

@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnInit, Signal} from '@angular/core';
 import {TaskStore} from "../state/task.state";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
@@ -12,6 +12,7 @@ import {
 import {Observable} from "rxjs";
 import {DeleteTaskDto, UpdateTaskDto, UpdateTaskStatus} from "../model/task";
 import {ConfirmationService} from "primeng/api";
+import {Task} from "../../generated/models/task";
 
 @Component({
     selector: 'app-task-detail-shell',
@@ -24,7 +25,7 @@ export class TaskDetailShellComponent implements OnInit {
     taskId!: number;
 
     readonly taskStore = inject(TaskStore);
-    $task = this.taskStore.task;
+    $task: Signal<Task | null> = this.taskStore.task;
 
     taskStatuses!: Observable<ConfigurationEntry[]>;
     taskTypes!: Observable<ConfigurationEntry[]>;

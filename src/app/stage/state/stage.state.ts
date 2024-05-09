@@ -1,5 +1,4 @@
 import {AppState} from "../../state/app.store";
-import {Store} from "@ngrx/store";
 import {Stage} from "../../generated/models/stage";
 import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
@@ -8,7 +7,7 @@ import {inject} from "@angular/core";
 import {StageRestService} from "../rest/stage-rest.service";
 import {MessageService} from "primeng/api";
 import {MessageSeverity} from "../../shared";
-import {ProjectState, ProjectStore} from "../../project/state";
+import {ProjectStore} from "../../project/state";
 
 export interface StageState extends AppState {
     projectId: number | undefined,
@@ -83,18 +82,18 @@ export const StageStore = signalStore(
                 })
             )
         ),
-        createStage: rxMethod<{ projectId: number,stage: Stage }>(
+        createStage: rxMethod<{ projectId: number, stage: Stage }>(
             pipe(
                 switchMap(({stage}) => {
-                    projectStore.setProjectNeedsRefresh();
                     return stageRestService.createStage(store.projectId()!, stage)
                         .pipe(
                             tap(stage => {
-                                messageService.add({
-                                    severity: MessageSeverity.INFO,
-                                    summary: `New stage created`,
-                                    detail: `New stage for project with id ${store.projectId()} was created.`,
-                                });
+                                    projectStore.setProjectNeedsRefresh();
+                                    messageService.add({
+                                        severity: MessageSeverity.INFO,
+                                        summary: `New stage created`,
+                                        detail: `New stage for project with id ${store.projectId()} was created.`,
+                                    });
                                 }
                             ),
                             catchError(error => {
@@ -134,5 +133,83 @@ export const StageStore = signalStore(
                 })
             )
         ),
+        rejectStage: rxMethod<{}>(
+            pipe(
+                switchMap(() => {
+                    return stageRestService.rejectStage(store.projectId()!, store.stageId()!)
+                        .pipe(
+                            tap(updatedStage => {
+                                projectStore.setProjectNeedsRefresh();
+                                patchState(store, {stage: updatedStage, stageNeedsRefresh: false});
+                                messageService.add({
+                                    severity: MessageSeverity.SUCCESS,
+                                    summary: `Stage rejected.`,
+                                    detail: `Stage with id: ${store.stageId()!} was rejected.`
+                                });
+                            }),
+                            catchError(error => {
+                                messageService.add({
+                                    severity: MessageSeverity.ERROR,
+                                    summary: `Error rejecting stage.`,
+                                    detail: `There was problem with rejecting stage: ${error}.`
+                                });
+                                return of(error)
+                            })
+                        )
+                })
+            )
+        ),
+        reopenStage: rxMethod<{}>(
+            pipe(
+                switchMap(() => {
+                    return stageRestService.reopenStage(store.projectId()!, store.stageId()!)
+                        .pipe(
+                            tap(updatedStage => {
+                                projectStore.setProjectNeedsRefresh();
+                                patchState(store, {stage: updatedStage, stageNeedsRefresh: false});
+                                messageService.add({
+                                    severity: MessageSeverity.SUCCESS,
+                                    summary: `Stage reopened.`,
+                                    detail: `Stage with id: ${store.stageId()!} was reopened.`
+                                });
+                            }),
+                            catchError(error => {
+                                messageService.add({
+                                    severity: MessageSeverity.ERROR,
+                                    summary: `Error reopening stage.`,
+                                    detail: `There was problem with reopening stage: ${error}.`
+                                });
+                                return of(error)
+                            })
+                        )
+                })
+            )
+        ),
+        updateStage: rxMethod<{ stage: Stage }>(
+            pipe(
+                switchMap(({stage}) => {
+                    return stageRestService.updateStage(store.projectId()!, store.stageId()!, stage)
+                        .pipe(
+                            tap(updatedStage => {
+                                projectStore.setProjectNeedsRefresh();
+                                patchState(store, {stage: updatedStage, stageNeedsRefresh: false});
+                                messageService.add({
+                                    severity: MessageSeverity.SUCCESS,
+                                    summary: `Stage updated.`,
+                                    detail: `Stage with id: ${store.stageId()!} was updated.`
+                                });
+                            }),
+                            catchError(error => {
+                                messageService.add({
+                                    severity: MessageSeverity.ERROR,
+                                    summary: `Error updating stage.`,
+                                    detail: `There was problem with updating stage: ${error}.`
+                                });
+                                return of(error)
+                            })
+                        )
+                })
+            )
+        )
     }))
 )

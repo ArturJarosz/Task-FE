@@ -1,4 +1,4 @@
 /* tslint:disable */
 /* eslint-disable */
-import { Stage } from '../models/stage';
+import { Stage } from './stage';
 export type Stages = Array<Stage>;

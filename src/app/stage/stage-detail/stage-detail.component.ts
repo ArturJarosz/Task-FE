@@ -1,13 +1,23 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {
+    Component,
+    computed,
+    EventEmitter,
+    Input,
+    OnChanges,
+    OnInit,
+    Output,
+    Signal,
+    SimpleChanges
+} from '@angular/core';
 import {FormGroup} from "@angular/forms";
-import {StageFormProvider, StageForm} from "../form/stage-form-provider";
-import {ConfigurationState, loadConfiguration} from "../../shared/configuration/state";
-import {Store} from "@ngrx/store";
+import {StageForm, StageFormProvider} from "../form/stage-form-provider";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Stage} from "../../generated/models/stage";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
-import {toDateIfExists} from "../../shared/utils/date-utils";
-import {DeleteStageDto} from "../model/stage";
+import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
+import {StageDto} from "../model/stage";
+import {StageStatus} from "../../generated/models/stage-status";
+import {cloneDeep} from "lodash";
 
 @Component({
     selector: 'stage-detail',
@@ -24,26 +34,39 @@ export class StageDetailComponent implements OnInit, OnChanges {
     @Input()
     stageTypes!: ConfigurationEntry[] | null;
     @Output()
-    deleteStageEvent: EventEmitter<DeleteStageDto>= new EventEmitter<DeleteStageDto>();
+    deleteStageEvent: EventEmitter<StageDto> = new EventEmitter<StageDto>();
+    @Output()
+    rejectEvent: EventEmitter<StageDto> = new EventEmitter<StageDto>();
+    @Output()
+    reopenEvent: EventEmitter<StageDto> = new EventEmitter<StageDto>();
+    @Output()
+    updateEvent: EventEmitter<Stage> = new EventEmitter<Stage>();
 
     stageDetailsForm!: FormGroup<StageForm>;
     resolvedStatusLabel: string = '';
     resolvedTypeLabel: string = '';
+    canReopen: boolean = false;
+    canReject: boolean = false;
 
     initialStageForm!: FormGroup<StageForm>;
 
-    constructor(private formProvider: StageFormProvider, private configurationStore: Store<ConfigurationState>) {
+    fieldsToUpdate: string[] = ["name", "type", "startDate", "endDate", "deadline", "note"];
+
+    constructor(private formProvider: StageFormProvider) {
     }
 
     ngOnInit(): void {
-        this.configurationStore.dispatch(loadConfiguration());
         this.stageDetailsForm = this.formProvider.getStageDetailForm();
     }
 
-    ngOnChanges({stage, stageStatuses, stageTypes}: SimpleChanges): void {
-        if (this.stage && stage) {
+    ngOnChanges(changes: SimpleChanges): void {
+        if (this.stage && changes['stage']) {
             this.fillFormData();
+            this.initialStageForm = cloneDeep(this.stageDetailsForm);
             this.resolveLabels();
+            this.resolvedTypeLabel = resolveLabel(this.stage.type, this.stageTypes);
+            this.canReject = this.stage.status !== StageStatus.REJECTED;
+            this.canReopen = this.stage.status === StageStatus.REJECTED;
         }
     }
 
@@ -73,7 +96,35 @@ export class StageDetailComponent implements OnInit, OnChanges {
         }
     }
 
+    isUpdated(): boolean {
+        return this.fieldsToUpdate.filter(fieldName => {
+                return this.initialStageForm.get(fieldName)?.value !== this.stageDetailsForm.get(fieldName)?.value
+            }
+        ).length > 0;
+    }
+
     onDelete(): void {
         this.deleteStageEvent.emit({stageName: this.stage!.name!, stageId: this.stage!.id!});
+    }
+
+    onReject(): void {
+        this.rejectEvent.emit({stageName: this.stage!.name!, stageId: this.stage!.id!});
+    }
+
+    onReopen(): void {
+        this.reopenEvent.emit({stageName: this.stage!.name!, stageId: this.stage!.id!});
+    }
+
+    onSave(): void {
+        let stage: Stage;
+        stage = {
+            name: this.stageDetailsForm.value.name,
+            type: this.stageDetailsForm.value.type,
+            startDate: toTimeZoneString(this.stageDetailsForm.value.startDate),
+            endDate: toTimeZoneString(this.stageDetailsForm.value.endDate),
+            deadline: toTimeZoneString(this.stageDetailsForm.value.deadline),
+            note: this.stageDetailsForm.value.note!
+        }
+        this.updateEvent.emit(stage);
     }
 }
