@@ -1,4 +1,4 @@
-<wrapper *ngIf="task" [title]="task.name + ',&nbsp;'" [secondaryTitle]="$resolvedTypeLabel()">
+<wrapper *ngIf="task" [title]="task.name + ',&nbsp;'" [secondaryTitle]="resolvedTypeLabel">
     <div wrapper-body>
         <p-accordion [multiple]="true">
             <form [formGroup]="taskDetailForm">

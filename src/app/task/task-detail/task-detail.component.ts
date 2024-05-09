@@ -27,13 +27,7 @@ export class TaskDetailComponent implements OnInit, OnChanges {
     deleteTaskEVent: EventEmitter<DeleteTaskDto> = new EventEmitter<DeleteTaskDto>();
 
     availableTaskStatuses!: ConfigurationEntry[];
-
-    $resolvedTypeLabel = computed(() => {
-        if (this.task?.type) {
-            return resolveLabel(this.task.type, this.taskTypes);
-        }
-        return "";
-    })
+    resolvedTypeLabel: string = "";
 
     taskDetailForm!: FormGroup<TaskForm>;
     initialTaskDetailForm!: FormGroup<TaskForm>;
@@ -48,15 +42,16 @@ export class TaskDetailComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['task'] && this.task) {
+            console.log("changes to task");
             this.taskDetailForm = this.formProvider.getTaskDetailForm();
             this.fillFormData();
-            this.initialTaskDetailForm = cloneDeep(this.taskDetailForm) as FormGroup<TaskForm>;
+            this.initialTaskDetailForm = cloneDeep(this.taskDetailForm);
+            this.resolvedTypeLabel = resolveLabel(this.task.type, this.taskTypes);
             this.resolveAvailableStatuses();
         }
     }
 
     statusNeedsUpdate(): boolean {
-
         return this.initialTaskDetailForm.value.status as TaskStatus != this.taskDetailForm.value.status;
     }
 

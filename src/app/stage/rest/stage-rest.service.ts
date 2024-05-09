@@ -14,6 +14,13 @@ export abstract class StageRestService {
     abstract createStage(projectId: number, stage: Stage): Observable<Stage>;
 
     abstract removeStage(projectId: number, stageId: number): Observable<void>;
+
+    abstract rejectStage(projectId: number, stageId: number): Observable<Stage>;
+
+    abstract reopenStage(projectId: number, stageId: number): Observable<Stage>;
+
+    abstract updateStage(projectId: number, stageId: number, stage: Stage): Observable<Stage>;
+
 }
 
 @Injectable()
@@ -47,6 +54,27 @@ export class StageRestServiceImpl extends AbstractRestService implements StageRe
 
     removeStage(projectId: number, stageId: number): Observable<void> {
         return this.httpClient.delete<void>(`${this.projectsUrl}/${projectId}/stages/${stageId}`)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            );
+    }
+
+    rejectStage(projectId: number, stageId: number): Observable<Stage> {
+        return this.httpClient.post<Stage>(`${this.projectsUrl}/${projectId}/stages/${stageId}/reject`, {})
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            );
+    }
+
+    reopenStage(projectId: number, stageId: number): Observable<Stage> {
+        return this.httpClient.post<Stage>(`${this.projectsUrl}/${projectId}/stages/${stageId}/reopen`, {})
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            );
+    }
+
+    updateStage(projectId: number, stageId: number, stage: Stage): Observable<Stage> {
+        return this.httpClient.put<Stage>(`${this.projectsUrl}/${projectId}/stages/${stageId}`, stage)
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))
             );

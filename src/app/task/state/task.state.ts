@@ -96,6 +96,7 @@ export const TaskStore = signalStore(
                         updateStatusDto)
                         .pipe(
                             tap(task => {
+                                patchState(store, {task: task});
                                 stageStore.refreshStage();
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
@@ -124,6 +125,7 @@ export const TaskStore = signalStore(
                     return taskRestService.updateTask(store.projectId()!, store.stageId()!, store.taskId()!, task)
                         .pipe(
                             tap(task => {
+                                patchState(store, {task: task});
                                 stageStore.refreshStage();
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,

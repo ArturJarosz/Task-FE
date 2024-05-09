@@ -1,4 +1,4 @@
 /* tslint:disable */
 /* eslint-disable */
-import { Client } from '../models/client';
+import { Client } from './client';
 export type Clients = Array<Client>;

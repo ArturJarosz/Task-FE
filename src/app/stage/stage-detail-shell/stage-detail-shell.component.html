@@ -4,5 +4,8 @@
         [stageTypes]="stageTypes$ | async"
         [projectId]="projectId"
         (deleteStageEvent)="deleteStage($event)"
+        (rejectEvent)="rejectStage($event)"
+        (reopenEvent)="reopenStage($event)"
+        (updateEvent)="updateStage($event)"
 >
 </stage-detail>
