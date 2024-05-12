@@ -104,7 +104,6 @@ export const ProjectStore = signalStore(
         updateProject: rxMethod<{ project: Project }>(
             pipe(
                 switchMap(({project}) => {
-                    console.log(`Updating project with id: ${store.projectId()}`)
                     return projectRestService.updateProject(store.projectId()!, project)
                         .pipe(
                             tap(project => {
@@ -126,6 +125,31 @@ export const ProjectStore = signalStore(
                         )
                 })
             )
-        )
+        ),
+        removeProject: rxMethod<{ }>(
+            pipe(
+                switchMap(() => {
+                    return projectRestService.removeProject(store.projectId()!)
+                        .pipe(
+                            tap(project => {
+                                patchState(store, {projectsNeedRefresh: true});
+                                messageService.add({
+                                    severity: MessageSeverity.SUCCESS,
+                                    summary: `Project removed.`,
+                                    detail: `A project with id: ${store.projectId()} was removed.`
+                                });
+                            }),
+                            catchError(error => {
+                                messageService.add({
+                                    severity: MessageSeverity.ERROR,
+                                    summary: `Error removing project.`,
+                                    detail: `There was a problem with removing a project ${store.projectId()}.`
+                                });
+                                return of(error)
+                            })
+                        )
+                })
+            )
+        ),
     }))
 )

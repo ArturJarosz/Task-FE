@@ -3,6 +3,7 @@
                 [projectStatuses]="projectStatuses$ | async"
                 [contractStatuses]="contractStatuses$ | async"
                 [projectTypes]="projectTypes$ | async"
-                (updateProjectEvent)="onUpdateProject($event)">
+                (updateProjectEvent)="onUpdateProject($event)"
+                (removeProjectEvent)="onRemoveProject($event)">
 
 </project-detail>

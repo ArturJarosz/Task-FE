@@ -42,7 +42,6 @@ export class TaskDetailComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['task'] && this.task) {
-            console.log("changes to task");
             this.taskDetailForm = this.formProvider.getTaskDetailForm();
             this.fillFormData();
             this.initialTaskDetailForm = cloneDeep(this.taskDetailForm);

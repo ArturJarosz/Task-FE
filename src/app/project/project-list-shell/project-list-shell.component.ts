@@ -9,6 +9,9 @@ import {
 import {Observable} from "rxjs";
 import {Project} from "../../generated/models/project";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
+import {Router} from "@angular/router";
+import {ConfirmationService} from "primeng/api";
+import {ProjectDto} from "../model/project.model";
 
 @Component({
     selector: 'project-list-shell',
@@ -25,7 +28,8 @@ export class ProjectListShellComponent implements OnInit {
     $projects: Signal<Project[] | null> = this.projectStore.projects;
     $projectsNeedRefresh: Signal<boolean | null> = this.projectStore.projectsNeedRefresh;
 
-    constructor(private projectStoreOld: Store<ProjectState>, private configurationStore: Store<ConfigurationState>) {
+    constructor(private projectStoreOld: Store<ProjectState>, private configurationStore: Store<ConfigurationState>,
+                private router: Router, private confirmationService: ConfirmationService) {
         effect(() => {
             if (this.$projectsNeedRefresh()) {
                 this.projectStore.loadProjects({})
@@ -46,4 +50,20 @@ export class ProjectListShellComponent implements OnInit {
         this.showComponent = !this.showComponent;
     }
 
+    onDeleteProject($event: ProjectDto) {
+        this.projectStore.setProjectId($event.id);
+        this.confirmationService.confirm({
+            message: `Do you want to project task: ${$event.name}?`,
+            header: `Confirm project delete ${$event.name}.`,
+            icon: "pi pi-info-circle text-red-300",
+            accept: () => {
+                this.projectStore.removeProject({});
+                this.router.navigate([`/projects`]);
+                this.confirmationService.close();
+            },
+            reject: () => {
+                this.confirmationService.close();
+            }
+        });
+    }
 }

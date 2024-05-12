@@ -10,10 +10,11 @@ import {
     getProjectTypeConfiguration,
     loadConfiguration
 } from "../../shared/configuration/state";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {Architect} from "../../generated/models/architect";
 import {Project} from "../../generated/models/project";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
+import {ConfirmationService} from "primeng/api";
 
 @Component({
     selector: 'project-detail-shell',
@@ -35,7 +36,8 @@ export class ProjectDetailShellComponent implements OnInit {
 
     constructor(private route: ActivatedRoute, private projectStoreOld: Store<ProjectState>,
                 private architectsStore: Store<ArchitectState>,
-                private configurationStore: Store<ConfigurationState>) {
+                private configurationStore: Store<ConfigurationState>, private router: Router,
+                private confirmationService: ConfirmationService) {
         effect(() => {
             if (this.$projectNeedsRefresh()) {
                 this.projectStore.loadProject({});
@@ -46,7 +48,6 @@ export class ProjectDetailShellComponent implements OnInit {
     ngOnInit(): void {
         let maybeProjectId = this.route.snapshot.paramMap.get('id');
         this.projectId = Number(maybeProjectId);
-        console.log("project")
         this.projectStore.setProjectId(this.projectId);
         this.projectStore.loadProject({});
 
@@ -61,5 +62,22 @@ export class ProjectDetailShellComponent implements OnInit {
 
     onUpdateProject($event: Project) {
         this.projectStore.updateProject({project: $event});
+    }
+
+    onRemoveProject($event: void) {
+        let projectName = this.projectStore.project()!.name;
+        this.confirmationService.confirm({
+            message: `Do you want to project task: ${projectName}?`,
+            header: `Confirm project delete ${projectName}.`,
+            icon: "pi pi-info-circle text-red-300",
+            accept: () => {
+                this.projectStore.removeProject({});
+                this.router.navigate([`/projects`]);
+                this.confirmationService.close();
+            },
+            reject: () => {
+                this.confirmationService.close();
+            }
+        });
     }
 }
