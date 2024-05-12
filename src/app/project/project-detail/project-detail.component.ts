@@ -1,4 +1,13 @@
-import {ChangeDetectionStrategy, Component, inject, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component, EventEmitter,
+    inject,
+    Input,
+    OnChanges,
+    OnInit,
+    Output,
+    SimpleChanges
+} from '@angular/core';
 import {FormGroup} from "@angular/forms";
 import {ProjectContractForm, ProjectCreateForm, ProjectDetailFormProvider} from "./project-detail-form-provider";
 import {cloneDeep} from 'lodash';
@@ -28,6 +37,8 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
     projectTypes!: ConfigurationEntry[] | null;
     @Input()
     costCategories!: ConfigurationEntry[] | null;
+    @Output()
+    updateProjectEvent: EventEmitter<Project> = new EventEmitter<Project>();
 
     contractStore = inject(ContractStore)
 
@@ -63,9 +74,10 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
                 }: SimpleChanges): void {
         if (this.project && project) {
             this.contractStore.setContractId(this.project?.contract!.id!);
+            this.fillFormData();
+            this.initialProjectForm = cloneDeep(this.projectDetailsForm);
             this.resolveLabels();
             this.resolveAvailableStatuses();
-            this.fillFormData();
         }
     }
 
@@ -81,6 +93,8 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
             clientId: this.project.client!.id,
             status: this.project.status,
             note: this.project.note,
+            startDate: toDateIfExists(this.project.startDate),
+            endDate: toDateIfExists(this.project.endDate),
             contract: {
                 id: this.project.contract!.id,
                 offerValue: this.project.contract!.offerValue,
@@ -136,7 +150,7 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
     }
 
     shouldUpdateContract(): boolean {
-        if (this.projectDetailsForm.get('contract')?.untouched) {
+        if (this.projectDetailsForm.get('contract')?.pristine) {
             return false;
         }
         let newContractForm = (this.projectDetailsForm.get('contract') as FormGroup<ProjectContractForm>);
@@ -151,7 +165,7 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
     }
 
     shouldUpdateProject(): boolean {
-        if (this.projectDetailsForm.untouched) {
+        if (this.projectDetailsForm.pristine) {
             return false;
         }
         let changedValues: any[] = [];
@@ -173,7 +187,8 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
     }
 
     onProjectUpdate(): void {
-
+        let project = this.createProject();
+        this.updateProjectEvent.emit(project);
     }
 
     createContract(): Contract {
@@ -188,5 +203,16 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
             deadline: toTimeZoneString(contractForm.get('deadline')?.value),
             endDate: toTimeZoneString(contractForm.get("endDate")?.value),
         };
+    }
+
+    createProject(): Project {
+        let project: Project;
+        project = {
+            name: this.projectDetailsForm.value.name,
+            type: this.projectDetailsForm.value.type,
+            architect: {...this.project?.architect!, id: this.projectDetailsForm.value.architectId},
+            note: this.projectDetailsForm.value.note!
+        }
+        return project;
     }
 }

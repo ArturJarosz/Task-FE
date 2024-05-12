@@ -13,6 +13,8 @@ export abstract class ProjectRestService {
     abstract getProject(projectId: number): Observable<Project>;
 
     abstract createProject(projectCreate: ProjectCreate): Observable<Project>;
+
+    abstract updateProject(projectId: number, project: Project): Observable<Project>;
 }
 
 @Injectable()
@@ -39,6 +41,14 @@ export class ProjectRestServiceImpl extends AbstractRestService implements Proje
 
     createProject(projectCreate: ProjectCreate): Observable<Project> {
         return this.httpClient.post<Project>(this.projectUrl, projectCreate)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            );
+    }
+
+    updateProject(projectId: number, project: Project): Observable<Project> {
+        console.log(`what is project id? : ${projectId}`)
+        return this.httpClient.put(`${this.projectUrl}/${projectId}`, project)
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))
             );
