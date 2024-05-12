@@ -46,6 +46,7 @@ export class ProjectDetailShellComponent implements OnInit {
     ngOnInit(): void {
         let maybeProjectId = this.route.snapshot.paramMap.get('id');
         this.projectId = Number(maybeProjectId);
+        console.log("project")
         this.projectStore.setProjectId(this.projectId);
         this.projectStore.loadProject({});
 
@@ -56,5 +57,9 @@ export class ProjectDetailShellComponent implements OnInit {
         this.projectTypes$ = this.configurationStore.select(getProjectTypeConfiguration);
         this.projectStatuses$ = this.configurationStore.select(getProjectStatusConfiguration);
         this.contractStatuses$ = this.configurationStore.select(getContractStatusConfiguration);
+    }
+
+    onUpdateProject($event: Project) {
+        this.projectStore.updateProject({project: $event});
     }
 }
