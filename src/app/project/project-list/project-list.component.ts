@@ -1,6 +1,7 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Client, ClientType, ConfigurationEntry, Project} from "../../generated/models";
+import {ProjectDto} from "../model/project.model";
 
 @Component({
     selector: 'project-list',
@@ -15,6 +16,8 @@ export class ProjectListComponent {
     projectTypes: ConfigurationEntry[] | null = [];
     @Input()
     projectStatuses: ConfigurationEntry[] | null = [];
+    @Output()
+    deleteProjectEvent: EventEmitter<ProjectDto> = new EventEmitter<ProjectDto>();
 
     getProjectTypeLabel(type: string): string {
         return resolveLabel(type, this.projectTypes);
@@ -29,5 +32,10 @@ export class ProjectListComponent {
             return client.companyName;
         }
         return `${client.firstName} ${client.lastName}`;
+    }
+
+    deleteProject($event: MouseEvent, name: string, id: number) {
+        $event.stopPropagation();
+        this.deleteProjectEvent.emit({name: name, id: id});
     }
 }

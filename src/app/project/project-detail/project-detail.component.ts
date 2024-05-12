@@ -39,6 +39,8 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
     costCategories!: ConfigurationEntry[] | null;
     @Output()
     updateProjectEvent: EventEmitter<Project> = new EventEmitter<Project>();
+    @Output()
+    removeProjectEvent: EventEmitter<void> = new EventEmitter<void>();
 
     contractStore = inject(ContractStore)
 
@@ -64,15 +66,8 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
         this.initialProjectForm = cloneDeep(this.projectDetailsForm);
     }
 
-    ngOnChanges({
-                    project,
-                    architects,
-                    projectStatuses,
-                    contractStatuses,
-                    projectTypes,
-                    costCategories
-                }: SimpleChanges): void {
-        if (this.project && project) {
+    ngOnChanges(changes: SimpleChanges): void {
+        if (this.project && changes['project']) {
             this.contractStore.setContractId(this.project?.contract!.id!);
             this.fillFormData();
             this.initialProjectForm = cloneDeep(this.projectDetailsForm);
@@ -214,5 +209,9 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
             note: this.projectDetailsForm.value.note!
         }
         return project;
+    }
+
+    onDelete() {
+        this.removeProjectEvent.emit();
     }
 }

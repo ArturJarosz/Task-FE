@@ -3,6 +3,7 @@
         <tr>
             <th>Id</th>
             <th>Name</th>
+            <th></th>
             <th>Type</th>
             <th>Architect</th>
             <th>Client</th>
@@ -13,6 +14,9 @@
         <tr [routerLink]="['/projects', project.id]" class="cursor-pointer">
             <td>{{ project.id }}</td>
             <td>{{ project.name}}</td>
+            <td>
+                <button pButton pRipple class="p-button-text p-button-plain p-0" icon="pi pi-times" (click)="deleteProject($event, project.name, project.id)" size="small"></button>
+            </td>
             <td>{{ getProjectTypeLabel(project.type) }}</td>
             <td>{{ project.architect.firstName + ' ' + project.architect.lastName}}</td>
             <td>{{ getClientName(project.client) }}</td>

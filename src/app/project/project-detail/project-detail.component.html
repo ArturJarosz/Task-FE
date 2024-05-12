@@ -6,6 +6,8 @@
                     <div class="p-2 ng-star-inserted surface-border" formGroupName="contract">
                         <div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
                             <p-button icon="pi pi-arrow-down" [disabled]="!shouldUpdateContract()" (click)="onContractUpdate()" [outlined]="true" [rounded]="true" class="update-button transition-colors transition-duration-300"></p-button>
+                            <p-button title="Remove project" icon="pi pi-times" [outlined]="true" [rounded]="true" (onClick)="onDelete()" class="remove-button transition-colors transition-duration-300 px-1"></p-button>
+
                         </div>
                         <div class="grid grid-nogutter surface-border col-12 p-1">
                             <div class="md:col-4 p-1">
