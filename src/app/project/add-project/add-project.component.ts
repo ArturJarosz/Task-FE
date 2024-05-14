@@ -1,7 +1,7 @@
-import {Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, computed, EventEmitter, inject, Input, OnDestroy, OnInit, Output, Signal} from '@angular/core';
 import {FormGroup} from "@angular/forms";
 import {AddProjectFormProvider} from "./add-project-form-provider.service";
-import {ClientState, getClients, loadClients} from "../../client/state";
+import {ClientStore} from "../../client/state";
 import {Store} from "@ngrx/store";
 import {ArchitectState, getArchitects, loadArchitects} from "../../architect/state";
 import {ProjectStore} from "../state";
@@ -11,6 +11,7 @@ import {ArchitectFormModel} from "../../architect/model/architect";
 import {ClientFormModel} from "../../client/model/client";
 import {ProjectCreate} from "../../generated/models/project-create";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
+import {Client} from "../../generated/models/client";
 
 @Component({
     selector: 'add-project',
@@ -18,6 +19,8 @@ import {ConfigurationEntry} from "../../generated/models/configuration-entry";
     styleUrls: ['./add-project.component.less']
 })
 export class AddProjectComponent implements OnInit, OnDestroy {
+    clientStore = inject(ClientStore);
+
     @Input()
     visible = false;
     @Output()
@@ -25,8 +28,14 @@ export class AddProjectComponent implements OnInit, OnDestroy {
 
     header: string = "Add new project";
 
-    clientsSubscription$!: Subscription;
-    clients: ClientFormModel[] = [];
+    $clients: Signal<Client[] | null> = this.clientStore.clients!;
+    $clientsForm: Signal<ClientFormModel[]> = computed(() => {
+        let clients: Client[] | null = this.$clients();
+        let clientForms: ClientFormModel[] = JSON.parse(JSON.stringify(clients));
+        clientForms.forEach(
+            client => client.resolvedName = client.firstName ? `${client.firstName} ${client.lastName}` : client.companyName);
+        return clientForms;
+    });
     architectsSubscription$!: Subscription;
     architects: ArchitectFormModel[] = [];
     projectTypesSubscription$!: Subscription;
@@ -36,25 +45,17 @@ export class AddProjectComponent implements OnInit, OnDestroy {
     readonly projectStore = inject(ProjectStore);
 
 
-    constructor(private addProjectFormProvider: AddProjectFormProvider, private clientStore: Store<ClientState>,
-                private architectStore: Store<ArchitectState>, private configurationStore: Store<ConfigurationState>) {
+    constructor(private addProjectFormProvider: AddProjectFormProvider, private architectStore: Store<ArchitectState>,
+                private configurationStore: Store<ConfigurationState>) {
     }
 
     ngOnInit(): void {
+        this.clientStore.loadClients({});
         this.initializeValues();
+        this.setFormDefaultValues();
     }
 
     private initializeValues() {
-        this.clientStore.dispatch(loadClients());
-        this.clientsSubscription$ = this.clientStore.select(getClients)
-            .subscribe({
-                next: clients => {
-                    this.clients = JSON.parse(JSON.stringify(clients));
-                    this.clients.forEach(
-                        client => client.resolvedName = client.firstName ? `${client.firstName} ${client.lastName}` : client.companyName);
-                    this.setFormDefaultValues();
-                }
-            });
         this.architectStore.dispatch(loadArchitects());
         this.architectsSubscription$ = this.architectStore.select(getArchitects)
             .subscribe({
@@ -79,18 +80,16 @@ export class AddProjectComponent implements OnInit, OnDestroy {
     }
 
     setFormDefaultValues() {
-        if (this.clients && this.clients.length > 0 && this.architects && this.architects.length > 0 && this.projectTypes && this.projectTypes.length > 0 && this.addProjectForm) {
+        if (this.$clientsForm() && this.$clientsForm().length > 0 && this.architects && this.architects.length > 0 && this.projectTypes && this.projectTypes.length > 0 && this.addProjectForm) {
             this.addProjectForm.patchValue({
                 type: this.projectTypes[0]?.id,
                 architectId: this.architects[0]?.id,
-                clientId: this.clients[0]?.id
+                clientId: this.$clientsForm()[0]?.id
             })
         }
     }
 
-
     ngOnDestroy(): void {
-        this.clientsSubscription$.unsubscribe();
         this.architectsSubscription$.unsubscribe();
         this.projectTypesSubscription$.unsubscribe();
     }

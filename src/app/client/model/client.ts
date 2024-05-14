@@ -43,3 +43,8 @@ export interface ClientForm {
     clientType: FormControl<string>,
     contact: FormGroup<ContactForm>
 }
+
+export interface ClientDto {
+    id: number,
+    name: string
+}
