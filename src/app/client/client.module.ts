@@ -21,15 +21,18 @@ import {ClientRestService, ClientRestServiceImpl} from "./rest/client-rest.servi
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {StoreModule} from "@ngrx/store";
-import {clientReducer, ClientEffects} from "./state";
 import {EffectsModule} from "@ngrx/effects";
 import {Features} from "../features";
+import { ClientDetailShellComponent } from './client-detail-shell/client-detail-shell.component';
+import { ClientListShellComponent } from './client-list-shell/client-list-shell.component';
 
 @NgModule({
     declarations: [
         ClientListComponent,
         ClientDetailComponent,
-        AddClientComponent
+        AddClientComponent,
+        ClientDetailShellComponent,
+        ClientListShellComponent
     ],
     imports: [
         BrowserAnimationsModule,
@@ -38,8 +41,8 @@ import {Features} from "../features";
         PanelModule,
         TableModule,
         RouterModule.forChild([
-            {path: 'clients', component: ClientListComponent},
-            {path: 'clients/:id', component: ClientDetailComponent}
+            {path: 'clients', component: ClientListShellComponent},
+            {path: 'clients/:id', component: ClientDetailShellComponent}
         ]),
         DialogModule,
         ButtonModule,
@@ -50,9 +53,7 @@ import {Features} from "../features";
         RippleModule,
         InputTextareaModule,
         DividerModule,
-        ConfirmDialogModule,
-        StoreModule.forFeature(Features.CLIENT, clientReducer),
-        EffectsModule.forFeature([ClientEffects])
+        ConfirmDialogModule
     ],
     exports: [
         ClientListComponent

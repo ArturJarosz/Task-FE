@@ -1,8 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
-import {Subscription} from "rxjs";
-import {Store} from "@ngrx/store";
-import {ClientState, getClient, loadClient} from "../state";
+import {Component, Input, OnInit} from '@angular/core';
 import {Client, ClientType} from "../../generated/models";
 
 @Component({
@@ -10,7 +6,7 @@ import {Client, ClientType} from "../../generated/models";
     templateUrl: './client-detail.component.html',
     styleUrls: ['./client-detail.component.less']
 })
-export class ClientDetailComponent implements OnInit, OnDestroy {
+export class ClientDetailComponent implements OnInit {
     noteCardLabel: string = "Note";
     pageTitle = "Client profile";
 
@@ -31,27 +27,17 @@ export class ClientDetailComponent implements OnInit, OnDestroy {
     streetLabel: string = "Street";
 
     clientId!: number;
-    clientSubscription$!: Subscription;
+
+    @Input()
     client!: Client | null;
     clientName: string | undefined;
     combinedStreetWithNumbers!: string;
 
-    constructor(private route: ActivatedRoute, private clientStore: Store<ClientState>) {
+    constructor() {
     }
 
     ngOnInit(): void {
-        let maybeNumber = this.route.snapshot.paramMap.get("id");
-        this.clientId = Number(maybeNumber);
-        this.clientStore.dispatch(loadClient({clientId: this.clientId}));
-        this.clientSubscription$ = this.clientStore.select(getClient)
-            .subscribe({
-                next: client => this.client = client
-            });
         this.resolveCombinedStreet();
-    }
-
-    ngOnDestroy(): void {
-        this.clientSubscription$.unsubscribe();
     }
 
     resolveCombinedStreet() {

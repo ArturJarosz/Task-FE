@@ -1,64 +1,43 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {Subscription} from "rxjs";
 import {ConfirmationService} from "primeng/api";
 import {Store} from "@ngrx/store";
-import {ClientState, getClients, getClientsNeedRefresh, loadClients, removeClient} from "../state";
+import {ClientStore} from "../state";
 import {ConfigurationState, getClientTypeConfiguration} from "../../shared/configuration/state";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Client, ClientType, ConfigurationEntry} from "../../generated/models";
+import {ClientDto} from "../model/client";
 
 @Component({
-    selector: 'clients-list',
+    selector: 'client-list',
     templateUrl: './client-list.component.html',
     styleUrls: ['./client-list.component.less',]
 })
 export class ClientListComponent implements OnInit, OnDestroy {
-    private clientSubscription$!: Subscription;
-    private clientsNeedsRefreshSubscription$!: Subscription;
+    clientStore = inject(ClientStore);
     private clientTypesSubscription$!: Subscription;
     showComponent: boolean = false;
-    errorMessage: string = '';
+    @Input()
     clients!: Client[];
     clientTypes!: ConfigurationEntry[];
+    @Output()
+    removeClientEvent: EventEmitter<ClientDto> = new EventEmitter<ClientDto>();
 
     protected readonly ClientType = ClientType;
 
-    constructor(private confirmationService: ConfirmationService, private clientStore: Store<ClientState>,
+    constructor(private confirmationService: ConfirmationService,
                 private configurationStore: Store<ConfigurationState>) {
     }
 
     ngOnInit(): void {
-        this.clientSubscription$ = this.clientStore.select(getClients)
-            .subscribe({
-                next: (clients: Client[]) => {
-                    this.clients = clients
-                },
-                error: (error: string) => this.errorMessage = error
-            })
-        this.clientStore.dispatch(loadClients());
-        this.refreshClients();
         this.clientTypesSubscription$ = this.configurationStore.select(getClientTypeConfiguration)
             .subscribe({
                 next: (clientTypes: ConfigurationEntry[]) => this.clientTypes = clientTypes
             })
-        this.clientsNeedsRefreshSubscription$ = this.clientStore.select(getClientsNeedRefresh)
-            .subscribe({
-                next: (needsRefresh: any) => {
-                    if (needsRefresh) {
-                        this.refreshClients();
-                    }
-                }
-            })
-    }
-
-    refreshClients(): void {
-        this.clientStore.dispatch(loadClients());
     }
 
     ngOnDestroy(): void {
         this.clientTypesSubscription$.unsubscribe();
-        this.clientsNeedsRefreshSubscription$.unsubscribe();
-        this.clientSubscription$.unsubscribe();
     }
 
     onClick() {
@@ -69,19 +48,7 @@ export class ClientListComponent implements OnInit, OnDestroy {
         // stop propagating row event
         event.stopPropagation();
         let name = client.clientType === ClientType.PRIVATE ? `${client.firstName} ${client.lastName}` : `${client.companyName}`;
-        this.confirmationService.confirm({
-            message: `Do you want to delete client: ${name}?`,
-            header: `Confirm client delete ${name}.`,
-            icon: "pi pi-info-circle text-red-300",
-            accept: () => {
-                this.clientStore.dispatch(removeClient({clientId: Number(client.id)}))
-                this.confirmationService.close();
-                this.refreshClients();
-            },
-            reject: () => {
-                this.confirmationService.close();
-            }
-        });
+        this.removeClientEvent.emit({name: name, id: client.id!});
     }
 
     onNotify(event: boolean) {

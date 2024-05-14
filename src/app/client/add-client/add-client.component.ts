@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Injectable, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Injectable, Input, OnInit, Output} from '@angular/core';
 import {
     ADDRESS,
     CITY,
@@ -17,7 +17,7 @@ import {
 } from "../model/client";
 import {FormGroup, Validators} from "@angular/forms";
 import {ClientFormProvider} from "./client-form-provider";
-import {ClientState, createClient} from "../state";
+import {ClientState, ClientStore} from "../state";
 import {Store} from "@ngrx/store";
 import {ConfigurationState, getClientTypeConfiguration} from "../../shared/configuration/state";
 import {resolveLabel} from "../../shared/utils/label-utils";
@@ -34,19 +34,18 @@ const DEFAULT_CLIENT_TYPE = ClientType.PRIVATE.toString();
     styleUrls: ['./add-client.component.less'],
 })
 export class AddClientComponent implements OnInit {
+    clientStore = inject(ClientStore);
     @Input()
     visible = false;
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
-    @Output()
-    reloadClients = new EventEmitter<void>();
 
     clientTypes: ConfigurationEntry[] = [];
     clientForm!: FormGroup;
 
     protected readonly ClientType = ClientType;
 
-    constructor(private clientFormProvider: ClientFormProvider, private clientStore: Store<ClientState>,
+    constructor(private clientFormProvider: ClientFormProvider, private clientStoreOld: Store<ClientState>,
                 private configurationStore: Store<ConfigurationState>) {
     }
 
@@ -104,8 +103,7 @@ export class AddClientComponent implements OnInit {
     onSave() {
         this.visible = false;
         let client: Client = this.createClient();
-        this.clientStore.dispatch(createClient({client: client}));
-        this.reloadClients.emit();
+        this.clientStore.createClient({client: client});
     }
 
     private createClient() {
