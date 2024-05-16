@@ -1,9 +1,11 @@
 import {Component, effect, inject, OnInit, Signal} from '@angular/core';
 import {Client} from "../../generated/models/client";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {ClientStore} from "../state";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
+import {ClientDto} from "../model/client";
+import {ConfirmationService} from "primeng/api";
 
 @Component({
     selector: 'client-detail-shell',
@@ -18,7 +20,8 @@ export class ClientDetailShellComponent implements OnInit {
     $clientNeedsRefresh: Signal<boolean> = this.clientStore.clientNeedsRefresh!;
     $clientTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.clientTypes;
 
-    constructor(private route: ActivatedRoute) {
+    constructor(private route: ActivatedRoute, private confirmationService: ConfirmationService,
+                private router: Router) {
         effect(() => {
             if (this.$clientNeedsRefresh()) {
                 this.clientStore.loadClient({});
@@ -36,5 +39,23 @@ export class ClientDetailShellComponent implements OnInit {
 
     onUpdate($event: Client) {
         this.clientStore.updateClient({client: $event});
+    }
+
+    onDelete($event: ClientDto) {
+        this.confirmationService.confirm({
+            message: `Do you want to delete client ${$event.name}?`,
+            header: `Confirm deleting client ${$event.name}`,
+            icon: "pi pi-info-circle text-red-300",
+            accept: () => {
+                this.clientStore.setClientId($event.id);
+                this.clientStore.deleteClient({clientId: $event.id});
+                this.router.navigate([`/clients`]);
+                this.confirmationService.close();
+            },
+            reject: () => {
+                this.confirmationService.close();
+            }
+        })
+
     }
 }

@@ -3,6 +3,7 @@ import {Client, ClientType, ConfigurationEntry, Contact} from "../../generated/m
 import {FormGroup} from "@angular/forms";
 import {ClientForm, ClientFormProvider} from "../form/client-form-provider";
 import {cloneDeep} from "lodash";
+import {ClientDto} from "../model/client";
 
 @Component({
     selector: 'client-detail',
@@ -16,6 +17,9 @@ export class ClientDetailComponent implements OnInit, OnChanges {
     clientTypes!: ConfigurationEntry[] | null;
     @Output()
     updateClientEvent: EventEmitter<Client> = new EventEmitter<Client>();
+    @Output()
+    deleteClientEvent: EventEmitter<ClientDto> = new EventEmitter<ClientDto>();
+
     clientDetailsForm!: FormGroup<ClientForm>;
     clientName: string | undefined;
     combinedStreetWithNumbers!: string;
@@ -101,5 +105,14 @@ export class ClientDetailComponent implements OnInit, OnChanges {
             } as Contact
         }
         this.updateClientEvent.emit(client);
+    }
+
+    onDelete() {
+        let client: ClientDto;
+        client = {
+            id: this.client!.id!,
+            name: this.clientName!
+        }
+        this.deleteClientEvent.emit(client);
     }
 }
