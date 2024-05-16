@@ -1,13 +1,7 @@
-import {Component, inject, Input, OnInit} from '@angular/core';
+import {Component, inject, Input, Signal} from '@angular/core';
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
-import {Observable} from "rxjs";
 import {Task} from "../../generated/models/task";
-import {
-    ConfigurationState,
-    getTaskStatusConfiguration,
-    getTaskTypeConfiguration
-} from "../../shared/configuration/state";
-import {Store} from "@ngrx/store";
+import {ConfigurationStore} from "../../shared/configuration/state";
 import {ConfirmationService} from "primeng/api";
 import {TaskStore} from "../state/task.state";
 import {DeleteTaskDto} from "../model/task";
@@ -17,7 +11,7 @@ import {DeleteTaskDto} from "../model/task";
     templateUrl: './task-list-shell.component.html',
     styleUrl: './task-list-shell.component.less'
 })
-export class TaskListShellComponent implements OnInit {
+export class TaskListShellComponent {
     @Input()
     tasks: Array<Task> | null = null;
     @Input()
@@ -26,17 +20,13 @@ export class TaskListShellComponent implements OnInit {
     stageId: number = 0;
 
     readonly taskStore = inject(TaskStore);
+    readonly configurationStore = inject(ConfigurationStore);
+    $taskTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.taskTypes;
+    $taskStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.taskStatuses;
 
-    taskTypes$!: Observable<ConfigurationEntry[]>;
-    taskStatuses$!: Observable<ConfigurationEntry[]>;
     showAddTaskComponent: boolean = false;
 
-    constructor(private configurationStore: Store<ConfigurationState>, private confirmationService: ConfirmationService) {
-    }
-
-    ngOnInit(): void {
-        this.taskTypes$ = this.configurationStore.select(getTaskTypeConfiguration);
-        this.taskStatuses$ = this.configurationStore.select(getTaskStatusConfiguration);
+    constructor(private confirmationService: ConfirmationService) {
     }
 
     onAddTask() {

@@ -1,12 +1,12 @@
 <div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
     <p-button icon="pi pi-plus" (onClick)="onAddStage()" [rounded]="true" class="add-button transition-colors transition-duration-300"></p-button>
 </div>
-<div class="pt-3">
+<div class="pt-2">
     <stage-list
             [stages]="stages"
             [projectId]="projectId"
-            [stageStatuses]="stageStatuses$ | async"
-            [stageTypes]="stageTypes$ | async"
+            [stageStatuses]="$stageStatuses()"
+            [stageTypes]="$stageTypes()"
             (deleteStageEvent)="onDelete($event)">
     </stage-list>
     <p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}" class="overlay-dialog"></p-confirmDialog>
@@ -15,7 +15,6 @@
 <add-stage
         [visible]="showAddStageComponent"
         [projectId]="projectId"
-        (addStageNotify)="onNotify($event)"
->
+        (addStageNotify)="onNotify($event)">
 </add-stage>
 

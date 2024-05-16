@@ -3,86 +3,88 @@
         <p-accordion [multiple]="true">
             <form [formGroup]="projectDetailsForm">
                 <p-accordionTab [selected]="true" header="Contract details" class="text-900 font-medium">
-                    <div class="p-2 ng-star-inserted surface-border" formGroupName="contract">
+                    <div class="p-1 ng-star-inserted surface-border" formGroupName="contract">
                         <div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
                             <p-button icon="pi pi-arrow-down" [disabled]="!shouldUpdateContract()" (click)="onContractUpdate()" [outlined]="true" [rounded]="true" class="update-button transition-colors transition-duration-300"></p-button>
                             <p-button title="Remove project" icon="pi pi-times" [outlined]="true" [rounded]="true" (onClick)="onDelete()" class="remove-button transition-colors transition-duration-300 px-1"></p-button>
 
                         </div>
-                        <div class="grid grid-nogutter surface-border col-12 p-1">
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium mb-1">Project value</div>
-                                <div id="value">{{ projectDetailsForm.get(['contract', 'offerValue'])?.value | currency: ' ':'code':'4.2-2' }}</div>
+                        <div class="grid grid-nogutter surface-border p-1">
+                            <div class="col-4 p-1 grid grid-nogutter">
+                                <div class="col-4 text-500 flex align-items-center">Project value:</div>
+                                <div class="col-8 flex align-items-center pl-4 pr-3" id="value">{{ projectDetailsForm.get(['contract', 'offerValue'])?.value | currency: ' ':'code':'4.2-2' }}</div>
                             </div>
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium mb-1">Status</div>
-                                <p-dropdown formControlName="status" [options]="availableContractStatuses"
+                            <div class="col-4 p-1 grid grid-nogutter">
+                                <div class="col-4 text-500 flex align-items-center">Status:</div>
+                                <p-dropdown class="col-8 pr-3" formControlName="status" [options]="availableContractStatuses"
                                             optionLabel="label" optionValue="id"></p-dropdown>
                             </div>
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium mb-1">Signing date</div>
-                                <p-calendar formControlName="signingDate" id="signingDate" dateFormat="yy-mm-dd"></p-calendar>
+                            <div class="col-4 p-1 grid grid-nogutter">
+                                <div class="col-4 text-500 flex align-items-center">Signing date:</div>
+                                <p-calendar class="col-8 pr-3" formControlName="signingDate" id="signingDate" dateFormat="yy-mm-dd"></p-calendar>
                             </div>
                         </div>
-                        <div class="grid grid-nogutter surface-border col-12 p-1">
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium mb-1">Deadline</div>
-                                <p-calendar formControlName="deadline" id="deadline" dateFormat="yy-mm-dd"></p-calendar>
+                        <div class="grid grid-nogutter surface-border p-1">
+                            <div class="col-4 p-1 grid grid-nogutter">
+                                <div class="col-4 text-500 flex align-items-center">Deadline:</div>
+                                <p-calendar class="col-8 pr-3" formControlName="deadline" id="deadline" dateFormat="yy-mm-dd"></p-calendar>
                             </div>
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium mb-1">Start date</div>
-                                <p-calendar formControlName="startDate" id="contractStartDate" dateFormat="yy-mm-dd"></p-calendar>
+                            <div class="col-4 p-1 grid grid-nogutter">
+                                <div class="col-4 text-500 flex align-items-center">Start date:</div>
+                                <p-calendar class="col-8 pr-3" formControlName="startDate" id="contractStartDate" dateFormat="yy-mm-dd"></p-calendar>
                             </div>
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium mb-1">End date</div>
-                                <p-calendar formControlName="endDate" id="contractEndDate" dateFormat="yy-mm-dd"></p-calendar>
+                            <div class="col-4 p-1 grid grid-nogutter">
+                                <div class="col-4 text-500 flex align-items-center">End date:</div>
+                                <p-calendar class="col-8 pr-3" formControlName="endDate" id="contractEndDate" dateFormat="yy-mm-dd"></p-calendar>
                             </div>
                         </div>
                     </div>
                 </p-accordionTab>
                 <p-accordionTab [selected]="true" header="Project details" class="text-900 font-medium">
-                    <div class="lg:px-2 md:px-2 px-2 py-1 ng-star-inserted surface-border">
+                    <div class="p-1 ng-star-inserted surface-border">
                         <div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
                             <p-button icon="pi pi-arrow-down" *ngIf="projectDetailsForm && initialProjectForm" [disabled]="!shouldUpdateProject()" (click)="onProjectUpdate()" [outlined]="true" [rounded]="true" class="update-button transition-colors transition-duration-300"></p-button>
                         </div>
-                        <div class="grid grid-nogutter surface-border col-12 p-1">
-                            <div class="col-4 p-1">
-                                <div class="text-500 font-medium mb-1">Project name</div>
-                                <input formControlName="name" pInputText>
+                        <div class="grid grid-nogutter surface-border p-1">
+                            <div class="col-4 p-1 grid grid-nogutter">
+                                <div class="col-4 text-500 flex align-items-center">Name:</div>
+                                <div class="col-8 pr-3">
+                                    <input  formControlName="name" pInputText>
+                                </div>
                             </div>
-                            <div class="col-4 p-1">
-                                <div class="text-500 font-medium mb-1">Project status</div>
-                                <div id="status">{{ resolvedProjectStatusLabel }}</div>
+                            <div class="col-4 p-1 grid grid-nogutter">
+                                <div class="col-4 text-500 flex align-items-center">Status:</div>
+                                <div class="col-8 pl-4 pr-3 flex align-items-center" id="status">{{ resolvedProjectStatusLabel }}</div>
                             </div>
-                            <div class="col-4 p-1">
-                                <div class="text-500 font-medium mb-1">Type</div>
-                                <p-dropdown formControlName="type" [options]="projectTypes!"
+                            <div class="col-4 p-1 grid grid-nogutter">
+                                <div class="col-4 text-500 flex align-items-center">Type:</div>
+                                <p-dropdown class="col-8 pr-3" formControlName="type" [options]="projectTypes!"
                                             optionLabel="label" optionValue="id"></p-dropdown>
                             </div>
                         </div>
-                        <div class="grid grid-nogutter surface-border col-12 p-1">
-                            <div class="col-4 p-1">
-                                <div class="text-500 font-medium mb-1">Leading architect</div>
-                                <div id="architect">{{ architectName }}</div>
+                        <div class="grid grid-nogutter surface-border p-1">
+                            <div class="col-4 p-1 grid grid-nogutter">
+                                <div class="col-4 text-500 flex align-items-center">Architect:</div>
+                                <div class="col-8 pr-3 pl-4" id="architect">{{ architectName }}</div>
                             </div>
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium mb-1">Client</div>
-                                <div id="client">{{ clientName }}</div>
-                            </div>
-                        </div>
-                        <div class="grid grid-nogutter surface-border col-12 p-1">
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium mb-1">Start date</div>
-                                <div id="startDate">{{projectDetailsForm.value.startDate}}</div>
-                            </div>
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium mb-1">End date</div>
-                                <div id="endDate">{{projectDetailsForm.value.endDate}}</div>
+                            <div class="col-4 p-1 grid grid-nogutter">
+                                <div class="col-4 text-500 flex align-items-center">Client:</div>
+                                <div class="col-8 pr-3 pl-4" id="client">{{ clientName }}</div>
                             </div>
                         </div>
-                        <div class="grid grid-nogutter surface-border col-12 p-1">
-                            <div class="md:col-12 p-1">
-                                <div class="text-500 font-medium mb-1">Note</div>
+                        <div class="grid grid-nogutter surface-border p-1">
+                            <div class="col-4 p-1 grid grid-nogutter">
+                                <div class="col-4 text-500 flex align-items-center">Start date:</div>
+                                <p-calendar class="col-8 pr-3" formControlName="startDate" id="startDate" dateFormat="yy-mm-dd"></p-calendar>
+                            </div>
+                            <div class="col-4 p-1 grid grid-nogutter">
+                                <div class="col-4 text-500 flex align-items-center">End date:</div>
+                                <div class="col-8 pr-3" id="endDate">{{projectDetailsForm.value.endDate}}</div>
+                            </div>
+                        </div>
+                        <div class="grid grid-nogutter surface-border p-1">
+                            <div class="col-12 p-1 pr-3">
+                                <div class="text-500 font-medium mb-1">Note: </div>
                                 <textarea formControlName="note" type="text" pInputTextarea rows="2"
                                           [autoResize]="true"></textarea>
                             </div>
@@ -91,12 +93,12 @@
                 </p-accordionTab>
             </form>
             <p-accordionTab [selected]="true" header="Stages" class="text-900 font-medium">
-                <div *ngIf="project" class="lg:px-2 md:px-2 px-2 py-1 ng-star-inserted surface-border">
+                <div *ngIf="project" class="p-1 ng-star-inserted surface-border">
                     <stage-list-shell [stages]="project.stages!" [projectId]="project!.id!"></stage-list-shell>
                 </div>
             </p-accordionTab>
             <p-accordionTab [selected]="true" header="Costs" class="text-900 font-medium">
-                <div *ngIf="project" class="lg:px-2 md:px-2 px-2 py-1 ng-star-inserted surface-border">
+                <div *ngIf="project" class="p-1 ng-star-inserted surface-border">
                     <cost-list-shell [projectId]="project.id!" [costs]="project.costs!"></cost-list-shell>
                 </div>
             </p-accordionTab>

@@ -3,13 +3,7 @@ import {ProjectState, ProjectStore} from "../state";
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
 import {ArchitectState, getArchitects, loadArchitects} from "../../architect/state";
-import {
-    ConfigurationState,
-    getContractStatusConfiguration,
-    getProjectStatusConfiguration,
-    getProjectTypeConfiguration,
-    loadConfiguration
-} from "../../shared/configuration/state";
+import {ConfigurationStore} from "../../shared/configuration/state";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Architect} from "../../generated/models/architect";
 import {Project} from "../../generated/models/project";
@@ -24,19 +18,20 @@ import {ConfirmationService} from "primeng/api";
 })
 export class ProjectDetailShellComponent implements OnInit {
     architects$!: Observable<Architect[]>;
-    projectTypes$!: Observable<ConfigurationEntry[]>;
-    projectStatuses$!: Observable<ConfigurationEntry[]>;
-    contractStatuses$!: Observable<ConfigurationEntry[]>;
 
     projectId: number = 0;
 
-    projectStore = inject(ProjectStore);
+    readonly projectStore = inject(ProjectStore);
+    readonly configurationStore = inject(ConfigurationStore);
     $project: Signal<Project | null> = this.projectStore.project!;
     $projectNeedsRefresh: Signal<boolean> = this.projectStore.projectNeedsRefresh!;
+    $projectTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.projectTypes;
+    $projectStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.projectStatuses;
+    $contractStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.contractStatuses;
 
     constructor(private route: ActivatedRoute, private projectStoreOld: Store<ProjectState>,
                 private architectsStore: Store<ArchitectState>,
-                private configurationStore: Store<ConfigurationState>, private router: Router,
+                private router: Router,
                 private confirmationService: ConfirmationService) {
         effect(() => {
             if (this.$projectNeedsRefresh()) {
@@ -52,12 +47,9 @@ export class ProjectDetailShellComponent implements OnInit {
         this.projectStore.loadProject({});
 
         this.architectsStore.dispatch(loadArchitects());
-        this.configurationStore.dispatch(loadConfiguration());
+        this.configurationStore.loadConfiguration({});
 
         this.architects$ = this.architectsStore.select(getArchitects);
-        this.projectTypes$ = this.configurationStore.select(getProjectTypeConfiguration);
-        this.projectStatuses$ = this.configurationStore.select(getProjectStatusConfiguration);
-        this.contractStatuses$ = this.configurationStore.select(getContractStatusConfiguration);
     }
 
     onUpdateProject($event: Project) {

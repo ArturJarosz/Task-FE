@@ -1,2 +1,2 @@
 export * from './add-client.component';
-export * from './client-form-provider';
+export * from '../form/client-form-provider';

@@ -1,8 +1,8 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit, Signal} from '@angular/core';
 import {Subscription} from "rxjs";
 import {getSuppliers, getSuppliersNeedRefresh, loadSuppliers, SupplierState} from "../state";
 import {Store} from "@ngrx/store";
-import {ConfigurationState, getSupplierTypeConfiguration} from "../../shared/configuration/state";
+import {ConfigurationStore} from "../../shared/configuration/state";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Supplier} from "../../generated/models/supplier";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
@@ -18,22 +18,21 @@ export class SupplierListComponent implements OnInit, OnDestroy {
 
     suppliers: Supplier[] = [];
     pageTitle = "Suppliers";
-    supplierTypes: ConfigurationEntry[] = [];
+
+    readonly configurationStore = inject(ConfigurationStore);
+    $supplierTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.supplierTypes;
 
     showAddComponent: boolean = false;
 
-    constructor(private supplierStore: Store<SupplierState>, private configurationStore: Store<ConfigurationState>) {
+    constructor(private supplierStore: Store<SupplierState>) {
     }
 
     ngOnInit(): void {
         this.supplierStore.dispatch(loadSuppliers());
+        this.configurationStore.loadConfiguration({});
         this.suppliersSubscription$ = this.supplierStore.select(getSuppliers)
             .subscribe({
                 next: (contractors: Supplier[]) => this.suppliers = contractors
-            });
-        this.configurationStore.select(getSupplierTypeConfiguration)
-            .subscribe({
-                next: (contractorTypes: ConfigurationEntry[]) => this.supplierTypes = contractorTypes
             });
         this.suppliersNeedRefreshSubscription$ = this.supplierStore.select(getSuppliersNeedRefresh)
             .subscribe({
@@ -51,7 +50,7 @@ export class SupplierListComponent implements OnInit, OnDestroy {
     }
 
     getLabelFromCategory(category: string): string {
-        return resolveLabel(category, this.supplierTypes);
+        return resolveLabel(category, this.$supplierTypes());
     }
 
     onClick() {

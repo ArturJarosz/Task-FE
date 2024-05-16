@@ -118,6 +118,31 @@ export const ClientStore = signalStore(
                         )
                 })
             )
-        )
+        ),
+        updateClient: rxMethod<{client: Client}>(
+            pipe(
+                switchMap(({client}) => {
+                    return clientRestService.updateClient(store.clientId()!, client)
+                        .pipe(
+                            tap(() => {
+                                patchState(store, {clientsNeedRefresh: true, clientNeedsRefresh: true});
+                                messageService.add({
+                                    severity: MessageSeverity.SUCCESS,
+                                    summary: `Client updated.`,
+                                    detail: `A client with id ${store.clientId()!} was updated.`
+                                });
+                            }),
+                            catchError(error => {
+                                messageService.add({
+                                    severity: MessageSeverity.ERROR,
+                                    summary: `Error updating client.`,
+                                    detail: `There was a problem with updating client with id ${store.clientId()!}.`,
+                                });
+                                return of(error);
+                            })
+                        )
+                })
+            )
+        ),
     }))
 )

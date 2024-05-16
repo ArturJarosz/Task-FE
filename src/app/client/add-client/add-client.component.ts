@@ -1,4 +1,4 @@
-import {Component, EventEmitter, inject, Injectable, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Injectable, Input, OnInit, Output, Signal} from '@angular/core';
 import {
     ADDRESS,
     CITY,
@@ -16,14 +16,10 @@ import {
     TELEPHONE
 } from "../model/client";
 import {FormGroup, Validators} from "@angular/forms";
-import {ClientFormProvider} from "./client-form-provider";
-import {ClientState, ClientStore} from "../state";
-import {Store} from "@ngrx/store";
-import {ConfigurationState, getClientTypeConfiguration} from "../../shared/configuration/state";
-import {resolveLabel} from "../../shared/utils/label-utils";
+import {ClientFormProvider} from "../form/client-form-provider";
+import {ClientStore} from "../state";
+import {ConfigurationStore} from "../../shared/configuration/state";
 import {Client, ClientType, ConfigurationEntry} from "../../generated/models";
-
-const DEFAULT_CLIENT_TYPE = ClientType.PRIVATE.toString();
 
 @Injectable({
     providedIn: 'root',
@@ -34,23 +30,23 @@ const DEFAULT_CLIENT_TYPE = ClientType.PRIVATE.toString();
     styleUrls: ['./add-client.component.less'],
 })
 export class AddClientComponent implements OnInit {
-    clientStore = inject(ClientStore);
     @Input()
     visible = false;
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    clientTypes: ConfigurationEntry[] = [];
+    readonly clientStore = inject(ClientStore);
+    readonly configurationStore = inject(ConfigurationStore);
+    $clientTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.clientTypes;
     clientForm!: FormGroup;
 
     protected readonly ClientType = ClientType;
 
-    constructor(private clientFormProvider: ClientFormProvider, private clientStoreOld: Store<ClientState>,
-                private configurationStore: Store<ConfigurationState>) {
+    constructor(private clientFormProvider: ClientFormProvider) {
     }
 
     ngOnInit(): void {
-        this.initClientTypes();
+        this.configurationStore.loadConfiguration({});
         this.initClientGroup();
         this.clientForm.get(CLIENT_TYPE)
             ?.valueChanges!
@@ -60,7 +56,7 @@ export class AddClientComponent implements OnInit {
     }
 
     initClientGroup(): void {
-        this.clientForm = this.clientFormProvider.getClientFormGroup(this.getIdFromLabel(DEFAULT_CLIENT_TYPE));
+        this.clientForm = this.clientFormProvider.getClientFormGroup();
     }
 
     updateClientValidators(clientType: string): void {
@@ -84,15 +80,6 @@ export class AddClientComponent implements OnInit {
 
     onClose(): void {
         this.notify.emit(false);
-    }
-
-    initClientTypes() {
-        this.configurationStore.select(getClientTypeConfiguration)
-            .subscribe({
-                next: clientTypes => {
-                    this.clientTypes = clientTypes;
-                }
-            })
     }
 
     onCancel() {
@@ -141,11 +128,7 @@ export class AddClientComponent implements OnInit {
     }
 
     resetFields() {
-        this.clientForm = this.clientFormProvider.getClientFormGroup(this.getIdFromLabel(DEFAULT_CLIENT_TYPE));
-    }
-
-    getIdFromLabel(id: string): string {
-        return resolveLabel(id, this.clientTypes);
+        this.clientForm = this.clientFormProvider.getClientFormGroup();
     }
 
 }

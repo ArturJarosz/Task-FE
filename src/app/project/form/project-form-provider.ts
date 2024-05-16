@@ -9,7 +9,7 @@ const DEFAULT_PROJECT_TYPE = ProjectType.ARCHITECTURE_HOUSE;
 @Injectable({
     providedIn: 'root'
 })
-export class ProjectDetailFormProvider {
+export class ProjectFormProvider {
     constructor(private formBuilder: FormBuilder) {
     }
 
@@ -40,6 +40,17 @@ export class ProjectDetailFormProvider {
             deadline: this.formBuilder.nonNullable.control<Date>(new Date(''))
         })
     }
+
+    public getAddProjectForm(): FormGroup<AddProjectForm> {
+        return this.formBuilder.nonNullable.group<AddProjectForm>({
+            name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
+            architectId: this.formBuilder.nonNullable.control<number>(0, [Validators.required]),
+            clientId: this.formBuilder.nonNullable.control<number>(0, [Validators.required]),
+            type: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
+            offerValue: this.formBuilder.nonNullable.control<number>(0, [Validators.required]),
+            note: this.formBuilder.control<string>('')
+        })
+    }
 }
 
 export interface ProjectContractForm {
@@ -63,4 +74,13 @@ export interface ProjectCreateForm {
     note: FormControl<string | null>,
     startDate?: FormControl<Date>,
     endDate?: FormControl<Date>,
+}
+
+export interface AddProjectForm {
+    name: FormControl<string>,
+    architectId: FormControl<number>,
+    clientId: FormControl<number>,
+    type: FormControl<string>,
+    offerValue: FormControl<number>,
+    note: FormControl<string | null>
 }

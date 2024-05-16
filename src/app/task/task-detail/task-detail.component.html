@@ -8,36 +8,36 @@
                             <p-button icon="pi pi-arrow-down" [disabled]="!isUpdated()" [outlined]="true" [rounded]="true" (onClick)="onSave()" class="update-button transition-colors transition-duration-300 px-1"></p-button>
                             <p-button icon="pi pi-times" [outlined]="true" [rounded]="true" (onClick)="onDelete()" class="remove-button transition-colors transition-duration-300 px-1"></p-button>
                         </div>
-                        <div class="grid grid-nogutter surface-border col-12 p-1 ">
+                        <div class="grid grid-nogutter surface-border  p-1 ">
                             <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium mb-1">Task name</div>
+                                <div class="text-500 font-medium ">Task name</div>
                                 <input formControlName="name" id="name" pInputText>
                             </div>
                             <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium mb-1">Type</div>
+                                <div class="text-500 font-medium ">Type</div>
                                 <p-dropdown formControlName="type" [options]="taskTypes!"
                                             optionLabel="label" optionValue="id"></p-dropdown>
                             </div>
                             <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium mb-1">Status</div>
+                                <div class="text-500 font-medium ">Status</div>
                                 <p-dropdown formControlName="status" [options]="availableTaskStatuses"
                                             optionLabel="label" optionValue="id"></p-dropdown>
 
                             </div>
                         </div>
-                        <div class="grid grid-nogutter surface-border col-12 p-1 ">
+                        <div class="grid grid-nogutter surface-border  p-1 ">
                             <div class="md:col-6 p-1">
-                                <div class="text-500 font-medium mb-1">Start date</div>
+                                <div class="text-500 font-medium ">Start date</div>
                                 <p-calendar formControlName="startDate" id="startDate" dateFormat="yy-mm-dd"></p-calendar>
                             </div>
                             <div class="md:col-6 p-1">
-                                <div class="text-500 font-medium mb-1">End date</div>
+                                <div class="text-500 font-medium ">End date</div>
                                 <p-calendar formControlName="endDate" id="endDate" dateFormat="yy-mm-dd"></p-calendar>
                             </div>
                         </div>
-                        <div class="grid grid-nogutter surface-border col-12 p-1 ">
-                            <div class="md:col-12 p-1 p-1">
-                                <div class="text-500 font-medium mb-1">Note</div>
+                        <div class="grid grid-nogutter surface-border  p-1 ">
+                            <div class="md: p-1 p-1">
+                                <div class="text-500 font-medium ">Note</div>
                                 <textarea formControlName="note" id="note" type="text" pInputTextarea rows="2"
                                           [autoResize]="true"></textarea>
                             </div>

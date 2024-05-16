@@ -1,11 +1,5 @@
-import {Component, inject, Input, OnInit} from '@angular/core';
-import {Observable} from "rxjs";
-import {Store} from "@ngrx/store";
-import {
-    ConfigurationState,
-    getStageStatusConfiguration,
-    getStageTypeConfiguration
-} from "../../shared/configuration/state";
+import {Component, inject, Input, OnInit, Signal} from '@angular/core';
+import {ConfigurationStore} from "../../shared/configuration/state";
 import {Stage} from "../../generated/models/stage";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {StageStore} from "../state";
@@ -24,19 +18,18 @@ export class StageListShellComponent implements OnInit {
     @Input()
     projectId: number = 0;
 
-    stageStore = inject(StageStore);
+    readonly stageStore = inject(StageStore);
+    readonly configurationStore = inject(ConfigurationStore);
+    $stageStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.stageStatuses;
+    $stageTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.stageTypes;
 
-    stageStatuses$!: Observable<ConfigurationEntry[]>;
-    stageTypes$!: Observable<ConfigurationEntry[]>;
     showAddStageComponent: boolean = false;
 
-    constructor(private configurationStore: Store<ConfigurationState>,
-                private confirmationService: ConfirmationService, private router: Router) {
+    constructor(private confirmationService: ConfirmationService, private router: Router) {
     }
 
     ngOnInit(): void {
-        this.stageTypes$ = this.configurationStore.select(getStageTypeConfiguration);
-        this.stageStatuses$ = this.configurationStore.select(getStageStatusConfiguration);
+        this.configurationStore.loadConfiguration({});
         this.stageStore.setProjectId(this.projectId);
     }
 

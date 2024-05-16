@@ -1,9 +1,8 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Input, OnInit, Output, Signal} from '@angular/core';
 import {AddCostFormProvider} from "./add-cost-form-provider";
 import {Store} from "@ngrx/store";
 import {CostState, createCost} from "../state";
-import {ConfigurationState, getCostCategories, loadConfiguration} from "../../../shared/configuration/state";
-import {Subscription} from "rxjs";
+import {ConfigurationStore} from "../../../shared/configuration/state";
 import {FormGroup} from "@angular/forms";
 import {Cost} from "../../../generated/models/cost";
 import {ConfigurationEntry} from "../../../generated/models/configuration-entry";
@@ -14,7 +13,7 @@ import {toTimeZoneString} from "../../../shared/utils/date-utils";
     templateUrl: './add-cost.component.html',
     styleUrl: './add-cost.component.less'
 })
-export class AddCostComponent implements OnInit, OnDestroy {
+export class AddCostComponent implements OnInit {
     @Input()
     visible = false;
     @Input()
@@ -24,26 +23,17 @@ export class AddCostComponent implements OnInit, OnDestroy {
 
     header: string = "Add new cost";
 
-    costCategoriesSubscription!: Subscription;
-    costCategories: ConfigurationEntry[] = [];
+    configurationStore = inject(ConfigurationStore);
+    $costCategories: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.costCategories;
+
     addCostForm!: FormGroup;
 
-    constructor(private addCostFormProvider: AddCostFormProvider, private costStore: Store<CostState>,
-                private configurationStore: Store<ConfigurationState>) {
+    constructor(private addCostFormProvider: AddCostFormProvider, private costStore: Store<CostState>) {
     }
 
     ngOnInit(): void {
-        this.configurationStore.dispatch(loadConfiguration());
-        this.costCategoriesSubscription = this.configurationStore.select(getCostCategories)
-            .subscribe({
-                next: categories => this.costCategories = categories
-            })
-
+        this.configurationStore.loadConfiguration({});
         this.addCostForm = this.addCostFormProvider.getAddCostForm();
-    }
-
-    ngOnDestroy(): void {
-        this.costCategoriesSubscription.unsubscribe();
     }
 
     onClose(): void {

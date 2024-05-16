@@ -1,9 +1,4 @@
-import {Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {Subscription} from "rxjs";
-import {ConfirmationService} from "primeng/api";
-import {Store} from "@ngrx/store";
-import {ClientStore} from "../state";
-import {ConfigurationState, getClientTypeConfiguration} from "../../shared/configuration/state";
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Client, ClientType, ConfigurationEntry} from "../../generated/models";
 import {ClientDto} from "../model/client";
@@ -13,31 +8,18 @@ import {ClientDto} from "../model/client";
     templateUrl: './client-list.component.html',
     styleUrls: ['./client-list.component.less',]
 })
-export class ClientListComponent implements OnInit, OnDestroy {
-    clientStore = inject(ClientStore);
-    private clientTypesSubscription$!: Subscription;
+export class ClientListComponent {
     showComponent: boolean = false;
     @Input()
     clients!: Client[];
+    @Input()
     clientTypes!: ConfigurationEntry[];
     @Output()
     removeClientEvent: EventEmitter<ClientDto> = new EventEmitter<ClientDto>();
 
     protected readonly ClientType = ClientType;
 
-    constructor(private confirmationService: ConfirmationService,
-                private configurationStore: Store<ConfigurationState>) {
-    }
-
-    ngOnInit(): void {
-        this.clientTypesSubscription$ = this.configurationStore.select(getClientTypeConfiguration)
-            .subscribe({
-                next: (clientTypes: ConfigurationEntry[]) => this.clientTypes = clientTypes
-            })
-    }
-
-    ngOnDestroy(): void {
-        this.clientTypesSubscription$.unsubscribe();
+    constructor() {
     }
 
     onClick() {

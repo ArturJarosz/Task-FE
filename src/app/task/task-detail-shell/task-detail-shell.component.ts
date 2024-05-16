@@ -2,14 +2,7 @@ import {Component, inject, OnInit, Signal} from '@angular/core';
 import {TaskStore} from "../state/task.state";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
-import {Store} from "@ngrx/store";
-import {
-    ConfigurationState,
-    getTaskStatusConfiguration,
-    getTaskTypeConfiguration,
-    loadConfiguration
-} from "../../shared/configuration/state";
-import {Observable} from "rxjs";
+import {ConfigurationStore} from "../../shared/configuration/state";
 import {DeleteTaskDto, UpdateTaskDto, UpdateTaskStatus} from "../model/task";
 import {ConfirmationService} from "primeng/api";
 import {Task} from "../../generated/models/task";
@@ -25,16 +18,14 @@ export class TaskDetailShellComponent implements OnInit {
     taskId!: number;
 
     readonly taskStore = inject(TaskStore);
+    readonly configurationStore = inject(ConfigurationStore);
     $task: Signal<Task | null> = this.taskStore.task;
+    $taskTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.taskTypes;
+    $taskStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.taskStatuses;
 
-    taskStatuses!: Observable<ConfigurationEntry[]>;
-    taskTypes!: Observable<ConfigurationEntry[]>;
-
-    constructor(private route: ActivatedRoute, private configurationStore: Store<ConfigurationState>,
-                private router: Router, private confirmationService: ConfirmationService) {
-        this.configurationStore.dispatch(loadConfiguration());
-        this.taskStatuses = this.configurationStore.select(getTaskStatusConfiguration);
-        this.taskTypes = this.configurationStore.select(getTaskTypeConfiguration);
+    constructor(private route: ActivatedRoute, private router: Router,
+                private confirmationService: ConfirmationService) {
+        this.configurationStore.loadConfiguration({});
     }
 
     ngOnInit(): void {

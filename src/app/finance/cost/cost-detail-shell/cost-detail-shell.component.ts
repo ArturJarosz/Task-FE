@@ -1,9 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, inject, OnInit, Signal} from '@angular/core';
 import {Observable} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
 import {CostState, getCost, loadCost} from "../state";
 import {Store} from "@ngrx/store";
-import {ConfigurationState, getCostCategories} from "../../../shared/configuration/state";
+import {ConfigurationStore} from "../../../shared/configuration/state";
 import {Cost} from "../../../generated/models/cost";
 import {ConfigurationEntry} from "../../../generated/models/configuration-entry";
 
@@ -14,13 +14,14 @@ import {ConfigurationEntry} from "../../../generated/models/configuration-entry"
 })
 export class CostDetailShellComponent implements OnInit {
     cost$!: Observable<Cost | null>;
-    costCategories$!: Observable<ConfigurationEntry[]>;
 
     projectId: number = 0;
     costId: number = 0;
 
-    constructor(private route: ActivatedRoute, private costStore: Store<CostState>,
-                private configurationStore: Store<ConfigurationState>) {
+    configurationStore = inject(ConfigurationStore);
+    $costCategories: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.costCategories;
+
+    constructor(private route: ActivatedRoute, private costStore: Store<CostState>) {
     }
 
     ngOnInit(): void {
@@ -31,8 +32,8 @@ export class CostDetailShellComponent implements OnInit {
         this.costStore.dispatch(loadCost({projectId: this.projectId, costId: this.costId}));
 
         this.cost$ = this.costStore.select(getCost);
+        this.configurationStore.loadConfiguration({});
 
-        this.costCategories$ = this.configurationStore.select(getCostCategories);
     }
 
 }

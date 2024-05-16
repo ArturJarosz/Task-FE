@@ -1,12 +1,10 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {FormGroup} from "@angular/forms";
 import {CostDetailFormProvider, CostForm} from "./cost-detail-form-provider";
-import {ConfigurationState, loadConfiguration} from "../../../shared/configuration/state";
-import {Store} from "@ngrx/store";
 import {resolveLabel} from "../../../shared/utils/label-utils";
 import {Cost} from "../../../generated/models/cost";
 import {ConfigurationEntry} from "../../../generated/models/configuration-entry";
-import {toDateIfExists, toTimeZoneString} from "../../../shared/utils/date-utils";
+import {toDateIfExists} from "../../../shared/utils/date-utils";
 
 @Component({
     selector: 'cost-detail',
@@ -22,11 +20,10 @@ export class CostDetailComponent implements OnInit, OnChanges {
     costDetailsForm!: FormGroup<CostForm>;
     resolvedCategoryLabel: string = '';
 
-    constructor(private formProvider: CostDetailFormProvider, private configurationStore: Store<ConfigurationState>) {
+    constructor(private formProvider: CostDetailFormProvider) {
     }
 
     ngOnInit(): void {
-        this.configurationStore.dispatch(loadConfiguration());
         this.costDetailsForm = this.formProvider.getCostDetailForm();
     }
 

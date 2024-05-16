@@ -1,8 +1,8 @@
 <project-detail [project]="$project()"
                 [architects]="architects$ | async"
-                [projectStatuses]="projectStatuses$ | async"
-                [contractStatuses]="contractStatuses$ | async"
-                [projectTypes]="projectTypes$ | async"
+                [projectStatuses]="$projectStatuses()"
+                [contractStatuses]="$contractStatuses()"
+                [projectTypes]="$projectTypes()"
                 (updateProjectEvent)="onUpdateProject($event)"
                 (removeProjectEvent)="onRemoveProject($event)">
 

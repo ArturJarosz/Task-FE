@@ -1,17 +1,17 @@
 import {Component, computed, EventEmitter, inject, Input, OnDestroy, OnInit, Output, Signal} from '@angular/core';
 import {FormGroup} from "@angular/forms";
-import {AddProjectFormProvider} from "./add-project-form-provider.service";
 import {ClientStore} from "../../client/state";
 import {Store} from "@ngrx/store";
 import {ArchitectState, getArchitects, loadArchitects} from "../../architect/state";
 import {ProjectStore} from "../state";
 import {Subscription} from "rxjs";
-import {ConfigurationState, getProjectTypeConfiguration, loadConfiguration} from "../../shared/configuration/state";
+import {ConfigurationStore} from "../../shared/configuration/state";
 import {ArchitectFormModel} from "../../architect/model/architect";
-import {ClientFormModel} from "../../client/model/client";
 import {ProjectCreate} from "../../generated/models/project-create";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {Client} from "../../generated/models/client";
+import {ClientFormModel} from "../../client/form/client-form-provider";
+import {ProjectFormProvider} from "../form/project-form-provider";
 
 @Component({
     selector: 'add-project',
@@ -19,8 +19,6 @@ import {Client} from "../../generated/models/client";
     styleUrls: ['./add-project.component.less']
 })
 export class AddProjectComponent implements OnInit, OnDestroy {
-    clientStore = inject(ClientStore);
-
     @Input()
     visible = false;
     @Output()
@@ -28,6 +26,9 @@ export class AddProjectComponent implements OnInit, OnDestroy {
 
     header: string = "Add new project";
 
+    readonly clientStore = inject(ClientStore);
+    readonly configurationStore = inject(ConfigurationStore);
+    readonly projectStore = inject(ProjectStore);
     $clients: Signal<Client[] | null> = this.clientStore.clients!;
     $clientsForm: Signal<ClientFormModel[]> = computed(() => {
         let clients: Client[] | null = this.$clients();
@@ -36,21 +37,17 @@ export class AddProjectComponent implements OnInit, OnDestroy {
             client => client.resolvedName = client.firstName ? `${client.firstName} ${client.lastName}` : client.companyName);
         return clientForms;
     });
+    $projectTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.projectTypes;
     architectsSubscription$!: Subscription;
     architects: ArchitectFormModel[] = [];
-    projectTypesSubscription$!: Subscription;
-    projectTypes: ConfigurationEntry[] = [];
     addProjectForm!: FormGroup;
 
-    readonly projectStore = inject(ProjectStore);
-
-
-    constructor(private addProjectFormProvider: AddProjectFormProvider, private architectStore: Store<ArchitectState>,
-                private configurationStore: Store<ConfigurationState>) {
+    constructor(private projectFormProvider: ProjectFormProvider, private architectStore: Store<ArchitectState>) {
     }
 
     ngOnInit(): void {
         this.clientStore.loadClients({});
+        this.configurationStore.loadConfiguration({});
         this.initializeValues();
         this.setFormDefaultValues();
     }
@@ -66,23 +63,15 @@ export class AddProjectComponent implements OnInit, OnDestroy {
                     this.setFormDefaultValues();
                 }
             })
-        this.configurationStore.dispatch(loadConfiguration());
-        this.projectTypesSubscription$ = this.configurationStore.select(getProjectTypeConfiguration)
-            .subscribe({
-                next: projectTypes => {
-                    this.projectTypes = projectTypes;
-                    this.setFormDefaultValues();
-                }
-            })
 
         this.setEmptyForm();
         this.setFormDefaultValues();
     }
 
     setFormDefaultValues() {
-        if (this.$clientsForm() && this.$clientsForm().length > 0 && this.architects && this.architects.length > 0 && this.projectTypes && this.projectTypes.length > 0 && this.addProjectForm) {
+        if (this.$clientsForm() && this.$clientsForm().length > 0 && this.architects && this.architects.length > 0 && this.$projectTypes() && this.$projectTypes().length > 0 && this.addProjectForm) {
             this.addProjectForm.patchValue({
-                type: this.projectTypes[0]?.id,
+                type: this.$projectTypes()[0]?.id,
                 architectId: this.architects[0]?.id,
                 clientId: this.$clientsForm()[0]?.id
             })
@@ -91,7 +80,6 @@ export class AddProjectComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.architectsSubscription$.unsubscribe();
-        this.projectTypesSubscription$.unsubscribe();
     }
 
     onCancel(): void {
@@ -115,7 +103,7 @@ export class AddProjectComponent implements OnInit, OnDestroy {
     }
 
     setEmptyForm(): void {
-        this.addProjectForm = this.addProjectFormProvider.getAddProjectForm();
+        this.addProjectForm = this.projectFormProvider.getAddProjectForm();
     }
 
     createProject(): ProjectCreate {

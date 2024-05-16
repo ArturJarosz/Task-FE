@@ -1,11 +1,11 @@
 <div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
     <p-button icon="pi pi-plus" (onClick)="onAddTask()" [rounded]="true" class="add-button transition-colors transition-duration-300"></p-button>
 </div>
-<div class="pt-3">
+<div class="pt-2">
     <task-list
             [tasks]="tasks"
-            [taskTypes]="taskTypes$ | async"
-            [taskStatuses]="taskStatuses$ | async"
+            [taskTypes]="$taskTypes()"
+            [taskStatuses]="$taskStatuses()"
             [projectId]="projectId"
             [stageId]="stageId"
             (deleteTaskEVent)="onDelete($event)">

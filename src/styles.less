@@ -20,7 +20,7 @@ client-list p-confirmDialog .p-component-overlay {
 }
 
 .p-accordion .p-accordion-content {
-    padding: 0.5rem !important;
+    padding: 0.5rem 2rem;
 }
 
 input {
@@ -34,6 +34,15 @@ input {
 
 .p-dropdown {
     min-width: 50%;
+    max-width: 100%;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+    padding: 0.25rem 0.75rem
+}
+
+.p-inputtext {
+    padding: 0.25rem 0.75rem;
 }
 
 textarea {
@@ -42,8 +51,8 @@ textarea {
 }
 
 .p-button.p-button-icon-only.p-button-rounded {
-    width: 2rem;
-    height: 2rem;
+    width: 1.5rem;
+    height: 1.5rem;
     font-weight: bold;
     border: 0px;
 }
@@ -75,11 +84,7 @@ textarea {
     background: var(--blue-700);
 }
 
-.p-inputtext {
-    padding: 0.5rem 1.75rem;
-}
-
-.p-dropdown, .p-inputtext  {
+.p-dropdown, .p-inputtext {
     border-color: #f1f0f0;
 }
 
@@ -89,4 +94,9 @@ textarea {
 
 .p-toast {
     min-height: 4rem !important;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+    padding: 0.5rem 1rem;
+    border-width: 0 0 0 0;
 }

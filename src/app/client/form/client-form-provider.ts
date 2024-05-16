@@ -1,6 +1,6 @@
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {AddressForm, ClientForm, ContactForm} from "../model/client";
+import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {Injectable} from "@angular/core";
+import {Client} from "../../generated/models/client";
 
 const DEFAULT_CLIENT_TYPE = "PRIVATE";
 
@@ -12,8 +12,7 @@ export class ClientFormProvider {
     constructor(private formBuilder: FormBuilder) {
     }
 
-    public getClientFormGroup(defaultLabel: string): FormGroup<ClientForm> {
-
+    public getClientFormGroup(): FormGroup<ClientForm> {
         return this.formBuilder.nonNullable.group<ClientForm>({
             firstName: this.formBuilder.control<string>('', [Validators.required]),
             lastName: this.formBuilder.control<string>('', [Validators.required]),
@@ -41,4 +40,32 @@ export class ClientFormProvider {
             flatNumber: this.formBuilder.control<string>('')
         });
     }
+}
+
+export interface AddressForm {
+    city: FormControl<string | null>,
+    postCode: FormControl<string | null>,
+    street: FormControl<string | null>,
+    houseNumber: FormControl<string | null>,
+    flatNumber: FormControl<string | null>,
+}
+
+export interface ContactForm {
+    email: FormControl<string | null>,
+    telephone: FormControl<string | null>,
+    address: FormGroup<AddressForm>,
+}
+
+export interface ClientFormModel extends Client {
+    resolvedName?: string
+}
+
+export interface ClientForm {
+    id?: FormControl<number>,
+    firstName: FormControl<string | null>,
+    lastName: FormControl<string | null>,
+    companyName: FormControl<string | null>,
+    note: FormControl<string | null>,
+    clientType: FormControl<string>,
+    contact: FormGroup<ContactForm>
 }

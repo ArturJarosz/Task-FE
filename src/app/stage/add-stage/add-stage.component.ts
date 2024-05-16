@@ -1,16 +1,9 @@
-import {Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Input, OnInit, Output, Signal} from '@angular/core';
 import {StageStore} from "../state";
-import {Subscription} from "rxjs";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {FormGroup} from "@angular/forms";
 import {AddStageForm, StageFormProvider} from "../form/stage-form-provider";
-import {Store} from "@ngrx/store";
-import {
-    ConfigurationState,
-    getStageStatusConfiguration,
-    getStageTypeConfiguration,
-    loadConfiguration
-} from "../../shared/configuration/state";
+import {ConfigurationStore} from "../../shared/configuration/state";
 import {Stage} from "../../generated/models/stage";
 import {toTimeZoneString} from "../../shared/utils/date-utils";
 
@@ -19,7 +12,7 @@ import {toTimeZoneString} from "../../shared/utils/date-utils";
     templateUrl: './add-stage.component.html',
     styleUrl: './add-stage.component.less'
 })
-export class AddStageComponent implements OnInit, OnDestroy {
+export class AddStageComponent implements OnInit {
     @Input()
     visible = false;
     @Input()
@@ -31,33 +24,17 @@ export class AddStageComponent implements OnInit, OnDestroy {
     header: string = "Add new stage";
 
     readonly stageStore = inject(StageStore);
+    readonly configurationStore = inject(ConfigurationStore);
+    $stageTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.stageTypes;
 
-    stageTypesSubscription!: Subscription;
-    stageTypes!: ConfigurationEntry[];
-    stageStatusesSubscription!: Subscription;
-    stageStatuses!: ConfigurationEntry[];
     addStageForm!: FormGroup<AddStageForm>;
 
-    constructor(private configurationStore: Store<ConfigurationState>, private formProvider: StageFormProvider) {
-
+    constructor(private formProvider: StageFormProvider) {
     }
 
     ngOnInit(): void {
-        this.configurationStore.dispatch(loadConfiguration());
-        this.stageStatusesSubscription = this.configurationStore.select(getStageStatusConfiguration)
-            .subscribe({
-                next: statuses => this.stageStatuses = statuses
-            })
-        this.stageTypesSubscription = this.configurationStore.select(getStageTypeConfiguration)
-            .subscribe({
-                next: types => this.stageTypes = types
-            })
+        this.configurationStore.loadConfiguration({});
         this.addStageForm = this.formProvider.getAddStageForm();
-    }
-
-    ngOnDestroy(): void {
-        this.stageTypesSubscription.unsubscribe();
-        this.stageStatusesSubscription.unsubscribe();
     }
 
     onClose(): void {

@@ -3,6 +3,8 @@ import {ClientStore} from "../state";
 import {Client} from "../../generated/models/client";
 import {ClientDto} from "../model/client";
 import {ConfirmationService} from "primeng/api";
+import {ConfigurationStore} from "../../shared/configuration/state";
+import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 
 @Component({
     selector: 'client-list-shell',
@@ -10,10 +12,12 @@ import {ConfirmationService} from "primeng/api";
     styleUrl: './client-list-shell.component.less'
 })
 export class ClientListShellComponent implements OnInit{
-    clientStore = inject(ClientStore);
+    readonly clientStore = inject(ClientStore);
+    readonly configurationStore = inject(ConfigurationStore);
 
     $clients: Signal<Client[]| null>= this.clientStore.clients!;
     $clientsNeedRefresh: Signal<boolean> = this.clientStore.clientsNeedRefresh!;
+    $clientTypes :Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.clientTypes;
 
     constructor(private confirmationService: ConfirmationService) {
         effect(() => {
@@ -25,6 +29,7 @@ export class ClientListShellComponent implements OnInit{
 
     ngOnInit(): void {
         this.clientStore.loadClients({});
+        this.configurationStore.loadConfiguration({});
     }
 
     onDeleteClient($event: ClientDto) {

@@ -10,38 +10,38 @@
                             <p-button *ngIf="stageDetailsForm && initialStageForm" icon="pi pi-arrow-down" [disabled]="!isUpdated()" [outlined]="true" [rounded]="true" (onClick)="onSave()" class="update-button transition-colors px-1"></p-button>
                             <p-button icon="pi pi-times" [outlined]="true" [rounded]="true" (onClick)="onDelete()" class="remove-button transition-colors px-1"></p-button>
                         </div>
-                        <div class="grid grid-nogutter surface-border col-12 p-1 ">
+                        <div class="grid grid-nogutter surface-border  p-1 ">
                             <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium mb-1">Stage name</div>
+                                <div class="text-500 font-medium ">Stage name</div>
                                 <input formControlName="name" id="name" pInputText>
                             </div>
                             <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium mb-1">Type</div>
+                                <div class="text-500 font-medium ">Type</div>
                                 <p-dropdown formControlName="type" [options]="stageTypes!"
                                             optionLabel="label" optionValue="id"></p-dropdown>
                             </div>
                             <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium mb-1">Status</div>
+                                <div class="text-500 font-medium ">Status</div>
                                 <div class="p-1" id="status">{{ resolvedStatusLabel }}</div>
                             </div>
                         </div>
-                        <div class="grid grid-nogutter surface-border col-12 p-1 ">
+                        <div class="grid grid-nogutter surface-border  p-1 ">
                             <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium mb-1">Start date</div>
+                                <div class="text-500 font-medium ">Start date</div>
                                 <p-calendar formControlName="startDate" id="startDate" dateFormat="yy-mm-dd"></p-calendar>
                             </div>
                             <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium mb-1">Deadline</div>
+                                <div class="text-500 font-medium ">Deadline</div>
                                 <p-calendar formControlName="deadline" id="deadline" dateFormat="yy-mm-dd"></p-calendar>
                             </div>
                             <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium mb-1">End date</div>
+                                <div class="text-500 font-medium ">End date</div>
                                 <p-calendar formControlName="endDate" id="endDate" dateFormat="yy-mm-dd"></p-calendar>
                             </div>
                         </div>
-                        <div class="grid grid-nogutter surface-border col-12 p-1 ">
-                            <div class="md:col-12 p-1 p-1">
-                                <div class="text-500 font-medium mb-1">Note</div>
+                        <div class="grid grid-nogutter surface-border  p-1 ">
+                            <div class="md: p-1 p-1">
+                                <div class="text-500 font-medium ">Note</div>
                                 <textarea formControlName="note" id="note" type="text" pInputTextarea rows="2"
                                           [autoResize]="true"></textarea>
                             </div>

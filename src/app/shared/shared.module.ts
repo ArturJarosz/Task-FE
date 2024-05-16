@@ -5,10 +5,6 @@ import {HttpClientModule} from "@angular/common/http";
 import {SharedModule as SharedPrimeNgModule} from "primeng/api";
 import {ToastModule} from "primeng/toast";
 import {ConfigurationRestService, ConfigurationRestServiceImpl} from "./configuration/rest/configuration.rest";
-import {StoreModule} from "@ngrx/store";
-import {Features} from "../features";
-import {configurationReducer, ConfigurationEffects} from "./configuration/state";
-import {EffectsModule} from "@ngrx/effects";
 import {NgIf} from "@angular/common";
 
 @NgModule({
@@ -20,8 +16,6 @@ import {NgIf} from "@angular/common";
         HttpClientModule,
         SharedPrimeNgModule,
         ToastModule,
-        StoreModule.forFeature(Features.CONFIGURATION, configurationReducer),
-        EffectsModule.forFeature([ConfigurationEffects]),
         NgIf
     ],
     exports: [
