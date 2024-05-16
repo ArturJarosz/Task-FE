@@ -1,12 +1,6 @@
-import {ChangeDetectionStrategy, Component, effect, inject, OnInit, Signal} from '@angular/core';
-import {Store} from "@ngrx/store";
-import {ProjectState, ProjectStore} from "../state";
-import {
-    ConfigurationState,
-    getProjectStatusConfiguration,
-    getProjectTypeConfiguration
-} from "../../shared/configuration/state";
-import {Observable} from "rxjs";
+import {ChangeDetectionStrategy, Component, effect, inject, Signal} from '@angular/core';
+import {ProjectStore} from "../state";
+import {ConfigurationStore} from "../../shared/configuration/state";
 import {Project} from "../../generated/models/project";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {Router} from "@angular/router";
@@ -19,27 +13,24 @@ import {ProjectDto} from "../model/project.model";
     styleUrls: ['./project-list-shell.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProjectListShellComponent implements OnInit {
-    projectTypes$!: Observable<ConfigurationEntry[]>;
-    projectStatuses$!: Observable<ConfigurationEntry[]>;
+export class ProjectListShellComponent {
+
     showComponent: boolean = false;
 
     readonly projectStore = inject(ProjectStore);
+    readonly configurationStore = inject(ConfigurationStore);
+
     $projects: Signal<Project[] | null> = this.projectStore.projects;
     $projectsNeedRefresh: Signal<boolean | null> = this.projectStore.projectsNeedRefresh;
+    $projectTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.projectTypes;
+    $projectStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.projectStatuses;
 
-    constructor(private projectStoreOld: Store<ProjectState>, private configurationStore: Store<ConfigurationState>,
-                private router: Router, private confirmationService: ConfirmationService) {
+    constructor(private router: Router, private confirmationService: ConfirmationService) {
         effect(() => {
             if (this.$projectsNeedRefresh()) {
                 this.projectStore.loadProjects({})
             }
         });
-    }
-
-    ngOnInit(): void {
-        this.projectTypes$ = this.configurationStore.select(getProjectTypeConfiguration);
-        this.projectStatuses$ = this.configurationStore.select(getProjectStatusConfiguration);
     }
 
     onClick() {

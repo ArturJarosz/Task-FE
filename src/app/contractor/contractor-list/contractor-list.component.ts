@@ -1,8 +1,8 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit, Signal} from '@angular/core';
 import {ContractorState, getContractors, getContractorsNeedRefresh, loadContractors} from "../state";
 import {Store} from "@ngrx/store";
 import {Subscription} from "rxjs";
-import {ConfigurationState, getContractorTypeConfiguration} from "../../shared/configuration/state";
+import {ConfigurationStore} from "../../shared/configuration/state";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Contractor} from "../../generated/models/contractor";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
@@ -17,12 +17,13 @@ export class ContractorListComponent implements OnInit, OnDestroy {
     private contractorsNeedRefreshSubscription$!: Subscription;
     contractors: Contractor[] = [];
     pageTitle = "Contractors";
-    contractorTypes!: ConfigurationEntry[];
+
+    readonly configurationStore = inject(ConfigurationStore);
+    $contractorTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.contractorTypes;
 
     protected showAddContractorComponent: boolean = false;
 
-    constructor(private contractorStore: Store<ContractorState>,
-                private configurationStore: Store<ConfigurationState>) {
+    constructor(private contractorStore: Store<ContractorState>) {
     }
 
     ngOnInit(): void {
@@ -30,10 +31,6 @@ export class ContractorListComponent implements OnInit, OnDestroy {
         this.contractorsSubscription$ = this.contractorStore.select(getContractors)
             .subscribe({
                 next: contractors => this.contractors = contractors
-            });
-        this.configurationStore.select(getContractorTypeConfiguration)
-            .subscribe({
-                next: contractorTypes => this.contractorTypes = contractorTypes
             });
         this.contractorsNeedRefreshSubscription$ = this.contractorStore.select(getContractorsNeedRefresh)
             .subscribe({
@@ -50,7 +47,7 @@ export class ContractorListComponent implements OnInit, OnDestroy {
     }
 
     getLabelFromCategory(category: string): string {
-        return resolveLabel(category, this.contractorTypes);
+        return resolveLabel(category, this.$contractorTypes());
     }
 
     onClick() {

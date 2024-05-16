@@ -1,9 +1,8 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Input, OnInit, Output, Signal} from '@angular/core';
 import {FormGroup} from "@angular/forms";
-import {ConfigurationState, getSupplierTypeConfiguration, loadConfiguration} from "../../shared/configuration/state";
+import {ConfigurationStore} from "../../shared/configuration/state";
 import {Store} from "@ngrx/store";
 import {AddSupplierFormProvider} from "./add-supplier-form-provider";
-import {Subscription} from "rxjs";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {Supplier} from "../../generated/models/supplier";
 import {createSupplier, SupplierState} from "../state";
@@ -13,7 +12,7 @@ import {createSupplier, SupplierState} from "../state";
     templateUrl: './add-supplier.component.html',
     styleUrl: './add-supplier.component.less'
 })
-export class AddSupplierComponent implements OnInit, OnDestroy {
+export class AddSupplierComponent implements OnInit {
     @Input()
     visible = false;
     @Output()
@@ -21,26 +20,17 @@ export class AddSupplierComponent implements OnInit, OnDestroy {
 
     header: string = "Add new supplier";
 
-    supplierCategoriesSubscription$!: Subscription;
-    supplierCategories: ConfigurationEntry[] = [];
+    readonly configurationStore = inject(ConfigurationStore);
+    $supplierTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.supplierTypes;
 
     addSupplierForm!: FormGroup;
 
-    constructor(private configurationStore: Store<ConfigurationState>,
-                private supplierProvider: AddSupplierFormProvider, private supplierStore: Store<SupplierState>) {
+    constructor(private supplierProvider: AddSupplierFormProvider, private supplierStore: Store<SupplierState>) {
     }
 
     ngOnInit(): void {
-        this.configurationStore.dispatch(loadConfiguration());
+        this.configurationStore.loadConfiguration({});
         this.addSupplierForm = this.supplierProvider.getAddSupplierFormGroup();
-        this.supplierCategoriesSubscription$ = this.configurationStore.select(getSupplierTypeConfiguration)
-            .subscribe({
-                next: categories => this.supplierCategories = categories
-            })
-    }
-
-    ngOnDestroy(): void {
-        this.supplierCategoriesSubscription$.unsubscribe();
     }
 
     onClose(): void {

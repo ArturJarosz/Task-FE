@@ -1,13 +1,7 @@
-import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
-import {Subscription} from "rxjs";
+import {Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, Signal, SimpleChanges} from '@angular/core';
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {FormGroup} from "@angular/forms";
-import {
-    ConfigurationState,
-    getContractorTypeConfiguration,
-    getSupplierTypeConfiguration,
-    loadConfiguration
-} from "../../shared/configuration/state";
+import {ConfigurationStore} from "../../shared/configuration/state";
 import {Store} from "@ngrx/store";
 import {AddContractorFormProvider} from "./add-contractor-form-provider";
 import {ContractorState, createContractor} from "../state";
@@ -18,7 +12,7 @@ import {Contractor} from "../../generated/models/contractor";
     templateUrl: './add-contractor.component.html',
     styleUrl: './add-contractor.component.less'
 })
-export class AddContractorComponent implements OnInit, OnDestroy, OnChanges {
+export class AddContractorComponent implements OnInit, OnChanges {
     @Input()
     visible = false;
     @Output()
@@ -26,27 +20,19 @@ export class AddContractorComponent implements OnInit, OnDestroy, OnChanges {
 
     header: string = "Add new contractor";
 
-    contractorCategoriesSubscription$!: Subscription;
-    contractorCategories: ConfigurationEntry[] = [];
+    readonly configurationStore = inject(ConfigurationStore);
+    $contractorTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.contractorTypes;
 
     addContractorForm!: FormGroup;
 
-    constructor(private configurationStore: Store<ConfigurationState>,
-                private contractorFormProvider: AddContractorFormProvider,
+    constructor(private contractorFormProvider: AddContractorFormProvider,
                 private contractorStore: Store<ContractorState>) {
     }
 
     ngOnInit(): void {
-        this.configurationStore.dispatch(loadConfiguration());
+        this.configurationStore.loadConfiguration({});
         this.addContractorForm = this.contractorFormProvider.getAddSupplierFormGroup();
-        this.contractorCategoriesSubscription$ = this.configurationStore.select(getContractorTypeConfiguration)
-            .subscribe({
-                next: categories => this.contractorCategories = categories
-            })
-    }
 
-    ngOnDestroy(): void {
-        this.contractorCategoriesSubscription$.unsubscribe();
     }
 
     onClose(): void {

@@ -9,7 +9,7 @@ import {
     SimpleChanges
 } from '@angular/core';
 import {FormGroup} from "@angular/forms";
-import {ProjectContractForm, ProjectCreateForm, ProjectDetailFormProvider} from "./project-detail-form-provider";
+import {ProjectContractForm, ProjectCreateForm, ProjectFormProvider} from "../form/project-form-provider";
 import {cloneDeep} from 'lodash';
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Architect} from "../../generated/models/architect";
@@ -42,7 +42,7 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
     @Output()
     removeProjectEvent: EventEmitter<void> = new EventEmitter<void>();
 
-    contractStore = inject(ContractStore)
+    readonly contractStore = inject(ContractStore)
 
     projectDetailsForm!: FormGroup<ProjectCreateForm>;
     resolvedProjectStatusLabel: string = '';
@@ -57,7 +57,7 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
     initialContractForm!: FormGroup<ProjectContractForm>;
     initialProjectForm!: FormGroup<ProjectCreateForm>;
 
-    constructor(private formProvider: ProjectDetailFormProvider) {
+    constructor(private formProvider: ProjectFormProvider) {
     }
 
     ngOnInit(): void {
@@ -100,6 +100,8 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
                 deadline: toDateIfExists(this.project.contract!.deadline)
             }
         })
+        this.projectDetailsForm.get('startDate')?.disable();
+        this.projectDetailsForm.get('endDate')?.disable();
     }
 
     resolveLabels() {

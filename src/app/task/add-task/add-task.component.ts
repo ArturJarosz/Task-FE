@@ -1,8 +1,6 @@
-import {Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Input, OnInit, Output, Signal} from '@angular/core';
 import {TaskStore} from "../state/task.state";
-import {Subscription} from "rxjs";
-import {Store} from "@ngrx/store";
-import {ConfigurationState, getTaskTypeConfiguration, loadConfiguration} from "../../shared/configuration/state";
+import {ConfigurationStore} from "../../shared/configuration/state";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {FormGroup} from "@angular/forms";
 import {TaskFormProvider} from "../form/task-form-provider";
@@ -13,7 +11,7 @@ import {Task} from "../../generated/models/task";
     templateUrl: './add-task.component.html',
     styleUrl: './add-task.component.less'
 })
-export class AddTaskComponent implements OnInit, OnDestroy {
+export class AddTaskComponent implements OnInit {
     @Input()
     visible = false;
     @Input()
@@ -27,27 +25,18 @@ export class AddTaskComponent implements OnInit, OnDestroy {
     header: string = "Add new task";
 
     readonly taskStore = inject(TaskStore);
+    readonly configurationStore = inject(ConfigurationStore);
+    $taskTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.stageTypes;
 
-    taskTypesSubscription!: Subscription;
-    taskTypes!: ConfigurationEntry[];
     addTaskForm!: FormGroup;
 
-    constructor(private configurationStore: Store<ConfigurationState>, private formProvider: TaskFormProvider) {
+    constructor(private formProvider: TaskFormProvider) {
 
     }
 
     ngOnInit(): void {
-        this.configurationStore.dispatch(loadConfiguration());
-        this.taskTypesSubscription = this.configurationStore.select(getTaskTypeConfiguration)
-            .subscribe({
-                next: taskTypes => this.taskTypes = taskTypes
-            })
-
+        this.configurationStore.loadConfiguration({});
         this.addTaskForm = this.formProvider.getAddTaskForm();
-    }
-
-    ngOnDestroy(): void {
-        this.taskTypesSubscription.unsubscribe();
     }
 
     onClose(): void {

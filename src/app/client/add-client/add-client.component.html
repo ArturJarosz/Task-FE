@@ -8,15 +8,14 @@
     </ng-template>
     <div>
         <form [formGroup]="clientForm">
-            <p-dropdown [options]="clientTypes" formControlName="clientType" optionLabel="label" optionValue="id">
+            <p-dropdown [options]="$clientTypes()!" formControlName="clientType" optionLabel="label" optionValue="id">
             </p-dropdown>
             <div class="flex flex-column gap-3 mt-3 border-top-1 surface-border pt-2"
                  [ngSwitch]="clientForm.get('clientType')?.value">
                 <div class="flex gap-3" *ngSwitchCase="ClientType.PRIVATE.toString()">
                     <div class="w-6">
-                        <label for="firstName" class="block mb-1 text-color text-base">First Name</label>
+                        <label for="firstName" class="block  text-color text-base">First Name</label>
                         <span class="p-input-icon-left w-full">
-                            <i class="pi pi-pencil"></i>
                             <input type="text" class="w-full" id="firstName" formControlName="firstName"
                                    pInputText
                                    placeholder="first name"
@@ -28,9 +27,8 @@
                         </span>
                     </div>
                     <div class="w-6">
-                        <label for="lastName" class="block mb-1 text-color text-base">Last Name</label>
+                        <label for="lastName" class="block  text-color text-base">Last Name</label>
                         <span class="p-input-icon-left w-full">
-                            <i class="pi pi-pencil"></i>
                             <input type="text" formControlName="lastName" class="w-full" id="lastName"
                                    pInputText
                                    placeholder="last name"
@@ -44,9 +42,8 @@
                 </div>
                 <div class="flex gap-3" *ngSwitchCase="ClientType.CORPORATE.toString()">
                     <div class="w-full">
-                        <label for="companyName" class="block mb-1 text-color text-base">Company Name</label>
+                        <label for="companyName" class="block  text-color text-base">Company Name</label>
                         <span class="p-input-icon-left w-full">
-                            <i class="pi pi-pencil"></i>
                             <input type="text" formControlName="companyName" class="w-full" id="companyName"
                                    pInputText
                                    placeholder="company name"
@@ -62,9 +59,8 @@
             <div class="flex flex-column gap-3 mt-3 border-top-1 surface-border pt-2" formGroupName="contact">
                 <div class="flex gap-3">
                     <div class="w-6">
-                        <label for="email" class="block mb-1 text-color text-base">Email</label>
+                        <label for="email" class="block  text-color text-base">Email</label>
                         <span class="p-input-icon-left w-full">
-                            <i class="pi pi-pencil"></i>
                             <input type="text" class="w-full" id="email" formControlName="email"
                                    pInputText
                                    placeholder="email"
@@ -72,9 +68,8 @@
                         </span>
                     </div>
                     <div class="w-6">
-                        <label for="telephone" class="block mb-1 text-color text-base">Phone</label>
+                        <label for="telephone" class="block  text-color text-base">Phone</label>
                         <span class="p-input-icon-left w-full">
-                            <i class="pi pi-pencil"></i>
                             <input type="text" formControlName="telephone" class="w-full" id="telephone"
                                    pInputText
                                    placeholder="telephone"
@@ -85,9 +80,8 @@
                 <div formGroupName="address">
                     <div class="flex gap-3">
                         <div class="w-6">
-                            <label for="city" class="block mb-1 text-color text-base">City</label>
+                            <label for="city" class="block  text-color text-base">City</label>
                             <span class="p-input-icon-left w-full">
-                            <i class="pi pi-pencil"></i>
                             <input type="text" class="w-full" id="city" formControlName="city"
                                    pInputText
                                    placeholder="city"
@@ -95,9 +89,8 @@
                         </span>
                         </div>
                         <div class="w-6">
-                            <label for="postCode" class="block mb-1 text-color text-base">Post code</label>
+                            <label for="postCode" class="block  text-color text-base">Post code</label>
                             <span class="p-input-icon-left w-full">
-                            <i class="pi pi-pencil"></i>
                             <input type="text" formControlName="postCode" class="w-full" id="postCode"
                                    pInputText
                                    placeholder="post code"
@@ -107,9 +100,8 @@
                     </div>
                     <div class="flex gap-3">
                         <div class="w-8">
-                            <label for="street" class="block mb-1 text-color text-base">Street</label>
+                            <label for="street" class="block  text-color text-base">Street</label>
                             <span class="p-input-icon-left w-full">
-                            <i class="pi pi-pencil"></i>
                             <input type="text" formControlName="street" class="w-full" id="street"
                                    pInputText
                                    placeholder="street"
@@ -117,9 +109,8 @@
                         </span>
                         </div>
                         <div class="w-2">
-                            <label for="houseNumber" class="block mb-1 text-color text-base">House</label>
+                            <label for="houseNumber" class="block  text-color text-base">House</label>
                             <span class="p-input-icon-left w-full">
-                            <i class="pi pi-pencil"></i>
                             <input type="text" formControlName="houseNumber" class="w-full" id="houseNumber"
                                    pInputText
                                    placeholder="house"
@@ -127,9 +118,8 @@
                         </span>
                         </div>
                         <div class="w-2">
-                            <label for="flatNumber" class="block mb-1 text-color text-base">Flat</label>
+                            <label for="flatNumber" class="block  text-color text-base">Flat</label>
                             <span class="p-input-icon-left w-full">
-                            <i class="pi pi-pencil"></i>
                             <input type="text" formControlName="flatNumber" class="w-full" id="flatNumber"
                                    pInputText
                                    placeholder="flat"
@@ -143,9 +133,8 @@
             <div class="flex flex-column gap-3 mt-3 border-top-1 surface-border pt-2">
                 <div class="flex gap-3">
                     <div class="w-full">
-                        <label for="note" class="block mb-1 text-color text-base">Note</label>
+                        <label for="note" class="block  text-color text-base">Note</label>
                         <span class="p-input-icon-left w-full">
-                            <i class="pi pi-pencil"></i>
                             <textarea rows="5" cols="30" pInputTextarea type="text" formControlName="note"
                                       class="w-full" id="note"
                                       pInputText

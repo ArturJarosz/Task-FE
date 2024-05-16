@@ -1,7 +1,12 @@
 import {AppState} from "../../../state/app.store";
 import {ApplicationConfiguration} from "../model/configuration";
-import {createFeatureSelector, createSelector} from "@ngrx/store";
-import {Features} from "../../../features";
+import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
+import {rxMethod} from "@ngrx/signals/rxjs-interop";
+import {ConfigurationRestService} from "../rest/configuration.rest";
+import {inject} from "@angular/core";
+import {catchError, of, pipe, switchMap, tap} from "rxjs";
+import {MessageService} from "primeng/api";
+import {MessageSeverity} from "../../message";
 
 export interface ConfigurationState extends AppState {
     error: string;
@@ -27,66 +32,34 @@ export const initialState: ConfigurationState = {
     needRefresh: true
 }
 
-// selectors
-
-export const getConfigurationFeatureState = createFeatureSelector<ConfigurationState>(Features.CONFIGURATION);
-
-export const getNeedRefresh = createSelector(
-    getConfigurationFeatureState,
-    state => state.needRefresh
+export const ConfigurationStore = signalStore(
+    {providedIn: 'root'},
+    withState(initialState),
+    withMethods((store, configurationRestService = inject(ConfigurationRestService),
+                 messageService = inject(MessageService)) => ({
+        loadConfiguration: rxMethod<{}>(
+            pipe(
+                switchMap(() => {
+                    if (store.needRefresh()!) {
+                        return configurationRestService.getConfiguration()
+                            .pipe(
+                                tap(configuration => patchState(store,
+                                    {configuration: configuration, needRefresh: false})),
+                                catchError(error => {
+                                    messageService.add({
+                                        severity: MessageSeverity.ERROR,
+                                        summary: `Error loading configuration.`,
+                                        detail: `There was a problem with loading application configuration.`,
+                                    });
+                                    return of(error);
+                                })
+                            )
+                    }
+                    return of({})
+                })
+            )
+        )
+    }))
 )
 
-export const getProjectTypeConfiguration = createSelector(
-    getConfigurationFeatureState,
-    state => state.configuration.projectTypes
-)
 
-export const getProjectStatusConfiguration = createSelector(
-    getConfigurationFeatureState,
-    state => state.configuration.projectStatuses
-)
-
-export const getContractorTypeConfiguration = createSelector(
-    getConfigurationFeatureState,
-    state => state.configuration.contractorTypes
-)
-
-export const getSupplierTypeConfiguration = createSelector(
-    getConfigurationFeatureState,
-    state => state.configuration.supplierTypes
-)
-
-export const getClientTypeConfiguration = createSelector(
-    getConfigurationFeatureState,
-    state => state.configuration.clientTypes
-)
-
-export const getContractStatusConfiguration = createSelector(
-    getConfigurationFeatureState,
-    state => state.configuration.contractStatuses
-)
-
-export const getStageStatusConfiguration = createSelector(
-    getConfigurationFeatureState,
-    state => state.configuration.stageStatuses
-)
-
-export const getStageTypeConfiguration = createSelector(
-    getConfigurationFeatureState,
-    state => state.configuration.stageTypes
-)
-
-export const getTaskTypeConfiguration = createSelector(
-    getConfigurationFeatureState,
-    state => state.configuration.taskTypes
-)
-
-export const getTaskStatusConfiguration = createSelector(
-    getConfigurationFeatureState,
-    state => state.configuration.taskStatuses
-)
-
-export const getCostCategories = createSelector(
-    getConfigurationFeatureState,
-    state => state.configuration.costCategories
-)

@@ -7,9 +7,9 @@
         </div>
     </ng-template>
     <form [formGroup]="addContractorForm">
-        <div class="grid grid-nogutter surface-border col-12 p-1">
+        <div class="grid grid-nogutter surface-border  p-1">
             <div class="md:col-6 p-1">
-                <label for="name" class="block mb-1 text-color text-base">Name</label>
+                <label for="name" class="block  text-color text-base">Name</label>
                 <span class="p-input-icon-left w-full">
                     <i class="pi pi-pencil"></i>
                     <input type="text" class="w-full" id="name" formControlName="name" pInputText placeholder="Contractor name"
@@ -17,17 +17,17 @@
                 </span>
             </div>
             <div class="md:col-6 p-1">
-                <label for="category" class="block mb-1 text-color text-base">Type</label>
+                <label for="category" class="block  text-color text-base">Type</label>
                 <span class="p-input-icon-left w-full">
-                    <p-dropdown [options]="contractorCategories" optionLabel="label" optionValue="id"
+                    <p-dropdown [options]="$contractorTypes()" optionLabel="label" optionValue="id"
                                 formControlName="category" class="w-full" appendTo="body" id="category">
                     </p-dropdown>
                 </span>
             </div>
         </div>
-        <div class="grid grid-nogutter surface-border col-12 p-1">
+        <div class="grid grid-nogutter surface-border  p-1">
             <div class="md:col-6 p-1">
-                <label for="email" class="block mb-1 text-color text-base">Email</label>
+                <label for="email" class="block  text-color text-base">Email</label>
                 <span class="p-input-icon-left w-full">
                 <i class="pi pi-pencil"></i>
                 <input type="text" class="w-full" id="email" formControlName="email"
@@ -37,7 +37,7 @@
                 </span>
             </div>
             <div class="md:col-6 p-1">
-                <label for="telephone" class="block mb-1 text-color text-base">Phone</label>
+                <label for="telephone" class="block  text-color text-base">Phone</label>
                 <span class="p-input-icon-left w-full">
                 <i class="pi pi-pencil"></i>
                 <input type="text" formControlName="telephone" class="w-full" id="telephone"
@@ -47,9 +47,9 @@
                 </span>
             </div>
         </div>
-        <div class="grid grid-nogutter surface-border col-12 p-1">
+        <div class="grid grid-nogutter surface-border  p-1">
             <div class="w-full">
-                <label for="note" class="block mb-1 text-color text-base">Note</label>
+                <label for="note" class="block  text-color text-base">Note</label>
                 <span class="p-input-icon-left w-full">
                 <i class="pi pi-pencil"></i>
                 <textarea rows="5" cols="30" pInputTextarea type="text" formControlName="note"

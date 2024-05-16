@@ -11,9 +11,9 @@
         </div>
     </ng-template>
     <form [formGroup]="addStageForm">
-        <div class="grid grid-nogutter surface-border col-12 p-1">
+        <div class="grid grid-nogutter surface-border  p-1">
             <div class="md:col-4 p-1">
-                <label for="name" class="block mb-1 text-color text-base">Stage name</label>
+                <label for="name" class="block  text-color text-base">Stage name</label>
                 <span class="p-input-icon-left w-full">
                     <i class="pi pi-pencil"></i>
                     <input type="text" class="w-full" id="name" formControlName="name" pInputText placeholder="stage name"
@@ -21,21 +21,21 @@
                 </span>
             </div>
             <div class="md:col-4 p-1">
-                <label for="type" class="block mb-1 text-color text-base">Type</label>
+                <label for="type" class="block  text-color text-base">Type</label>
                 <span class="p-input-icon-left w-full">
-                    <p-dropdown [options]="stageTypes" optionLabel="label" optionValue="id"
+                    <p-dropdown [options]="$stageTypes()" optionLabel="label" optionValue="id"
                                 formControlName="type" class="w-full" appendTo="body" id="type">
                     </p-dropdown>
                 </span>
             </div>
             <div class="md:col-4 p-1">
-                <div class="text-500 font-medium mb-1">Deadline</div>
+                <div class="text-500 font-medium ">Deadline</div>
                 <p-calendar formControlName="deadline" id="deadline" dateFormat="yy-mm-dd"></p-calendar>
             </div>
         </div>
-        <div class="grid grid-nogutter surface-border col-12 p-1">
-            <div class="md:col-12 p-1 p-1">
-                <div class="text-500 font-medium mb-1 h-2rem">Note</div>
+        <div class="grid grid-nogutter surface-border  p-1">
+            <div class="md: p-1 p-1">
+                <div class="text-500 font-medium  h-2rem">Note</div>
                 <textarea formControlName="note" id="note" type="text" pInputTextarea rows="2"
                           [autoResize]="true" style="height: 4rem;overflow: hidden;"></textarea>
             </div>

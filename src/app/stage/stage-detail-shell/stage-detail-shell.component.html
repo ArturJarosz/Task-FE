@@ -1,7 +1,7 @@
 <stage-detail
         [stage]="$stage()"
-        [stageStatuses]="stageStatuses$ | async"
-        [stageTypes]="stageTypes$ | async"
+        [stageStatuses]="$stageStatuses()"
+        [stageTypes]="$stageTypes()"
         [projectId]="projectId"
         (deleteStageEvent)="deleteStage($event)"
         (rejectEvent)="rejectStage($event)"

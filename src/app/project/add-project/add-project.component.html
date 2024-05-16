@@ -11,7 +11,7 @@
             <div class="flex flex-column gap-3 mt-3 border-top-1 surface-border pt-2">
                 <div class="flex gap-3">
                     <div class="w-6">
-                        <label for="name" class="block mb-1 text-color text-base">Project name</label>
+                        <label for="name" class="block  text-color text-base">Project name</label>
                         <span class="p-input-icon-left w-full">
                             <i class="pi pi-pencil"></i>
                             <input type="text" class="w-full" id="name" formControlName="name"
@@ -21,9 +21,9 @@
                         </span>
                     </div>
                     <div class="w-6">
-                        <label for="type" class="block mb-1 text-color text-base">Type</label>
+                        <label for="type" class="block  text-color text-base">Type</label>
                         <span style="width: 100%">
-                            <p-dropdown [options]="projectTypes" optionLabel="label" optionValue="id"
+                            <p-dropdown [options]="$projectTypes()" optionLabel="label" optionValue="id"
                                         formControlName="type" class="w-full" appendTo="body" id="type">
                             </p-dropdown>
                         </span>
@@ -33,13 +33,13 @@
             <div class="flex flex-column gap-3 mt-3 border-top-1 surface-border pt-2">
                 <div class="flex gap-3">
                     <div class="w-6">
-                        <label for="client" class="block mb-1 text-color text-base w-full">Client</label>
+                        <label for="client" class="block  text-color text-base w-full">Client</label>
                         <p-dropdown [options]="$clientsForm()" optionLabel="resolvedName" optionValue="id"
                                     formControlName="clientId" class="w-full" appendTo="body" id="client">
                         </p-dropdown>
                     </div>
                     <div class="w-6">
-                        <label for="architect" class="block mb-1 text-color text-base w-full">Architect</label>
+                        <label for="architect" class="block  text-color text-base w-full">Architect</label>
                         <p-dropdown [options]="architects" optionLabel="resolvedName" optionValue="id"
                                     formControlName="architectId" appendTo="body" id="architect">
                         </p-dropdown>
@@ -49,7 +49,7 @@
             <div class="flex flex-column gap-3 mt-3 border-top-1 surface-border pt-2">
                 <div class="flex gap-3">
                     <div class="w-full">
-                        <label for="offerValue" class="block mb-1 text-color text-base">Value</label>
+                        <label for="offerValue" class="block  text-color text-base">Value</label>
                         <span class="p-input-icon-left w-full">
                                 <i class="pi pi-pencil"></i>
                                 <input type=number step=0.01 class="w-full" id="offerValue" formControlName="offerValue"

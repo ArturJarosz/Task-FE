@@ -11,9 +11,11 @@ export abstract class ClientRestService {
 
     abstract getClient(clientId: number): Observable<Client>;
 
-    abstract createClient(client: Client): Observable<any>;
+    abstract createClient(client: Client): Observable<Client>;
 
     abstract deleteClient(clientId: number): Observable<void>;
+
+    abstract updateClient(clientId: number, client: Client): Observable<Client>;
 }
 
 @Injectable()
@@ -50,5 +52,12 @@ export class ClientRestServiceImpl extends AbstractRestService implements Client
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))
             )
+    }
+
+    updateClient(clientId: number, client: Client): Observable<Client> {
+        return this.httpClient.put<Client>(`${this.clientUrl}/${clientId}`, client)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            );
     }
 }

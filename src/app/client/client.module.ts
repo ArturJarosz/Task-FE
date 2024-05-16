@@ -20,11 +20,9 @@ import {AddClientComponent} from "./add-client";
 import {ClientRestService, ClientRestServiceImpl} from "./rest/client-rest.service";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ConfirmationService, MessageService} from "primeng/api";
-import {StoreModule} from "@ngrx/store";
-import {EffectsModule} from "@ngrx/effects";
-import {Features} from "../features";
-import { ClientDetailShellComponent } from './client-detail-shell/client-detail-shell.component';
-import { ClientListShellComponent } from './client-list-shell/client-list-shell.component';
+import {ClientDetailShellComponent} from './client-detail-shell/client-detail-shell.component';
+import {ClientListShellComponent} from './client-list-shell/client-list-shell.component';
+import {AccordionModule} from "primeng/accordion";
 
 @NgModule({
     declarations: [
@@ -53,7 +51,8 @@ import { ClientListShellComponent } from './client-list-shell/client-list-shell.
         RippleModule,
         InputTextareaModule,
         DividerModule,
-        ConfirmDialogModule
+        ConfirmDialogModule,
+        AccordionModule
     ],
     exports: [
         ClientListComponent

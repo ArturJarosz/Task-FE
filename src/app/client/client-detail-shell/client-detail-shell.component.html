@@ -1,4 +1,6 @@
 <client-detail
     [client]="$client()"
+    [clientTypes]="$clientTypes()"
+    (updateClientEvent)="onUpdate($event)"
 >
 </client-detail>

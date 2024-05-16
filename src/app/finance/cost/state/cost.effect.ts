@@ -5,12 +5,11 @@ import {MessageService} from "primeng/api";
 import {createCost, createCostError, createCostSuccess, loadCost, loadCostError, loadCostSuccess} from "./cost.actions";
 import {catchError, map, mergeMap, of} from "rxjs";
 import {MessageSeverity} from "../../../shared";
-import {ProjectState, ProjectStore} from "../../../project/state";
-import {Store} from "@ngrx/store";
+import {ProjectStore} from "../../../project/state";
 
 @Injectable()
 export class CostEffect {
-    projectStore = inject(ProjectStore);
+    readonly projectStore = inject(ProjectStore);
 
     constructor(private actions$: Actions, private costRestService: CostRestService,
                 private messageService: MessageService) {
