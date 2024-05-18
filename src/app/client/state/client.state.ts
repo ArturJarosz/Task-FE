@@ -12,9 +12,9 @@ export interface ClientState extends AppState {
     error: string;
     clients: Client[];
     clientId: number | undefined;
-    client: Client | null,
-    clientsNeedRefresh: boolean,
-    clientNeedsRefresh: boolean
+    client: Client | null;
+    clientsNeedRefresh: boolean;
+    clientNeedsRefresh: boolean;
 }
 
 export const initialState: ClientState = {
@@ -86,7 +86,7 @@ export const ClientStore = signalStore(
                                 messageService.add({
                                     severity: MessageSeverity.ERROR,
                                     summary: `Error removing client.`,
-                                    detail: `There was a problem with removing client.`,
+                                    detail: `There was a problem with removing client. Error: ${error}`,
                                 });
                                 return of(error);
                             })

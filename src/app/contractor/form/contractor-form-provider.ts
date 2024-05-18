@@ -7,12 +7,12 @@ const DEFAULT_TYPE = ContractorCategory.GENERAL;
 @Injectable({
     providedIn: 'root'
 })
-export class AddContractorFormProvider {
+export class ContractorFormProvider {
     constructor(private formBuilder: FormBuilder) {
     }
 
-    public getAddSupplierFormGroup(): FormGroup<AddContractorForm> {
-        return this.formBuilder.nonNullable.group<AddContractorForm>({
+    public getSupplierFormGroup(): FormGroup<ContractorForm> {
+        return this.formBuilder.nonNullable.group<ContractorForm>({
             category: this.formBuilder.nonNullable.control<ContractorCategory>(DEFAULT_TYPE, [Validators.required]),
             email: this.formBuilder.control<string>(''),
             name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
@@ -22,7 +22,7 @@ export class AddContractorFormProvider {
     }
 }
 
-interface AddContractorForm {
+export interface ContractorForm {
     category: FormControl<string>;
     email: FormControl<string | null>;
     name: FormControl<string>;

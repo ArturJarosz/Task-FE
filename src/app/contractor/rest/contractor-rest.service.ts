@@ -8,7 +8,10 @@ import {Contractor} from "../../generated/models/contractor";
 
 export abstract class ContractorRestService {
     abstract getContractors(): Observable<Contractor[]>;
+
     abstract createContractor(contractor: Contractor): Observable<Contractor>;
+
+    abstract getContractor(contractorId: number): Observable<Contractor>;
 }
 
 @Injectable()
@@ -31,5 +34,12 @@ export class ContractorRestServiceImpl extends AbstractRestService implements Co
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))
             )
+    }
+
+    getContractor(contractorId: number): Observable<Contractor> {
+        return this.httpClient.get<Contractor>(`${this.contractorUrl}/${contractorId}`)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            );
     }
 }
