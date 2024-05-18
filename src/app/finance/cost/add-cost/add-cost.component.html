@@ -11,7 +11,6 @@
             <div class="md:col-4 p-1">
                 <label for="name" class="block  text-color text-base">Cost name</label>
                 <span class="p-input-icon-left w-full">
-                    <i class="pi pi-pencil"></i>
                     <input type="text" class="w-full" id="name" formControlName="name" pInputText placeholder="cost name"
                            [ngClass]="{'is-invalid': (addCostForm.get('name')?.touched || addCostForm.get('name')?.dirty) && !addCostForm.get('name')?.valid }"/>
                 </span>

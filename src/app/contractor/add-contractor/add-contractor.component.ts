@@ -2,10 +2,9 @@ import {Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, Signa
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {FormGroup} from "@angular/forms";
 import {ConfigurationStore} from "../../shared/configuration/state";
-import {Store} from "@ngrx/store";
-import {AddContractorFormProvider} from "./add-contractor-form-provider";
-import {ContractorState, createContractor} from "../state";
+import {ContractorFormProvider} from "../form/contractor-form-provider";
 import {Contractor} from "../../generated/models/contractor";
+import {ContractorStore} from "../state";
 
 @Component({
     selector: 'add-contractor',
@@ -20,18 +19,18 @@ export class AddContractorComponent implements OnInit, OnChanges {
 
     header: string = "Add new contractor";
 
+    readonly contractorStore = inject(ContractorStore);
     readonly configurationStore = inject(ConfigurationStore);
     $contractorTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.contractorTypes;
 
     addContractorForm!: FormGroup;
 
-    constructor(private contractorFormProvider: AddContractorFormProvider,
-                private contractorStore: Store<ContractorState>) {
+    constructor(private contractorFormProvider: ContractorFormProvider) {
     }
 
     ngOnInit(): void {
         this.configurationStore.loadConfiguration({});
-        this.addContractorForm = this.contractorFormProvider.getAddSupplierFormGroup();
+        this.addContractorForm = this.contractorFormProvider.getSupplierFormGroup();
 
     }
 
@@ -41,7 +40,7 @@ export class AddContractorComponent implements OnInit, OnChanges {
     }
 
     private resetFields() {
-        this.addContractorForm = this.contractorFormProvider.getAddSupplierFormGroup();
+        this.addContractorForm = this.contractorFormProvider.getSupplierFormGroup();
     }
 
     onCancel() {
@@ -53,7 +52,7 @@ export class AddContractorComponent implements OnInit, OnChanges {
     onSave() {
         this.visible = false;
         let contractor = this.createContractor();
-        this.contractorStore.dispatch(createContractor({contractor: contractor}));
+        this.contractorStore.createContractor({contractor: contractor});
     }
 
     isSaveEnabled() {
@@ -73,7 +72,7 @@ export class AddContractorComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        this.addContractorForm = this.contractorFormProvider.getAddSupplierFormGroup();
+        this.addContractorForm = this.contractorFormProvider.getSupplierFormGroup();
     }
 
 }

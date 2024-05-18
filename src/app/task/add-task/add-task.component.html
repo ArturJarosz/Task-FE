@@ -14,7 +14,6 @@
             <div class="md:col-6 p-1">
                 <label for="name" class="block  text-color text-base">Task name</label>
                 <span class="p-input-icon-left w-full">
-                    <i class="pi pi-pencil"></i>
                     <input type="text" class="w-full" id="name" formControlName="name" pInputText placeholder="task name"
                            [ngClass]="{'is-invalid': (addTaskForm.get('name')?.touched || addTaskForm.get('name')?.dirty) && !addTaskForm.get('name')?.valid }"/>
                 </span>

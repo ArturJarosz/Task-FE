@@ -9,7 +9,7 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-contractor>
-                <tr>
+                <tr [routerLink]="['/contractors', contractor.id]" class="cursor-pointer">
                     <td>{{contractor.id}}</td>
                     <td>{{contractor.name}}</td>
                     <td>{{getLabelFromCategory(contractor.category)}}</td>

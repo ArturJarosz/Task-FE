@@ -1,7 +1,6 @@
 import {Component, effect, inject, OnInit, Signal} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {StageState, StageStore} from "../state";
-import {Store} from "@ngrx/store";
+import {StageStore} from "../state";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {Stage} from "../../generated/models/stage";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
@@ -20,13 +19,13 @@ export class StageDetailShellComponent implements OnInit {
     readonly configurationStore = inject(ConfigurationStore);
     readonly stageStore = inject(StageStore);
     $stage: Signal<Stage | null> = this.stageStore.stage;
-    $stageNeedsRefresh: Signal<boolean | null> = this.stageStore.stageNeedsRefresh;
+    $stageNeedsRefresh: Signal<boolean> = this.stageStore.stageNeedsRefresh;
     $stageTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.stageTypes;
     $stageStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.stageStatuses;
 
 
-    constructor(private route: ActivatedRoute, private stageStoreOld: Store<StageState>,
-                private confirmationService: ConfirmationService, private router: Router) {
+    constructor(private route: ActivatedRoute, private confirmationService: ConfirmationService,
+                private router: Router) {
         effect(() => {
             if (this.$stageNeedsRefresh()) {
                 this.stageStore.loadStage({});
