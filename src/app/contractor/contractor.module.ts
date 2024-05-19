@@ -15,6 +15,8 @@ import {ContractorListShellComponent} from './contractor-list-shell/contractor-l
 import {ContractorDetailShellComponent} from './contractor-detail-shell/contractor-detail-shell.component';
 import {ContractorDetailComponent} from './contractor-detail/contractor-detail.component';
 import {AccordionModule} from "primeng/accordion";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {RippleModule} from "primeng/ripple";
 
 @NgModule({
     declarations: [
@@ -37,7 +39,9 @@ import {AccordionModule} from "primeng/accordion";
         DropdownModule,
         InputTextModule,
         InputTextareaModule,
-        AccordionModule
+        AccordionModule,
+        ConfirmDialogModule,
+        RippleModule
     ],
     providers: [
         {provide: ContractorRestService, useClass: ContractorRestServiceImpl}

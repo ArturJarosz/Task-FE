@@ -4,6 +4,7 @@ import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {FormGroup} from "@angular/forms";
 import {ContractorForm, ContractorFormProvider} from "../form/contractor-form-provider";
 import {cloneDeep} from "lodash";
+import {ContractorDto} from "../model/contractor";
 
 @Component({
     selector: 'contractor-detail',
@@ -17,6 +18,8 @@ export class ContractorDetailComponent implements OnInit, OnChanges {
     contractorTypes!: ConfigurationEntry[];
     @Output()
     updateContractorEvent: EventEmitter<Contractor> = new EventEmitter<Contractor>();
+    @Output()
+    deleteContractorEvent: EventEmitter<ContractorDto> = new EventEmitter<ContractorDto>();
 
     contractorDetailsForm!: FormGroup<ContractorForm>;
     initialContractorDetailsForm!: FormGroup<ContractorForm>;
@@ -50,9 +53,7 @@ export class ContractorDetailComponent implements OnInit, OnChanges {
     }
 
     isFormChanged() {
-        console.log("checking")
         if (this.contractorDetailsForm.pristine) {
-            console.log("pristine")
             return false;
         }
         return JSON.stringify(this.contractorDetailsForm.value) !== JSON.stringify(this.initialContractorDetailsForm.value);
@@ -68,5 +69,14 @@ export class ContractorDetailComponent implements OnInit, OnChanges {
             note: this.contractorDetailsForm.value.note!
         };
         this.updateContractorEvent.emit(contractor);
+    }
+
+    onDelete() {
+        let contractor: ContractorDto;
+        contractor = {
+            name: this.contractor?.name!,
+            id: this.contractor?.id!
+        };
+        this.deleteContractorEvent.emit(contractor);
     }
 }

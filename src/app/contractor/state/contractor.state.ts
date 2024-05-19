@@ -103,6 +103,24 @@ export const ContractorStore = signalStore(
                             )
                     })
                 )
+            ),
+            deleteContractor: rxMethod<{}>(
+                pipe(
+                    switchMap(() => {
+                        console.log("removing contractor store");
+                        return contractorRestService.deleteContractor(store.contractorId()!)
+                            .pipe(
+                                tap(contractor => {
+                                    patchState(store, {contractorsNeedRefresh: true});
+                                    messageService.add({
+                                        severity: MessageSeverity.INFO,
+                                        summary: `Contractor removed.`,
+                                        detail: `Contractor with id ${store.contractorId()!} was removed.`,
+                                    });
+                                })
+                            )
+                    })
+                )
             )
         }))
 )
