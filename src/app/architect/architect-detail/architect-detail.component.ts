@@ -1,9 +1,6 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnInit, Signal} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
-import {Subscription} from "rxjs";
-import {Store} from "@ngrx/store";
-import {ArchitectState, getArchitect} from "../state";
-import {loadArchitect} from "../state";
+import {ArchitectStore} from "../state";
 import {Architect} from "../../generated/models/architect";
 
 @Component({
@@ -11,31 +8,26 @@ import {Architect} from "../../generated/models/architect";
     templateUrl: './architect-detail.component.html',
     styleUrls: ['./architect-detail.component.less']
 })
-export class ArchitectDetailComponent implements OnInit, OnDestroy {
+export class ArchitectDetailComponent implements OnInit {
     pageTitle: string = "Architect profile";
     // main info labels
     architectIdLabel: string = "ID:"
     firstNameLabel: string = "First name:";
     lastNameLabel: string = "Last name:";
 
-    architectId!: number;
-    architectSubscription!: Subscription
-    architect!: Architect | null;
+    architectStore = inject(ArchitectStore);
+    $architect: Signal<Architect | null> = this.architectStore.architect!;
 
-    constructor(private route: ActivatedRoute, private architectStore: Store<ArchitectState>) {
+    architectId!: number;
+
+    constructor(private route: ActivatedRoute) {
     }
 
     ngOnInit(): void {
         let maybeNumber = this.route.snapshot.paramMap.get("id");
         this.architectId = Number(maybeNumber);
-        this.architectStore.dispatch(loadArchitect({architectId: this.architectId}));
-        this.architectSubscription = this.architectStore.select(getArchitect)
-            .subscribe({
-                next: architect => this.architect = architect
-            });
+        this.architectStore.setArchitectId(this.architectId);
+        this.architectStore.loadArchitect({});
     }
 
-    ngOnDestroy(): void {
-        this.architectSubscription.unsubscribe();
-    }
 }

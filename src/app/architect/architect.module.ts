@@ -12,10 +12,6 @@ import {DropdownModule} from "primeng/dropdown";
 import {InputTextModule} from "primeng/inputtext";
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {NgIf, NgSwitchCase} from "@angular/common";
-import {StoreModule} from "@ngrx/store";
-import {Features} from "../features";
-import {EffectsModule} from "@ngrx/effects";
-import {architectReducer, ArchitectEffects} from "./state";
 
 @NgModule({
     declarations: [
@@ -36,9 +32,7 @@ import {architectReducer, ArchitectEffects} from "./state";
         InputTextModule,
         InputTextareaModule,
         NgIf,
-        NgSwitchCase,
-        StoreModule.forFeature(Features.ARCHITECT, architectReducer),
-        EffectsModule.forFeature([ArchitectEffects])
+        NgSwitchCase
     ],
     providers: [
         {provide: ArchitectRestService, useClass: ArchitectRestServiceImpl}

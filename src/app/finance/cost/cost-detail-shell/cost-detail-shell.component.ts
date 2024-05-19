@@ -1,8 +1,6 @@
 import {Component, inject, OnInit, Signal} from '@angular/core';
-import {Observable} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
-import {CostState, getCost, loadCost} from "../state";
-import {Store} from "@ngrx/store";
+import {CostStore} from "../state";
 import {ConfigurationStore} from "../../../shared/configuration/state";
 import {Cost} from "../../../generated/models/cost";
 import {ConfigurationEntry} from "../../../generated/models/configuration-entry";
@@ -13,15 +11,15 @@ import {ConfigurationEntry} from "../../../generated/models/configuration-entry"
     styleUrl: './cost-detail-shell.component.less'
 })
 export class CostDetailShellComponent implements OnInit {
-    cost$!: Observable<Cost | null>;
-
     projectId: number = 0;
     costId: number = 0;
 
-    configurationStore = inject(ConfigurationStore);
+    readonly costStore = inject(CostStore);
+    readonly configurationStore = inject(ConfigurationStore);
     $costCategories: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.costCategories;
+    $cost: Signal<Cost | null> = this.costStore.cost!;
 
-    constructor(private route: ActivatedRoute, private costStore: Store<CostState>) {
+    constructor(private route: ActivatedRoute) {
     }
 
     ngOnInit(): void {
@@ -29,11 +27,10 @@ export class CostDetailShellComponent implements OnInit {
         let maybeProjectId = this.route.snapshot.paramMap.get('projectId');
         this.costId = Number(maybeCostId);
         this.projectId = Number(maybeProjectId);
-        this.costStore.dispatch(loadCost({projectId: this.projectId, costId: this.costId}));
+        this.costStore.setProjectId(this.projectId);
+        this.costStore.setCostId(this.costId);
 
-        this.cost$ = this.costStore.select(getCost);
         this.configurationStore.loadConfiguration({});
-
+        this.costStore.loadCost({});
     }
-
 }

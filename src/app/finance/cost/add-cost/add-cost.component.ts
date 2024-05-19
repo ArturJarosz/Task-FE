@@ -1,7 +1,6 @@
 import {Component, EventEmitter, inject, Input, OnInit, Output, Signal} from '@angular/core';
 import {AddCostFormProvider} from "./add-cost-form-provider";
-import {Store} from "@ngrx/store";
-import {CostState, createCost} from "../state";
+import {CostStore} from "../state";
 import {ConfigurationStore} from "../../../shared/configuration/state";
 import {FormGroup} from "@angular/forms";
 import {Cost} from "../../../generated/models/cost";
@@ -23,12 +22,13 @@ export class AddCostComponent implements OnInit {
 
     header: string = "Add new cost";
 
-    configurationStore = inject(ConfigurationStore);
+    readonly costStore = inject(CostStore);
+    readonly configurationStore = inject(ConfigurationStore);
     $costCategories: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.costCategories;
 
     addCostForm!: FormGroup;
 
-    constructor(private addCostFormProvider: AddCostFormProvider, private costStore: Store<CostState>) {
+    constructor(private addCostFormProvider: AddCostFormProvider) {
     }
 
     ngOnInit(): void {
@@ -50,7 +50,7 @@ export class AddCostComponent implements OnInit {
     onSave(): void {
         this.visible = false;
         let cost: Cost = this.createCost();
-        this.costStore.dispatch(createCost({projectId: this.projectId, cost: cost}));
+        this.costStore.createCost({cost: cost});
     }
 
 

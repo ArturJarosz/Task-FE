@@ -1,11 +1,10 @@
 import {Component, EventEmitter, inject, Input, OnInit, Output, Signal} from '@angular/core';
 import {FormGroup} from "@angular/forms";
 import {ConfigurationStore} from "../../shared/configuration/state";
-import {Store} from "@ngrx/store";
 import {AddSupplierFormProvider} from "./add-supplier-form-provider";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {Supplier} from "../../generated/models/supplier";
-import {createSupplier, SupplierState} from "../state";
+import {SupplierStore} from "../state";
 
 @Component({
     selector: 'add-supplier',
@@ -20,12 +19,13 @@ export class AddSupplierComponent implements OnInit {
 
     header: string = "Add new supplier";
 
+    readonly supplierStore = inject(SupplierStore);
     readonly configurationStore = inject(ConfigurationStore);
     $supplierTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.supplierTypes;
 
     addSupplierForm!: FormGroup;
 
-    constructor(private supplierProvider: AddSupplierFormProvider, private supplierStore: Store<SupplierState>) {
+    constructor(private supplierProvider: AddSupplierFormProvider) {
     }
 
     ngOnInit(): void {
@@ -51,7 +51,7 @@ export class AddSupplierComponent implements OnInit {
     onSave() {
         this.visible = false;
         let supplier = this.createSupplier();
-        this.supplierStore.dispatch(createSupplier({supplier: supplier}));
+        this.supplierStore.createSupplier({supplier});
     }
 
     isSaveEnabled() {

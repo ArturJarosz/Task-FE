@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, effect, inject, OnInit, Signal} from
 import {ProjectState, ProjectStore} from "../state";
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
-import {ArchitectState, getArchitects, loadArchitects} from "../../architect/state";
+import {ArchitectStore} from "../../architect/state";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Architect} from "../../generated/models/architect";
@@ -18,9 +18,9 @@ import {ConfirmationService} from "primeng/api";
 })
 export class ProjectDetailShellComponent implements OnInit {
     architects$!: Observable<Architect[]>;
-
     projectId: number = 0;
 
+    readonly architectStore = inject(ArchitectStore);
     readonly projectStore = inject(ProjectStore);
     readonly configurationStore = inject(ConfigurationStore);
     $project: Signal<Project | null> = this.projectStore.project!;
@@ -30,7 +30,6 @@ export class ProjectDetailShellComponent implements OnInit {
     $contractStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.contractStatuses;
 
     constructor(private route: ActivatedRoute, private projectStoreOld: Store<ProjectState>,
-                private architectsStore: Store<ArchitectState>,
                 private router: Router,
                 private confirmationService: ConfirmationService) {
         effect(() => {
@@ -46,10 +45,8 @@ export class ProjectDetailShellComponent implements OnInit {
         this.projectStore.setProjectId(this.projectId);
         this.projectStore.loadProject({});
 
-        this.architectsStore.dispatch(loadArchitects());
         this.configurationStore.loadConfiguration({});
-
-        this.architects$ = this.architectsStore.select(getArchitects);
+        this.architectStore.loadArchitects({});
     }
 
     onUpdateProject($event: Project) {

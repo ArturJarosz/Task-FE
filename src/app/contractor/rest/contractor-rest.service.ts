@@ -55,7 +55,6 @@ export class ContractorRestServiceImpl extends AbstractRestService implements Co
     }
 
     deleteContractor(contractorId: number): Observable<void> {
-        console.log("removing contractor");
         return this.httpClient.delete<void>(`${this.contractorUrl}/${contractorId}`)
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))
