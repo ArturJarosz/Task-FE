@@ -9,7 +9,13 @@ import {Supplier} from "../../generated/models/supplier";
 export abstract class SupplierRestService {
     abstract getSuppliers(): Observable<Supplier[]>;
 
+    abstract getSupplier(supplierId: number): Observable<Supplier>;
+
     abstract createSupplier(supplier: Supplier): Observable<Supplier>;
+
+    abstract deleteSupplier(supplierId: number): Observable<void>;
+
+    abstract updateSupplier(supplierId: number, supplier: Supplier): Observable<Supplier>;
 }
 
 @Injectable()
@@ -32,5 +38,26 @@ export class SupplierRestServiceImpl extends AbstractRestService implements Supp
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))
             )
+    }
+
+    deleteSupplier(supplierId: number): Observable<void> {
+        return this.httpClient.delete<void>(`${this.supplierUrl}/${supplierId}`)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            );
+    }
+
+    getSupplier(supplierId: number): Observable<Supplier> {
+        return this.httpClient.get<Supplier>(`${this.supplierUrl}/${supplierId}`)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            );
+    }
+
+    updateSupplier(supplierId: number, supplier: Supplier): Observable<Supplier> {
+        return this.httpClient.put<Supplier>(`${this.supplierUrl}/${supplierId}`, supplier)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            );
     }
 }

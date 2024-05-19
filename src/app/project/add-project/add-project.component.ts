@@ -1,24 +1,36 @@
-import {Component, computed, EventEmitter, inject, Input, OnDestroy, OnInit, Output, Signal} from '@angular/core';
+import {
+    Component,
+    computed,
+    effect,
+    EventEmitter,
+    inject,
+    Input,
+    OnChanges,
+    OnInit,
+    Output,
+    Signal,
+    SimpleChanges
+} from '@angular/core';
 import {FormGroup} from "@angular/forms";
 import {ClientStore} from "../../client/state";
-import {Store} from "@ngrx/store";
-import {ArchitectState, getArchitects, loadArchitects} from "../../architect/state";
+import {ArchitectStore} from "../../architect/state";
 import {ProjectStore} from "../state";
-import {Subscription} from "rxjs";
 import {ConfigurationStore} from "../../shared/configuration/state";
-import {ArchitectFormModel} from "../../architect/model/architect";
 import {ProjectCreate} from "../../generated/models/project-create";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {Client} from "../../generated/models/client";
 import {ClientFormModel} from "../../client/form/client-form-provider";
 import {ProjectFormProvider} from "../form/project-form-provider";
+import {Architect} from "../../generated/models/architect";
+import {ArchitectFormModel} from "../../architect/model/architect";
+import {cloneDeep} from "lodash";
 
 @Component({
     selector: 'add-project',
     templateUrl: './add-project.component.html',
     styleUrls: ['./add-project.component.less']
 })
-export class AddProjectComponent implements OnInit, OnDestroy {
+export class AddProjectComponent implements OnInit, OnChanges {
     @Input()
     visible = false;
     @Output()
@@ -29,6 +41,7 @@ export class AddProjectComponent implements OnInit, OnDestroy {
     readonly clientStore = inject(ClientStore);
     readonly configurationStore = inject(ConfigurationStore);
     readonly projectStore = inject(ProjectStore);
+    readonly architectStore = inject(ArchitectStore);
     $clients: Signal<Client[] | null> = this.clientStore.clients!;
     $clientsForm: Signal<ClientFormModel[]> = computed(() => {
         let clients: Client[] | null = this.$clients();
@@ -38,48 +51,52 @@ export class AddProjectComponent implements OnInit, OnDestroy {
         return clientForms;
     });
     $projectTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.projectTypes;
-    architectsSubscription$!: Subscription;
-    architects: ArchitectFormModel[] = [];
+    $architects: Signal<Architect[] | null> = this.architectStore.architects!;
+    $architectsModel: Signal<ArchitectFormModel[]> = computed(() => {
+        let architects: ArchitectFormModel[] = cloneDeep(this.$architects()!) as ArchitectFormModel[];
+        architects.forEach(architect => architect.resolvedName = `${architect.firstName} ${architect.lastName}`);
+        return architects;
+    });
     addProjectForm!: FormGroup;
 
-    constructor(private projectFormProvider: ProjectFormProvider, private architectStore: Store<ArchitectState>) {
+    constructor(private projectFormProvider: ProjectFormProvider) {
+        effect(() => {
+            if (this.$architects() && this.$projectTypes() && this.$clients()) {
+                this.initializeValues()
+            }
+        });
     }
 
     ngOnInit(): void {
         this.clientStore.loadClients({});
+        this.architectStore.loadArchitects({});
         this.configurationStore.loadConfiguration({});
         this.initializeValues();
-        this.setFormDefaultValues();
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
     }
 
     private initializeValues() {
-        this.architectStore.dispatch(loadArchitects());
-        this.architectsSubscription$ = this.architectStore.select(getArchitects)
-            .subscribe({
-                next: architects => {
-                    this.architects = JSON.parse(JSON.stringify(architects));
-                    this.architects.forEach(
-                        architect => architect.resolvedName = `${architect.firstName} ${architect.lastName}`);
-                    this.setFormDefaultValues();
-                }
-            })
-
         this.setEmptyForm();
         this.setFormDefaultValues();
     }
 
     setFormDefaultValues() {
-        if (this.$clientsForm() && this.$clientsForm().length > 0 && this.architects && this.architects.length > 0 && this.$projectTypes() && this.$projectTypes().length > 0 && this.addProjectForm) {
+        if (this.existsAndNotEmpty(this.$clientsForm()) && this.existsAndNotEmpty(this.$architects()) && this.existsAndNotEmpty(this.$projectTypes()) && this.addProjectForm) {
             this.addProjectForm.patchValue({
                 type: this.$projectTypes()[0]?.id,
-                architectId: this.architects[0]?.id,
+                architectId: this.$architects()![0]?.id,
                 clientId: this.$clientsForm()[0]?.id
             })
         }
     }
 
-    ngOnDestroy(): void {
-        this.architectsSubscription$.unsubscribe();
+    private existsAndNotEmpty(collection: any[] | null): boolean {
+        if (collection === null) {
+            return false;
+        }
+        return collection && collection!.length > 0;
     }
 
     onCancel(): void {

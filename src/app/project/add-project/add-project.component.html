@@ -39,7 +39,7 @@
                     </div>
                     <div class="w-6">
                         <label for="architect" class="block  text-color text-base w-full">Architect</label>
-                        <p-dropdown [options]="architects" optionLabel="resolvedName" optionValue="id"
+                        <p-dropdown [options]="$architectsModel()!" optionLabel="resolvedName" optionValue="id"
                                     formControlName="architectId" appendTo="body" id="architect">
                         </p-dropdown>
                     </div>

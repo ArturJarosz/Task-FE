@@ -11,7 +11,7 @@ export class AppComponent implements OnInit {
     title = 'Task-FE';
     items: MenuItem[] = [];
 
-    configurationStore = inject(ConfigurationStore);
+    readonly configurationStore = inject(ConfigurationStore);
 
 //TODO TA-313 Make many code dependent, not hardcoded in HTML
     ngOnInit(): void {

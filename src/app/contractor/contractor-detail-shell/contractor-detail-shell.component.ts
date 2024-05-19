@@ -48,7 +48,6 @@ export class ContractorDetailShellComponent implements OnInit {
             header: `Confirm deleting contractor ${$event.name}`,
             icon: "pi pi-info-circle text-red-300",
             accept: () => {
-                console.log("removing contractor confirmation")
                 this.contractorStore.setContractorId($event.id);
                 this.contractorStore.deleteContractor({});
                 this.router.navigate([`/contractors`]);

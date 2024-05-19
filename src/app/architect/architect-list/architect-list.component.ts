@@ -1,7 +1,5 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Subscription} from "rxjs";
-import {ArchitectState, getArchitects, loadArchitects} from "../state";
-import {Store} from "@ngrx/store";
+import {Component, effect, inject, OnInit, Signal} from '@angular/core';
+import {ArchitectStore} from "../state";
 import {Architect} from "../../generated/models/architect";
 
 @Component({
@@ -9,23 +7,21 @@ import {Architect} from "../../generated/models/architect";
     templateUrl: './architect-list.component.html',
     styleUrls: ['./architect-list.component.less']
 })
-export class ArchitectListComponent implements OnInit, OnDestroy {
-    private architectsSubscription$!: Subscription;
-    architects: Architect[] = []
+export class ArchitectListComponent implements OnInit {
+    architectStore = inject(ArchitectStore);
 
-    constructor(private architectStore: Store<ArchitectState>) {
+    $architects: Signal<Architect[]> = this.architectStore.architects!;
+    $architectsNeedRefresh: Signal<boolean> = this.architectStore.architectsNeedRefresh!;
+
+    constructor() {
+        effect(() => {
+            if (this.$architectsNeedRefresh()) {
+                this.architectStore.loadArchitects({});
+            }
+        });
     }
 
     ngOnInit(): void {
-        this.architectStore.dispatch(loadArchitects());
-        this.architectsSubscription$ = this.architectStore.select(getArchitects)
-            .subscribe({
-                next: architects => this.architects = architects
-            });
+        this.architectStore.loadArchitects({});
     }
-
-    ngOnDestroy(): void {
-        this.architectsSubscription$.unsubscribe();
-    }
-
 }

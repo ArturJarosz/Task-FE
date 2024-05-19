@@ -107,7 +107,6 @@ export const ContractorStore = signalStore(
             deleteContractor: rxMethod<{}>(
                 pipe(
                     switchMap(() => {
-                        console.log("removing contractor store");
                         return contractorRestService.deleteContractor(store.contractorId()!)
                             .pipe(
                                 tap(contractor => {
