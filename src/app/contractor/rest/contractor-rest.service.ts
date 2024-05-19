@@ -12,6 +12,8 @@ export abstract class ContractorRestService {
     abstract createContractor(contractor: Contractor): Observable<Contractor>;
 
     abstract getContractor(contractorId: number): Observable<Contractor>;
+
+    abstract updateContractor(contractorId: number, contractor: Contractor): Observable<Contractor>;
 }
 
 @Injectable()
@@ -38,6 +40,13 @@ export class ContractorRestServiceImpl extends AbstractRestService implements Co
 
     getContractor(contractorId: number): Observable<Contractor> {
         return this.httpClient.get<Contractor>(`${this.contractorUrl}/${contractorId}`)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            );
+    }
+
+    updateContractor(contractorId: number, contractor: Contractor): Observable<Contractor> {
+        return this.httpClient.put<Contractor>(`${this.contractorUrl}/${contractorId}`, contractor)
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))
             );

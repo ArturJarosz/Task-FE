@@ -1,8 +1,9 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Contractor} from "../../generated/models/contractor";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {FormGroup} from "@angular/forms";
 import {ContractorForm, ContractorFormProvider} from "../form/contractor-form-provider";
+import {cloneDeep} from "lodash";
 
 @Component({
     selector: 'contractor-detail',
@@ -14,8 +15,11 @@ export class ContractorDetailComponent implements OnInit, OnChanges {
     contractor!: Contractor | null;
     @Input()
     contractorTypes!: ConfigurationEntry[];
+    @Output()
+    updateContractorEvent: EventEmitter<Contractor> = new EventEmitter<Contractor>();
 
     contractorDetailsForm!: FormGroup<ContractorForm>;
+    initialContractorDetailsForm!: FormGroup<ContractorForm>;
 
     constructor(private formProvider: ContractorFormProvider) {
     }
@@ -28,6 +32,7 @@ export class ContractorDetailComponent implements OnInit, OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         if (this.contractor) {
             this.fillFormData();
+            this.initialContractorDetailsForm = cloneDeep(this.contractorDetailsForm);
         }
     }
 
@@ -42,5 +47,26 @@ export class ContractorDetailComponent implements OnInit, OnChanges {
             telephone: this.contractor.telephone,
             note: this.contractor.note
         })
+    }
+
+    isFormChanged() {
+        console.log("checking")
+        if (this.contractorDetailsForm.pristine) {
+            console.log("pristine")
+            return false;
+        }
+        return JSON.stringify(this.contractorDetailsForm.value) !== JSON.stringify(this.initialContractorDetailsForm.value);
+    }
+
+    onSave() {
+        let contractor: Contractor;
+        contractor = {
+            name: this.contractorDetailsForm.value.name!,
+            category: this.contractorDetailsForm.value.category!,
+            email: this.contractorDetailsForm.value.email!,
+            telephone: this.contractorDetailsForm.value.telephone!,
+            note: this.contractorDetailsForm.value.note!
+        };
+        this.updateContractorEvent.emit(contractor);
     }
 }
