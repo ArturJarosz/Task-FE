@@ -23,7 +23,7 @@ export class ContractorFormProvider {
 }
 
 export interface ContractorForm {
-    category: FormControl<string>;
+    category: FormControl<ContractorCategory>;
     email: FormControl<string | null>;
     name: FormControl<string>;
     note: FormControl<string | null>;

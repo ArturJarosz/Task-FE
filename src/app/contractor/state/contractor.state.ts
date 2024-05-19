@@ -86,6 +86,23 @@ export const ContractorStore = signalStore(
                             )
                     })
                 )
+            ),
+            updateContractor: rxMethod<{ contractor: Contractor }>(
+                pipe(
+                    switchMap(({contractor}) => {
+                        return contractorRestService.updateContractor(store.contractorId()!, contractor)
+                            .pipe(
+                                tap(contractor => {
+                                    patchState(store, {contractor: contractor, contractorsNeedRefresh: true});
+                                    messageService.add({
+                                        severity: MessageSeverity.INFO,
+                                        summary: `Contractor updated.`,
+                                        detail: `Contractor ${contractor.name} was updated.`,
+                                    });
+                                })
+                            )
+                    })
+                )
             )
         }))
 )

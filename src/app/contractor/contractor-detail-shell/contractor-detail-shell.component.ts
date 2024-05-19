@@ -34,4 +34,8 @@ export class ContractorDetailShellComponent implements OnInit{
 
         this.contractorStore.loadContractor({});
     }
+
+    onUpdateContractor($event: Contractor) {
+        this.contractorStore.updateContractor({contractor: $event});
+    }
 }
