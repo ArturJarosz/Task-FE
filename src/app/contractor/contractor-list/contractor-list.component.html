@@ -5,6 +5,7 @@
                 <tr>
                     <th>Id</th>
                     <th>Name</th>
+                    <th></th>
                     <th>Category</th>
                 </tr>
             </ng-template>
@@ -12,6 +13,9 @@
                 <tr [routerLink]="['/contractors', contractor.id]" class="cursor-pointer">
                     <td>{{contractor.id}}</td>
                     <td>{{contractor.name}}</td>
+                    <td>
+                        <button pButton pRipple class="p-button-text p-button-plain p-0" icon="pi pi-times" (click)="onDeleteContractor($event, contractor)" size="small"></button>
+                    </td>
                     <td>{{getLabelFromCategory(contractor.category)}}</td>
                 </tr>
             </ng-template>

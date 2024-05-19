@@ -14,6 +14,8 @@ export abstract class ContractorRestService {
     abstract getContractor(contractorId: number): Observable<Contractor>;
 
     abstract updateContractor(contractorId: number, contractor: Contractor): Observable<Contractor>;
+
+    abstract deleteContractor(contractorId: number): Observable<void>;
 }
 
 @Injectable()
@@ -35,7 +37,7 @@ export class ContractorRestServiceImpl extends AbstractRestService implements Co
         return this.httpClient.post<Contractor>(this.contractorUrl, contractor)
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))
-            )
+            );
     }
 
     getContractor(contractorId: number): Observable<Contractor> {
@@ -47,6 +49,14 @@ export class ContractorRestServiceImpl extends AbstractRestService implements Co
 
     updateContractor(contractorId: number, contractor: Contractor): Observable<Contractor> {
         return this.httpClient.put<Contractor>(`${this.contractorUrl}/${contractorId}`, contractor)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            );
+    }
+
+    deleteContractor(contractorId: number): Observable<void> {
+        console.log("removing contractor");
+        return this.httpClient.delete<void>(`${this.contractorUrl}/${contractorId}`)
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))
             );

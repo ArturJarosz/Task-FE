@@ -3,6 +3,9 @@ import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {Contractor} from "../../generated/models/contractor";
 import {ContractorStore} from "../state";
 import {ConfigurationStore} from "../../shared/configuration/state";
+import {ContractorDto} from "../model/contractor";
+import {ConfirmationService} from "primeng/api";
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'contractor-list-shell',
@@ -18,7 +21,7 @@ export class ContractorListShellComponent implements OnInit {
     $contractors: Signal<Contractor[]> = this.contractorStore.contractors!;
     $contractorsNeedRefresh: Signal<boolean> = this.contractorStore.contractorsNeedRefresh!;
 
-    constructor() {
+    constructor(private confirmationService: ConfirmationService, private router: Router) {
         effect(() => {
             if (this.$contractorsNeedRefresh()) {
                 this.contractorStore.loadContractors({});
@@ -28,5 +31,21 @@ export class ContractorListShellComponent implements OnInit {
 
     ngOnInit(): void {
         this.contractorStore.loadContractors({});
+    }
+
+    onDeleteContractor($event: ContractorDto) {
+        this.confirmationService.confirm({
+            message: `Do you want to delete contractor ${$event.name}?`,
+            header: `Confirm contractor delete ${$event.name}`,
+            icon: "pi pi-info-circle text-red-300",
+            accept: () => {
+                this.contractorStore.setContractorId($event.id);
+                this.contractorStore.deleteContractor({});
+                this.confirmationService.close();
+            },
+            reject: () => {
+                this.confirmationService.close();
+            }
+        })
     }
 }
