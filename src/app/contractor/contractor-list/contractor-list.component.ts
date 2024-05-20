@@ -21,9 +21,6 @@ export class ContractorListComponent {
 
     protected showAddContractorComponent: boolean = false;
 
-    constructor() {
-    }
-
     getLabelFromCategory(category: string): string {
         return resolveLabel(category, this.contractorTypes);
     }

@@ -8,7 +8,7 @@ import {ConfirmationService} from "primeng/api";
 import {Task} from "../../generated/models/task";
 
 @Component({
-    selector: 'app-task-detail-shell',
+    selector: 'task-detail-shell',
     templateUrl: './task-detail-shell.component.html',
     styleUrl: './task-detail-shell.component.less'
 })

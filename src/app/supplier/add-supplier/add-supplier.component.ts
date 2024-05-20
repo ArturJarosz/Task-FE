@@ -1,7 +1,7 @@
 import {Component, EventEmitter, inject, Input, OnInit, Output, Signal} from '@angular/core';
 import {FormGroup} from "@angular/forms";
 import {ConfigurationStore} from "../../shared/configuration/state";
-import {AddSupplierFormProvider} from "./add-supplier-form-provider";
+import {SupplierFormProvider} from "../form/supplier-form-provider.service";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {Supplier} from "../../generated/models/supplier";
 import {SupplierStore} from "../state";
@@ -25,12 +25,12 @@ export class AddSupplierComponent implements OnInit {
 
     addSupplierForm!: FormGroup;
 
-    constructor(private supplierProvider: AddSupplierFormProvider) {
+    constructor(private supplierProvider: SupplierFormProvider) {
     }
 
     ngOnInit(): void {
         this.configurationStore.loadConfiguration({});
-        this.addSupplierForm = this.supplierProvider.getAddSupplierFormGroup();
+        this.addSupplierForm = this.supplierProvider.getSupplierForm();
     }
 
     onClose(): void {
@@ -39,7 +39,7 @@ export class AddSupplierComponent implements OnInit {
     }
 
     private resetFields() {
-        this.addSupplierForm = this.supplierProvider.getAddSupplierFormGroup();
+        this.addSupplierForm = this.supplierProvider.getSupplierForm();
     }
 
     onCancel() {
