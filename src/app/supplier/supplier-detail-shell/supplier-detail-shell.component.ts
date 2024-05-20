@@ -3,7 +3,9 @@ import {ConfigurationStore} from "../../shared/configuration/state";
 import {SupplierStore} from "../state";
 import {Supplier} from "../../generated/models/supplier";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
+import {SupplierDto} from "../model/supplier";
+import {ConfirmationService} from "primeng/api";
 
 @Component({
     selector: 'supplier-detail-shell',
@@ -19,7 +21,8 @@ export class SupplierDetailShellComponent implements OnInit {
     $supplierTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.supplierTypes;
     $supplierNeedsRefresh: Signal<boolean> = this.supplierStore.supplierNeedsRefresh!;
 
-    constructor(private route: ActivatedRoute) {
+    constructor(private route: ActivatedRoute, private confirmationService: ConfirmationService,
+                private router: Router) {
         effect(() => {
             if(this.$supplierNeedsRefresh()) {
                 this.supplierStore.loadSupplier({});
@@ -37,5 +40,22 @@ export class SupplierDetailShellComponent implements OnInit {
 
     onUpdateSupplier($event: Supplier) {
         this.supplierStore.updateSupplier({supplier: $event});
+    }
+
+    onDeleteSupplier($event: SupplierDto) {
+        this.confirmationService.confirm({
+            message: `Do you want to delete supplier ${$event.name}?`,
+            header: `Confirm deleting supplier ${$event.name}`,
+            icon: "pi pi-info-circle text-red-300",
+            accept: () => {
+                this.supplierStore.setSupplierId($event.id);
+                this.supplierStore.deleteSupplier({});
+                this.router.navigate([`/suppliers`]);
+                this.confirmationService.close();
+            },
+            reject: () => {
+                this.confirmationService.close();
+            }
+        })
     }
 }

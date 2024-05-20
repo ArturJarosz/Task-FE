@@ -1,7 +1,8 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Supplier} from "../../generated/models/supplier";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
+import {SupplierDto} from "../model/supplier";
 
 @Component({
     selector: 'supplier-list',
@@ -15,6 +16,8 @@ export class SupplierListComponent {
     suppliers!: Supplier[];
     @Input()
     supplierTypes!: ConfigurationEntry[];
+    @Output()
+    deleteSupplierEvent: EventEmitter<SupplierDto> = new EventEmitter<SupplierDto>();
 
     showAddComponent: boolean = false;
 
@@ -31,5 +34,15 @@ export class SupplierListComponent {
 
     onNotify($event: boolean) {
         this.showAddComponent = false;
+    }
+
+    onDeleteSupplier($event: MouseEvent, supplier: Supplier) {
+        $event.stopPropagation();
+        let supplierDto: SupplierDto;
+        supplierDto = {
+            id: supplier.id!,
+            name: supplier.name!,
+        }
+        this.deleteSupplierEvent.emit(supplierDto);
     }
 }

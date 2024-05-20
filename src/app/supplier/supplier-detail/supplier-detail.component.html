@@ -6,6 +6,7 @@
                     <div class="p-1 ng-star-inserted surface-border">
                         <div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
                             <p-button icon="pi pi-arrow-down" [disabled]="!isFormChanged()" (onClick)="onSave()" [outlined]="true" [rounded]="true" class="update-button transition-colors transition-duration-300"></p-button>
+                            <p-button icon="pi pi-times" [outlined]="true" [rounded]="true" (onClick)="onDelete()" class="remove-button transition-colors px-1"></p-button>
                         </div>
                     </div>
                     <div class="grid grid-nogutter surface-border p-1">
@@ -25,19 +26,19 @@
                         <div class="col-4 p-1 grid grid-nogutter">
                             <div class="col-4 text-500 flex align-items-center">Email:</div>
                             <div class="col-8 pr-3">
-                                <input  formControlName="email" pInputText>
+                                <input formControlName="email" pInputText>
                             </div>
                         </div>
                         <div class="col-4 p-1 grid grid-nogutter">
                             <div class="col-4 text-500 flex align-items-center">Telephone:</div>
                             <div class="col-8 pr-3">
-                                <input  formControlName="telephone" pInputText>
+                                <input formControlName="telephone" pInputText>
                             </div>
                         </div>
                     </div>
                     <div class="grid grid-nogutter surface-border p-1">
                         <div class="col-12 p-1 pr-3">
-                            <div class="text-500 font-medium mb-1">Note: </div>
+                            <div class="text-500 font-medium mb-1">Note:</div>
                             <textarea formControlName="note" type="text" pInputTextarea rows="2"
                                       [autoResize]="true"></textarea>
                         </div>
