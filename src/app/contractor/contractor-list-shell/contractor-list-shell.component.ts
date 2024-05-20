@@ -5,7 +5,6 @@ import {ContractorStore} from "../state";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {ContractorDto} from "../model/contractor";
 import {ConfirmationService} from "primeng/api";
-import {Router} from "@angular/router";
 
 @Component({
     selector: 'contractor-list-shell',
@@ -21,7 +20,7 @@ export class ContractorListShellComponent implements OnInit {
     $contractors: Signal<Contractor[]> = this.contractorStore.contractors!;
     $contractorsNeedRefresh: Signal<boolean> = this.contractorStore.contractorsNeedRefresh!;
 
-    constructor(private confirmationService: ConfirmationService, private router: Router) {
+    constructor(private confirmationService: ConfirmationService) {
         effect(() => {
             if (this.$contractorsNeedRefresh()) {
                 this.contractorStore.loadContractors({});

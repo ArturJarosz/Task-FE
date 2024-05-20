@@ -4,6 +4,7 @@ import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {FormGroup} from "@angular/forms";
 import {SupplierForm, SupplierFormProvider} from "../form/supplier-form-provider.service";
 import {cloneDeep} from "lodash";
+import {SupplierDto} from "../model/supplier";
 
 @Component({
     selector: 'supplier-detail',
@@ -17,6 +18,8 @@ export class SupplierDetailComponent implements OnInit, OnChanges {
     supplierTypes!: ConfigurationEntry[];
     @Output()
     updateSupplierEvent: EventEmitter<Supplier> = new EventEmitter<Supplier>();
+    @Output()
+    deleteSupplierEvent: EventEmitter<SupplierDto> = new EventEmitter<SupplierDto>();
 
     supplierDetailsForm!: FormGroup<SupplierForm>;
     initialSupplierDetailsForm!: FormGroup<SupplierForm>;
@@ -66,5 +69,14 @@ export class SupplierDetailComponent implements OnInit, OnChanges {
             note: this.supplierDetailsForm.value.note!
         };
         this.updateSupplierEvent.emit(supplier);
+    }
+
+    onDelete(): void {
+        let supplier: SupplierDto;
+        supplier = {
+            name: this.supplier?.name!,
+            id: this.supplier?.id!
+        };
+        this.deleteSupplierEvent.emit(supplier);
     }
 }

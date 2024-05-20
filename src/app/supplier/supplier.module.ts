@@ -15,6 +15,8 @@ import {SupplierDetailShellComponent} from './supplier-detail-shell/supplier-det
 import {SupplierDetailComponent} from './supplier-detail/supplier-detail.component';
 import {AccordionModule} from "primeng/accordion";
 import {SupplierListShellComponent} from './supplier-list-shell/supplier-list-shell.component';
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {RippleModule} from "primeng/ripple";
 
 @NgModule({
     declarations: [
@@ -37,7 +39,9 @@ import {SupplierListShellComponent} from './supplier-list-shell/supplier-list-sh
         InputTextModule,
         DropdownModule,
         InputTextareaModule,
-        AccordionModule
+        AccordionModule,
+        ConfirmDialogModule,
+        RippleModule
     ],
     providers: [
         {provide: SupplierRestService, useClass: SupplierRestServiceImpl}
