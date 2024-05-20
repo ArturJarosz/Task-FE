@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, Signal} from '@angular/core';
+import {Component, effect, inject, OnInit, Signal} from '@angular/core';
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {SupplierStore} from "../state";
 import {Supplier} from "../../generated/models/supplier";
@@ -17,8 +17,14 @@ export class SupplierDetailShellComponent implements OnInit {
     readonly configurationStore = inject(ConfigurationStore);
     $supplier: Signal<Supplier | null> = this.supplierStore.supplier;
     $supplierTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.supplierTypes;
+    $supplierNeedsRefresh: Signal<boolean> = this.supplierStore.supplierNeedsRefresh!;
 
     constructor(private route: ActivatedRoute) {
+        effect(() => {
+            if(this.$supplierNeedsRefresh()) {
+                this.supplierStore.loadSupplier({});
+            }
+        });
     }
 
     ngOnInit(): void {
@@ -27,5 +33,9 @@ export class SupplierDetailShellComponent implements OnInit {
         this.supplierStore.setSupplierId(this.supplierId);
 
         this.supplierStore.loadSupplier({});
+    }
+
+    onUpdateSupplier($event: Supplier) {
+        this.supplierStore.updateSupplier({supplier: $event});
     }
 }

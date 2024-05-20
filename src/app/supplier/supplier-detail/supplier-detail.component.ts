@@ -1,8 +1,9 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Supplier} from "../../generated/models/supplier";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {FormGroup} from "@angular/forms";
 import {SupplierForm, SupplierFormProvider} from "../form/supplier-form-provider.service";
+import {cloneDeep} from "lodash";
 
 @Component({
     selector: 'supplier-detail',
@@ -14,8 +15,11 @@ export class SupplierDetailComponent implements OnInit, OnChanges {
     supplier!: Supplier | null;
     @Input()
     supplierTypes!: ConfigurationEntry[];
+    @Output()
+    updateSupplierEvent: EventEmitter<Supplier> = new EventEmitter<Supplier>();
 
     supplierDetailsForm!: FormGroup<SupplierForm>;
+    initialSupplierDetailsForm!: FormGroup<SupplierForm>;
 
     constructor(private formProvider: SupplierFormProvider) {
     }
@@ -28,6 +32,7 @@ export class SupplierDetailComponent implements OnInit, OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         if (this.supplier) {
             this.fillFormData();
+            this.initialSupplierDetailsForm = cloneDeep(this.supplierDetailsForm);
         }
     }
 
@@ -42,5 +47,24 @@ export class SupplierDetailComponent implements OnInit, OnChanges {
             telephone: this.supplier.telephone,
             note: this.supplier.note
         })
+    }
+
+    isFormChanged(): boolean {
+        if (this.supplierDetailsForm.pristine) {
+            return false;
+        }
+        return JSON.stringify(this.supplierDetailsForm.value) !== JSON.stringify(this.initialSupplierDetailsForm.value);
+    }
+
+    onSave(): void {
+        let supplier: Supplier;
+        supplier = {
+            name: this.supplierDetailsForm.value.name!,
+            category: this.supplierDetailsForm.value.category!,
+            email: this.supplierDetailsForm.value.email!,
+            telephone: this.supplierDetailsForm.value.telephone!,
+            note: this.supplierDetailsForm.value.note!
+        };
+        this.updateSupplierEvent.emit(supplier);
     }
 }
