@@ -7,13 +7,13 @@ const DEFAULT_TYPE = SupplierCategory.FLOORING_SHOP;
 @Injectable({
     providedIn: 'root'
 })
-export class AddSupplierFormProvider {
+export class SupplierFormProvider {
 
     constructor(private formBuilder: FormBuilder) {
     }
 
-    public getAddSupplierFormGroup(): FormGroup<AddSupplierForm> {
-        return this.formBuilder.nonNullable.group<AddSupplierForm>({
+    public getSupplierForm(): FormGroup<SupplierForm> {
+        return this.formBuilder.nonNullable.group<SupplierForm>({
             category: this.formBuilder.nonNullable.control<SupplierCategory>(DEFAULT_TYPE, [Validators.required]),
             email: this.formBuilder.control<string>(''),
             name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
@@ -23,8 +23,8 @@ export class AddSupplierFormProvider {
     }
 }
 
-interface AddSupplierForm {
-    category: FormControl<string>;
+export interface SupplierForm {
+    category: FormControl<SupplierCategory>;
     email: FormControl<string | null>;
     name: FormControl<string>;
     note: FormControl<string | null>;

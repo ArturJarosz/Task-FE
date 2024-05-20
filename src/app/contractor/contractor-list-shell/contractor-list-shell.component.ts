@@ -31,6 +31,7 @@ export class ContractorListShellComponent implements OnInit {
 
     ngOnInit(): void {
         this.contractorStore.loadContractors({});
+        this.configurationStore.loadConfiguration({});
     }
 
     onDeleteContractor($event: ContractorDto) {

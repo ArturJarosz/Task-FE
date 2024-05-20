@@ -1,6 +1,6 @@
 <wrapper [title]="pageTitle">
     <div wrapper-body>
-        <p-table [value]="$suppliers()">
+        <p-table [value]="suppliers">
             <ng-template pTemplate="header">
                 <tr>
                     <th>Id</th>
@@ -9,7 +9,7 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-supplier>
-                <tr>
+                <tr [routerLink]="['/suppliers', supplier.id]" class="cursor-pointer">
                     <td>{{ supplier.id }}</td>
                     <td>{{ supplier.name }}</td>
                     <td>{{ getLabelFromCategory(supplier.category) }}</td>

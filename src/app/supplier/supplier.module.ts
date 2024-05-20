@@ -11,16 +11,24 @@ import {DialogModule} from "primeng/dialog";
 import {InputTextModule} from "primeng/inputtext";
 import {DropdownModule} from "primeng/dropdown";
 import {InputTextareaModule} from "primeng/inputtextarea";
+import {SupplierDetailShellComponent} from './supplier-detail-shell/supplier-detail-shell.component';
+import {SupplierDetailComponent} from './supplier-detail/supplier-detail.component';
+import {AccordionModule} from "primeng/accordion";
+import {SupplierListShellComponent} from './supplier-list-shell/supplier-list-shell.component';
 
 @NgModule({
     declarations: [
         SupplierListComponent,
-        AddSupplierComponent
+        AddSupplierComponent,
+        SupplierDetailShellComponent,
+        SupplierDetailComponent,
+        SupplierListShellComponent
     ],
     imports: [
         CommonModule,
         RouterModule.forChild([
-            {path: 'suppliers', component: SupplierListComponent}
+            {path: 'suppliers', component: SupplierListShellComponent},
+            {path: 'suppliers/:supplierId', component: SupplierDetailShellComponent},
         ]),
         SharedModule,
         TableModule,
@@ -28,7 +36,8 @@ import {InputTextareaModule} from "primeng/inputtextarea";
         DialogModule,
         InputTextModule,
         DropdownModule,
-        InputTextareaModule
+        InputTextareaModule,
+        AccordionModule
     ],
     providers: [
         {provide: SupplierRestService, useClass: SupplierRestServiceImpl}

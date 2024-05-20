@@ -39,7 +39,7 @@ export class ContractorDetailComponent implements OnInit, OnChanges {
         }
     }
 
-    private fillFormData() {
+    private fillFormData(): void {
         if (!this.contractor || !this.contractorDetailsForm) {
             return;
         }
@@ -52,14 +52,14 @@ export class ContractorDetailComponent implements OnInit, OnChanges {
         })
     }
 
-    isFormChanged() {
+    isFormChanged(): boolean {
         if (this.contractorDetailsForm.pristine) {
             return false;
         }
         return JSON.stringify(this.contractorDetailsForm.value) !== JSON.stringify(this.initialContractorDetailsForm.value);
     }
 
-    onSave() {
+    onSave(): void {
         let contractor: Contractor;
         contractor = {
             name: this.contractorDetailsForm.value.name!,
@@ -71,7 +71,7 @@ export class ContractorDetailComponent implements OnInit, OnChanges {
         this.updateContractorEvent.emit(contractor);
     }
 
-    onDelete() {
+    onDelete(): void {
         let contractor: ContractorDto;
         contractor = {
             name: this.contractor?.name!,

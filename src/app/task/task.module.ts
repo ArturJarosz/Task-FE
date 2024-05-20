@@ -28,7 +28,8 @@ import {RippleModule} from "primeng/ripple";
         AddTaskComponent
     ],
     exports: [
-        TaskListShellComponent
+        TaskListShellComponent,
+        TaskDetailShellComponent
     ],
     imports: [
         CommonModule,
