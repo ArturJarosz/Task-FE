@@ -22,7 +22,6 @@ export class ClientDetailComponent implements OnInit, OnChanges {
 
     clientDetailsForm!: FormGroup<ClientForm>;
     clientName: string | undefined;
-    combinedStreetWithNumbers!: string;
 
     initialClientForm!: FormGroup<ClientForm>;
 
@@ -32,22 +31,9 @@ export class ClientDetailComponent implements OnInit, OnChanges {
     }
 
     ngOnInit(): void {
-        this.resolveCombinedStreet();
         this.clientDetailsForm = this.formProvider.getClientFormGroup();
         this.fillFormData();
     }
-
-    resolveCombinedStreet() {
-        if (!this.client?.contact || !this.client.contact?.address || !this.client?.contact) {
-            this.combinedStreetWithNumbers = "";
-        } else {
-            this.combinedStreetWithNumbers = `${this.client?.contact?.address?.street} ${this.client?.contact?.address?.houseNumber}`;
-            if (this.client?.contact.address.flatNumber) {
-                this.combinedStreetWithNumbers = this.combinedStreetWithNumbers + `/${this.client?.contact?.address?.flatNumber}`;
-            }
-        }
-    }
-
 
     ngOnChanges(changes: SimpleChanges): void {
         if (this.client) {

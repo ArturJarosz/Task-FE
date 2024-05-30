@@ -35,9 +35,7 @@ export class ClientFormProvider {
         return this.formBuilder.group<AddressForm>({
             city: this.formBuilder.control<string>(''),
             postCode: this.formBuilder.control<string>(''),
-            street: this.formBuilder.control<string>(''),
-            houseNumber: this.formBuilder.control<string>(''),
-            flatNumber: this.formBuilder.control<string>('')
+            street: this.formBuilder.control<string>('')
         });
     }
 }
@@ -45,9 +43,7 @@ export class ClientFormProvider {
 export interface AddressForm {
     city: FormControl<string | null>,
     postCode: FormControl<string | null>,
-    street: FormControl<string | null>,
-    houseNumber: FormControl<string | null>,
-    flatNumber: FormControl<string | null>,
+    street: FormControl<string | null>
 }
 
 export interface ContactForm {

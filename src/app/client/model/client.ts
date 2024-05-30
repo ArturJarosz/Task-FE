@@ -9,8 +9,6 @@ export const ADDRESS: string = "address";
 export const CITY: string = "city";
 export const POST_CODE: string = "postCode";
 export const STREET: string = "street";
-export const HOUSE_NUMBER: string = "houseNumber";
-export const FLAT_NUMBER:string = "flatNumber";
 export const NOTE:string = "note";
 
 export interface ClientDto {
