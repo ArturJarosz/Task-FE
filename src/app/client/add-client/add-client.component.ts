@@ -7,8 +7,6 @@ import {
     CONTACT,
     EMAIL,
     FIRST_NAME,
-    FLAT_NUMBER,
-    HOUSE_NUMBER,
     LAST_NAME,
     NOTE,
     POST_CODE,
@@ -114,8 +112,6 @@ export class AddClientComponent implements OnInit {
                 client.contact.address!.city = addressForm.get(CITY)?.value;
                 client.contact.address!.postCode = addressForm.get(POST_CODE)?.value;
                 client.contact.address!.street = addressForm.get(STREET)?.value;
-                client.contact.address!.houseNumber = addressForm.get(HOUSE_NUMBER)?.value;
-                client.contact.address!.flatNumber = addressForm.get(FLAT_NUMBER)?.value;
             }
 
         }

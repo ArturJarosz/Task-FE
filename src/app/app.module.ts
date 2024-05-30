@@ -22,6 +22,7 @@ import {ContractorModule} from "./contractor/contractor.module";
 import {SupplierModule} from "./supplier/supplier.module";
 import {StageModule} from "./stage/stage.module";
 import {TaskModule} from "./task/task.module";
+import {BreadcrumbModule} from "primeng/breadcrumb";
 
 @NgModule({
     declarations: [
@@ -52,7 +53,8 @@ import {TaskModule} from "./task/task.module";
         StoreModule.forRoot({}, {}),
         EffectsModule.forRoot([]),
         StoreDevtoolsModule.instrument({name: "TASK app", maxAge: 25, logOnly: !isDevMode()}),
-        StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() })
+        StoreDevtoolsModule.instrument({maxAge: 25, logOnly: !isDevMode()}),
+        BreadcrumbModule
     ],
     providers: [],
     bootstrap: [AppComponent]
