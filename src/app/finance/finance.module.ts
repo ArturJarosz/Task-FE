@@ -16,6 +16,10 @@ import {CostListShellComponent} from './cost/cost-list-shell/cost-list-shell.com
 import {AddCostComponent} from './cost/add-cost/add-cost.component';
 import {DialogModule} from "primeng/dialog";
 import {DropdownModule} from "primeng/dropdown";
+import {FinancialRestService, FinancialRestServiceImpl} from "./project-financial-summary/rest/financial-rest.service";
+import {
+    ProjectFinancialDetailShellComponent
+} from "./project-financial-summary/project-financial-detail-shell/project-financial-detail-shell.component";
 
 @NgModule({
     declarations: [
@@ -31,7 +35,8 @@ import {DropdownModule} from "primeng/dropdown";
         TableModule,
         AccordionModule,
         RouterModule.forChild([
-            {path: 'projects/:projectId/costs/:costId', component: CostDetailShellComponent}
+            {path: 'projects/:projectId/costs/:costId', component: CostDetailShellComponent},
+            {path: 'projects/:projectId/finance', component: ProjectFinancialDetailShellComponent},
         ]),
         InputTextModule,
         CalendarModule,
@@ -45,7 +50,8 @@ import {DropdownModule} from "primeng/dropdown";
         CostListShellComponent
     ],
     providers: [
-        {provide: CostRestService, useClass: CostRestServiceImpl}
+        {provide: CostRestService, useClass: CostRestServiceImpl},
+        {provide: FinancialRestService, useClass: FinancialRestServiceImpl}
     ]
 
 })

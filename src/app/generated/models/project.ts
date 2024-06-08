@@ -12,9 +12,11 @@ export interface Project {
   client?: Client;
   contract?: Contract;
   costs?: Array<Cost>;
+  createdDateTime?: string;
   deadLine?: string;
   endDate?: string;
   id?: number;
+  lastModifiedDateTime?: string;
   name?: string;
   nextStatuses?: Array<ProjectStatus>;
   note?: string;

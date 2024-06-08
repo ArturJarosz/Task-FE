@@ -1,11 +1,13 @@
 /* tslint:disable */
 /* eslint-disable */
-import { ContractorCategory } from './contractor-category';
+import { ContractorCategory } from '../models/contractor-category';
 export interface Contractor {
-  category: ContractorCategory;
+  category?: ContractorCategory;
+  createdDateTime?: string;
   email?: string;
   id?: number;
-  name: string;
+  lastModifiedDateTime?: string;
+  name?: string;
   note?: string;
   telephone?: string;
 }

@@ -40,7 +40,7 @@ export class ProjectDetailShellComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        let maybeProjectId = this.route.snapshot.paramMap.get('id');
+        let maybeProjectId = this.route.snapshot.paramMap.get('projectId');
         this.projectId = Number(maybeProjectId);
         this.projectStore.setProjectId(this.projectId);
         this.projectStore.loadProject({});

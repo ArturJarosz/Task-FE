@@ -23,6 +23,12 @@ import {AccordionModule} from "primeng/accordion";
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {StageModule} from "../stage/stage.module";
 import {FinanceModule} from "../finance/finance.module";
+import {
+    ProjectFinancialDetailShellComponent
+} from "../finance/project-financial-summary/project-financial-detail-shell/project-financial-detail-shell.component";
+import {
+    ProjectFinancialDetailComponent
+} from "../finance/project-financial-summary/project-financial-detail/project-financial-detail.component";
 
 @NgModule({
     declarations: [
@@ -30,7 +36,9 @@ import {FinanceModule} from "../finance/finance.module";
         AddProjectComponent,
         ProjectListShellComponent,
         ProjectDetailShellComponent,
-        ProjectDetailComponent
+        ProjectDetailComponent,
+        ProjectFinancialDetailShellComponent,
+        ProjectFinancialDetailComponent
     ],
     imports: [
         SharedModule,
@@ -41,7 +49,7 @@ import {FinanceModule} from "../finance/finance.module";
         TableModule,
         RouterModule.forChild([
             {path: 'projects', component: ProjectListShellComponent},
-            {path: 'projects/:id', component: ProjectDetailShellComponent}
+            {path: 'projects/:projectId', component: ProjectDetailShellComponent}
         ]),
         DialogModule,
         DropdownModule,

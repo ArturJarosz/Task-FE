@@ -55,12 +55,12 @@ export class ClientDetailComponent implements OnInit, OnChanges {
             note: this.client.note,
             contact: {
                 address: {
-                    city: this.client.contact.address?.city,
-                    street: this.client.contact.address?.street,
-                    postCode: this.client.contact.address?.postCode,
+                    city: this.client.contact?.address?.city,
+                    street: this.client.contact?.address?.street,
+                    postCode: this.client.contact?.address?.postCode,
                 },
-                email: this.client.contact.email,
-                telephone: this.client.contact.telephone
+                email: this.client.contact?.email,
+                telephone: this.client.contact?.telephone
             }
         });
     }

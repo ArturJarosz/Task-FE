@@ -1,0 +1,39 @@
+<wrapper [title]="title">
+    <div wrapper-body>
+        <p-accordion [multiple]="true">
+            <form [formGroup]="projectFinancialDetailForm">
+                <p-accordionTab [selected]="true" header="Financial summary" class="text-900 font-medium">
+                    <div class="p-1 ng-star-inserted surface-border">
+                        <div class="grid grid-nogutter surface-border p-1">
+                            <div class="col-3 p-1 grid grid-nogutter">
+                                <div class="col-5 text-500 flex align-items-center">Gross value:</div>
+                                <div class="col-7 flex align-items-center pl-4 pr-3" id="gross">{{projectFinancialDetailForm.value.grossValue  | currency: ' ':'code':'3.2-2'}}</div>
+                            </div>
+                            <div class="col-3 p-1 grid grid-nogutter">
+                                <div class="col-5 text-500 flex align-items-center">Nett value:</div>
+                                <div class="col-7 flex align-items-center pl-4 pr-3" id="net">{{projectFinancialDetailForm.value.netValue  | currency: ' ':'code':'3.2-2'}}</div>
+                            </div>
+                            <div class="col-3 p-1 grid grid-nogutter">
+                                <div class="col-5 text-500 flex align-items-center">Tax:</div>
+                                <div class="col-7 flex align-items-center pl-4 pr-3" id="tax">{{projectFinancialDetailForm.value.incomeTax  | currency: ' ':'code':'3.2-2'}}</div>
+                            </div>
+                            <div class="col-3 p-1 grid grid-nogutter">
+                                <div class="col-5 text-500 flex align-items-center">VAT:</div>
+                                <div class="col-7 flex align-items-center pl-4 pr-3" id="vat">{{projectFinancialDetailForm.value.vatTax  | currency: ' ':'code':'3.2-2'}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </p-accordionTab>
+                <p-accordionTab [selected]="true" header="Costs" class="text-900 font-medium">
+                    <div *ngIf="projectId && costs" class="p-1 ng-star-inserted surface-border">
+                        <cost-list-shell [projectId]="projectId!" [costs]="costs"></cost-list-shell>
+                    </div>
+                </p-accordionTab>
+            </form>
+        </p-accordion>
+
+    </div>
+    <div wrapper-buttons>
+        <p-button [routerLink]="['/projects', projectId]" label="Project details" size="small" severity="secondary" class="top-menu-button"/>
+    </div>
+</wrapper>

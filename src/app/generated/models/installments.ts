@@ -1,4 +1,4 @@
 /* tslint:disable */
 /* eslint-disable */
-import { Installment } from './installment';
+import { Installment } from '../models/installment';
 export type Installments = Array<Installment>;

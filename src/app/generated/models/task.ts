@@ -1,10 +1,12 @@
 /* tslint:disable */
 /* eslint-disable */
-import { TaskStatus } from './task-status';
-import { TaskType } from './task-type';
+import { TaskStatus } from '../models/task-status';
+import { TaskType } from '../models/task-type';
 export interface Task {
+  createdDateTime?: string;
   endDate?: string;
   id?: number;
+  lastModifiedDateTime?: string;
   name?: string;
   nextStatuses?: Array<TaskStatus>;
   note?: string;

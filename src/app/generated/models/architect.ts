@@ -1,7 +1,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface Architect {
-  firstName: string;
+  createdDateTime?: string;
+  firstName?: string;
   id?: number;
-  lastName: string;
+  lastModifiedDateTime?: string;
+  lastName?: string;
 }

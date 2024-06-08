@@ -10,7 +10,7 @@
         <form [formGroup]="clientForm">
             <p-dropdown [options]="$clientTypes()!" formControlName="clientType" optionLabel="label" optionValue="id">
             </p-dropdown>
-            <div class="flex flex-column gap-3 mt-3 border-top-1 surface-border pt-2"
+            <div class="flex flex-column gap-3 mt-3 surface-border pt-2"
                  [ngSwitch]="clientForm.get('clientType')?.value">
                 <div class="flex gap-3" *ngSwitchCase="ClientType.PRIVATE.toString()">
                     <div class="w-6">
@@ -27,7 +27,7 @@
                         </span>
                     </div>
                     <div class="w-6">
-                        <label for="lastName" class="block  text-color text-base">Last Name</label>
+                        <label for="lastName" class="block text-color text-base">Last Name</label>
                         <span class="p-input-icon-left w-full">
                             <input type="text" formControlName="lastName" class="w-full" id="lastName"
                                    pInputText
@@ -56,7 +56,7 @@
                     </div>
                 </div>
             </div>
-            <div class="flex flex-column gap-3 mt-3 border-top-1 surface-border pt-2" formGroupName="contact">
+            <div class="flex flex-column gap-3 mt-3 pt-2" formGroupName="contact">
                 <div class="flex gap-3">
                     <div class="w-6">
                         <label for="email" class="block  text-color text-base">Email</label>
@@ -111,7 +111,7 @@
                 </div>
                 </div>
             </div>
-            <div class="flex flex-column gap-3 mt-3 border-top-1 surface-border pt-2">
+            <div class="flex flex-column gap-3 mt-3 pt-2">
                 <div class="flex gap-3">
                     <div class="w-full">
                         <label for="note" class="block  text-color text-base">Note</label>
