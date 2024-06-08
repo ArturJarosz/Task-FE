@@ -35,8 +35,6 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
     contractStatuses!: ConfigurationEntry[] | null;
     @Input()
     projectTypes!: ConfigurationEntry[] | null;
-    @Input()
-    costCategories!: ConfigurationEntry[] | null;
     @Output()
     updateProjectEvent: EventEmitter<Project> = new EventEmitter<Project>();
     @Output()

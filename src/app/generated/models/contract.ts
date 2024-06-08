@@ -1,12 +1,14 @@
 /* tslint:disable */
 /* eslint-disable */
-import { ContractStatus } from './contract-status';
+import { ContractStatus } from '../models/contract-status';
 export interface Contract {
+  createdDateTime?: string;
   deadline?: string;
   endDate?: string;
   id?: number;
+  lastModifiedDateTime?: string;
   nextStatuses?: Array<ContractStatus>;
-  offerValue: number;
+  offerValue?: number;
   signingDate?: string;
   startDate?: string;
   status?: ContractStatus;

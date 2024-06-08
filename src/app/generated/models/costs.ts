@@ -1,4 +1,4 @@
 /* tslint:disable */
 /* eslint-disable */
-import { Cost } from './cost';
+import { Cost } from '../models/cost';
 export type Costs = Array<Cost>;
