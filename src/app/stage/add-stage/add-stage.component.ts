@@ -1,4 +1,4 @@
-import {Component, EventEmitter, inject, Input, OnInit, Output, Signal} from '@angular/core';
+import {Component, EventEmitter, inject, Input, OnInit, Output, Signal, ViewEncapsulation} from '@angular/core';
 import {StageStore} from "../state";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {FormGroup} from "@angular/forms";
@@ -6,11 +6,12 @@ import {AddStageForm, StageFormProvider} from "../form/stage-form-provider";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {Stage} from "../../generated/models/stage";
 import {toTimeZoneString} from "../../shared/utils/date-utils";
+import {Installment} from "../../generated/models/installment";
 
 @Component({
     selector: 'add-stage',
     templateUrl: './add-stage.component.html',
-    styleUrl: './add-stage.component.less'
+    styleUrls: ['./add-stage.component.less']
 })
 export class AddStageComponent implements OnInit {
     @Input()
@@ -62,6 +63,14 @@ export class AddStageComponent implements OnInit {
             note: this.addStageForm.get('note')?.value!,
             deadline: toTimeZoneString(this.addStageForm.get('deadline')!.value)
         };
+        if (this.addStageForm.value.hasInstallment) {
+            let installment: Installment;
+            installment = {
+                hasInvoice: this.addStageForm.value.hasInvoice!,
+                value: this.addStageForm.value.installmentValue!
+            };
+            stage.installment = installment;
+        }
         return stage;
     }
 

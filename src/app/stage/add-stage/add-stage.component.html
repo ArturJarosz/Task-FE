@@ -1,10 +1,10 @@
 <p-dialog
-    header="header"
-    [(visible)]="visible"
-    appendTo="body"
-    [modal]="true"
-    [style]="{ width: '60vw', 'max-width': '100vw'}"
-    (onHide)="onClose()">
+        header="header"
+        [(visible)]="visible"
+        appendTo="body"
+        [modal]="true"
+        [style]="{ width: '50vw', 'max-width': '100vw', 'min-width': '40vw'}"
+        (onHide)="onClose()">
     <ng-template pTemplate="header">
         <div class="flex flex-column gap-2">
             <h1 class="m-0 text-900 font-semibold line-height-3">{{ header }}</h1>
@@ -12,24 +12,22 @@
     </ng-template>
     <form [formGroup]="addStageForm">
         <div class="grid grid-nogutter surface-border p-1">
-            <div class="md:col-4 p-1">
-                <label for="name" class="block text-color text-base">Stage name</label>
-                <span class="p-input-icon-left w-full">
-                    <input type="text" class="w-full" id="name" formControlName="name" pInputText placeholder="stage name"
+            <div class="col-4 p-1 grid grid-nogutter">
+                <div class="col-4 text-500 flex align-items-center">Name:</div>
+                <span class="col-8 pr-3">
+                    <input type="text" id="name" formControlName="name" pInputText placeholder="stage name"
                            [ngClass]="{'is-invalid': (addStageForm.get('name')?.touched || addStageForm.get('name')?.dirty) && !addStageForm.get('name')?.valid }"/>
                 </span>
             </div>
-            <div class="md:col-4 p-1">
-                <label for="type" class="block text-color text-base">Type</label>
-                <span class="p-input-icon-left w-full">
-                    <p-dropdown [options]="$stageTypes()" optionLabel="label" optionValue="id"
-                                formControlName="type" class="w-full" appendTo="body" id="type">
-                    </p-dropdown>
-                </span>
+            <div class="col-4 p-1 grid grid-nogutter">
+                <div class="col-4 text-500 flex align-items-center">Type:</div>
+                <p-dropdown class="col-8 pr-3" [options]="$stageTypes()" optionLabel="label" optionValue="id"
+                            formControlName="type" appendTo="body" id="type">
+                </p-dropdown>
             </div>
-            <div class="md:col-4 p-1">
-                <div class="text-500 font-medium ">Deadline</div>
-                <p-calendar formControlName="deadline" id="deadline" dateFormat="yy-mm-dd"></p-calendar>
+            <div class="col-4 p-1 grid grid-nogutter">
+                <div class="col-4 text-500 flex align-items-center">Deadline:</div>
+                <p-calendar class="col-8 pr-3" formControlName="deadline" id="deadline" dateFormat="yy-mm-dd"></p-calendar>
             </div>
         </div>
         <div class="grid grid-nogutter surface-border p-1">
@@ -37,6 +35,22 @@
                 <div class="text-500 font-medium h-2rem">Note</div>
                 <textarea formControlName="note" id="note" type="text" pInputTextarea rows="2"
                           [autoResize]="true" style="height: 4rem;overflow: hidden;"></textarea>
+            </div>
+        </div>
+        <div class="grid grid-nogutter surface-border p-1">
+            <div class="col-4 p-1 grid grid-nogutter">
+                <div class="col-6 text-500 font-medium ">Installment</div>
+                <p-inputSwitch formControlName="hasInstallment" class="col-6" id="hasInstallment"></p-inputSwitch>
+            </div>
+        </div>
+        <div *ngIf="addStageForm.get('hasInstallment')?.value!" class="grid grid-nogutter surface-border p-1">
+            <div class="col-4 p-1 grid grid-nogutter">
+                <div class="col-4 text-500 flex align-items-center">Value:</div>
+                <input formControlName="installmentValue" class="col-8 pr-3" id="installmentValue" pInputText>
+            </div>
+            <div class="col-4 p-1 grid grid-nogutter">
+                <div class="col-4 text-500 flex align-items-center">Has invoice:</div>
+                <p-inputSwitch formControlName="hasInvoice" class="col-8 pr-3" id="hasInvoice"></p-inputSwitch>
             </div>
         </div>
     </form>
