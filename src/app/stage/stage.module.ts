@@ -18,6 +18,9 @@ import {DialogModule} from "primeng/dialog";
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {RippleModule} from "primeng/ripple";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {ToggleButtonModule} from "primeng/togglebutton";
+import {InputSwitchModule} from "primeng/inputswitch";
+import {CheckboxModule} from "primeng/checkbox";
 
 @NgModule({
     declarations: [
@@ -45,7 +48,10 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
         InputTextareaModule,
         NgClass,
         RippleModule,
-        ConfirmDialogModule
+        ConfirmDialogModule,
+        ToggleButtonModule,
+        InputSwitchModule,
+        CheckboxModule
     ],
     exports: [
         StageListComponent,

@@ -18,7 +18,7 @@ export class StageFormProvider {
             id: this.formBuilder.nonNullable.control<number>(0, [Validators.required]),
             name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
             type: this.formBuilder.nonNullable.control<StageType>(DEFAULT_TYPE, [Validators.required]),
-            status: this.formBuilder.nonNullable.control<StageStatus>(StageStatus.TO_DO, [Validators.required]),
+            status: this.formBuilder.nonNullable.control<StageStatus>(DEFAULT_STATUS, [Validators.required]),
             startDate: this.formBuilder.nonNullable.control(new Date()),
             deadline: this.formBuilder.nonNullable.control(new Date()),
             endDate: this.formBuilder.nonNullable.control(new Date()),
@@ -31,7 +31,10 @@ export class StageFormProvider {
             name: this.formBuilder.nonNullable.control<string>('',[Validators.required]),
             deadline: this.formBuilder.nonNullable.control<Date>(new Date()),
             type: this.formBuilder.nonNullable.control<StageType>(DEFAULT_TYPE),
-            note: this.formBuilder.control('')
+            note: this.formBuilder.control<string>(''),
+            hasInstallment: this.formBuilder.nonNullable.control<boolean>(false, [Validators.required]),
+            installmentValue: this.formBuilder.control<number>(0),
+            hasInvoice: this.formBuilder.control<boolean>(true, [Validators.required]),
         })
     }
 }
@@ -52,4 +55,8 @@ export interface AddStageForm {
     deadline: FormControl<Date>,
     type: FormControl<StageType>,
     note: FormControl<string | null>
+    hasInstallment: FormControl<boolean>,
+    installmentValue?: FormControl<number | null>,
+    hasInvoice?: FormControl<boolean | null>
+
 }
