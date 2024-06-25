@@ -7,6 +7,8 @@ import {MessageService} from "primeng/api";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
 import {of, pipe, switchMap, tap} from "rxjs";
 import {MessageSeverity} from "../../../shared";
+import {FinancialRestService} from "../../project-financial-summary/rest/financial-rest.service";
+import {FinancialDataStore} from "../../project-financial-summary/state/financial-data.state";
 
 export interface CostState extends AppState {
     cost: Cost | null,
@@ -27,7 +29,7 @@ export const initialState: CostState = {
 export const CostStore = signalStore(
     {providedIn: 'root'},
     withState(initialState),
-    withMethods((store, costRestService = inject(CostRestService), messageService = inject(MessageService)) => ({
+    withMethods((store, costRestService = inject(CostRestService), financialDataStore = inject(FinancialDataStore),  messageService = inject(MessageService)) => ({
         setCostId(costId: number) {
             patchState(store, {costId: costId})
         },
@@ -73,6 +75,7 @@ export const CostStore = signalStore(
                                     summary: `New cost created`,
                                     detail: `New cost for project with id ${store.projectId()} was created.`,
                                 });
+                                financialDataStore.setProjectFinancialDataNeedsUpdate();
                             })
                         )
                 })

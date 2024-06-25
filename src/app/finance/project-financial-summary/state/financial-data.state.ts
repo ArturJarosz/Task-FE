@@ -24,6 +24,9 @@ export const FinancialDataStore = signalStore(
         setProjectId(projectId: number) {
             patchState(store, {projectId: projectId})
         },
+        setProjectFinancialDataNeedsUpdate() {
+            patchState(store, {projectFinancialSummaryNeedsRefresh: true})
+        },
         loadProjectFinancialSummary: rxMethod<{}>(
             pipe(
                 switchMap(() => {

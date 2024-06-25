@@ -20,6 +20,9 @@ import {FinancialRestService, FinancialRestServiceImpl} from "./project-financia
 import {
     ProjectFinancialDetailShellComponent
 } from "./project-financial-summary/project-financial-detail-shell/project-financial-detail-shell.component";
+import { InstallmentListShellComponent } from './installment/installment-list-shell/installment-list-shell.component';
+import { InstallmentListComponent } from './installment/installment-list/installment-list.component';
+import {InstallmentRestService, InstallmentRestServiceImpl} from "./installment/rest/installment-rest.service";
 
 @NgModule({
     declarations: [
@@ -28,6 +31,8 @@ import {
         CostDetailComponent,
         CostListShellComponent,
         AddCostComponent,
+        InstallmentListShellComponent,
+        InstallmentListComponent,
     ],
     imports: [
         CommonModule,
@@ -47,11 +52,13 @@ import {
     ],
     exports: [
         CostListComponent,
-        CostListShellComponent
+        CostListShellComponent,
+        InstallmentListShellComponent
     ],
     providers: [
         {provide: CostRestService, useClass: CostRestServiceImpl},
-        {provide: FinancialRestService, useClass: FinancialRestServiceImpl}
+        {provide: FinancialRestService, useClass: FinancialRestServiceImpl},
+        {provide: InstallmentRestService, useClass: InstallmentRestServiceImpl}
     ]
 
 })

@@ -10,11 +10,11 @@
                             <input formControlName="name" id="name" pInputText>
                         </div>
                         <div class="md:col-4 p-1">
-                            <div class="text-500 font-medium ">Paid</div>
+                            <div class="text-500 font-medium ">Category</div>
                             <div class="p-1" id="type">{{resolvedCategoryLabel}}</div>
                         </div>
                         <div class="md:col-4 p-1">
-                            <div class="text-500 font-medium ">Has Invoice</div>
+                            <div class="text-500 font-medium ">Paid</div>
                             <p-inputSwitch formControlName="paid" id="paid"></p-inputSwitch>
                         </div>
                     </div>
@@ -33,7 +33,7 @@
                         </div>
                     </div>
                     <div class="grid grid-nogutter surface-border  p-1 ">
-                        <div class="md:col-8 p-1">
+                        <div class="md:col-12 p-1">
                             <div class="text-500 font-medium ">Note</div>
                             <textarea formControlName="note" id="note" type="text" pInputTextarea rows="2"
                                       [autoResize]="true"></textarea>

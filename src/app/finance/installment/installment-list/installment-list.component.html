@@ -1,0 +1,60 @@
+<div class="border-bottom-1 surface-border pb-3">
+    <form [formGroup]="installmentsDetailForm">
+        <div class="grid grid-nogutter surface-border p-1">
+            <div class="col-6 p-1 grid grid-nogutter">
+                <div class="col-5 text-500 flex align-items-center">Count:</div>
+                <div class="col-7 flex align-items-center pl-4 pr-3" id="count">{{ installmentsDetailForm.value.count }}</div>
+            </div>
+            <div class="col-6 p-1 grid grid-nogutter">
+                <div class="col-5 text-500 flex align-items-center">Paid:</div>
+                <div class="col-7 flex align-items-center pl-4 pr-3" id="paid">{{ installmentsDetailForm.value.paid }}</div>
+            </div>
+        </div>
+        <div class="grid grid-nogutter surface-border p-1">
+            <div class="col-3 p-1 grid grid-nogutter">
+                <div class="col-5 text-500 flex align-items-center">Gross value:</div>
+                <div class="col-7 flex align-items-center pl-4 pr-3" id="gross">{{installmentsDetailForm.value.grossValue  | currency: ' ':'code':'3.2-2'}}</div>
+            </div>
+            <div class="col-3 p-1 grid grid-nogutter">
+                <div class="col-5 text-500 flex align-items-center">Nett value:</div>
+                <div class="col-7 flex align-items-center pl-4 pr-3" id="net">{{installmentsDetailForm.value.netValue  | currency: ' ':'code':'3.2-2'}}</div>
+            </div>
+            <div class="col-3 p-1 grid grid-nogutter">
+                <div class="col-5 text-500 flex align-items-center">Tax:</div>
+                <div class="col-7 flex align-items-center pl-4 pr-3" id="tax">{{installmentsDetailForm.value.incomeTax  | currency: ' ':'code':'3.2-2'}}</div>
+            </div>
+            <div class="col-3 p-1 grid grid-nogutter">
+                <div class="col-5 text-500 flex align-items-center">VAT:</div>
+                <div class="col-7 flex align-items-center pl-4 pr-3" id="vat">{{installmentsDetailForm.value.vatTax  | currency: ' ':'code':'3.2-2'}}</div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="pt-4">
+    <p-table [value]="installmentProjectData.installments!" [tableStyle]="{ 'min-width': '50rem' }">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Stage Name</th>
+                <th>Value</th>
+                <th>Invoice</th>
+                <th>Paid</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-installment>
+            <tr>
+                <td>{{ installment.stageName }}</td>
+                <td>{{ installment.value | currency: ' ':'code':'2.2-2' }}</td>
+                <td>
+                    <i *ngIf="installment.hasInvoice" class="pi pi-check"></i>
+                    <i *ngIf="!installment.hasInvoice" class="pi pi-times"></i>
+                </td>
+                <td>
+                    <i *ngIf="installment.paid" class="pi pi-check"></i>
+                    <i *ngIf="!installment.paid" class="pi pi-times"></i>
+                </td>
+            </tr>
+
+        </ng-template>
+    </p-table>
+</div>
+

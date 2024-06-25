@@ -24,9 +24,17 @@
                         </div>
                     </div>
                 </p-accordionTab>
-                <p-accordionTab [selected]="true" header="Costs" class="text-900 font-medium">
+                <p-accordionTab [selected]="true" header="Financial components" class="text-900 font-medium">
                     <div *ngIf="projectId && costs" class="p-1 ng-star-inserted surface-border">
-                        <cost-list-shell [projectId]="projectId!" [costs]="costs"></cost-list-shell>
+                        <p-tabView>
+                            <p-tabPanel header="Costs">
+                                <cost-list-shell [projectId]="projectId!" [costs]="costs"></cost-list-shell>
+                            </p-tabPanel>
+                            <p-tabPanel header="Installments">
+                                <installment-list-shell></installment-list-shell>
+                            </p-tabPanel>
+                        </p-tabView>
+
                     </div>
                 </p-accordionTab>
             </form>

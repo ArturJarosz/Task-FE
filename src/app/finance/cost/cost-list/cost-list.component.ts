@@ -21,4 +21,5 @@ export class CostListComponent {
         return resolveLabel(category, this.costCategories);
     }
 
+    protected readonly JSON = JSON;
 }
