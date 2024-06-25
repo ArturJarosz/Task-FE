@@ -26,7 +26,7 @@ export class AddTaskComponent implements OnInit {
 
     readonly taskStore = inject(TaskStore);
     readonly configurationStore = inject(ConfigurationStore);
-    $taskTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.stageTypes;
+    $taskTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.taskTypes;
 
     addTaskForm!: FormGroup;
 
