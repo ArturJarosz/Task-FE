@@ -23,6 +23,7 @@ import {SupplierModule} from "./supplier/supplier.module";
 import {StageModule} from "./stage/stage.module";
 import {TaskModule} from "./task/task.module";
 import {BreadcrumbModule} from "primeng/breadcrumb";
+import {AuthorizationService, AuthorizationServiceImpl} from "./auth/authorization.service";
 
 @NgModule({
     declarations: [
@@ -56,7 +57,9 @@ import {BreadcrumbModule} from "primeng/breadcrumb";
         StoreDevtoolsModule.instrument({maxAge: 25, logOnly: !isDevMode()}),
         BreadcrumbModule
     ],
-    providers: [],
+    providers: [
+        {provide: AuthorizationService, useClass: AuthorizationServiceImpl}
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule {
