@@ -9,5 +9,6 @@ export interface Installment {
   paid?: boolean;
   paymentDate?: string;
   stageId?: number;
+  stageName?: string;
   value?: number;
 }

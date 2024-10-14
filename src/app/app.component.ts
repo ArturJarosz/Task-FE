@@ -1,6 +1,9 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, Inject, inject, OnInit} from '@angular/core';
 import {MenuItem} from "primeng/api";
 import {ConfigurationStore} from "./shared/configuration/state";
+import {AuthService} from "@auth0/auth0-angular";
+import {DOCUMENT} from "@angular/common";
+import {AuthorizationService} from "./auth/authorization.service";
 
 @Component({
     selector: 'app-root',
@@ -12,6 +15,9 @@ export class AppComponent implements OnInit {
     items: MenuItem[] = [];
 
     readonly configurationStore = inject(ConfigurationStore);
+
+    constructor(protected authorizationService  : AuthorizationService, @Inject(DOCUMENT) private doc: Document) {
+    }
 
 //TODO TA-313 Make many code dependent, not hardcoded in HTML
     ngOnInit(): void {
@@ -38,5 +44,13 @@ export class AppComponent implements OnInit {
                 routerLink: "/contractors"
             }
         ]
+    }
+
+    login(): void {
+        this.authorizationService.login();
+    }
+
+    logout(): void {
+        this.authorizationService.logout();
     }
 }

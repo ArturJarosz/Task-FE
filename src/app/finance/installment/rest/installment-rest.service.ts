@@ -1,5 +1,4 @@
 import {catchError, Observable} from "rxjs";
-import {Installment} from "../../../generated/models/installment";
 import {environment} from "../../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
 import {MessageService} from "primeng/api";

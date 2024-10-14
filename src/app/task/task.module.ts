@@ -12,7 +12,7 @@ import {AccordionModule} from "primeng/accordion";
 import {InputTextModule} from "primeng/inputtext";
 import {CalendarModule} from "primeng/calendar";
 import {InputTextareaModule} from "primeng/inputtextarea";
-import { AddTaskComponent } from './add-task/add-task.component';
+import {AddTaskComponent} from './add-task/add-task.component';
 import {DialogModule} from "primeng/dialog";
 import {DropdownModule} from "primeng/dropdown";
 import {ConfirmDialogModule} from "primeng/confirmdialog";

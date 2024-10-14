@@ -30,4 +30,4 @@ export ENV_FILE="./env/$ENVIRONMENT.env"
 
 echo "version is ${APP_VERSION}"
 docker compose --env-file "$ENV_FILE" down --remove-orphans
-docker compose --env-file "$ENV_FILE" up -d
+docker compose --env-file "$ENV_FILE" up -d --progress=plain --no-cache
