@@ -23,6 +23,7 @@ import {ConfirmationService, MessageService} from "primeng/api";
 import {ClientDetailShellComponent} from './client-detail-shell/client-detail-shell.component';
 import {ClientListShellComponent} from './client-list-shell/client-list-shell.component';
 import {AccordionModule} from "primeng/accordion";
+import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.guard";
 
 @NgModule({
     declarations: [
@@ -39,8 +40,8 @@ import {AccordionModule} from "primeng/accordion";
         PanelModule,
         TableModule,
         RouterModule.forChild([
-            {path: 'clients', component: ClientListShellComponent},
-            {path: 'clients/:id', component: ClientDetailShellComponent}
+            {path: 'clients', component: ClientListShellComponent, canActivate: [loggedInGuardGuard]},
+            {path: 'clients/:id', component: ClientDetailShellComponent, canActivate: [loggedInGuardGuard]}
         ]),
         DialogModule,
         ButtonModule,

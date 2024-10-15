@@ -23,7 +23,7 @@ import {auth_config} from "../auth.config";
         ReactiveFormsModule,
         WrapperComponent,
         SharedPrimeNgModule,
-        ToastModule,
+        ToastModule
     ],
     providers: [
         {provide: ConfigurationRestService, useClass: ConfigurationRestServiceImpl},

@@ -1,11 +1,11 @@
 <div class="min-h-screen flex flex-column surface-ground">
     <p-toast [life]="6000"></p-toast>
     <div class="surface-overlay py-3 px-4 flex align-items-center justify-content-between relative lg:static">
-        <a pRipple class="cursor-pointer inline-flex align-items-center justify-content-center lg:hidden text-700" pStyleClass="#app-sidebar-12" enterClass="hidden" enterActiveClass="fadeinleft" leaveToClass="hidden" leaveActiveClass="fadeoutleft" [hideOnOutsideClick]="true">
+        <a pRipple class="cursor-pointer inline-flex align-items-center justify-content-center lg:hidden text-700" pStyleClass="#app-sidebar-12" enterFromClass="hidden" enterActiveClass="fadeinleft" leaveToClass="hidden" leaveActiveClass="fadeoutleft" [hideOnOutsideClick]="true">
             <i class="pi pi-bars text-4xl"></i>
         </a>
         <img src="assets/images/logo.svg" alt="Image" height="40" class="mr-0 lg:mr-6">
-        <a pRipple class="cursor-pointer block lg:hidden text-700" pStyleClass="@next" enterClass="hidden" leaveToClass="hidden" [hideOnOutsideClick]="true">
+        <a pRipple class="cursor-pointer block lg:hidden text-700" pStyleClass="@next" enterFromClass="hidden" leaveToClass="hidden" [hideOnOutsideClick]="true">
             <i class="pi pi-ellipsis-v text-2xl"></i>
         </a>
         <ul class="list-none p-3 lg:p-0 m-0 lg:align-items-center select-none flex-column lg:flex-row absolute hidden lg:flex lg:static surface-overlay right-0 top-100 z-1 shadow-2 lg:shadow-none">
