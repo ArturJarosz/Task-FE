@@ -23,7 +23,9 @@ import {SupplierModule} from "./supplier/supplier.module";
 import {StageModule} from "./stage/stage.module";
 import {TaskModule} from "./task/task.module";
 import {BreadcrumbModule} from "primeng/breadcrumb";
-import {AuthorizationService, AuthorizationServiceImpl} from "./auth/authorization.service";
+import {AuthorizationService, AuthorizationServiceImpl} from "./security/authorization.service";
+import {SecurityModule} from "./security/security.module";
+import {loggedInGuardGuard} from "./security/logged-in-guard/logged-in-guard.guard";
 
 @NgModule({
     declarations: [
@@ -41,7 +43,7 @@ import {AuthorizationService, AuthorizationServiceImpl} from "./auth/authorizati
         ContractorModule,
         SupplierModule,
         RouterModule.forRoot([
-            {path: 'home', component: MainComponent},
+            {path: 'home', component: MainComponent, canActivate: [loggedInGuardGuard]},
             {path: '', redirectTo: 'home', pathMatch: 'full'},
             {path: '**', redirectTo: 'home', pathMatch: 'full'}
         ]),
@@ -55,7 +57,8 @@ import {AuthorizationService, AuthorizationServiceImpl} from "./auth/authorizati
         EffectsModule.forRoot([]),
         StoreDevtoolsModule.instrument({name: "TASK app", maxAge: 25, logOnly: !isDevMode()}),
         StoreDevtoolsModule.instrument({maxAge: 25, logOnly: !isDevMode()}),
-        BreadcrumbModule
+        BreadcrumbModule,
+        SecurityModule
     ],
     providers: [
         {provide: AuthorizationService, useClass: AuthorizationServiceImpl}

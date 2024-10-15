@@ -29,6 +29,7 @@ import {
 import {
     ProjectFinancialDetailComponent
 } from "../finance/project-financial-summary/project-financial-detail/project-financial-detail.component";
+import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.guard";
 
 @NgModule({
     declarations: [
@@ -48,8 +49,8 @@ import {
         RippleModule,
         TableModule,
         RouterModule.forChild([
-            {path: 'projects', component: ProjectListShellComponent},
-            {path: 'projects/:projectId', component: ProjectDetailShellComponent}
+            {path: 'projects', component: ProjectListShellComponent, canActivate: [loggedInGuardGuard]},
+            {path: 'projects/:projectId', component: ProjectDetailShellComponent, canActivate: [loggedInGuardGuard]}
         ]),
         DialogModule,
         DropdownModule,

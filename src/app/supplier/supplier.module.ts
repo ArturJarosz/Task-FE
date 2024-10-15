@@ -17,6 +17,7 @@ import {AccordionModule} from "primeng/accordion";
 import {SupplierListShellComponent} from './supplier-list-shell/supplier-list-shell.component';
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {RippleModule} from "primeng/ripple";
+import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.guard";
 
 @NgModule({
     declarations: [
@@ -29,8 +30,8 @@ import {RippleModule} from "primeng/ripple";
     imports: [
         CommonModule,
         RouterModule.forChild([
-            {path: 'suppliers', component: SupplierListShellComponent},
-            {path: 'suppliers/:supplierId', component: SupplierDetailShellComponent},
+            {path: 'suppliers', component: SupplierListShellComponent, canActivate: [loggedInGuardGuard]},
+            {path: 'suppliers/:supplierId', component: SupplierDetailShellComponent, canActivate: [loggedInGuardGuard]},
         ]),
         SharedModule,
         TableModule,

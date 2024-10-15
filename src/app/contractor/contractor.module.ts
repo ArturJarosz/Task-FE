@@ -17,6 +17,7 @@ import {ContractorDetailComponent} from './contractor-detail/contractor-detail.c
 import {AccordionModule} from "primeng/accordion";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {RippleModule} from "primeng/ripple";
+import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.guard";
 
 @NgModule({
     declarations: [
@@ -29,8 +30,15 @@ import {RippleModule} from "primeng/ripple";
     imports: [
         CommonModule,
         RouterModule.forChild([
-            {path: 'contractors', component: ContractorListShellComponent},
-            {path: 'contractors/:contractorId', component: ContractorDetailShellComponent}
+            {
+                path: 'contractors',
+                component: ContractorListShellComponent,
+                canActivate: [loggedInGuardGuard]},
+            {
+                path: 'contractors/:contractorId',
+                component: ContractorDetailShellComponent,
+                canActivate: [loggedInGuardGuard]
+            }
         ]),
         SharedModule,
         TableModule,

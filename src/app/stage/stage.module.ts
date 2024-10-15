@@ -21,6 +21,7 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ToggleButtonModule} from "primeng/togglebutton";
 import {InputSwitchModule} from "primeng/inputswitch";
 import {CheckboxModule} from "primeng/checkbox";
+import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.guard";
 
 @NgModule({
     declarations: [
@@ -33,7 +34,11 @@ import {CheckboxModule} from "primeng/checkbox";
     imports: [
         TableModule,
         RouterModule.forChild([
-            {path: 'projects/:projectId/stages/:stageId', component: StageDetailShellComponent}
+            {
+                path: 'projects/:projectId/stages/:stageId',
+                component: StageDetailShellComponent,
+                canActivate: [loggedInGuardGuard]
+            }
         ]),
         RouterLink,
         SharedModule,

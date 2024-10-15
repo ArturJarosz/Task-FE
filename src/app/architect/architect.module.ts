@@ -12,6 +12,7 @@ import {DropdownModule} from "primeng/dropdown";
 import {InputTextModule} from "primeng/inputtext";
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {NgIf, NgSwitchCase} from "@angular/common";
+import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.guard";
 
 @NgModule({
     declarations: [
@@ -20,8 +21,8 @@ import {NgIf, NgSwitchCase} from "@angular/common";
     ],
     imports: [
         RouterModule.forChild([
-            {path: 'architects', component: ArchitectListComponent},
-            {path: 'architects/:id', component: ArchitectDetailComponent}
+            {path: 'architects', component: ArchitectListComponent, canActivate: [loggedInGuardGuard]},
+            {path: 'architects/:id', component: ArchitectDetailComponent, canActivate: [loggedInGuardGuard]}
         ]),
         ButtonModule,
         RippleModule,

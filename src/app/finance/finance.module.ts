@@ -20,9 +20,10 @@ import {FinancialRestService, FinancialRestServiceImpl} from "./project-financia
 import {
     ProjectFinancialDetailShellComponent
 } from "./project-financial-summary/project-financial-detail-shell/project-financial-detail-shell.component";
-import { InstallmentListShellComponent } from './installment/installment-list-shell/installment-list-shell.component';
-import { InstallmentListComponent } from './installment/installment-list/installment-list.component';
+import {InstallmentListShellComponent} from './installment/installment-list-shell/installment-list-shell.component';
+import {InstallmentListComponent} from './installment/installment-list/installment-list.component';
 import {InstallmentRestService, InstallmentRestServiceImpl} from "./installment/rest/installment-rest.service";
+import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.guard";
 
 @NgModule({
     declarations: [
@@ -40,8 +41,16 @@ import {InstallmentRestService, InstallmentRestServiceImpl} from "./installment/
         TableModule,
         AccordionModule,
         RouterModule.forChild([
-            {path: 'projects/:projectId/costs/:costId', component: CostDetailShellComponent},
-            {path: 'projects/:projectId/finance', component: ProjectFinancialDetailShellComponent},
+            {
+                path: 'projects/:projectId/costs/:costId',
+                component: CostDetailShellComponent,
+                canActivate: [loggedInGuardGuard]
+            },
+            {
+                path: 'projects/:projectId/finance',
+                component: ProjectFinancialDetailShellComponent,
+                canActivate: [loggedInGuardGuard]
+            },
         ]),
         InputTextModule,
         CalendarModule,
