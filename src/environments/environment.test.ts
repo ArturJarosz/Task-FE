@@ -1,6 +1,7 @@
 export const environment = {
     production: true,
     baseUrl: 'BASE_URL',
+    feUrl: `http:localhost:FE_PORT`,
     auth: {
         auth0: {
             domain: 'AUTH0_DOMAIN',

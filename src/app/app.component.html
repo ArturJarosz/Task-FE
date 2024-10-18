@@ -9,7 +9,7 @@
             <i class="pi pi-ellipsis-v text-2xl"></i>
         </a>
         <ul class="list-none p-3 lg:p-0 m-0 lg:align-items-center select-none flex-column lg:flex-row absolute hidden lg:flex lg:static surface-overlay right-0 top-100 z-1 shadow-2 lg:shadow-none">
-            Personal menu placeholder
+            {{ (authorizationService.getUser() | async)?.name }}
         </ul>
     </div>
     <ul class="list-none py-3 px-5 m-0 surface-section flex align-items-center font-medium overflow-x-auto border-top-1 border-bottom-1 surface-border">

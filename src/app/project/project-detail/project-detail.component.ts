@@ -1,7 +1,7 @@
 import {
     ChangeDetectionStrategy,
-    Component, EventEmitter,
-    inject,
+    Component,
+    EventEmitter,
     Input,
     OnChanges,
     OnInit,
@@ -15,7 +15,6 @@ import {resolveLabel} from "../../shared/utils/label-utils";
 import {Architect} from "../../generated/models/architect";
 import {Project} from "../../generated/models/project";
 import {ConfigurationEntry, Contract, ContractStatus, ProjectStatus} from "../../generated/models";
-import {ContractStore} from "../contract-status/state/contract.store";
 import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
 
 @Component({
@@ -39,8 +38,10 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
     updateProjectEvent: EventEmitter<Project> = new EventEmitter<Project>();
     @Output()
     removeProjectEvent: EventEmitter<void> = new EventEmitter<void>();
-
-    readonly contractStore = inject(ContractStore)
+    @Output()
+    updateContractStatusEvent: EventEmitter<Contract> = new EventEmitter<Contract>();
+    @Output()
+    updateContractEvent: EventEmitter<Contract> = new EventEmitter<Contract>();
 
     projectDetailsForm!: FormGroup<ProjectCreateForm>;
     resolvedProjectStatusLabel: string = '';
@@ -66,9 +67,11 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         if (this.project && changes['project']) {
-            this.contractStore.setContractId(this.project?.contract!.id!);
             this.fillFormData();
             this.initialProjectForm = cloneDeep(this.projectDetailsForm);
+            if (this.projectDetailsForm != null) {
+                this.initialContractForm = cloneDeep(this.projectDetailsForm.get('contract') as FormGroup<ProjectContractForm>);
+            }
             this.resolveLabels();
             this.resolveAvailableStatuses();
         }
@@ -98,8 +101,10 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
                 deadline: toDateIfExists(this.project.contract!.deadline)
             }
         })
-        this.projectDetailsForm.get('startDate')?.disable();
-        this.projectDetailsForm.get('endDate')?.disable();
+        this.projectDetailsForm.get('startDate')
+            ?.disable();
+        this.projectDetailsForm.get('endDate')
+            ?.disable();
     }
 
     resolveLabels() {
@@ -178,7 +183,11 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
 
     onContractUpdate(): void {
         let contract = this.createContract();
-        this.contractStore.changeStatus({contract: contract});
+        if (this.contractStatusNeedsUpdate()) {
+            this.updateContractStatusEvent.emit(contract);
+        } else {
+            this.updateContractEvent.emit(contract);
+        }
     }
 
     onProjectUpdate(): void {
@@ -213,5 +222,24 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
 
     onDelete() {
         this.removeProjectEvent.emit();
+    }
+
+    contractStatusNeedsUpdate(): boolean {
+        let contractForm: FormGroup<ProjectContractForm> = this.projectDetailsForm.get(
+            'contract') as FormGroup<ProjectContractForm>;
+        return contractForm.value.status != this.initialContractForm.value.status;
+    }
+
+    contractNeedsUpdate(): boolean {
+        let contractForm: FormGroup<ProjectContractForm> = this.projectDetailsForm.get(
+            'contract') as FormGroup<ProjectContractForm>;
+        let allContractFirmFields = Object.keys(this.initialContractForm.controls);
+        return allContractFirmFields.filter(fieldName => {
+            return this.initialContractForm.get(fieldName)?.value !== contractForm.get(fieldName)?.value
+        }).length > 0
+    }
+
+    isContractUpdated(): boolean {
+        return this.contractNeedsUpdate() || this.contractStatusNeedsUpdate();
     }
 }

@@ -4,7 +4,15 @@
 
 export const environment = {
   production: false,
-  baseUrl: 'http://0.0.0.0:8100'
+  baseUrl: 'http://0.0.0.0:8100',
+  feUrl: `http:localhost:8050`,
+  auth: {
+    auth0: {
+      domain: 'task-app-test.uk.auth0.com',
+      clientId: 'VhlnmiQXvMtcqk2e3e5DxbaRv4LSQ8eh',
+      audience: 'Task-Test-API'
+    }
+  }
 };
 
 /*

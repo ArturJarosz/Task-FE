@@ -9,6 +9,8 @@ import {Contract} from "../../generated/models/contract";
 export abstract class ContractRestService {
 
     abstract changeStatus(contractId: number, contract: Contract): Observable<Contract>;
+
+    abstract updateContract(contractId: number, contract: Contract): Observable<Contract>;
 }
 
 @Injectable()
@@ -21,6 +23,13 @@ export class ContractRestServiceImpl extends AbstractRestService implements Cont
 
     changeStatus(contractId: number, contract: Contract): Observable<Contract> {
         return this.httpClient.post<Contract>(`${this.contractUrl}/${contractId}/status`, contract)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            );
+    }
+
+    updateContract(contractId: number, contract: Contract): Observable<Contract> {
+        return this.httpClient.put<Contract>(`${this.contractUrl}/${contractId}`, contract)
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))
             );

@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, Component, effect, inject, OnInit, Signal} from '@angular/core';
-import {ProjectState, ProjectStore} from "../state";
-import {Store} from "@ngrx/store";
+import {ProjectStore} from "../state";
 import {Observable} from "rxjs";
 import {ArchitectStore} from "../../architect/state";
 import {ConfigurationStore} from "../../shared/configuration/state";
@@ -9,6 +8,8 @@ import {Architect} from "../../generated/models/architect";
 import {Project} from "../../generated/models/project";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {ConfirmationService} from "primeng/api";
+import {ContractStore} from "../contract-status/state/contract.store";
+import {Contract} from "../../generated/models/contract";
 
 @Component({
     selector: 'project-detail-shell',
@@ -23,14 +24,14 @@ export class ProjectDetailShellComponent implements OnInit {
     readonly architectStore = inject(ArchitectStore);
     readonly projectStore = inject(ProjectStore);
     readonly configurationStore = inject(ConfigurationStore);
+    readonly contractStore = inject(ContractStore);
     $project: Signal<Project | null> = this.projectStore.project!;
     $projectNeedsRefresh: Signal<boolean> = this.projectStore.projectNeedsRefresh!;
     $projectTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.projectTypes;
     $projectStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.projectStatuses;
     $contractStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.contractStatuses;
 
-    constructor(private route: ActivatedRoute, private projectStoreOld: Store<ProjectState>,
-                private router: Router,
+    constructor(private route: ActivatedRoute, private router: Router,
                 private confirmationService: ConfirmationService) {
         effect(() => {
             if (this.$projectNeedsRefresh()) {
@@ -68,5 +69,15 @@ export class ProjectDetailShellComponent implements OnInit {
                 this.confirmationService.close();
             }
         });
+    }
+
+    onContractUpdate($event: Contract) {
+        this.contractStore.setContractId($event.id!);
+
+    }
+
+    onContractStatusUpdate($event: Contract) {
+        this.contractStore.setContractId($event.id!);
+
     }
 }

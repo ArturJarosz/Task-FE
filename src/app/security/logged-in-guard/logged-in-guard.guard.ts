@@ -6,10 +6,12 @@ export const loggedInGuardGuard: CanActivateFn = (route: ActivatedRouteSnapshot,
     const authenticationService = inject(AuthorizationService);
     const router = inject(Router);
 
-    if (!authenticationService.isAuthenticated()) {
-        router.navigateByUrl('/not-logged-in');
-        return false;
-    }
-    return true;
+    authenticationService.isAuthenticated()
+        .subscribe(isAuthenticated => {
+            if (!isAuthenticated) {
+                router.navigateByUrl('/not-logged-in');
+            }
+        })
 
+    return authenticationService.isAuthenticated();
 };

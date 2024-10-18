@@ -4,7 +4,7 @@ export const auth_config = {
     domain: `${environment.auth.auth0.domain}`,
     clientId: `${environment.auth.auth0.clientId}`,
     authorizationParams: {
-        redirect_uri: window.location.origin,
+        redirect_uri: `${environment.feUrl}`,
         audience: `${environment.auth.auth0.audience}`,
     },
     httpInterceptor: {

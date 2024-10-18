@@ -13,11 +13,15 @@ export class NotLoggedInComponent implements OnInit {
 
     // TODO: time should be configured from application configuration
     ngOnInit(): void {
-        if (!this.authorizationService.isAuthenticated()) {
-            setTimeout(() => {
-                this.authorizationService.login();
-            }, 3000);
-        }
+        this.authorizationService.isAuthenticated()
+            .subscribe(isAuthenticated => {
+                if (!isAuthenticated) {
+                    setTimeout(() => {
+                        this.authorizationService.login();
+                    }, 3000);
+                }
+            })
+
     }
 
 }

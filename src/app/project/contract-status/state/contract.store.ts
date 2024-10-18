@@ -21,8 +21,9 @@ export const ContractStore = signalStore(
     {providedIn: 'root'},
     withState(initialState),
     withMethods(
-        (store, messageService = inject(MessageService), contractRestService = inject(ContractRestService), projectStore = inject(ProjectStore)) => ({
-            setContractId(contractId: number) : void {
+        (store, messageService = inject(MessageService), contractRestService = inject(ContractRestService),
+         projectStore = inject(ProjectStore)) => ({
+            setContractId(contractId: number): void {
                 patchState(store, {contractId: contractId});
             },
             changeStatus: rxMethod<{ contract: Contract }>(
@@ -43,6 +44,31 @@ export const ContractStore = signalStore(
                                         severity: MessageSeverity.ERROR,
                                         summary: `Error changing contract status.`,
                                         detail: `There was a problem with changing contract status.`
+                                    });
+                                    return of(error);
+                                })
+                            )
+                    })
+                )
+            ),
+            update: rxMethod<{ contract: Contract }>(
+                pipe(
+                    mergeMap(({contract}) => {
+                        return contractRestService.updateContract(store.contractId()!, contract)
+                            .pipe(
+                                map(contract => {
+                                    projectStore.setProjectNeedsRefresh();
+                                    messageService.add({
+                                        severity: MessageSeverity.INFO,
+                                        summary: `Contract updated.`,
+                                        detail: `Contract with id: ${contract.id} was updated.`
+                                    });
+                                }),
+                                catchError(error => {
+                                    messageService.add({
+                                        severity: MessageSeverity.ERROR,
+                                        summary: `Error updating contract.`,
+                                        detail: `There was a problem with updating contract data.`
                                     });
                                     return of(error);
                                 })
