@@ -10,6 +10,7 @@ export interface InstallmentState {
     installments: Installment[];
     installmentProjectData: InstallmentProjectData,
     installmentsNeedRefresh: boolean;
+    installmentNeedsRefresh: boolean;
     installmentId: number | undefined;
     projectId: number | undefined;
 }
@@ -18,6 +19,7 @@ export const initialState: InstallmentState = {
     installments: [],
     installmentProjectData: {},
     installmentsNeedRefresh: true,
+    installmentNeedsRefresh: true,
     installmentId: undefined,
     projectId: undefined
 }
@@ -27,6 +29,9 @@ export const InstallmentStore = signalStore(
     withState(initialState),
     withMethods((store, installmentRestService = inject(InstallmentRestService)) => ({
         setInstallmentId(installmentId: number) {
+            if (store.installmentId() !== installmentId) {
+                this.setInstallmentNeedsRefresh();
+            }
             patchState(store, {installmentId: installmentId});
         },
         setProjectId(projectId: number) {
@@ -37,6 +42,9 @@ export const InstallmentStore = signalStore(
         },
         setInstallmentsNeedRefresh() {
             patchState(store, {installmentsNeedRefresh: true});
+        },
+        setInstallmentNeedsRefresh() {
+            patchState(store, {installmentNeedsRefresh: true})
         },
         loadProjectInstallments: rxMethod<{}>(
             pipe(

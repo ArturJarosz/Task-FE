@@ -30,43 +30,55 @@ export const SupplierStore = signalStore(
     withMethods(
         (store, supplierRestService = inject(SupplierRestService), messageService = inject(MessageService)) => ({
             setSupplierId(supplierId: number) {
+                if (store.supplierId() !== supplierId) {
+                    this.setSupplierNeedsRefresh();
+                }
                 patchState(store, {supplierId: supplierId});
+            },
+            setSupplierNeedsRefresh() {
+                patchState(store, {supplierNeedsRefresh: true});
             },
             loadSuppliers: rxMethod<{}>(
                 pipe(
                     switchMap(() => {
-                        return supplierRestService.getSuppliers()
-                            .pipe(
-                                tap(suppliers => patchState(store,
-                                    {suppliers: suppliers, suppliersNeedRefresh: false})),
-                                catchError(error => {
-                                    messageService.add({
-                                        severity: MessageSeverity.ERROR,
-                                        summary: `Error loading suppliers.`,
-                                        detail: `There was a problem with loading suppliers.`,
-                                    });
-                                    return of(error);
-                                })
-                            )
+                        if (store.suppliersNeedRefresh()) {
+                            return supplierRestService.getSuppliers()
+                                .pipe(
+                                    tap(suppliers => patchState(store,
+                                        {suppliers: suppliers, suppliersNeedRefresh: false})),
+                                    catchError(error => {
+                                        messageService.add({
+                                            severity: MessageSeverity.ERROR,
+                                            summary: `Error loading suppliers.`,
+                                            detail: `There was a problem with loading suppliers.`,
+                                        });
+                                        return of(error);
+                                    })
+                                )
+                        }
+                        return of({});
                     })
                 )
             ),
             loadSupplier: rxMethod<{}>(
                 pipe(
                     switchMap(() => {
-                        return supplierRestService.getSupplier(store.supplierId()!)
-                            .pipe(
-                                tap(supplier => patchState(store,
-                                    {supplier: supplier, supplierNeedsRefresh: false})),
-                                catchError(error => {
-                                    messageService.add({
-                                        severity: MessageSeverity.ERROR,
-                                        summary: `Error loading supplier.`,
-                                        detail: `There was a problem with loading supplier with id: ${store.supplierId()}.`,
-                                    });
-                                    return of(error);
-                                })
-                            )
+                        if (store.suppliersNeedRefresh()) {
+                            return supplierRestService.getSupplier(store.supplierId()!)
+                                .pipe(
+                                    tap(supplier => patchState(store,
+                                        {supplier: supplier, supplierNeedsRefresh: false})),
+                                    catchError(error => {
+                                        messageService.add({
+                                            severity: MessageSeverity.ERROR,
+                                            summary: `Error loading supplier.`,
+                                            detail: `There was a problem with loading supplier with id: ${store.supplierId()}.`,
+                                        });
+                                        return of(error);
+                                    })
+                                )
+                        }
+                        return of({});
                     })
                 )
             ),
@@ -93,7 +105,8 @@ export const SupplierStore = signalStore(
                         return supplierRestService.updateSupplier(store.supplierId()!, supplier)
                             .pipe(
                                 tap(supplier => {
-                                    patchState(store, {supplier: supplier, suppliersNeedRefresh: true});
+                                    patchState(store,
+                                        {supplier: supplier, suppliersNeedRefresh: true, supplierNeedsRefresh: true});
                                     messageService.add({
                                         severity: MessageSeverity.INFO,
                                         summary: `Supplier updated.`,
