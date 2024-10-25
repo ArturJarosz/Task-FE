@@ -30,43 +30,55 @@ export const ContractorStore = signalStore(
     withMethods(
         (store, contractorRestService = inject(ContractorRestService), messageService = inject(MessageService)) => ({
             setContractorId(contractorId: number) {
+                if (store.contractorId() !== contractorId) {
+                    this.setContractorNeedsRefresh();
+                }
                 patchState(store, {contractorId: contractorId});
+            },
+            setContractorNeedsRefresh() {
+                patchState(store, {contractorNeedsRefresh: false});
             },
             loadContractors: rxMethod<{}>(
                 pipe(
                     switchMap(() => {
-                        return contractorRestService.getContractors()
-                            .pipe(
-                                tap(contractors => patchState(store,
-                                    {contractors: contractors, contractorsNeedRefresh: false})),
-                                catchError(error => {
-                                    messageService.add({
-                                        severity: MessageSeverity.ERROR,
-                                        summary: `Error loading contractors.`,
-                                        detail: `There was a problem with loading contractors.`,
-                                    });
-                                    return of(error);
-                                })
-                            )
+                        if (store.contractorsNeedRefresh()) {
+                            return contractorRestService.getContractors()
+                                .pipe(
+                                    tap(contractors => patchState(store,
+                                        {contractors: contractors, contractorsNeedRefresh: false})),
+                                    catchError(error => {
+                                        messageService.add({
+                                            severity: MessageSeverity.ERROR,
+                                            summary: `Error loading contractors.`,
+                                            detail: `There was a problem with loading contractors.`,
+                                        });
+                                        return of(error);
+                                    })
+                                )
+                        }
+                        return of({});
                     })
                 )
             ),
             loadContractor: rxMethod<{}>(
                 pipe(
                     switchMap(() => {
-                        return contractorRestService.getContractor(store.contractorId()!)
-                            .pipe(
-                                tap(contractor => patchState(store,
-                                    {contractor: contractor, contractorNeedsRefresh: false})),
-                                catchError(error => {
-                                    messageService.add({
-                                        severity: MessageSeverity.ERROR,
-                                        summary: `Error loading contractor.`,
-                                        detail: `There was a problem with loading contractor with id: ${store.contractorId()}.`,
-                                    });
-                                    return of(error);
-                                })
-                            )
+                        if (store.contractorNeedsRefresh()) {
+                            return contractorRestService.getContractor(store.contractorId()!)
+                                .pipe(
+                                    tap(contractor => patchState(store,
+                                        {contractor: contractor, contractorNeedsRefresh: false})),
+                                    catchError(error => {
+                                        messageService.add({
+                                            severity: MessageSeverity.ERROR,
+                                            summary: `Error loading contractor.`,
+                                            detail: `There was a problem with loading contractor with id: ${store.contractorId()}.`,
+                                        });
+                                        return of(error);
+                                    })
+                                )
+                        }
+                        return of({});
                     })
                 )
             ),
@@ -93,7 +105,11 @@ export const ContractorStore = signalStore(
                         return contractorRestService.updateContractor(store.contractorId()!, contractor)
                             .pipe(
                                 tap(contractor => {
-                                    patchState(store, {contractor: contractor, contractorsNeedRefresh: true});
+                                    patchState(store, {
+                                        contractor: contractor,
+                                        contractorsNeedRefresh: true,
+                                        contractorNeedsRefresh: true
+                                    });
                                     messageService.add({
                                         severity: MessageSeverity.INFO,
                                         summary: `Contractor updated.`,

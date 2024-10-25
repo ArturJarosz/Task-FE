@@ -37,9 +37,10 @@ export const ProjectStore = signalStore(
     withMethods((store, projectRestService = inject(ProjectRestService), messageService = inject(MessageService),
                  financialDataStore = inject(FinancialDataStore)) => ({
         setProjectId(projectId: number) {
-            // if (store.projectId() != projectId) {
-            //     financialDataStore.setProjectFinancialDataNeedsUpdate();
-            // }
+            if (store.projectId() != projectId) {
+                financialDataStore.setProjectFinancialDataNeedsUpdate();
+                this.setProjectNeedsRefresh();
+            }
             patchState(store, {projectId: projectId});
         },
         setProjectNeedsRefresh(): void {
@@ -51,36 +52,42 @@ export const ProjectStore = signalStore(
         loadProject: rxMethod<{}>(
             pipe(
                 switchMap(() => {
-                    return projectRestService.getProject(store.projectId()!)
-                        .pipe(
-                            tap(project => patchState(store, {project: project, projectNeedsRefresh: false})),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error loading project.`,
-                                    detail: `There was a problem with loading project with id ${store.projectId()!}.`,
-                                });
-                                return of(error);
-                            })
-                        )
+                    if (store.projectNeedsRefresh()) {
+                        return projectRestService.getProject(store.projectId()!)
+                            .pipe(
+                                tap(project => patchState(store, {project: project, projectNeedsRefresh: false})),
+                                catchError(error => {
+                                    messageService.add({
+                                        severity: MessageSeverity.ERROR,
+                                        summary: `Error loading project.`,
+                                        detail: `There was a problem with loading project with id ${store.projectId()!}.`,
+                                    });
+                                    return of(error);
+                                })
+                            )
+                    }
+                    return of({});
                 })
             )
         ),
         loadProjects: rxMethod<{}>(
             pipe(
                 switchMap(() => {
-                    return projectRestService.getProjects()
-                        .pipe(
-                            tap(projects => patchState(store, {projects: projects, projectsNeedRefresh: false})),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error loading projects.`,
-                                    detail: `There was a problem with loading projects.`,
-                                });
-                                return of(error);
-                            })
-                        )
+                    if (store.projectsNeedRefresh()) {
+                        return projectRestService.getProjects()
+                            .pipe(
+                                tap(projects => patchState(store, {projects: projects, projectsNeedRefresh: false})),
+                                catchError(error => {
+                                    messageService.add({
+                                        severity: MessageSeverity.ERROR,
+                                        summary: `Error loading projects.`,
+                                        detail: `There was a problem with loading projects.`,
+                                    });
+                                    return of(error);
+                                })
+                            )
+                    }
+                    return of({});
                 })
             )
         ),
@@ -115,7 +122,8 @@ export const ProjectStore = signalStore(
                     return projectRestService.updateProject(store.projectId()!, project)
                         .pipe(
                             tap(project => {
-                                patchState(store, {projectsNeedRefresh: true, projectNeedsRefresh: true});
+                                patchState(store,
+                                    {projectsNeedRefresh: true, projectNeedsRefresh: true, project: project});
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
                                     summary: `Project updated.`,

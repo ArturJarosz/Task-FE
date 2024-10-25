@@ -52,19 +52,22 @@ export const ArchitectStore = signalStore(
             loadArchitects: rxMethod<{}>(
                 pipe(
                     switchMap(() => {
-                        return architectRestService.getArchitects()
-                            .pipe(
-                                tap(architects => patchState(store,
-                                    {architects: architects, architectsNeedRefresh: false})),
-                                catchError(error => {
-                                    messageService.add({
-                                        severity: MessageSeverity.ERROR,
-                                        summary: `Error loading architects.`,
-                                        detail: `There was a problem with loading architects.`,
-                                    });
-                                    return of(error);
-                                })
-                            )
+                        if (store.architectsNeedRefresh()) {
+                            return architectRestService.getArchitects()
+                                .pipe(
+                                    tap(architects => patchState(store,
+                                        {architects: architects, architectsNeedRefresh: false})),
+                                    catchError(error => {
+                                        messageService.add({
+                                            severity: MessageSeverity.ERROR,
+                                            summary: `Error loading architects.`,
+                                            detail: `There was a problem with loading architects.`,
+                                        });
+                                        return of(error);
+                                    })
+                                )
+                        }
+                        return of({});
                     })
                 )
             ),

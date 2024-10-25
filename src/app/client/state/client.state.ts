@@ -24,8 +24,8 @@ export const initialState: ClientState = {
     clients: [],
     clientId: undefined,
     client: null,
-    clientsNeedRefresh: false,
-    clientNeedsRefresh: false,
+    clientsNeedRefresh: true,
+    clientNeedsRefresh: true,
     clientProjectsSummary: null,
 }
 
@@ -45,36 +45,42 @@ export const ClientStore = signalStore(
         loadClient: rxMethod<{}>(
             pipe(
                 switchMap(() => {
-                    return clientRestService.getClient(store.clientId()!)
-                        .pipe(
-                            tap(client => patchState(store, {client: client, clientNeedsRefresh: false})),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error loading client.`,
-                                    detail: `There was a problem with loading client with id ${store.clientId()!}.`,
-                                });
-                                return of(error);
-                            })
-                        )
+                    if (store.clientNeedsRefresh()) {
+                        return clientRestService.getClient(store.clientId()!)
+                            .pipe(
+                                tap(client => patchState(store, {client: client, clientNeedsRefresh: false})),
+                                catchError(error => {
+                                    messageService.add({
+                                        severity: MessageSeverity.ERROR,
+                                        summary: `Error loading client.`,
+                                        detail: `There was a problem with loading client with id ${store.clientId()!}.`,
+                                    });
+                                    return of(error);
+                                })
+                            )
+                    }
+                    return of({});
                 })
             )
         ),
         loadClients: rxMethod<{}>(
             pipe(
                 switchMap(() => {
-                    return clientRestService.getClients()
-                        .pipe(
-                            tap(clients => patchState(store, {clients: clients, clientsNeedRefresh: false})),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error loading clients.`,
-                                    detail: `There was a problem with loading clients.`,
-                                });
-                                return of(error);
-                            })
-                        )
+                    if (store.clientsNeedRefresh()) {
+                        return clientRestService.getClients()
+                            .pipe(
+                                tap(clients => patchState(store, {clients: clients, clientsNeedRefresh: false})),
+                                catchError(error => {
+                                    messageService.add({
+                                        severity: MessageSeverity.ERROR,
+                                        summary: `Error loading clients.`,
+                                        detail: `There was a problem with loading clients.`,
+                                    });
+                                    return of(error);
+                                })
+                            )
+                    }
+                    return of({});
                 })
             )
         ),
@@ -153,12 +159,13 @@ export const ClientStore = signalStore(
                 })
             )
         ),
-        loadClientProjectsSummary: rxMethod<{}> (
+        loadClientProjectsSummary: rxMethod<{}>(
             pipe(
                 switchMap(() => {
                     return clientRestService.getClientProjectsSummary(store.clientId()!)
                         .pipe(
-                            tap(clientProjectsSummary => patchState(store, {clientProjectsSummary: clientProjectsSummary})),
+                            tap(clientProjectsSummary => patchState(store,
+                                {clientProjectsSummary: clientProjectsSummary})),
                             catchError(error => {
                                 messageService.add({
                                     severity: MessageSeverity.ERROR,

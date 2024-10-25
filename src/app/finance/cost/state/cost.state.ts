@@ -13,6 +13,7 @@ export interface CostState extends AppState {
     cost: Cost | null,
     costs: Cost[];
     costsNeedRefresh: boolean,
+    costNeedsRefresh: boolean,
     costId: number | undefined,
     projectId: number | undefined
 }
@@ -21,6 +22,7 @@ export const initialState: CostState = {
     cost: null,
     costs: [],
     costsNeedRefresh: true,
+    costNeedsRefresh: true,
     costId: undefined,
     projectId: undefined
 }
@@ -31,6 +33,9 @@ export const CostStore = signalStore(
     withMethods((store, costRestService = inject(CostRestService), financialDataStore = inject(FinancialDataStore),
                  messageService = inject(MessageService)) => ({
         setCostId(costId: number) {
+            if (store.costId() !== costId) {
+                this.setCostNeedRefresh();
+            }
             patchState(store, {costId: costId})
         },
         setProjectId(projectId: number) {
@@ -42,14 +47,23 @@ export const CostStore = signalStore(
         setCostsNeedRefresh() {
             patchState(store, {costsNeedRefresh: true})
         },
+        setCostNeedRefresh() {
+            patchState(store, {costNeedsRefresh: true})
+        },
         loadCost: rxMethod<{}>(
             pipe(
                 switchMap(() => {
-                    return costRestService.getCost(store.projectId()!, store.costId()!)
-                        .pipe(
-                            tap(cost => patchState(store,
-                                {cost: cost}))
-                        )
+                    if (store.costNeedsRefresh()) {
+                        return costRestService.getCost(store.projectId()!, store.costId()!)
+                            .pipe(
+                                tap(cost => patchState(store,
+                                    {
+                                        cost: cost,
+                                        costNeedsRefresh: false
+                                    }))
+                            )
+                    }
+                    return of({});
                 })
             )
         ),
