@@ -8,6 +8,7 @@ import {StageRestService} from "../rest/stage-rest.service";
 import {MessageService} from "primeng/api";
 import {MessageSeverity} from "../../shared";
 import {ProjectStore} from "../../project/state";
+import {FinancialDataStore} from "../../finance/project-financial-summary/state/financial-data.state";
 
 export interface StageState extends AppState {
     projectId: number | undefined,
@@ -33,7 +34,7 @@ export const StageStore = signalStore(
     {providedIn: 'root'},
     withState(initialState),
     withMethods((store, stageRestService = inject(StageRestService), messageService = inject(MessageService),
-                 projectStore = inject(ProjectStore)) => ({
+                 projectStore = inject(ProjectStore), financialDataStore = inject(FinancialDataStore)) => ({
         setProjectId(projectId: number) {
             patchState(store, {projectId: projectId});
         },
@@ -89,6 +90,7 @@ export const StageStore = signalStore(
                         .pipe(
                             tap(stage => {
                                     projectStore.setProjectNeedsRefresh();
+                                    financialDataStore.setProjectFinancialDataNeedsUpdate();
                                     messageService.add({
                                         severity: MessageSeverity.INFO,
                                         summary: `New stage created`,

@@ -24,6 +24,8 @@ import {ClientDetailShellComponent} from './client-detail-shell/client-detail-sh
 import {ClientListShellComponent} from './client-list-shell/client-list-shell.component';
 import {AccordionModule} from "primeng/accordion";
 import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.guard";
+import { ClientProjectsSummaryComponent } from './client-projects-summary/client-projects-summary.component';
+import { ClientProjectsSummaryShellComponent } from './client-projects-summary-shell/client-projects-summary-shell.component';
 
 @NgModule({
     declarations: [
@@ -31,7 +33,9 @@ import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.gu
         ClientDetailComponent,
         AddClientComponent,
         ClientDetailShellComponent,
-        ClientListShellComponent
+        ClientListShellComponent,
+        ClientProjectsSummaryComponent,
+        ClientProjectsSummaryShellComponent
     ],
     imports: [
         BrowserAnimationsModule,

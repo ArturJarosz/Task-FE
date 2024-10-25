@@ -30,7 +30,13 @@ export const InstallmentStore = signalStore(
             patchState(store, {installmentId: installmentId});
         },
         setProjectId(projectId: number) {
+            if (store.projectId() !== projectId) {
+                this.setInstallmentsNeedRefresh();
+            }
             patchState(store, {projectId: projectId});
+        },
+        setInstallmentsNeedRefresh() {
+            patchState(store, {installmentsNeedRefresh: true});
         },
         loadProjectInstallments: rxMethod<{}>(
             pipe(

@@ -38,6 +38,13 @@ export class ClientFormProvider {
             street: this.formBuilder.control<string>('')
         });
     }
+
+    public getClientProjectsSummary(): FormGroup<ClientProjectsSummaryForm> {
+        return this.formBuilder.group<ClientProjectsSummaryForm>({
+            count: this.formBuilder.nonNullable.control<number>(0),
+            totalValue: this.formBuilder.nonNullable.control<number>(0)
+        })
+    }
 }
 
 export interface AddressForm {
@@ -64,4 +71,9 @@ export interface ClientForm {
     note: FormControl<string | null>,
     clientType: FormControl<string>,
     contact: FormGroup<ContactForm>
+}
+
+export interface ClientProjectsSummaryForm {
+    count: FormControl<number>,
+    totalValue: FormControl<number>
 }

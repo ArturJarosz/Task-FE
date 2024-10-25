@@ -7,7 +7,6 @@ import {MessageService} from "primeng/api";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
 import {of, pipe, switchMap, tap} from "rxjs";
 import {MessageSeverity} from "../../../shared";
-import {FinancialRestService} from "../../project-financial-summary/rest/financial-rest.service";
 import {FinancialDataStore} from "../../project-financial-summary/state/financial-data.state";
 
 export interface CostState extends AppState {
@@ -29,12 +28,19 @@ export const initialState: CostState = {
 export const CostStore = signalStore(
     {providedIn: 'root'},
     withState(initialState),
-    withMethods((store, costRestService = inject(CostRestService), financialDataStore = inject(FinancialDataStore),  messageService = inject(MessageService)) => ({
+    withMethods((store, costRestService = inject(CostRestService), financialDataStore = inject(FinancialDataStore),
+                 messageService = inject(MessageService)) => ({
         setCostId(costId: number) {
             patchState(store, {costId: costId})
         },
         setProjectId(projectId: number) {
-            patchState(store, {projectId: projectId})
+            if (store.projectId() !== projectId) {
+                this.setCostsNeedRefresh();
+            }
+            patchState(store, {projectId: projectId});
+        },
+        setCostsNeedRefresh() {
+            patchState(store, {costsNeedRefresh: true})
         },
         loadCost: rxMethod<{}>(
             pipe(
@@ -49,7 +55,7 @@ export const CostStore = signalStore(
         ),
         loadCosts: rxMethod<{}>(
             pipe(
-                switchMap(()=>{
+                switchMap(() => {
                     if (store.costsNeedRefresh()) {
                         return costRestService.getProjectCosts(store.projectId()!)
                             .pipe(

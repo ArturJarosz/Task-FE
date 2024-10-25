@@ -8,6 +8,7 @@ import {computed, inject} from "@angular/core";
 import {MessageService} from "primeng/api";
 import {MessageSeverity} from "../../shared";
 import {ProjectCreate} from "../../generated/models/project-create";
+import {FinancialDataStore} from "../../finance/project-financial-summary/state/financial-data.state";
 
 export interface ProjectState extends AppState {
     error: string,
@@ -30,11 +31,15 @@ export const initialState: ProjectState = {
 export const ProjectStore = signalStore(
     {providedIn: 'root'},
     withState(initialState),
-    withComputed(({ project}) => ({
+    withComputed(({project}) => ({
         projectName: computed(() => project()!.name!)
     })),
-    withMethods((store, projectRestService = inject(ProjectRestService), messageService = inject(MessageService)) => ({
+    withMethods((store, projectRestService = inject(ProjectRestService), messageService = inject(MessageService),
+                 financialDataStore = inject(FinancialDataStore)) => ({
         setProjectId(projectId: number) {
+            // if (store.projectId() != projectId) {
+            //     financialDataStore.setProjectFinancialDataNeedsUpdate();
+            // }
             patchState(store, {projectId: projectId});
         },
         setProjectNeedsRefresh(): void {
@@ -129,7 +134,7 @@ export const ProjectStore = signalStore(
                 })
             )
         ),
-        removeProject: rxMethod<{ }>(
+        removeProject: rxMethod<{}>(
             pipe(
                 switchMap(() => {
                     return projectRestService.removeProject(store.projectId()!)
