@@ -32,18 +32,18 @@ export class ClientDetailComponent implements OnInit, OnChanges {
 
     ngOnInit(): void {
         this.clientDetailsForm = this.formProvider.getClientFormGroup();
-        this.fillFormData();
+        this.fillClientFormData();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (this.client) {
             this.clientName = this.client?.firstName ? `${this.client?.firstName} ${this.client?.lastName}` : `${this.client?.companyName}`;
-            this.fillFormData();
+            this.fillClientFormData();
             this.initialClientForm = cloneDeep(this.clientDetailsForm);
         }
     }
 
-    private fillFormData(): void {
+    private fillClientFormData(): void {
         if (!this.client || !this.clientDetailsForm) {
             return;
         }
@@ -64,6 +64,7 @@ export class ClientDetailComponent implements OnInit, OnChanges {
             }
         });
     }
+
 
     isFormChanged(): boolean {
         if (this.clientDetailsForm.pristine) {

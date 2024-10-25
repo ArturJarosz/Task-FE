@@ -31,6 +31,7 @@ export class ProjectFinancialDetailComponent implements OnInit, OnChanges {
 
     ngOnInit(): void {
         this.projectFinancialDetailForm = this.formProvider.getProjectFinancialSummaryForm();
+        this.fillFormData();
     }
 
     ngOnChanges({projectFinancialSummary}: SimpleChanges): void {
@@ -46,7 +47,6 @@ export class ProjectFinancialDetailComponent implements OnInit, OnChanges {
         if (!this.projectFinancialDetailForm) {
             return;
         }
-
         this.projectFinancialDetailForm.patchValue({
             netValue: this.projectFinancialSummary.netValue,
             grossValue: this.projectFinancialSummary.grossValue,

@@ -3,7 +3,7 @@ import {TotalProjectFinancialSummary} from "../../../generated/models/total-proj
 import {FinancialRestService} from "../rest/financial-rest.service";
 import {inject} from "@angular/core";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {pipe, switchMap, tap} from "rxjs";
+import {of, pipe, switchMap, tap} from "rxjs";
 
 export interface FinancialDataState {
     projectId: number | undefined,
@@ -22,6 +22,9 @@ export const FinancialDataStore = signalStore(
     withState(initialState),
     withMethods((store, financialRestService = inject(FinancialRestService)) => ({
         setProjectId(projectId: number) {
+            if (store.projectId() != projectId) {
+                this.setProjectFinancialDataNeedsUpdate();
+            }
             patchState(store, {projectId: projectId})
         },
         setProjectFinancialDataNeedsUpdate() {
@@ -30,15 +33,18 @@ export const FinancialDataStore = signalStore(
         loadProjectFinancialSummary: rxMethod<{}>(
             pipe(
                 switchMap(() => {
-                    return financialRestService.getProjectFinancialDataSummary(store.projectId()!)
-                        .pipe(
-                            tap(projectFinancialSummary => {
-                                patchState(store, {
-                                    projectFinancialSummary: projectFinancialSummary,
-                                    projectFinancialSummaryNeedsRefresh: false
-                                });
-                            })
-                        )
+                    if (store.projectFinancialSummaryNeedsRefresh()) {
+                        return financialRestService.getProjectFinancialDataSummary(store.projectId()!)
+                            .pipe(
+                                tap(projectFinancialSummary => {
+                                    patchState(store, {
+                                        projectFinancialSummary: projectFinancialSummary,
+                                        projectFinancialSummaryNeedsRefresh: false
+                                    });
+                                })
+                            )
+                    }
+                    return of(store.projectFinancialSummary());
                 })
             )
         )

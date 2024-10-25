@@ -5,6 +5,7 @@ import {MessageService} from "primeng/api";
 import {AbstractRestService} from "../../shared/rest/abstract-rest.service";
 import {environment} from "../../../environments/environment";
 import {Client} from "../../generated/models/client";
+import {ClientProjectsSummary} from "../../generated/models/client-projects-summary";
 
 export abstract class ClientRestService {
     abstract getClients(): Observable<Client[]>;
@@ -16,6 +17,8 @@ export abstract class ClientRestService {
     abstract deleteClient(clientId: number): Observable<void>;
 
     abstract updateClient(clientId: number, client: Client): Observable<Client>;
+
+    abstract getClientProjectsSummary(clientId: number): Observable<ClientProjectsSummary>;
 }
 
 @Injectable()
@@ -60,4 +63,12 @@ export class ClientRestServiceImpl extends AbstractRestService implements Client
                 catchError(error => this.handleError(error, this.messageService))
             );
     }
+
+    getClientProjectsSummary(clientId: number): Observable<ClientProjectsSummary> {
+        return this.httpClient.get<ClientProjectsSummary>(`${this.clientUrl}/${clientId}/projects`)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService))
+            );
+    }
+
 }

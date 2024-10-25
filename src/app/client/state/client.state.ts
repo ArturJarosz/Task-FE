@@ -7,6 +7,7 @@ import {ClientRestService} from "../rest/client-rest.service";
 import {inject} from "@angular/core";
 import {MessageService} from "primeng/api";
 import {MessageSeverity} from "../../shared";
+import {ClientProjectsSummary} from "../../generated/models/client-projects-summary";
 
 export interface ClientState extends AppState {
     error: string;
@@ -15,6 +16,7 @@ export interface ClientState extends AppState {
     client: Client | null;
     clientsNeedRefresh: boolean;
     clientNeedsRefresh: boolean;
+    clientProjectsSummary: ClientProjectsSummary | null;
 }
 
 export const initialState: ClientState = {
@@ -23,7 +25,8 @@ export const initialState: ClientState = {
     clientId: undefined,
     client: null,
     clientsNeedRefresh: false,
-    clientNeedsRefresh: false
+    clientNeedsRefresh: false,
+    clientProjectsSummary: null,
 }
 
 export const ClientStore = signalStore(
@@ -31,7 +34,13 @@ export const ClientStore = signalStore(
     withState(initialState),
     withMethods((store, clientRestService = inject(ClientRestService), messageService = inject(MessageService)) => ({
         setClientId(clientId: number) {
+            if (store.clientId() != clientId) {
+                this.setClientNeedRefresh();
+            }
             patchState(store, {clientId: clientId});
+        },
+        setClientNeedRefresh() {
+            patchState(store, {clientNeedsRefresh: true});
         },
         loadClient: rxMethod<{}>(
             pipe(
@@ -94,7 +103,7 @@ export const ClientStore = signalStore(
                 })
             )
         ),
-        createClient: rxMethod<{client: Client}>(
+        createClient: rxMethod<{ client: Client }>(
             pipe(
                 switchMap(({client}) => {
                     return clientRestService.createClient(client)
@@ -119,7 +128,7 @@ export const ClientStore = signalStore(
                 })
             )
         ),
-        updateClient: rxMethod<{client: Client}>(
+        updateClient: rxMethod<{ client: Client }>(
             pipe(
                 switchMap(({client}) => {
                     return clientRestService.updateClient(store.clientId()!, client)
@@ -144,5 +153,23 @@ export const ClientStore = signalStore(
                 })
             )
         ),
+        loadClientProjectsSummary: rxMethod<{}> (
+            pipe(
+                switchMap(() => {
+                    return clientRestService.getClientProjectsSummary(store.clientId()!)
+                        .pipe(
+                            tap(clientProjectsSummary => patchState(store, {clientProjectsSummary: clientProjectsSummary})),
+                            catchError(error => {
+                                messageService.add({
+                                    severity: MessageSeverity.ERROR,
+                                    summary: `Error loading client projects.`,
+                                    detail: `There was a problem with loading client projects.`,
+                                });
+                                return of(error);
+                            })
+                        )
+                })
+            )
+        )
     }))
 )
