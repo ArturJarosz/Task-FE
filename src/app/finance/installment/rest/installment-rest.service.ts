@@ -7,7 +7,7 @@ import {Injectable} from "@angular/core";
 import {InstallmentProjectData} from "../../../generated/models/installment-project-data";
 
 export abstract class InstallmentRestService {
-    abstract getInstallmentsForProject(projectId: number): Observable<InstallmentProjectData>;
+    abstract getProjectInstallmentData(projectId: number): Observable<InstallmentProjectData>;
 }
 
 @Injectable()
@@ -18,8 +18,8 @@ export class InstallmentRestServiceImpl extends AbstractRestService implements I
         super();
     }
 
-    getInstallmentsForProject(projectId: number): Observable<InstallmentProjectData> {
-        return this.httpClient.get<InstallmentProjectData>(`${this.projectsUrl}/${projectId}/installments`)
+    getProjectInstallmentData(projectId: number): Observable<InstallmentProjectData> {
+        return this.httpClient.get<InstallmentProjectData>(`${this.projectsUrl}/${projectId}/installments-data`)
             .pipe(
                 catchError(error => this.handleError(error, this.messageService))
             );

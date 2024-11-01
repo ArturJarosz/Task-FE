@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, Signal, SimpleChanges} from '@angular/core';
 import {TotalProjectFinancialSummary} from "../../../generated/models/total-project-financial-summary";
 import {FormGroup} from "@angular/forms";
 import {
@@ -6,6 +6,8 @@ import {
     ProjectFinancialSummaryFormProvider
 } from "../form/project-financial-summary-form-provider";
 import {Cost} from "../../../generated/models/cost";
+import {SupplyProjectData} from "../../../generated/models/supply-project-data";
+import {Supplier} from "../../../generated/models/supplier";
 
 @Component({
     selector: 'project-financial-detail',
@@ -21,6 +23,10 @@ export class ProjectFinancialDetailComponent implements OnInit, OnChanges {
     projectFinancialSummary!: TotalProjectFinancialSummary | null;
     @Input()
     costs!: Cost[] | null;
+    @Input()
+    supplyProjectData!: SupplyProjectData | null;
+    @Input()
+    $suppliers! : Signal<Supplier[]>;
 
     projectFinancialDetailForm!: FormGroup<ProjectFinancialSummaryForm>;
 

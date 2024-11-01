@@ -8,10 +8,12 @@ import {rxMethod} from "@ngrx/signals/rxjs-interop";
 import {of, pipe, switchMap, tap} from "rxjs";
 import {MessageSeverity} from "../../../shared";
 import {FinancialDataStore} from "../../project-financial-summary/state/financial-data.state";
+import {CostProjectData} from "../../../generated/models/cost-project-data";
 
 export interface CostState extends AppState {
     cost: Cost | null,
     costs: Cost[];
+    projectCostsData: CostProjectData;
     costsNeedRefresh: boolean,
     costNeedsRefresh: boolean,
     costId: number | undefined,
@@ -21,6 +23,7 @@ export interface CostState extends AppState {
 export const initialState: CostState = {
     cost: null,
     costs: [],
+    projectCostsData: {},
     costsNeedRefresh: true,
     costNeedsRefresh: true,
     costId: undefined,
@@ -101,6 +104,22 @@ export const CostStore = signalStore(
                 })
             )
         ),
+        loadCostsProjectData: rxMethod<{}>(
+            pipe(
+                switchMap(() => {
+                    if(store.costsNeedRefresh()) {
+                        return costRestService.getProjectCostsData(store.projectId()!).pipe(
+                            tap(projectCostsData => patchState(store, {
+                                projectCostsData: projectCostsData,
+                                costsNeedRefresh: false,
+                                costs: projectCostsData.costs
+                            }))
+                        )
+                    }
+                    return of({});
+                })
+            )
+        )
 
     }))
 )

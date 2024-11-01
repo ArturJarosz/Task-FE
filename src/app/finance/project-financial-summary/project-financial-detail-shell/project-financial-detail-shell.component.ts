@@ -6,6 +6,10 @@ import {ConfigurationStore} from "../../../shared/configuration/state";
 import {CostStore} from "../../cost/state";
 import {Cost} from "../../../generated/models/cost";
 import {ProjectStore} from "../../../project/state";
+import {SupplyStore} from "../../supply/state/supply.state";
+import {SupplyProjectData} from "../../../generated/models/supply-project-data";
+import {SupplierStore} from "../../../supplier/state";
+import {Supplier} from "../../../generated/models/supplier";
 
 @Component({
     selector: 'project-financial-detail-shell',
@@ -19,19 +23,29 @@ export class ProjectFinancialDetailShellComponent implements OnInit {
     readonly financialStore = inject(FinancialDataStore);
     readonly costStore = inject(CostStore);
     readonly projectStore = inject(ProjectStore);
+    readonly supplyStore = inject(SupplyStore);
+    readonly supplierStore = inject(SupplierStore);
     $projectFinancialSummary: Signal<TotalProjectFinancialSummary | null> = this.financialStore.projectFinancialSummary!;
     $projectFinancialSummaryNeedsRefresh: Signal<boolean> = this.financialStore.projectFinancialSummaryNeedsRefresh!;
     $costs: Signal<Cost[]> = this.costStore.costs!;
     $costsNeedRefresh: Signal<boolean> = this.costStore.costsNeedRefresh!;
     $projectName: Signal<string> = this.projectStore.projectName!;
+    $suppliesNeedRefresh: Signal<boolean> = this.supplyStore.suppliesNeedRefresh!;
+    $supplyProjectData: Signal<SupplyProjectData> = this.supplyStore.supplyProjectData!;
+    $suppliersNeedRefresh: Signal<boolean> = this.supplierStore.suppliersNeedRefresh;
+    $suppliers: Signal<Supplier[]> = this.supplierStore.suppliers;
 
     constructor(private route: ActivatedRoute) {
         effect(() => {
             if (this.$projectFinancialSummaryNeedsRefresh()) {
                 this.financialStore.loadProjectFinancialSummary({});
             }
-            if (this.$costsNeedRefresh()) {
-                this.costStore.loadCosts({});
+
+            if (this.$suppliesNeedRefresh()) {
+                this.supplyStore.loadProjectSupplies({});
+            }
+            if (this.$suppliersNeedRefresh()) {
+                this.supplierStore.loadSuppliers({});
             }
         });
     }
@@ -43,7 +57,10 @@ export class ProjectFinancialDetailShellComponent implements OnInit {
         this.financialStore.loadProjectFinancialSummary({});
         this.configurationStore.loadConfiguration({});
         this.costStore.setProjectId(this.projectId);
-        this.costStore.loadCosts({});
+        this.costStore.loadCostsProjectData({});
+        this.supplyStore.setProjectId(this.projectId);
+        this.supplyStore.loadProjectSupplies({});
+        this.supplierStore.loadSuppliers({});
     }
 
 }
