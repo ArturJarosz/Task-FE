@@ -24,6 +24,8 @@ import {InstallmentListShellComponent} from './installment/installment-list-shel
 import {InstallmentListComponent} from './installment/installment-list/installment-list.component';
 import {InstallmentRestService, InstallmentRestServiceImpl} from "./installment/rest/installment-rest.service";
 import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.guard";
+import {SupplyListComponent} from "./supply/supply-list/supply-list.component";
+import {SupplyRestService, SupplyRestServiceImpl} from "./supply/rest/supply-rest.service";
 
 @NgModule({
     declarations: [
@@ -34,6 +36,7 @@ import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.gu
         AddCostComponent,
         InstallmentListShellComponent,
         InstallmentListComponent,
+        SupplyListComponent,
     ],
     imports: [
         CommonModule,
@@ -62,12 +65,14 @@ import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.gu
     exports: [
         CostListComponent,
         CostListShellComponent,
-        InstallmentListShellComponent
+        InstallmentListShellComponent,
+        SupplyListComponent
     ],
     providers: [
         {provide: CostRestService, useClass: CostRestServiceImpl},
         {provide: FinancialRestService, useClass: FinancialRestServiceImpl},
-        {provide: InstallmentRestService, useClass: InstallmentRestServiceImpl}
+        {provide: InstallmentRestService, useClass: InstallmentRestServiceImpl},
+        {provide: SupplyRestService, useClass: SupplyRestServiceImpl}
     ]
 
 })

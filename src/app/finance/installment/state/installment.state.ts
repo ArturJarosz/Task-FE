@@ -42,7 +42,7 @@ export const InstallmentStore = signalStore(
             pipe(
                 switchMap(() => {
                     if (store.installmentsNeedRefresh()) {
-                        return installmentRestService.getInstallmentsForProject(store.projectId()!)
+                        return installmentRestService.getProjectInstallmentData(store.projectId()!)
                             .pipe(
                                 tap(installmentsData => patchState(store, {
                                     installments: installmentsData.installments,

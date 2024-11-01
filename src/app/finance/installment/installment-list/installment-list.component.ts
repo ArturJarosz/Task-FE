@@ -1,37 +1,35 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {InstallmentProjectData} from "../../../generated/models/installment-project-data";
-import {InstallmentFormProvider, InstallmentsForm} from "../form/installment-form-provider";
 import {FormGroup} from "@angular/forms";
+import {
+    FinanceObjectSummaryForm,
+    ProjectFinancialSummaryFormProvider
+} from "../../project-financial-summary/form/project-financial-summary-form-provider";
+import {isUndefinedOrEmpty} from "../../../shared/utils/data-validation-util";
 
 @Component({
     selector: 'installment-list',
     templateUrl: './installment-list.component.html',
     styleUrl: './installment-list.component.less'
 })
-export class InstallmentListComponent implements OnInit, OnChanges {
+export class InstallmentListComponent implements OnChanges {
     @Input()
     installmentProjectData!: InstallmentProjectData;
 
-    installmentsDetailForm!: FormGroup<InstallmentsForm>;
+    installmentsDetailForm!: FormGroup<FinanceObjectSummaryForm>;
 
-    constructor(private formProvider: InstallmentFormProvider) {
+    constructor(private formProvider: ProjectFinancialSummaryFormProvider) {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
+        this.installmentsDetailForm = this.formProvider.getFinanceObjectSummaryForm();
         if (changes['installmentProjectData'] && this.installmentProjectData) {
             this.fillFormData();
         }
     }
 
-    ngOnInit(): void {
-        this.installmentsDetailForm = this.formProvider.getInstallmentsDetail();
-    }
-
     private fillFormData(): void {
-        if (!this.installmentProjectData) {
-            return;
-        }
-        if (!this.installmentsDetailForm) {
+        if (isUndefinedOrEmpty(this.installmentProjectData) || !this.installmentsDetailForm) {
             return;
         }
 
@@ -47,6 +45,5 @@ export class InstallmentListComponent implements OnInit, OnChanges {
             incomeTax: this.installmentProjectData.financialData?.incomeTax,
             vatTax: this.installmentProjectData.financialData?.vatTax,
         })
-
     }
 }
