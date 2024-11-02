@@ -1,0 +1,61 @@
+<div class="border-bottom-1 surface-border pb-3">
+    <form [formGroup]="contractorsJobsSummaryForm">
+        <div class="grid grid-nogutter surface-border p-1">
+            <div class="col-6 p-1 grid grid-nogutter">
+                <div class="col-5 text-500 flex align-items-center">Count:</div>
+                <div class="col-7 flex align-items-center pl-4 pr-3" id="count">{{ contractorsJobsSummaryForm.value.count }}</div>
+            </div>
+            <div class="col-6 p-1 grid grid-nogutter">
+                <div class="col-5 text-500 flex align-items-center">Paid:</div>
+                <div class="col-7 flex align-items-center pl-4 pr-3" id="paid">{{ contractorsJobsSummaryForm.value.paid }}</div>
+            </div>
+        </div>
+        <div class="grid grid-nogutter surface-border p-1">
+            <div class="col-3 p-1 grid grid-nogutter">
+                <div class="col-5 text-500 flex align-items-center">Gross value:</div>
+                <div class="col-7 flex align-items-center pl-4 pr-3" id="gross">{{ contractorsJobsSummaryForm.value.grossValue  | currency: ' ':'code':'2.2-2' }}</div>
+            </div>
+            <div class="col-3 p-1 grid grid-nogutter">
+                <div class="col-5 text-500 flex align-items-center">Nett value:</div>
+                <div class="col-7 flex align-items-center pl-4 pr-3" id="net">{{ contractorsJobsSummaryForm.value.netValue  | currency: ' ':'code':'2.2-2' }}</div>
+            </div>
+            <div class="col-3 p-1 grid grid-nogutter">
+                <div class="col-5 text-500 flex align-items-center">Tax:</div>
+                <div class="col-7 flex align-items-center pl-4 pr-3" id="tax">{{ contractorsJobsSummaryForm.value.incomeTax  | currency: ' ':'code':'2.2-2' }}</div>
+            </div>
+            <div class="col-3 p-1 grid grid-nogutter">
+                <div class="col-5 text-500 flex align-items-center">VAT:</div>
+                <div class="col-7 flex align-items-center pl-4 pr-3" id="vat">{{ contractorsJobsSummaryForm.value.vatTax  | currency: ' ':'code':'2.2-2' }}</div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="pt-4">
+    <p-table [value]="contractorsJobsProjectData.contractorJobs!" [tableStyle]="{ 'min-width': '50rem' }">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Name</th>
+                <th>Supplier</th>
+                <th>Value</th>
+                <th>Invoice</th>
+                <th>Paid</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-contractorjob>
+            <tr>
+                <td>{{ contractorjob.name }}</td>
+                <td>{{ this.contractorIdToContractorName.get(contractorjob.contractorId) }}</td>
+                <td>{{ contractorjob.value | currency: ' ':'code':'2.2-2' }}</td>
+                <td>
+                    <i *ngIf="contractorjob.hasInvoice" class="pi pi-check"></i>
+                    <i *ngIf="!contractorjob.hasInvoice" class="pi pi-times"></i>
+                </td>
+                <td>
+                    <i *ngIf="contractorjob.paid" class="pi pi-check"></i>
+                    <i *ngIf="!contractorjob.paid" class="pi pi-times"></i>
+                </td>
+            </tr>
+
+        </ng-template>
+    </p-table>
+</div>

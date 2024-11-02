@@ -8,6 +8,8 @@ import {
 import {Cost} from "../../../generated/models/cost";
 import {SupplyProjectData} from "../../../generated/models/supply-project-data";
 import {Supplier} from "../../../generated/models/supplier";
+import {ContractorJobProjectData} from "../../../generated/models/contractor-job-project-data";
+import {Contractor} from "../../../generated/models/contractor";
 
 @Component({
     selector: 'project-financial-detail',
@@ -27,6 +29,10 @@ export class ProjectFinancialDetailComponent implements OnInit, OnChanges {
     supplyProjectData!: SupplyProjectData | null;
     @Input()
     $suppliers! : Signal<Supplier[]>;
+    @Input()
+    contractorsJobsProjectData!: ContractorJobProjectData;
+    @Input()
+    contractors!: Contractor[];
 
     projectFinancialDetailForm!: FormGroup<ProjectFinancialSummaryForm>;
 
