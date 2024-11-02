@@ -7,19 +7,19 @@
                         <div class="grid grid-nogutter surface-border p-1">
                             <div class="col-3 p-1 grid grid-nogutter">
                                 <div class="col-5 text-500 flex align-items-center">Gross value:</div>
-                                <div class="col-7 flex align-items-center pl-4 pr-3" id="gross">{{projectFinancialDetailForm.value.grossValue  | currency: ' ':'code':'3.2-2'}}</div>
+                                <div class="col-7 flex align-items-center pl-4 pr-3" id="gross">{{projectFinancialDetailForm.value.grossValue  | currency: ' ':'code':'2.2-2'}}</div>
                             </div>
                             <div class="col-3 p-1 grid grid-nogutter">
                                 <div class="col-5 text-500 flex align-items-center">Nett value:</div>
-                                <div class="col-7 flex align-items-center pl-4 pr-3" id="net">{{projectFinancialDetailForm.value.netValue  | currency: ' ':'code':'3.2-2'}}</div>
+                                <div class="col-7 flex align-items-center pl-4 pr-3" id="net">{{projectFinancialDetailForm.value.netValue  | currency: ' ':'code':'2.2-2'}}</div>
                             </div>
                             <div class="col-3 p-1 grid grid-nogutter">
                                 <div class="col-5 text-500 flex align-items-center">Tax:</div>
-                                <div class="col-7 flex align-items-center pl-4 pr-3" id="tax">{{projectFinancialDetailForm.value.incomeTax  | currency: ' ':'code':'3.2-2'}}</div>
+                                <div class="col-7 flex align-items-center pl-4 pr-3" id="tax">{{projectFinancialDetailForm.value.incomeTax  | currency: ' ':'code':'2.2-2'}}</div>
                             </div>
                             <div class="col-3 p-1 grid grid-nogutter">
                                 <div class="col-5 text-500 flex align-items-center">VAT:</div>
-                                <div class="col-7 flex align-items-center pl-4 pr-3" id="vat">{{projectFinancialDetailForm.value.vatTax  | currency: ' ':'code':'3.2-2'}}</div>
+                                <div class="col-7 flex align-items-center pl-4 pr-3" id="vat">{{projectFinancialDetailForm.value.vatTax  | currency: ' ':'code':'2.2-2'}}</div>
                             </div>
                         </div>
                     </div>
@@ -35,8 +35,10 @@
                             </p-tabPanel>
                             <p-tabPanel header="Supplies">
                                 <supply-list [supplyProjectData]="supplyProjectData" [suppliers]="$suppliers()">
-
                                 </supply-list>
+                            </p-tabPanel>
+                            <p-tabPanel header="Contractor Jobs">
+                                <contractor-job-list [contractorsJobsProjectData]="contractorsJobsProjectData" [contractors]="contractors"></contractor-job-list>
                             </p-tabPanel>
                         </p-tabView>
 

@@ -14,6 +14,7 @@ export { Contract } from './models/contract';
 export { Contractor } from './models/contractor';
 export { ContractorCategory } from './models/contractor-category';
 export { ContractorJob } from './models/contractor-job';
+export { ContractorJobProjectData } from './models/contractor-job-project-data';
 export { Contractors } from './models/contractors';
 export { ContractStatus } from './models/contract-status';
 export { Cost } from './models/cost';

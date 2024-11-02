@@ -1,10 +1,10 @@
 import {
     ChangeDetectionStrategy,
-    Component, EventEmitter,
+    Component,
+    EventEmitter,
     inject,
     Input,
     OnChanges,
-    OnInit,
     Output,
     SimpleChanges
 } from '@angular/core';
@@ -24,7 +24,7 @@ import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
     styleUrls: ['./project-detail.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProjectDetailComponent implements OnInit, OnChanges {
+export class ProjectDetailComponent implements OnChanges {
     @Input()
     project!: Project | null;
     @Input()
@@ -55,16 +55,19 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
     initialContractForm!: FormGroup<ProjectContractForm>;
     initialProjectForm!: FormGroup<ProjectCreateForm>;
 
+    formInitialized: boolean = false;
+
     constructor(private formProvider: ProjectFormProvider) {
     }
 
-    ngOnInit(): void {
-        this.projectDetailsForm = this.formProvider.getProjectDetailForm();
-        this.initialContractForm = cloneDeep(this.projectDetailsForm.get('contract') as FormGroup<ProjectContractForm>);
-        this.initialProjectForm = cloneDeep(this.projectDetailsForm);
-    }
-
     ngOnChanges(changes: SimpleChanges): void {
+        if (!this.formInitialized) {
+            this.projectDetailsForm = this.formProvider.getProjectDetailForm();
+            this.initialContractForm = cloneDeep(
+                this.projectDetailsForm.get('contract') as FormGroup<ProjectContractForm>);
+            this.initialProjectForm = cloneDeep(this.projectDetailsForm);
+            this.formInitialized = true;
+        }
         if (this.project && changes['project']) {
             this.contractStore.setContractId(this.project?.contract!.id!);
             this.fillFormData();
@@ -98,8 +101,10 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
                 deadline: toDateIfExists(this.project.contract!.deadline)
             }
         })
-        this.projectDetailsForm.get('startDate')?.disable();
-        this.projectDetailsForm.get('endDate')?.disable();
+        this.projectDetailsForm.get('startDate')
+            ?.disable();
+        this.projectDetailsForm.get('endDate')
+            ?.disable();
     }
 
     resolveLabels() {

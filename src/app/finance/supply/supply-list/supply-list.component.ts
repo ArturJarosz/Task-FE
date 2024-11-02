@@ -6,13 +6,14 @@ import {
 } from "../../project-financial-summary/form/project-financial-summary-form-provider";
 import {FormGroup} from "@angular/forms";
 import {Supplier} from "../../../generated/models/supplier";
+import {isUndefinedOrEmpty} from "../../../shared/utils/data-validation-util";
 
 @Component({
     selector: 'supply-list',
     templateUrl: './supply-list.component.html',
     styleUrl: './supply-list.component.less'
 })
-export class SupplyListComponent implements OnInit, OnChanges{
+export class SupplyListComponent implements OnChanges{
     @Input()
     supplyProjectData!: SupplyProjectData | null;
     @Input()
@@ -25,18 +26,15 @@ export class SupplyListComponent implements OnInit, OnChanges{
     }
 
     ngOnChanges(changes: SimpleChanges): void {
+        this.supplierIdToSupplier = new Map(this.suppliers.map(supplier => [supplier.id!, supplier.name!]));
         this.supplyDataForm = this.formProvider.getFinanceObjectSummaryForm();
         if (changes['supplyProjectData'] && this.supplyProjectData) {
             this.fillFormData();
         }
     }
 
-    ngOnInit(): void {
-        this.supplierIdToSupplier = new Map(this.suppliers.map(supplier => [supplier.id!, supplier.name!] as const));
-    }
-
     private fillFormData(): void {
-        if (!this.supplyDataForm || !this.supplyProjectData) {
+        if (!this.supplyDataForm || isUndefinedOrEmpty(this.supplyProjectData)) {
             return;
         }
 

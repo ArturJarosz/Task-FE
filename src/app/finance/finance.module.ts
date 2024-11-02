@@ -26,6 +26,11 @@ import {InstallmentRestService, InstallmentRestServiceImpl} from "./installment/
 import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.guard";
 import {SupplyListComponent} from "./supply/supply-list/supply-list.component";
 import {SupplyRestService, SupplyRestServiceImpl} from "./supply/rest/supply-rest.service";
+import { ContractorJobListComponent } from './contractor-job/contractor-job-list/contractor-job-list.component';
+import {
+    ContractorJobRestService,
+    ContractorJobRestServiceImpl
+} from "./contractor-job/rest/contractor-job-rest.service";
 
 @NgModule({
     declarations: [
@@ -37,6 +42,7 @@ import {SupplyRestService, SupplyRestServiceImpl} from "./supply/rest/supply-res
         InstallmentListShellComponent,
         InstallmentListComponent,
         SupplyListComponent,
+        ContractorJobListComponent
     ],
     imports: [
         CommonModule,
@@ -66,15 +72,16 @@ import {SupplyRestService, SupplyRestServiceImpl} from "./supply/rest/supply-res
         CostListComponent,
         CostListShellComponent,
         InstallmentListShellComponent,
-        SupplyListComponent
+        SupplyListComponent,
+        ContractorJobListComponent
     ],
     providers: [
         {provide: CostRestService, useClass: CostRestServiceImpl},
         {provide: FinancialRestService, useClass: FinancialRestServiceImpl},
         {provide: InstallmentRestService, useClass: InstallmentRestServiceImpl},
-        {provide: SupplyRestService, useClass: SupplyRestServiceImpl}
+        {provide: SupplyRestService, useClass: SupplyRestServiceImpl},
+        {provide: ContractorJobRestService, useClass: ContractorJobRestServiceImpl}
     ]
-
 })
 export class FinanceModule {
 }
