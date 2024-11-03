@@ -2,10 +2,9 @@ import {AppState} from "../../state/app.store";
 import {Architect} from "../../generated/models/architect";
 import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {catchError, of, pipe, switchMap, tap} from "rxjs";
+import {of, pipe, switchMap, tap} from "rxjs";
 import {ArchitectRestService} from "../rest/architect-rest.service";
 import {inject} from "@angular/core";
-import {MessageSeverity} from "../../shared";
 import {MessageService} from "primeng/api";
 
 export interface ArchitectState extends AppState {
@@ -36,15 +35,7 @@ export const ArchitectStore = signalStore(
                         return architectRestService.getArchitect(store.architectId()!)
                             .pipe(
                                 tap(architect => patchState(store,
-                                    {architect: architect})),
-                                catchError(error => {
-                                    messageService.add({
-                                        severity: MessageSeverity.ERROR,
-                                        summary: `Error loading architect.`,
-                                        detail: `There was a problem with loading architect with id ${store.architectId()}.`,
-                                    });
-                                    return of(error);
-                                })
+                                    {architect: architect}))
                             )
                     })
                 )
@@ -56,15 +47,7 @@ export const ArchitectStore = signalStore(
                             return architectRestService.getArchitects()
                                 .pipe(
                                     tap(architects => patchState(store,
-                                        {architects: architects, architectsNeedRefresh: false})),
-                                    catchError(error => {
-                                        messageService.add({
-                                            severity: MessageSeverity.ERROR,
-                                            summary: `Error loading architects.`,
-                                            detail: `There was a problem with loading architects.`,
-                                        });
-                                        return of(error);
-                                    })
+                                        {architects: architects, architectsNeedRefresh: false}))
                                 )
                         }
                         return of({});

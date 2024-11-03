@@ -22,7 +22,8 @@ export class ContractRestServiceImpl extends AbstractRestService implements Cont
     changeStatus(contractId: number, contract: Contract): Observable<Contract> {
         return this.httpClient.post<Contract>(`${this.contractUrl}/${contractId}/status`, contract)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(
+                    error => this.handleError(error, this.messageService, `Error changing contract status`))
             );
     }
 

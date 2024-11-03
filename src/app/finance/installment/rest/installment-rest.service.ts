@@ -21,7 +21,8 @@ export class InstallmentRestServiceImpl extends AbstractRestService implements I
     getProjectInstallmentData(projectId: number): Observable<InstallmentProjectData> {
         return this.httpClient.get<InstallmentProjectData>(`${this.projectsUrl}/${projectId}/installments-data`)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error,
+                    this.messageService, `Error getting installment project data for project with id: ${projectId}`))
             );
     }
 

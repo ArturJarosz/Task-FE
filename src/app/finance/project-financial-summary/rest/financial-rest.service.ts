@@ -22,7 +22,8 @@ export class FinancialRestServiceImpl extends AbstractRestService implements Fin
         return this.httpClient.get<TotalProjectFinancialSummary>(
             `${this.projectsUrl}/${projectId}/total-financial-summary`)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error loading financial summary for project with id: ${projectId}`))
             );
     }
 }

@@ -30,35 +30,39 @@ export class ProjectRestServiceImpl extends AbstractRestService implements Proje
     getProjects(): Observable<Project[]> {
         return this.httpClient.get<Project[]>(this.projectUrl)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService, `Error loading projects`))
             );
     }
 
     getProject(projectId: number): Observable<Project> {
         return this.httpClient.get<Project>(`${this.projectUrl}/${projectId}`)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error loading project with id: ${projectId}`))
             );
     }
 
     createProject(projectCreate: ProjectCreate): Observable<Project> {
         return this.httpClient.post<Project>(this.projectUrl, projectCreate)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(
+                    error => this.handleError(error, this.messageService, `Error creating a new project`))
             );
     }
 
     updateProject(projectId: number, project: Project): Observable<Project> {
         return this.httpClient.put<Project>(`${this.projectUrl}/${projectId}`, project)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error updating a project with id ${projectId}`))
             );
     }
 
     removeProject(projectId: number): Observable<void> {
         return this.httpClient.delete<void>(`${this.projectUrl}/${projectId}`)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error deleting project with id: ${projectId}`))
             );
     }
 }
