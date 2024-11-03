@@ -21,7 +21,8 @@ export class SupplyRestServiceImpl extends AbstractRestService implements Supply
     getProjectSuppliesData(projectId: number): Observable<SupplyProjectData> {
         return this.httpClient.get<SupplyProjectData>(`${this.projectUrl}/${projectId}/supplies-data`)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error getting project supplies data for project with id: ${projectId}`))
             );
     }
 

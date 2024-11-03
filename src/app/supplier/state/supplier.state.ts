@@ -45,15 +45,7 @@ export const SupplierStore = signalStore(
                             return supplierRestService.getSuppliers()
                                 .pipe(
                                     tap(suppliers => patchState(store,
-                                        {suppliers: suppliers, suppliersNeedRefresh: false})),
-                                    catchError(error => {
-                                        messageService.add({
-                                            severity: MessageSeverity.ERROR,
-                                            summary: `Error loading suppliers.`,
-                                            detail: `There was a problem with loading suppliers.`,
-                                        });
-                                        return of(error);
-                                    })
+                                        {suppliers: suppliers, suppliersNeedRefresh: false}))
                                 )
                         }
                         return of({});
@@ -67,15 +59,7 @@ export const SupplierStore = signalStore(
                             return supplierRestService.getSupplier(store.supplierId()!)
                                 .pipe(
                                     tap(supplier => patchState(store,
-                                        {supplier: supplier, supplierNeedsRefresh: false})),
-                                    catchError(error => {
-                                        messageService.add({
-                                            severity: MessageSeverity.ERROR,
-                                            summary: `Error loading supplier.`,
-                                            detail: `There was a problem with loading supplier with id: ${store.supplierId()}.`,
-                                        });
-                                        return of(error);
-                                    })
+                                        {supplier: supplier, supplierNeedsRefresh: false}))
                                 )
                         }
                         return of({});
@@ -92,7 +76,7 @@ export const SupplierStore = signalStore(
                                     messageService.add({
                                         severity: MessageSeverity.INFO,
                                         summary: `New supplier created`,
-                                        detail: `New supplier was created.`,
+                                        detail: `New supplier '${supplier.name}' was created.`,
                                     });
                                 })
                             )
@@ -110,7 +94,7 @@ export const SupplierStore = signalStore(
                                     messageService.add({
                                         severity: MessageSeverity.INFO,
                                         summary: `Supplier updated.`,
-                                        detail: `Supplier ${supplier.name} was updated.`,
+                                        detail: `Supplier '${supplier.name}' was updated.`,
                                     });
                                 })
                             )

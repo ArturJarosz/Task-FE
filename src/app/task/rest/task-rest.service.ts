@@ -33,14 +33,15 @@ export class TaskRestServiceImpl extends AbstractRestService implements TaskRest
     loadTask(projectId: number, stageId: number, taskId: number): Observable<Task> {
         return this.httpClient.get<Task>(`${this.projectsUrl}/${projectId}/stages/${stageId}/tasks/${taskId}`)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error loading task with id ${taskId}`))
             );
     }
 
     createTask(projectId: number, stageId: number, task: Task): Observable<Task> {
         return this.httpClient.post<Task>(`${this.projectsUrl}/${projectId}/stages/${stageId}/tasks`, task)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService, `Error creating task`))
             );
     }
 
@@ -49,7 +50,8 @@ export class TaskRestServiceImpl extends AbstractRestService implements TaskRest
         return this.httpClient.post<Task>(`${this.projectsUrl}/${projectId}/stages/${stageId}/tasks/${taskId}/status`,
             updateTaskStatusDto)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error updating task status for task with id ${taskId}`))
             );
     }
 
@@ -57,14 +59,16 @@ export class TaskRestServiceImpl extends AbstractRestService implements TaskRest
         return this.httpClient.put<Task>(`${this.projectsUrl}/${projectId}/stages/${stageId}/tasks/${taskId}`,
             task)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error updating task with id ${taskId}`))
             );
     }
 
     removeTask(projectId: number, stageId: number, taskId: number): Observable<void> {
         return this.httpClient.delete<void>(`${this.projectsUrl}/${projectId}/stages/${stageId}/tasks/${taskId}`)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error removing task with id ${taskId}`))
             );
     }
 }

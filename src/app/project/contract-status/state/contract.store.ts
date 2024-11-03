@@ -37,14 +37,6 @@ export const ContractStore = signalStore(
                                         summary: `Contract status changed.`,
                                         detail: `Status of contract with id: ${contract.id} was updated.`
                                     });
-                                }),
-                                catchError(error => {
-                                    messageService.add({
-                                        severity: MessageSeverity.ERROR,
-                                        summary: `Error changing contract status.`,
-                                        detail: `There was a problem with changing contract status.`
-                                    });
-                                    return of(error);
                                 })
                             )
                     })

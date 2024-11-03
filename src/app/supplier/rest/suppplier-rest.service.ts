@@ -29,35 +29,38 @@ export class SupplierRestServiceImpl extends AbstractRestService implements Supp
     getSuppliers(): Observable<Supplier[]> {
         return this.httpClient.get<Supplier[]>(this.supplierUrl)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService, `Error loading suppliers`))
             );
     }
 
     createSupplier(supplier: Supplier): Observable<Supplier> {
         return this.httpClient.post<Supplier>(this.supplierUrl, supplier)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService, `Error creating supplier`))
             )
     }
 
     deleteSupplier(supplierId: number): Observable<void> {
         return this.httpClient.delete<void>(`${this.supplierUrl}/${supplierId}`)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error deleting supplier with id ${supplierId}`))
             );
     }
 
     getSupplier(supplierId: number): Observable<Supplier> {
         return this.httpClient.get<Supplier>(`${this.supplierUrl}/${supplierId}`)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error loading supplier with id ${supplierId}`))
             );
     }
 
     updateSupplier(supplierId: number, supplier: Supplier): Observable<Supplier> {
         return this.httpClient.put<Supplier>(`${this.supplierUrl}/${supplierId}`, supplier)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error updating supplier with id ${supplierId}`))
             );
     }
 }

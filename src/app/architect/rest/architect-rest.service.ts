@@ -23,14 +23,15 @@ export class ArchitectRestServiceImpl extends AbstractRestService implements Arc
     getArchitects(): Observable<Architect[]> {
         return this.httpClient.get<Architect[]>(this.architectUrl)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService, `Error loading architects`))
             );
     }
 
     getArchitect(architectId: number): Observable<Architect> {
         return this.httpClient.get<Architect>(`${this.architectUrl}/${architectId}`)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error loading architect with id ${architectId}`))
             );
     }
 

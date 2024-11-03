@@ -2,7 +2,7 @@ import {AppState} from "../../state/app.store";
 import {Contractor} from "../../generated/models/contractor";
 import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {catchError, of, pipe, switchMap, tap} from "rxjs";
+import {of, pipe, switchMap, tap} from "rxjs";
 import {ContractorRestService} from "../rest/contractor-rest.service";
 import {inject} from "@angular/core";
 import {MessageSeverity} from "../../shared";
@@ -45,15 +45,7 @@ export const ContractorStore = signalStore(
                             return contractorRestService.getContractors()
                                 .pipe(
                                     tap(contractors => patchState(store,
-                                        {contractors: contractors, contractorsNeedRefresh: false})),
-                                    catchError(error => {
-                                        messageService.add({
-                                            severity: MessageSeverity.ERROR,
-                                            summary: `Error loading contractors.`,
-                                            detail: `There was a problem with loading contractors.`,
-                                        });
-                                        return of(error);
-                                    })
+                                        {contractors: contractors, contractorsNeedRefresh: false}))
                                 )
                         }
                         return of({});
@@ -67,15 +59,7 @@ export const ContractorStore = signalStore(
                             return contractorRestService.getContractor(store.contractorId()!)
                                 .pipe(
                                     tap(contractor => patchState(store,
-                                        {contractor: contractor, contractorNeedsRefresh: false})),
-                                    catchError(error => {
-                                        messageService.add({
-                                            severity: MessageSeverity.ERROR,
-                                            summary: `Error loading contractor.`,
-                                            detail: `There was a problem with loading contractor with id: ${store.contractorId()}.`,
-                                        });
-                                        return of(error);
-                                    })
+                                        {contractor: contractor, contractorNeedsRefresh: false}))
                                 )
                         }
                         return of({});
@@ -92,7 +76,7 @@ export const ContractorStore = signalStore(
                                     messageService.add({
                                         severity: MessageSeverity.INFO,
                                         summary: `New contractor created`,
-                                        detail: `New contractor was created.`,
+                                        detail: `New contractor '${contractor.name}' was created.`,
                                     });
                                 })
                             )
@@ -113,7 +97,7 @@ export const ContractorStore = signalStore(
                                     messageService.add({
                                         severity: MessageSeverity.INFO,
                                         summary: `Contractor updated.`,
-                                        detail: `Contractor ${contractor.name} was updated.`,
+                                        detail: `Contractor '${contractor.name}' was updated.`,
                                     });
                                 })
                             )
@@ -126,12 +110,12 @@ export const ContractorStore = signalStore(
                         return contractorRestService.deleteContractor(store.contractorId()!)
                             .pipe(
                                 tap(contractor => {
-                                    patchState(store, {contractorsNeedRefresh: true});
                                     messageService.add({
                                         severity: MessageSeverity.INFO,
                                         summary: `Contractor removed.`,
                                         detail: `Contractor with id ${store.contractorId()!} was removed.`,
                                     });
+                                    patchState(store, {contractorsNeedRefresh: true, contractorId: undefined});
                                 })
                             )
                     })

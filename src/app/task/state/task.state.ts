@@ -2,7 +2,7 @@ import {AppState} from "../../state/app.store";
 import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {inject} from "@angular/core";
 import {TaskRestService} from "../rest/task-rest.service";
-import {catchError, of, pipe, switchMap, tap} from "rxjs";
+import {pipe, switchMap, tap} from "rxjs";
 import {Task} from "../../generated/models/task";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
 import {MessageService} from "primeng/api";
@@ -47,15 +47,7 @@ export const TaskStore = signalStore(
                 switchMap(() => {
                     return taskRestService.loadTask(store.projectId()!, store.stageId()!, store.taskId()!)
                         .pipe(
-                            tap(task => patchState(store, {task: task})),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error loading task.`,
-                                    detail: `There was a problem with loading task with id ${store.taskId()!}.`
-                                });
-                                return of(error)
-                            })
+                            tap(task => patchState(store, {task: task}))
                         )
                 })
             )
@@ -73,14 +65,6 @@ export const TaskStore = signalStore(
                                     summary: `Task created.`,
                                     detail: `Task with id: ${task.id} was created.`
                                 });
-                            }),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error creating task.`,
-                                    detail: `There was a problem with creating a new task.`
-                                });
-                                return of(error)
                             })
                         )
                 })
@@ -103,14 +87,6 @@ export const TaskStore = signalStore(
                                     summary: `Task status changed.`,
                                     detail: `Status of task with id: ${task.id} was changed to ${task.status}.`
                                 });
-                            }),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error changing task status.`,
-                                    detail: `There was problem with changing task status: ${error}.`
-                                });
-                                return of(error)
                             })
                         )
                 })
@@ -130,16 +106,8 @@ export const TaskStore = signalStore(
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
                                     summary: `Task updated.`,
-                                    detail: `Task with id: ${task.id} was updated.`
+                                    detail: `Task ${task.name} was updated.`
                                 });
-                            }),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error updating task.`,
-                                    detail: `There was problem with updating task: ${error}.`
-                                });
-                                return of(error)
                             })
                         )
                 })
@@ -165,14 +133,6 @@ export const TaskStore = signalStore(
                                     summary: `Task removed.`,
                                     detail: `Task with id: ${store.taskId()!} was removed.`
                                 });
-                            }),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error removing task.`,
-                                    detail: `There was problem with removing task: ${error}.`
-                                });
-                                return of(error)
                             })
                         )
                 })

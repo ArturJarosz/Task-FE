@@ -2,7 +2,7 @@ import {AppState} from "../../state/app.store";
 import {Stage} from "../../generated/models/stage";
 import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {catchError, of, pipe, switchMap, tap} from "rxjs";
+import {pipe, switchMap, tap} from "rxjs";
 import {inject} from "@angular/core";
 import {StageRestService} from "../rest/stage-rest.service";
 import {MessageService} from "primeng/api";
@@ -52,15 +52,7 @@ export const StageStore = signalStore(
                 switchMap(() => {
                     return stageRestService.getStage(store.projectId()!, store.stageId()!)
                         .pipe(
-                            tap(stage => patchState(store, {stage: stage, stageNeedsRefresh: false})),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error loading stage`,
-                                    detail: `There was a problem with loading stage with id: ${store.stageId()!}.`,
-                                });
-                                return of(error);
-                            })
+                            tap(stage => patchState(store, {stage: stage, stageNeedsRefresh: false}))
                         )
                 })
             )
@@ -70,15 +62,7 @@ export const StageStore = signalStore(
                 switchMap(() => {
                     return stageRestService.getStagesForProject(store.projectId()!)
                         .pipe(
-                            tap(stages => patchState(store, {stages: stages, stagesNeedRefresh: false})),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error loading stages`,
-                                    detail: `There was a problem with loading stages for project with id: ${store.projectId()!}.`,
-                                });
-                                return of(error);
-                            })
+                            tap(stages => patchState(store, {stages: stages, stagesNeedRefresh: false}))
                         )
                 })
             )
@@ -94,18 +78,10 @@ export const StageStore = signalStore(
                                     messageService.add({
                                         severity: MessageSeverity.INFO,
                                         summary: `New stage created`,
-                                        detail: `New stage for project with id ${store.projectId()} was created.`,
+                                        detail: `New stage '${stage.name}' for project with id ${store.projectId()} was created.`,
                                     });
                                 }
-                            ),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error creating stage`,
-                                    detail: `There was a problem with creating new stage for project with id: ${store.projectId()!}.`,
-                                });
-                                return of(error);
-                            })
+                            )
                         )
                 })
             )
@@ -122,14 +98,6 @@ export const StageStore = signalStore(
                                     summary: `Stage removed.`,
                                     detail: `Stage with id: ${store.stageId()!} was removed.`
                                 });
-                            }),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error removing stage.`,
-                                    detail: `There was problem with removing stage: ${error}.`
-                                });
-                                return of(error)
                             })
                         )
                 })
@@ -148,14 +116,6 @@ export const StageStore = signalStore(
                                     summary: `Stage rejected.`,
                                     detail: `Stage with id: ${store.stageId()!} was rejected.`
                                 });
-                            }),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error rejecting stage.`,
-                                    detail: `There was problem with rejecting stage: ${error}.`
-                                });
-                                return of(error)
                             })
                         )
                 })
@@ -174,14 +134,6 @@ export const StageStore = signalStore(
                                     summary: `Stage reopened.`,
                                     detail: `Stage with id: ${store.stageId()!} was reopened.`
                                 });
-                            }),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error reopening stage.`,
-                                    detail: `There was problem with reopening stage: ${error}.`
-                                });
-                                return of(error)
                             })
                         )
                 })
@@ -198,16 +150,8 @@ export const StageStore = signalStore(
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
                                     summary: `Stage updated.`,
-                                    detail: `Stage with id: ${store.stageId()!} was updated.`
+                                    detail: `Stage ${stage.name} was updated.`
                                 });
-                            }),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error updating stage.`,
-                                    detail: `There was problem with updating stage: ${error}.`
-                                });
-                                return of(error)
                             })
                         )
                 })

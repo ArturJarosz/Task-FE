@@ -21,7 +21,8 @@ export class ContractorJobRestServiceImpl extends AbstractRestService implements
     getProjectContractorsJobsData(projectId: number): Observable<ContractorJobProjectData> {
         return this.httpClient.get<ContractorJobProjectData>(`${this.projectUrl}/${projectId}/contractor-jobs-data`)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error loading contractor jobs data for project with id: ${projectId}`))
             );
     }
 

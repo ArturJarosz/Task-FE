@@ -22,7 +22,8 @@ export class ConfigurationRestServiceImpl extends AbstractRestService implements
     getConfiguration(): Observable<ApplicationConfiguration> {
         return this.httpClient.get<ApplicationConfiguration>(this.configurationUrl)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    "Error loading application configuration"))
             );
     }
 }

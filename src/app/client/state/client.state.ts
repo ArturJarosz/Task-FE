@@ -2,7 +2,7 @@ import {AppState} from "../../state/app.store";
 import {Client} from "../../generated/models/client";
 import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {catchError, of, pipe, switchMap, tap} from "rxjs";
+import {of, pipe, switchMap, tap} from "rxjs";
 import {ClientRestService} from "../rest/client-rest.service";
 import {inject} from "@angular/core";
 import {MessageService} from "primeng/api";
@@ -48,15 +48,7 @@ export const ClientStore = signalStore(
                     if (store.clientNeedsRefresh()) {
                         return clientRestService.getClient(store.clientId()!)
                             .pipe(
-                                tap(client => patchState(store, {client: client, clientNeedsRefresh: false})),
-                                catchError(error => {
-                                    messageService.add({
-                                        severity: MessageSeverity.ERROR,
-                                        summary: `Error loading client.`,
-                                        detail: `There was a problem with loading client with id ${store.clientId()!}.`,
-                                    });
-                                    return of(error);
-                                })
+                                tap(client => patchState(store, {client: client, clientNeedsRefresh: false}))
                             )
                     }
                     return of({});
@@ -69,15 +61,7 @@ export const ClientStore = signalStore(
                     if (store.clientsNeedRefresh()) {
                         return clientRestService.getClients()
                             .pipe(
-                                tap(clients => patchState(store, {clients: clients, clientsNeedRefresh: false})),
-                                catchError(error => {
-                                    messageService.add({
-                                        severity: MessageSeverity.ERROR,
-                                        summary: `Error loading clients.`,
-                                        detail: `There was a problem with loading clients.`,
-                                    });
-                                    return of(error);
-                                })
+                                tap(clients => patchState(store, {clients: clients, clientsNeedRefresh: false}))
                             )
                     }
                     return of({});
@@ -96,14 +80,6 @@ export const ClientStore = signalStore(
                                     summary: `Client removed.`,
                                     detail: `A client with id: ${store.clientId()} was removed.`
                                 });
-                            }),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error removing client.`,
-                                    detail: `There was a problem with removing client. Error: ${error}`,
-                                });
-                                return of(error);
                             })
                         )
                 })
@@ -121,14 +97,6 @@ export const ClientStore = signalStore(
                                     summary: `Client created.`,
                                     detail: `A new client was created.`
                                 });
-                            }),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error creating client.`,
-                                    detail: `There was a problem with creating client.`,
-                                });
-                                return of(error);
                             })
                         )
                 })
@@ -139,21 +107,14 @@ export const ClientStore = signalStore(
                 switchMap(({client}) => {
                     return clientRestService.updateClient(store.clientId()!, client)
                         .pipe(
-                            tap(() => {
+                            tap(client => {
+                                let clientName = client?.firstName ? `${client?.firstName} ${client?.lastName}` : `${client?.companyName}`;
                                 patchState(store, {clientsNeedRefresh: true, clientNeedsRefresh: true});
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
                                     summary: `Client updated.`,
-                                    detail: `A client with id ${store.clientId()!} was updated.`
+                                    detail: `A client ${clientName} was updated.`
                                 });
-                            }),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error updating client.`,
-                                    detail: `There was a problem with updating client with id ${store.clientId()!}.`,
-                                });
-                                return of(error);
                             })
                         )
                 })
@@ -165,15 +126,7 @@ export const ClientStore = signalStore(
                     return clientRestService.getClientProjectsSummary(store.clientId()!)
                         .pipe(
                             tap(clientProjectsSummary => patchState(store,
-                                {clientProjectsSummary: clientProjectsSummary})),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error loading client projects.`,
-                                    detail: `There was a problem with loading client projects.`,
-                                });
-                                return of(error);
-                            })
+                                {clientProjectsSummary: clientProjectsSummary}))
                         )
                 })
             )

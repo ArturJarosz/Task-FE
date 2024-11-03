@@ -5,17 +5,17 @@ import {MessageService} from "primeng/api";
 
 export class AbstractRestService {
 
-    handleError(error: HttpErrorResponse, messageService: MessageService) {
+    handleError(error: HttpErrorResponse, messageService: MessageService, title: string) {
         let errorMessage = '';
         if (error.error instanceof ErrorEvent) {
             errorMessage = `An error occurred: ${error.error.message}`;
         } else {
-            errorMessage = `Response code: ${error.status}, Error: ${error.error.message ? error.error.message : error.message}`;
+            errorMessage = `Response code: ${error.status},\n Error: ${error.error.message ? error.error.message : error.message}`;
         }
 
         messageService.add({
             severity: MessageSeverity.ERROR,
-            summary: "Error",
+            summary: title,
             detail: errorMessage,
 
         })

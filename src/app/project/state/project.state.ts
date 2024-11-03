@@ -55,15 +55,7 @@ export const ProjectStore = signalStore(
                     if (store.projectNeedsRefresh()) {
                         return projectRestService.getProject(store.projectId()!)
                             .pipe(
-                                tap(project => patchState(store, {project: project, projectNeedsRefresh: false})),
-                                catchError(error => {
-                                    messageService.add({
-                                        severity: MessageSeverity.ERROR,
-                                        summary: `Error loading project.`,
-                                        detail: `There was a problem with loading project with id ${store.projectId()!}.`,
-                                    });
-                                    return of(error);
-                                })
+                                tap(project => patchState(store, {project: project, projectNeedsRefresh: false}))
                             )
                     }
                     return of({});
@@ -76,15 +68,7 @@ export const ProjectStore = signalStore(
                     if (store.projectsNeedRefresh()) {
                         return projectRestService.getProjects()
                             .pipe(
-                                tap(projects => patchState(store, {projects: projects, projectsNeedRefresh: false})),
-                                catchError(error => {
-                                    messageService.add({
-                                        severity: MessageSeverity.ERROR,
-                                        summary: `Error loading projects.`,
-                                        detail: `There was a problem with loading projects.`,
-                                    });
-                                    return of(error);
-                                })
+                                tap(projects => patchState(store, {projects: projects, projectsNeedRefresh: false}))
                             )
                     }
                     return of({});
@@ -101,16 +85,8 @@ export const ProjectStore = signalStore(
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
                                     summary: `Project created.`,
-                                    detail: `New project with id: ${project.id} was created.`
+                                    detail: `New project: '${project.name}' of type: ${project.type} was created.`
                                 });
-                            }),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error creating project.`,
-                                    detail: `There was a problem with creating a new project.`
-                                });
-                                return of(error)
                             })
                         )
                 })
@@ -127,16 +103,8 @@ export const ProjectStore = signalStore(
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
                                     summary: `Project updated.`,
-                                    detail: `Project with id: ${project.id} was updated.`
+                                    detail: `Project ${project.name} was updated.`
                                 });
-                            }),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error updating project.`,
-                                    detail: `There was a problem with updating a project with id ${project.id}.`
-                                });
-                                return of(error)
                             })
                         )
                 })
@@ -147,21 +115,13 @@ export const ProjectStore = signalStore(
                 switchMap(() => {
                     return projectRestService.removeProject(store.projectId()!)
                         .pipe(
-                            tap(project => {
+                            tap(() => {
                                 patchState(store, {projectsNeedRefresh: true});
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
                                     summary: `Project removed.`,
                                     detail: `A project with id: ${store.projectId()} was removed.`
                                 });
-                            }),
-                            catchError(error => {
-                                messageService.add({
-                                    severity: MessageSeverity.ERROR,
-                                    summary: `Error removing project.`,
-                                    detail: `There was a problem with removing a project ${store.projectId()}.`
-                                });
-                                return of(error)
                             })
                         )
                 })

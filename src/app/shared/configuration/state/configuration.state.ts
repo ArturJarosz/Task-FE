@@ -44,15 +44,7 @@ export const ConfigurationStore = signalStore(
                         return configurationRestService.getConfiguration()
                             .pipe(
                                 tap(configuration => patchState(store,
-                                    {configuration: configuration, needRefresh: false})),
-                                catchError(error => {
-                                    messageService.add({
-                                        severity: MessageSeverity.ERROR,
-                                        summary: `Error loading configuration.`,
-                                        detail: `There was a problem with loading application configuration.`,
-                                    });
-                                    return of(error);
-                                })
+                                    {configuration: configuration, needRefresh: false}))
                             )
                     }
                     return of({})

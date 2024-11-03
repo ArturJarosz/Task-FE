@@ -32,42 +32,48 @@ export class ClientRestServiceImpl extends AbstractRestService implements Client
     getClients(): Observable<Client[]> {
         return this.httpClient.get<Client[]>(this.clientUrl)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error loading clients`))
             );
     }
 
     getClient(clientId: number): Observable<Client> {
         return this.httpClient.get<Client>(`${this.clientUrl}/${clientId}`)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error loading a client with id ${clientId}`))
             );
     }
 
     createClient(client: Client): Observable<Client> {
         return this.httpClient.post<Client>(this.clientUrl, client)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error creating a client`))
             )
     }
 
     deleteClient(clientId: number): Observable<void> {
         return this.httpClient.delete<void>(`${this.clientUrl}/${clientId}`)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error removing a client with id ${clientId}`))
             )
     }
 
     updateClient(clientId: number, client: Client): Observable<Client> {
         return this.httpClient.put<Client>(`${this.clientUrl}/${clientId}`, client)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error updating a client with id: ${clientId}`))
             );
     }
 
     getClientProjectsSummary(clientId: number): Observable<ClientProjectsSummary> {
         return this.httpClient.get<ClientProjectsSummary>(`${this.clientUrl}/${clientId}/projects`)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error loading projects summary for client with id": ${clientId}`))
             );
     }
 

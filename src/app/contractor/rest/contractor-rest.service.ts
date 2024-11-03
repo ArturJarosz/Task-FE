@@ -29,35 +29,39 @@ export class ContractorRestServiceImpl extends AbstractRestService implements Co
     getContractors(): Observable<Contractor[]> {
         return this.httpClient.get<Contractor[]>(this.contractorUrl)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService, `Error loading contractors`))
             );
     }
 
     createContractor(contractor: Contractor): Observable<Contractor> {
         return this.httpClient.post<Contractor>(this.contractorUrl, contractor)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(
+                    error => this.handleError(error, this.messageService, `Error creating new contractor`))
             );
     }
 
     getContractor(contractorId: number): Observable<Contractor> {
         return this.httpClient.get<Contractor>(`${this.contractorUrl}/${contractorId}`)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error loading contractor with id: ${contractorId}`))
             );
     }
 
     updateContractor(contractorId: number, contractor: Contractor): Observable<Contractor> {
         return this.httpClient.put<Contractor>(`${this.contractorUrl}/${contractorId}`, contractor)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error updating contractor with id: ${contractorId}`))
             );
     }
 
     deleteContractor(contractorId: number): Observable<void> {
         return this.httpClient.delete<void>(`${this.contractorUrl}/${contractorId}`)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error removing contractor with id: ${contractorId}`))
             );
     }
 }

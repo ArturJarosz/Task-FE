@@ -34,49 +34,57 @@ export class StageRestServiceImpl extends AbstractRestService implements StageRe
     getStagesForProject(projectId: number): Observable<Stage[]> {
         return this.httpClient.get<Stage[]>(`${this.projectsUrl}/${projectId}/stages`)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error loading stages for project with id: ${projectId}`))
             );
     }
 
     getStage(projectId: number, stageId: number): Observable<Stage> {
         return this.httpClient.get<Stage>(`${this.projectsUrl}/${projectId}/stages/${stageId}`)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(
+                    error => this.handleError(error, this.messageService,
+                        `Error loading stage with id: ${stageId}`))
             );
     }
 
     createStage(projectId: number, stage: Stage): Observable<Stage> {
         return this.httpClient.post<Stage>(`${this.projectsUrl}/${projectId}/stages`, stage)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error creating stage for project ${projectId}`))
             );
     }
 
     removeStage(projectId: number, stageId: number): Observable<void> {
         return this.httpClient.delete<void>(`${this.projectsUrl}/${projectId}/stages/${stageId}`)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error deleting stage with id: ${stageId}`))
             );
     }
 
     rejectStage(projectId: number, stageId: number): Observable<Stage> {
         return this.httpClient.post<Stage>(`${this.projectsUrl}/${projectId}/stages/${stageId}/reject`, {})
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error rejecting stage with id: ${stageId}`))
             );
     }
 
     reopenStage(projectId: number, stageId: number): Observable<Stage> {
         return this.httpClient.post<Stage>(`${this.projectsUrl}/${projectId}/stages/${stageId}/reopen`, {})
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error reopening stage with id: ${stageId}`))
             );
     }
 
     updateStage(projectId: number, stageId: number, stage: Stage): Observable<Stage> {
         return this.httpClient.put<Stage>(`${this.projectsUrl}/${projectId}/stages/${stageId}`, stage)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService))
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error updating stage with id: ${stageId}`))
             );
     }
 }
