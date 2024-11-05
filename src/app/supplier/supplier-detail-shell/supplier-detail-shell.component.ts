@@ -34,7 +34,6 @@ export class SupplierDetailShellComponent implements OnInit {
         let maybeSupplierId = this.route.snapshot.paramMap.get("supplierId");
         this.supplierId = Number(maybeSupplierId);
         this.supplierStore.setSupplierId(this.supplierId);
-
         this.supplierStore.loadSupplier({});
     }
 

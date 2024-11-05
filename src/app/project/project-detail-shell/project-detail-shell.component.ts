@@ -56,7 +56,7 @@ export class ProjectDetailShellComponent implements OnInit {
     onRemoveProject($event: void) {
         let projectName = this.projectStore.project()!.name;
         this.confirmationService.confirm({
-            message: `Do you want to project task: ${projectName}?`,
+            message: `Do you want to remove project: ${projectName}?`,
             header: `Confirm project delete ${projectName}.`,
             icon: "pi pi-info-circle text-red-300",
             accept: () => {

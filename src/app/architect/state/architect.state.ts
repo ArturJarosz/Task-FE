@@ -6,19 +6,22 @@ import {of, pipe, switchMap, tap} from "rxjs";
 import {ArchitectRestService} from "../rest/architect-rest.service";
 import {inject} from "@angular/core";
 import {MessageService} from "primeng/api";
+import {EntityProjectsSummary} from "../../generated/models/entity-projects-summary";
 
 export interface ArchitectState extends AppState {
     architects: Architect[];
     architect: Architect | null;
     architectId: number | undefined;
     architectsNeedRefresh: boolean;
+    architectProjectsSummary: EntityProjectsSummary;
 }
 
 export const initialState: ArchitectState = {
     architects: [],
     architect: null,
     architectId: undefined,
-    architectsNeedRefresh: true
+    architectsNeedRefresh: true,
+    architectProjectsSummary: {},
 }
 
 export const ArchitectStore = signalStore(
@@ -54,6 +57,18 @@ export const ArchitectStore = signalStore(
                     })
                 )
             ),
+            loadArchitectProjectsSummary: rxMethod<{}>(
+                pipe(
+                    switchMap(() => {
+                        return architectRestService.getArchitectProjectSummary(store.architectId()!)
+                            .pipe(
+                                tap(architectProjectsSummary => patchState(store, {
+                                    architectProjectsSummary: architectProjectsSummary
+                                }))
+                            )
+                    })
+                )
+            )
         })
     )
 )

@@ -55,7 +55,7 @@ export const SupplierStore = signalStore(
             loadSupplier: rxMethod<{}>(
                 pipe(
                     switchMap(() => {
-                        if (store.suppliersNeedRefresh()) {
+                        if (store.supplierNeedsRefresh()) {
                             return supplierRestService.getSupplier(store.supplierId()!)
                                 .pipe(
                                     tap(supplier => patchState(store,

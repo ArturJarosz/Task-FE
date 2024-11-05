@@ -5,7 +5,8 @@ import {MessageService} from "primeng/api";
 import {AbstractRestService} from "../../shared/rest/abstract-rest.service";
 import {environment} from "../../../environments/environment";
 import {Client} from "../../generated/models/client";
-import {ClientProjectsSummary} from "../../generated/models/client-projects-summary";
+import {EntityProjectsSummary} from "../../generated/models/entity-projects-summary";
+
 
 export abstract class ClientRestService {
     abstract getClients(): Observable<Client[]>;
@@ -18,7 +19,7 @@ export abstract class ClientRestService {
 
     abstract updateClient(clientId: number, client: Client): Observable<Client>;
 
-    abstract getClientProjectsSummary(clientId: number): Observable<ClientProjectsSummary>;
+    abstract getClientProjectsSummary(clientId: number): Observable<EntityProjectsSummary>;
 }
 
 @Injectable()
@@ -69,8 +70,8 @@ export class ClientRestServiceImpl extends AbstractRestService implements Client
             );
     }
 
-    getClientProjectsSummary(clientId: number): Observable<ClientProjectsSummary> {
-        return this.httpClient.get<ClientProjectsSummary>(`${this.clientUrl}/${clientId}/projects`)
+    getClientProjectsSummary(clientId: number): Observable<EntityProjectsSummary> {
+        return this.httpClient.get<EntityProjectsSummary>(`${this.clientUrl}/${clientId}/projects`)
             .pipe(
                 catchError(error => this.handleError(error, this.messageService,
                     `Error loading projects summary for client with id": ${clientId}`))
