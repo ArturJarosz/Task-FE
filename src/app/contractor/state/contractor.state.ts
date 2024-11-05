@@ -36,7 +36,7 @@ export const ContractorStore = signalStore(
                 patchState(store, {contractorId: contractorId});
             },
             setContractorNeedsRefresh() {
-                patchState(store, {contractorNeedsRefresh: false});
+                patchState(store, {contractorNeedsRefresh: true});
             },
             loadContractors: rxMethod<{}>(
                 pipe(

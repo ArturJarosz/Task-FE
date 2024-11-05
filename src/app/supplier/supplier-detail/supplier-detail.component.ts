@@ -5,13 +5,14 @@ import {FormGroup} from "@angular/forms";
 import {SupplierForm, SupplierFormProvider} from "../form/supplier-form-provider.service";
 import {cloneDeep} from "lodash";
 import {SupplierDto} from "../model/supplier";
+import {isUndefinedOrEmpty} from "../../shared/utils/data-validation-util";
 
 @Component({
     selector: 'supplier-detail',
     templateUrl: './supplier-detail.component.html',
     styleUrl: './supplier-detail.component.less'
 })
-export class SupplierDetailComponent implements OnInit, OnChanges {
+export class SupplierDetailComponent implements OnChanges {
     @Input()
     supplier!: Supplier | null;
     @Input()
@@ -23,32 +24,33 @@ export class SupplierDetailComponent implements OnInit, OnChanges {
 
     supplierDetailsForm!: FormGroup<SupplierForm>;
     initialSupplierDetailsForm!: FormGroup<SupplierForm>;
+    formInitialized: boolean = false;
 
     constructor(private formProvider: SupplierFormProvider) {
     }
 
-    ngOnInit(): void {
-        this.supplierDetailsForm = this.formProvider.getSupplierForm();
-        this.fillFormData();
-    }
-
     ngOnChanges(changes: SimpleChanges): void {
-        if (this.supplier) {
+        if (!this.formInitialized) {
+            this.supplierDetailsForm = this.formProvider.getSupplierForm();
+            this.fillFormData();
+            this.formInitialized = true;
+        }
+        if (this.supplier && changes['supplier']) {
             this.fillFormData();
             this.initialSupplierDetailsForm = cloneDeep(this.supplierDetailsForm);
         }
     }
 
     private fillFormData(): void {
-        if (!this.supplier || !this.supplierDetailsForm) {
+        if (isUndefinedOrEmpty(this.supplier) || !this.supplierDetailsForm) {
             return;
         }
         this.supplierDetailsForm.patchValue({
-            name: this.supplier.name,
-            category: this.supplier.category,
-            email: this.supplier.email,
-            telephone: this.supplier.telephone,
-            note: this.supplier.note
+            name: this.supplier?.name,
+            category: this.supplier?.category,
+            email: this.supplier?.email,
+            telephone: this.supplier?.telephone,
+            note: this.supplier?.note
         })
     }
 

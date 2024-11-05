@@ -1,8 +1,9 @@
 import {Component, effect, inject, OnInit, Signal} from '@angular/core';
-import {ClientProjectsSummary} from "../../generated/models/client-projects-summary";
+
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {ClientStore} from "../state";
 import {ConfigurationStore} from "../../shared/configuration/state";
+import {EntityProjectsSummary} from "../../generated/models/entity-projects-summary";
 
 @Component({
     selector: 'client-projects-summary-shell',
@@ -14,7 +15,7 @@ export class ClientProjectsSummaryShellComponent implements OnInit{
     readonly configurationStore = inject(ConfigurationStore);
 
     $clientNeedsRefresh: Signal<boolean> = this.clientStore.clientNeedsRefresh!;
-    $clientProjectsSummary: Signal<ClientProjectsSummary | null> = this.clientStore.clientProjectsSummary!;
+    $clientProjectsSummary: Signal<EntityProjectsSummary | null> = this.clientStore.clientProjectsSummary!;
     $projectTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.projectTypes;
     $projectStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.projectStatuses;
 

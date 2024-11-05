@@ -44,7 +44,7 @@ export class ProjectListShellComponent {
     onDeleteProject($event: ProjectDto) {
         this.projectStore.setProjectId($event.id);
         this.confirmationService.confirm({
-            message: `Do you want to project task: ${$event.name}?`,
+            message: `Do you want to remove project: ${$event.name}?`,
             header: `Confirm project delete ${$event.name}.`,
             icon: "pi pi-info-circle text-red-300",
             accept: () => {

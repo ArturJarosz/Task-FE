@@ -1,7 +1,7 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {FormGroup} from "@angular/forms";
 import {ClientFormProvider, ClientProjectsSummaryForm} from "../form/client-form-provider";
-import {ClientProjectsSummary} from "../../generated/models/client-projects-summary";
+import {EntityProjectsSummary} from "../../generated/models/entity-projects-summary";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {resolveLabel} from "../../shared/utils/label-utils";
 
@@ -12,7 +12,7 @@ import {resolveLabel} from "../../shared/utils/label-utils";
 })
 export class ClientProjectsSummaryComponent implements OnInit, OnChanges {
     @Input()
-    clientProjectsSummary!: ClientProjectsSummary | null;
+    clientProjectsSummary!: EntityProjectsSummary | null;
     @Input()
     projectTypes: ConfigurationEntry[] | null = [];
     @Input()

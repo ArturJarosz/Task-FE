@@ -5,11 +5,14 @@ import {MessageService} from "primeng/api";
 import {AbstractRestService} from "../../shared/rest/abstract-rest.service";
 import {environment} from "../../../environments/environment";
 import {Architect} from "../../generated/models/architect";
+import {EntityProjectsSummary} from "../../generated/models/entity-projects-summary";
 
 export abstract class ArchitectRestService {
     abstract getArchitects(): Observable<Architect[]>;
 
     abstract getArchitect(architectId: number): Observable<Architect>;
+
+    abstract getArchitectProjectSummary(architectId: number): Observable<EntityProjectsSummary>;
 }
 
 @Injectable()
@@ -35,4 +38,11 @@ export class ArchitectRestServiceImpl extends AbstractRestService implements Arc
             );
     }
 
+    getArchitectProjectSummary(architectId: number): Observable<EntityProjectsSummary> {
+        return this.httpClient.get<EntityProjectsSummary>(`${this.architectUrl}/${architectId}/projects`)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error loading projects summary for architect with id: ${architectId}`))
+            );
+    }
 }

@@ -7,7 +7,7 @@ import {ClientRestService} from "../rest/client-rest.service";
 import {inject} from "@angular/core";
 import {MessageService} from "primeng/api";
 import {MessageSeverity} from "../../shared";
-import {ClientProjectsSummary} from "../../generated/models/client-projects-summary";
+import {EntityProjectsSummary} from "../../generated/models/entity-projects-summary";
 
 export interface ClientState extends AppState {
     error: string;
@@ -16,7 +16,7 @@ export interface ClientState extends AppState {
     client: Client | null;
     clientsNeedRefresh: boolean;
     clientNeedsRefresh: boolean;
-    clientProjectsSummary: ClientProjectsSummary | null;
+    clientProjectsSummary: EntityProjectsSummary | null;
 }
 
 export const initialState: ClientState = {
