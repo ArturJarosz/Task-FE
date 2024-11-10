@@ -1,10 +1,15 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {CostListComponent} from "./cost/cost-list/cost-list.component";
+import {
+    AddCostComponent,
+    CostDetailComponent,
+    CostDetailShellComponent,
+    CostListComponent,
+    CostListShellComponent,
+    CostRestService,
+    CostRestServiceImpl
+} from "./cost";
 import {TableModule} from "primeng/table";
-import {CostDetailShellComponent} from "./cost/cost-detail-shell/cost-detail-shell.component";
-import {CostDetailComponent} from './cost/cost-detail/cost-detail.component';
-import {CostRestService, CostRestServiceImpl} from "./cost/rest/cost-rest.service";
 import {SharedModule} from "../shared/shared.module";
 import {AccordionModule} from "primeng/accordion";
 import {RouterModule} from "@angular/router";
@@ -12,8 +17,6 @@ import {InputTextModule} from "primeng/inputtext";
 import {CalendarModule} from "primeng/calendar";
 import {InputSwitchModule} from "primeng/inputswitch";
 import {InputTextareaModule} from "primeng/inputtextarea";
-import {CostListShellComponent} from './cost/cost-list-shell/cost-list-shell.component';
-import {AddCostComponent} from './cost/add-cost/add-cost.component';
 import {DialogModule} from "primeng/dialog";
 import {DropdownModule} from "primeng/dropdown";
 import {FinancialRestService, FinancialRestServiceImpl} from "./project-financial-summary/rest/financial-rest.service";
@@ -26,23 +29,27 @@ import {InstallmentRestService, InstallmentRestServiceImpl} from "./installment/
 import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.guard";
 import {SupplyListComponent} from "./supply/supply-list/supply-list.component";
 import {SupplyRestService, SupplyRestServiceImpl} from "./supply/rest/supply-rest.service";
-import { ContractorJobListComponent } from './contractor-job/contractor-job-list/contractor-job-list.component';
+import {ContractorJobListComponent} from './contractor-job/contractor-job-list/contractor-job-list.component';
 import {
     ContractorJobRestService,
     ContractorJobRestServiceImpl
 } from "./contractor-job/rest/contractor-job-rest.service";
+import {AddSupplyComponent} from './supply/add-supply/add-supply.component';
+import {SupplyListShellComponent} from './supply/supply-list-shell/supply-list-shell.component';
 
 @NgModule({
     declarations: [
+        AddCostComponent,
+        AddSupplyComponent,
+        ContractorJobListComponent,
+        CostDetailComponent,
         CostDetailShellComponent,
         CostListComponent,
-        CostDetailComponent,
         CostListShellComponent,
-        AddCostComponent,
-        InstallmentListShellComponent,
         InstallmentListComponent,
+        InstallmentListShellComponent,
         SupplyListComponent,
-        ContractorJobListComponent
+        SupplyListShellComponent
     ],
     imports: [
         CommonModule,
@@ -72,8 +79,9 @@ import {
         CostListComponent,
         CostListShellComponent,
         InstallmentListShellComponent,
+        ContractorJobListComponent,
         SupplyListComponent,
-        ContractorJobListComponent
+        SupplyListShellComponent
     ],
     providers: [
         {provide: CostRestService, useClass: CostRestServiceImpl},

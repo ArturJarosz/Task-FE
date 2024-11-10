@@ -1,61 +1,31 @@
-<div class="border-bottom-1 surface-border pb-3">
-    <form [formGroup]="supplyDataForm">
-        <div class="grid grid-nogutter surface-border p-1">
-            <div class="col-6 p-1 grid grid-nogutter">
-                <div class="col-5 text-500 flex align-items-center">Count:</div>
-                <div class="col-7 flex align-items-center pl-4 pr-3" id="count">{{ supplyDataForm.value.count }}</div>
-            </div>
-            <div class="col-6 p-1 grid grid-nogutter">
-                <div class="col-5 text-500 flex align-items-center">Paid:</div>
-                <div class="col-7 flex align-items-center pl-4 pr-3" id="paid">{{ supplyDataForm.value.paid }}</div>
-            </div>
-        </div>
-        <div class="grid grid-nogutter surface-border p-1">
-            <div class="col-3 p-1 grid grid-nogutter">
-                <div class="col-5 text-500 flex align-items-center">Gross value:</div>
-                <div class="col-7 flex align-items-center pl-4 pr-3" id="gross">{{supplyDataForm.value.grossValue  | currency: ' ':'code':'2.2-2'}}</div>
-            </div>
-            <div class="col-3 p-1 grid grid-nogutter">
-                <div class="col-5 text-500 flex align-items-center">Nett value:</div>
-                <div class="col-7 flex align-items-center pl-4 pr-3" id="net">{{supplyDataForm.value.netValue  | currency: ' ':'code':'2.2-2'}}</div>
-            </div>
-            <div class="col-3 p-1 grid grid-nogutter">
-                <div class="col-5 text-500 flex align-items-center">Tax:</div>
-                <div class="col-7 flex align-items-center pl-4 pr-3" id="tax">{{supplyDataForm.value.incomeTax  | currency: ' ':'code':'2.2-2'}}</div>
-            </div>
-            <div class="col-3 p-1 grid grid-nogutter">
-                <div class="col-5 text-500 flex align-items-center">VAT:</div>
-                <div class="col-7 flex align-items-center pl-4 pr-3" id="vat">{{supplyDataForm.value.vatTax  | currency: ' ':'code':'2.2-2'}}</div>
-            </div>
-        </div>
-    </form>
-</div>
-<div class="pt-4">
-    <p-table [value]="supplyProjectData?.supplies!" [tableStyle]="{ 'min-width': '50rem' }">
-        <ng-template pTemplate="header">
-            <tr>
-                <th>Name</th>
-                <th>Supplier</th>
-                <th>Value</th>
-                <th>Invoice</th>
-                <th>Paid</th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-supply>
-            <tr>
-                <td>{{ supply.name }}</td>
-                <td>{{ this.supplierIdToSupplier.get(supply.supplierId) }}</td>
-                <td>{{ supply.value | currency: ' ':'code':'2.2-2' }}</td>
-                <td>
-                    <i *ngIf="supply.hasInvoice" class="pi pi-check"></i>
-                    <i *ngIf="!supply.hasInvoice" class="pi pi-times"></i>
-                </td>
-                <td>
-                    <i *ngIf="supply.paid" class="pi pi-check"></i>
-                    <i *ngIf="!supply.paid" class="pi pi-times"></i>
-                </td>
-            </tr>
+<finance-component-summary [financeComponentDataForm]="supplyDataForm">
+    <div wrapper-list>
+        <p-table [value]="supplyProjectData?.supplies!" [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Name</th>
+                    <th>Supplier</th>
+                    <th>Value</th>
+                    <th class="max-w-4rem text-center">Invoice</th>
+                    <th class="max-w-4rem text-center">Paid</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-supply>
+                <tr>
+                    <td>{{ supply.name }}</td>
+                    <td>{{ this.supplierIdToSupplier.get(supply.supplierId) }}</td>
+                    <td>{{ supply.value | currency: ' ':'code':'2.2-2' }}</td>
+                    <td class="max-w-4rem text-center">
+                        <i *ngIf="supply.hasInvoice" class="pi pi-check"></i>
+                        <i *ngIf="!supply.hasInvoice" class="pi pi-times"></i>
+                    </td>
+                    <td class="max-w-4rem text-center">
+                        <i *ngIf="supply.paid" class="pi pi-check"></i>
+                        <i *ngIf="!supply.paid" class="pi pi-times"></i>
+                    </td>
+                </tr>
 
-        </ng-template>
-    </p-table>
-</div>
+            </ng-template>
+        </p-table>
+    </div>
+</finance-component-summary>

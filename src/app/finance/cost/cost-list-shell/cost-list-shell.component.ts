@@ -32,7 +32,7 @@ export class CostListShellComponent implements OnInit{
         });
     }
 
-    onClick() {
+    onClickAdd() {
         this.showAddCostComponent = true;
     }
 

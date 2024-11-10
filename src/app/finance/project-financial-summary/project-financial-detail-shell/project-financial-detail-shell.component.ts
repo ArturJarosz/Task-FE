@@ -6,10 +6,6 @@ import {ConfigurationStore} from "../../../shared/configuration/state";
 import {CostStore} from "../../cost/state";
 import {Cost} from "../../../generated/models/cost";
 import {ProjectStore} from "../../../project/state";
-import {SupplyStore} from "../../supply/state/supply.state";
-import {SupplyProjectData} from "../../../generated/models/supply-project-data";
-import {SupplierStore} from "../../../supplier/state";
-import {Supplier} from "../../../generated/models/supplier";
 import {ContractorJobStore} from "../../contractor-job/state/contractor-job.state";
 import {ContractorJobProjectData} from "../../../generated/models/contractor-job-project-data";
 import {ContractorStore} from "../../../contractor/state";
@@ -27,8 +23,6 @@ export class ProjectFinancialDetailShellComponent implements OnInit {
     readonly financialStore = inject(FinancialDataStore);
     readonly costStore = inject(CostStore);
     readonly projectStore = inject(ProjectStore);
-    readonly supplyStore = inject(SupplyStore);
-    readonly supplierStore = inject(SupplierStore);
     readonly contractorJobStore = inject(ContractorJobStore);
     readonly contractorStore = inject(ContractorStore);
 
@@ -37,10 +31,6 @@ export class ProjectFinancialDetailShellComponent implements OnInit {
     $costs: Signal<Cost[]> = this.costStore.costs!;
     $costsNeedRefresh: Signal<boolean> = this.costStore.costsNeedRefresh!;
     $projectName: Signal<string> = this.projectStore.projectName!;
-    $suppliesNeedRefresh: Signal<boolean> = this.supplyStore.suppliesNeedRefresh!;
-    $supplyProjectData: Signal<SupplyProjectData> = this.supplyStore.supplyProjectData!;
-    $suppliersNeedRefresh: Signal<boolean> = this.supplierStore.suppliersNeedRefresh;
-    $suppliers: Signal<Supplier[]> = this.supplierStore.suppliers;
     $contractorJobsNeedRefresh: Signal<boolean> = this.contractorJobStore.contractorJobsNeedRefresh;
     $contractorsJobsProjectData: Signal<ContractorJobProjectData> = this.contractorJobStore.contractorsJobsProjectData;
     $contractorsNeedRefresh: Signal<boolean> = this.contractorStore.contractorsNeedRefresh;
@@ -53,12 +43,6 @@ export class ProjectFinancialDetailShellComponent implements OnInit {
             }
             if (this.$costsNeedRefresh()) {
                 this.costStore.loadCostsProjectData({});
-            }
-            if (this.$suppliesNeedRefresh()) {
-                this.supplyStore.loadProjectSupplies({});
-            }
-            if (this.$suppliersNeedRefresh()) {
-                this.supplierStore.loadSuppliers({});
             }
             if (this.$contractorJobsNeedRefresh()) {
                 this.contractorJobStore.loadContractorsJobsProjectData({});
@@ -77,9 +61,6 @@ export class ProjectFinancialDetailShellComponent implements OnInit {
         this.configurationStore.loadConfiguration({});
         this.costStore.setProjectId(this.projectId);
         this.costStore.loadCostsProjectData({});
-        this.supplyStore.setProjectId(this.projectId);
-        this.supplyStore.loadProjectSupplies({});
-        this.supplierStore.loadSuppliers({});
         this.contractorJobStore.setProjectId(this.projectId);
         this.contractorJobStore.loadContractorsJobsProjectData({});
         this.contractorStore.loadContractors({});
