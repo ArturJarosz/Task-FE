@@ -1,4 +1,4 @@
-<p-dialog header='header' [(visible)]="visible" appendTo="body" [modal]="true"
+<p-dialog header="header" [(visible)]="visible" appendTo="body" [modal]="true"
           [style]="{ width: '50vw', 'max-width': '800px'}"
           (onHide)="onClose()">
     <ng-template pTemplate="header">
@@ -6,20 +6,20 @@
             <h1 class="m-0 text-900 font-semibold line-height-3">{{ header }}</h1>
         </div>
     </ng-template>
-    <form [formGroup]="addCostForm">
+    <form [formGroup]="addSupplyForm">
         <div class="grid grid-nogutter surface-border p-1">
             <div class="md:col-4 p-1">
-                <label for="name" class="block  text-color text-base">Cost name</label>
+                <label for="name" class="block  text-color text-base">Supply name</label>
                 <span class="p-input-icon-left w-full">
-                    <input type="text" class="w-full" id="name" formControlName="name" pInputText placeholder="cost name"
-                           [ngClass]="{'is-invalid': (addCostForm.get('name')?.touched || addCostForm.get('name')?.dirty) && !addCostForm.get('name')?.valid }"/>
+                    <input type="text" class="w-full" id="name" formControlName="name" pInputText placeholder="supply name"
+                           [ngClass]="{'is-invalid': (addSupplyForm.get('name')?.touched || addSupplyForm.get('name')?.dirty) && !addSupplyForm.get('name')?.valid }"/>
                 </span>
             </div>
             <div class="md:col-4 p-1">
-                <label for="category" class="block  text-color text-base">Type</label>
+                <label for="supplier" class="block  text-color text-base">Supplier</label>
                 <span class="p-input-icon-left w-full">
-                    <p-dropdown [options]="$costCategories()" optionLabel="label" optionValue="id"
-                                formControlName="category" class="w-full" appendTo="body" id="category">
+                    <p-dropdown [options]="$suppliers()" optionLabel="name" optionValue="id"
+                                formControlName="supplierId" class="w-full" appendTo="body" id="supplier">
                     </p-dropdown>
                 </span>
             </div>
@@ -31,10 +31,6 @@
             </div>
         </div>
         <div class="grid grid-nogutter surface-border p-1 ">
-            <div class="md:col-4 p-1">
-                <div class="text-500 font-medium ">Date</div>
-                <p-calendar formControlName="date" id="date" dateFormat="yy-mm-dd"></p-calendar>
-            </div>
             <div class="md:col-4 p-1">
                 <div class="text-500 font-medium">Value</div>
                 <input formControlName="value" id="value" pInputText>

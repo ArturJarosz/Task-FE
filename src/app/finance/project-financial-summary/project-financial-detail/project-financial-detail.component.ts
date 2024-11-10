@@ -26,10 +26,6 @@ export class ProjectFinancialDetailComponent implements OnInit, OnChanges {
     @Input()
     costs!: Cost[] | null;
     @Input()
-    supplyProjectData!: SupplyProjectData | null;
-    @Input()
-    $suppliers! : Signal<Supplier[]>;
-    @Input()
     contractorsJobsProjectData!: ContractorJobProjectData;
     @Input()
     contractors!: Contractor[];

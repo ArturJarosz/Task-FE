@@ -6,13 +6,14 @@ import {FormGroup} from "@angular/forms";
 import {Cost} from "../../../generated/models/cost";
 import {ConfigurationEntry} from "../../../generated/models/configuration-entry";
 import {toTimeZoneString} from "../../../shared/utils/date-utils";
+import {AbstractAddEditComponent} from "../../../shared";
 
 @Component({
     selector: 'add-cost',
     templateUrl: './add-cost.component.html',
     styleUrl: './add-cost.component.less'
 })
-export class AddCostComponent implements OnInit {
+export class AddCostComponent implements OnInit, AbstractAddEditComponent {
     @Input()
     visible = false;
     @Input()
@@ -20,7 +21,7 @@ export class AddCostComponent implements OnInit {
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    header: string = "Add new cost";
+    header: string = "Add new Cost";
 
     readonly costStore = inject(CostStore);
     readonly configurationStore = inject(ConfigurationStore);

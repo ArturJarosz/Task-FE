@@ -5,8 +5,12 @@ import {SupplyRestService} from "../rest/supply-rest.service";
 import {inject} from "@angular/core";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
 import {of, pipe, switchMap, tap} from "rxjs";
+import {MessageService} from "primeng/api";
+import {MessageSeverity} from "../../../shared";
+import {FinancialDataStore} from "../../project-financial-summary/state/financial-data.state";
 
 export interface SupplyState {
+    supply: Supply,
     supplies: Supply[];
     supplyProjectData: SupplyProjectData;
     suppliesNeedRefresh: boolean;
@@ -14,6 +18,7 @@ export interface SupplyState {
 }
 
 export const initialState: SupplyState = {
+    supply: {},
     supplies: [],
     supplyProjectData: {},
     suppliesNeedRefresh: true,
@@ -23,7 +28,8 @@ export const initialState: SupplyState = {
 export const SupplyStore = signalStore(
     {providedIn: 'root'},
     withState(initialState),
-    withMethods((store, supplyRestService = inject(SupplyRestService)) => ({
+    withMethods((store, supplyRestService = inject(SupplyRestService), messageService = inject(MessageService),
+                 financialDataStore = inject(FinancialDataStore)) => ({
         setProjectId(projectId: number) {
             if (store.projectId() !== projectId) {
                 this.setSuppliesNeedRefresh();
@@ -35,17 +41,36 @@ export const SupplyStore = signalStore(
         },
         loadProjectSupplies: rxMethod<{}>(
             pipe(
-                switchMap(()=>{
-                    if(store.suppliesNeedRefresh()) {
-                        return supplyRestService.getProjectSuppliesData(store.projectId()!).pipe(
-                            tap(suppliesData => patchState(store, {
-                                supplyProjectData: suppliesData,
-                                supplies: suppliesData.supplies,
-                                suppliesNeedRefresh: true
-                            }))
-                        )
+                switchMap(() => {
+                    if (store.suppliesNeedRefresh()) {
+                        return supplyRestService.getProjectSuppliesData(store.projectId()!)
+                            .pipe(
+                                tap(suppliesData => patchState(store, {
+                                    supplyProjectData: suppliesData,
+                                    supplies: suppliesData.supplies,
+                                    suppliesNeedRefresh: false
+                                }))
+                            )
                     }
                     return of({});
+                })
+            )
+        ),
+        createSupply: rxMethod<{ supply: Supply }>(
+            pipe(
+                switchMap(({supply}) => {
+                    return supplyRestService.createSupply(store.projectId()!, supply)
+                        .pipe(
+                            tap(createdSupply => {
+                                patchState(store, {supply: createdSupply, suppliesNeedRefresh: true});
+                                messageService.add({
+                                    severity: MessageSeverity.INFO,
+                                    summary: `New supply created`,
+                                    detail: `New supply ${createdSupply.name} was created successfully.`,
+                                });
+                                financialDataStore.setProjectFinancialDataNeedsUpdate();
+                            })
+                        )
                 })
             )
         )

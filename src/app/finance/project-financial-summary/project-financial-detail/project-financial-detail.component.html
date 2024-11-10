@@ -34,19 +34,17 @@
                                 <installment-list-shell></installment-list-shell>
                             </p-tabPanel>
                             <p-tabPanel header="Supplies">
-                                <supply-list [supplyProjectData]="supplyProjectData" [suppliers]="$suppliers()">
-                                </supply-list>
+                                <supply-list-shell [projectId]="projectId!">
+                                </supply-list-shell>
                             </p-tabPanel>
                             <p-tabPanel header="Contractor Jobs">
                                 <contractor-job-list [contractorsJobsProjectData]="contractorsJobsProjectData" [contractors]="contractors"></contractor-job-list>
                             </p-tabPanel>
                         </p-tabView>
-
                     </div>
                 </p-accordionTab>
             </form>
         </p-accordion>
-
     </div>
     <div wrapper-buttons>
         <p-button [routerLink]="['/projects', projectId]" label="Project details" size="small" severity="secondary" class="top-menu-button"/>

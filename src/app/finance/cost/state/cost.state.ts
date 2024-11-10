@@ -96,7 +96,7 @@ export const CostStore = signalStore(
                                 messageService.add({
                                     severity: MessageSeverity.INFO,
                                     summary: `New cost created`,
-                                    detail: `New cost for project with id ${store.projectId()} was created.`,
+                                    detail: `New cost ${cost.name} was created successfully.`,
                                 });
                                 financialDataStore.setProjectFinancialDataNeedsUpdate();
                             })

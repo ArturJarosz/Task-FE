@@ -2,7 +2,7 @@ import {AppState} from "../../state/app.store";
 import {Project} from "../../generated/models/project";
 import {patchState, signalStore, withComputed, withMethods, withState} from "@ngrx/signals";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {catchError, of, pipe, switchMap, tap} from "rxjs";
+import {of, pipe, switchMap, tap} from "rxjs";
 import {ProjectRestService} from "../rest/project-rest.service";
 import {computed, inject} from "@angular/core";
 import {MessageService} from "primeng/api";
@@ -32,7 +32,12 @@ export const ProjectStore = signalStore(
     {providedIn: 'root'},
     withState(initialState),
     withComputed(({project}) => ({
-        projectName: computed(() => project()!.name!)
+        projectName: computed(() => {
+            if (project()) {
+                return project()!.name!;
+            }
+            return '';
+        })
     })),
     withMethods((store, projectRestService = inject(ProjectRestService), messageService = inject(MessageService),
                  financialDataStore = inject(FinancialDataStore)) => ({
