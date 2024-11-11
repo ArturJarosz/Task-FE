@@ -60,13 +60,13 @@ import {SupplyListShellComponent} from './supply/supply-list-shell/supply-list-s
             {
                 path: 'projects/:projectId/costs/:costId',
                 component: CostDetailShellComponent,
-                canActivate: [loggedInGuardGuard]
+                canActivate: [loggedInGuardGuard],
             },
             {
                 path: 'projects/:projectId/finance',
                 component: ProjectFinancialDetailShellComponent,
                 canActivate: [loggedInGuardGuard]
-            },
+            }
         ]),
         InputTextModule,
         CalendarModule,
