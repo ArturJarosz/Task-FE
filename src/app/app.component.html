@@ -13,7 +13,21 @@
         </ul>
     </div>
     <ul class="list-none py-3 px-5 m-0 surface-section flex align-items-center font-medium overflow-x-auto border-top-1 border-bottom-1 surface-border">
-        <p-breadcrumb class="max-w-full" [model]="items"></p-breadcrumb>
+        <p-breadcrumb class="max-w-full" [model]="breadcrumbItems">
+            <ng-template pTemplate="item" let-item>
+                <ng-container *ngIf="item.route; else elseBlock">
+                    <a [routerLink]="item.route" class="p-menuitem-link">
+                        <span [ngClass]="[item.icon ? item.icon : '', 'text-color']"></span>
+                        <span class="text-primary font-semibold">{{ item.label }}</span>
+                    </a>
+                </ng-container>
+                <ng-template #elseBlock>
+                    <a [href]="item.url">
+                        <span class="text-color">{{ item.label }}</span>
+                    </a>
+                </ng-template>
+            </ng-template>
+        </p-breadcrumb>
     </ul>
     <div class="flex relative lg:static p-5 flex-auto">
         <div id="app-sidebar-12" class="surface-card hidden lg:block flex-shrink-0 absolute lg:static left-0 top-0 z-1 select-none shadow-2" style="width:280px;border-radius: 12px">

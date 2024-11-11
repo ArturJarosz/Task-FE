@@ -1,8 +1,10 @@
-import {Component, Inject, inject, OnInit} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {MenuItem} from "primeng/api";
 import {ConfigurationStore} from "./shared/configuration/state";
-import {DOCUMENT} from "@angular/common";
 import {AuthorizationService} from "./security/authorization.service";
+import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
+import {filter} from "rxjs";
+import {BreadcrumbService} from "./shared/breadcrumb/breadcrumb.service";
 
 @Component({
     selector: 'app-root',
@@ -11,14 +13,15 @@ import {AuthorizationService} from "./security/authorization.service";
 })
 export class AppComponent implements OnInit {
     title = 'Task-FE';
-    items: MenuItem[] = [];
+
+    breadcrumbItems: MenuItem[] = [];
 
     readonly configurationStore = inject(ConfigurationStore);
 
-    constructor(protected authorizationService: AuthorizationService, @Inject(DOCUMENT) private doc: Document) {
+    constructor(protected authorizationService: AuthorizationService, private router: Router,
+                private activatedRoute: ActivatedRoute, private breadcrumbService: BreadcrumbService) {
     }
 
-    //TODO TA-313 Make menu code dependent, not hardcoded in HTML
     ngOnInit(): void {
         this.authorizationService.isAuthenticated()
             .subscribe(isAuthenticated => {
@@ -27,28 +30,11 @@ export class AppComponent implements OnInit {
                 }
             })
 
-        this.items = [
-            {
-                label: "Main",
-                routerLink: "/home"
-            },
-            {
-                label: "Clients",
-                routerLink: "/clients"
-            },
-            {
-                label: "Architects",
-                routerLink: "/architects"
-            },
-            {
-                label: "Projects",
-                routerLink: "/projects"
-            },
-            {
-                label: "Contractors",
-                routerLink: "/contractors"
-            }
-        ]
+        this.router.events
+            .pipe(filter(event => event instanceof NavigationEnd))
+            .subscribe(() => {
+                this.breadcrumbItems = this.breadcrumbService.createBreadcrumbs(this.activatedRoute.root);
+            });
     }
 
     login(): void {
