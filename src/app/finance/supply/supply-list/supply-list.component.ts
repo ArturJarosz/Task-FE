@@ -18,8 +18,8 @@ export class SupplyListComponent implements OnChanges{
     supplyProjectData!: SupplyProjectData | null;
     @Input()
     suppliers! : Supplier[];
-    supplierIdToSupplier! : Map<number, String>;
 
+    supplierIdToSupplier! : Map<number, String>;
     supplyDataForm!: FormGroup<FinanceObjectSummaryForm>;
 
     constructor(private formProvider: ProjectFinancialSummaryFormProvider) {

@@ -36,6 +36,8 @@ import {
 } from "./contractor-job/rest/contractor-job-rest.service";
 import {AddSupplyComponent} from './supply/add-supply/add-supply.component';
 import {SupplyListShellComponent} from './supply/supply-list-shell/supply-list-shell.component';
+import { ContractorJobListShellComponent } from './contractor-job/contractor-job-list-shell/contractor-job-list-shell.component';
+import { AddContractorJobComponent } from './contractor-job/add-contractor-job/add-contractor-job.component';
 
 @NgModule({
     declarations: [
@@ -49,7 +51,9 @@ import {SupplyListShellComponent} from './supply/supply-list-shell/supply-list-s
         InstallmentListComponent,
         InstallmentListShellComponent,
         SupplyListComponent,
-        SupplyListShellComponent
+        SupplyListShellComponent,
+        ContractorJobListShellComponent,
+        AddContractorJobComponent
     ],
     imports: [
         CommonModule,
@@ -81,7 +85,8 @@ import {SupplyListShellComponent} from './supply/supply-list-shell/supply-list-s
         InstallmentListShellComponent,
         ContractorJobListComponent,
         SupplyListComponent,
-        SupplyListShellComponent
+        SupplyListShellComponent,
+        ContractorJobListShellComponent
     ],
     providers: [
         {provide: CostRestService, useClass: CostRestServiceImpl},

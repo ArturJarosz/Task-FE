@@ -32,7 +32,9 @@ export class SupplyRestServiceImpl extends AbstractRestService implements Supply
     createSupply(projectId: number, supply: Supply): Observable<Supply> {
         return this.httpClient.post<Supply>(`${this.projectUrl}/${projectId}/supplies`, supply)
             .pipe(catchError(
-                error => this.handleError(error, this.messageService, `Error creating supply for project with id: ${projectId}`)));
+                error => this.handleError(error, this.messageService,
+                    `Error creating supply for project with id: ${projectId}`))
+            );
     }
 
 }
