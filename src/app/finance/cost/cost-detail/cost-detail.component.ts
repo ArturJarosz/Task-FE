@@ -1,10 +1,11 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {FormGroup} from "@angular/forms";
 import {CostDetailFormProvider, CostForm} from "./cost-detail-form-provider";
 import {resolveLabel} from "../../../shared/utils/label-utils";
 import {Cost} from "../../../generated/models/cost";
 import {ConfigurationEntry} from "../../../generated/models/configuration-entry";
-import {toDateIfExists} from "../../../shared/utils/date-utils";
+import {toDateIfExists, toTimeZoneString} from "../../../shared/utils/date-utils";
+import {cloneDeep} from "lodash";
 
 @Component({
     selector: 'cost-detail',
@@ -16,8 +17,12 @@ export class CostDetailComponent implements OnInit, OnChanges {
     cost!: Cost | null;
     @Input()
     costCategories!: ConfigurationEntry[] | null;
+    @Output()
+    updateCostEvent: EventEmitter<Cost> = new EventEmitter<Cost>();
 
     costDetailsForm!: FormGroup<CostForm>;
+    initialCostDetailsForm!: FormGroup<CostForm>;
+
     resolvedCategoryLabel: string = '';
 
     constructor(private formProvider: CostDetailFormProvider) {
@@ -25,12 +30,13 @@ export class CostDetailComponent implements OnInit, OnChanges {
 
     ngOnInit(): void {
         this.costDetailsForm = this.formProvider.getCostDetailForm();
+        this.fillFormData();
     }
 
-    ngOnChanges({cost, costCategories}: SimpleChanges): void {
-        if (cost && this.cost) {
+    ngOnChanges(changes: SimpleChanges): void {
+        if (this.cost && this.costDetailsForm) {
             this.fillFormData();
-            this.resolveLabels();
+            this.initialCostDetailsForm = cloneDeep(this.costDetailsForm);
         }
     }
 
@@ -55,5 +61,27 @@ export class CostDetailComponent implements OnInit, OnChanges {
         if (this.costCategories && this.costCategories.length > 0 && this.costDetailsForm.get('category')?.value) {
             this.resolvedCategoryLabel = resolveLabel(this.costDetailsForm.get('category')?.value, this.costCategories);
         }
+    }
+
+    isFormChanged(): boolean {
+        if (this.costDetailsForm.pristine) {
+            return false;
+        }
+        return JSON.stringify(this.initialCostDetailsForm.value) !== JSON.stringify(this.costDetailsForm.value);
+    }
+
+    onSave(): void {
+        let cost: Cost;
+        cost = {
+            name: this.costDetailsForm.value.name,
+            category: this.costDetailsForm.value.category,
+            note: this.costDetailsForm.value.note!,
+            paid: this.costDetailsForm.value.paid,
+            value: this.costDetailsForm.value.value,
+            payable: true,
+            hasInvoice: this.costDetailsForm.value.hasInvoice,
+            date: toTimeZoneString(this.costDetailsForm.value.date)
+        }
+        this.updateCostEvent.emit(cost);
     }
 }

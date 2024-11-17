@@ -107,16 +107,35 @@ export const CostStore = signalStore(
         loadCostsProjectData: rxMethod<{}>(
             pipe(
                 switchMap(() => {
-                    if(store.costsNeedRefresh()) {
-                        return costRestService.getProjectCostsData(store.projectId()!).pipe(
-                            tap(projectCostsData => patchState(store, {
-                                projectCostsData: projectCostsData,
-                                costsNeedRefresh: false,
-                                costs: projectCostsData.costs
-                            }))
-                        )
+                    if (store.costsNeedRefresh()) {
+                        return costRestService.getProjectCostsData(store.projectId()!)
+                            .pipe(
+                                tap(projectCostsData => patchState(store, {
+                                    projectCostsData: projectCostsData,
+                                    costsNeedRefresh: false,
+                                    costs: projectCostsData.costs
+                                }))
+                            )
                     }
                     return of({});
+                })
+            )
+        ),
+        updateCost: rxMethod<{ cost: Cost }>(
+            pipe(
+                switchMap(({cost}) => {
+                    return costRestService.updateCost(store.projectId()!, cost)
+                        .pipe(
+                            tap(cost => {
+                                patchState(store, {cost: cost, costsNeedRefresh: true, costNeedsRefresh: false});
+                                messageService.add({
+                                    severity: MessageSeverity.INFO,
+                                    summary: `Cost updated`,
+                                    detail: `Cost ${cost.name} was updated successfully.`,
+                                });
+                                financialDataStore.setProjectFinancialDataNeedsUpdate();
+                            })
+                        )
                 })
             )
         )
