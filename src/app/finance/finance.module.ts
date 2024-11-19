@@ -36,8 +36,10 @@ import {
 } from "./contractor-job/rest/contractor-job-rest.service";
 import {AddSupplyComponent} from './supply/add-supply/add-supply.component';
 import {SupplyListShellComponent} from './supply/supply-list-shell/supply-list-shell.component';
-import { ContractorJobListShellComponent } from './contractor-job/contractor-job-list-shell/contractor-job-list-shell.component';
-import { AddContractorJobComponent } from './contractor-job/add-contractor-job/add-contractor-job.component';
+import {
+    ContractorJobListShellComponent
+} from './contractor-job/contractor-job-list-shell/contractor-job-list-shell.component';
+import {AddContractorJobComponent} from './contractor-job/add-contractor-job/add-contractor-job.component';
 
 @NgModule({
     declarations: [
@@ -70,7 +72,11 @@ import { AddContractorJobComponent } from './contractor-job/add-contractor-job/a
                 path: 'projects/:projectId/finance',
                 component: ProjectFinancialDetailShellComponent,
                 canActivate: [loggedInGuardGuard]
-            }
+            },
+            {path: 'projects/:projectId/costs', redirectTo: '/projects/:projectId/finance?tab=costs'},
+            {path: 'projects/:projectId/installments', redirectTo: 'projects/:projectId/finance?tab=installments'},
+            {path: 'projects/:projectId/supplies', redirectTo: 'projects/:projectId/finance?tab=supplies'},
+            {path: 'projects/:projectId/contractorJobs', redirectTo: 'projects/:projectId/finance?tab=contractorJobs'},
         ]),
         InputTextModule,
         CalendarModule,
