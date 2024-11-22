@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {InstallmentProjectData} from "../../../generated/models/installment-project-data";
 import {FormGroup} from "@angular/forms";
 import {
@@ -6,6 +6,7 @@ import {
     ProjectFinancialSummaryFormProvider
 } from "../../project-financial-summary/form/project-financial-summary-form-provider";
 import {isUndefinedOrEmpty} from "../../../shared/utils/data-validation-util";
+import {Stage} from "../../../generated/models/stage";
 
 @Component({
     selector: 'installment-list',

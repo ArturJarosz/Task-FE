@@ -5,8 +5,12 @@ import {of, pipe, switchMap, tap} from "rxjs";
 import {inject} from "@angular/core";
 import {InstallmentRestService} from "../rest/installment-rest.service";
 import {InstallmentProjectData} from "../../../generated/models/installment-project-data";
+import {FinancialDataStore} from "../../project-financial-summary/state/financial-data.state";
+import {MessageService} from "primeng/api";
+import {MessageSeverity} from "../../../shared";
 
 export interface InstallmentState {
+    installment: Installment;
     installments: Installment[];
     installmentProjectData: InstallmentProjectData,
     installmentsNeedRefresh: boolean;
@@ -16,6 +20,7 @@ export interface InstallmentState {
 }
 
 export const initialState: InstallmentState = {
+    installment: {},
     installments: [],
     installmentProjectData: {},
     installmentsNeedRefresh: true,
@@ -27,7 +32,8 @@ export const initialState: InstallmentState = {
 export const InstallmentStore = signalStore(
     {providedIn: 'root'},
     withState(initialState),
-    withMethods((store, installmentRestService = inject(InstallmentRestService)) => ({
+    withMethods((store, installmentRestService = inject(InstallmentRestService),
+                 financialDataStore = inject(FinancialDataStore), messageService = inject(MessageService)) => ({
         setInstallmentId(installmentId: number) {
             if (store.installmentId() !== installmentId) {
                 this.setInstallmentNeedsRefresh();
@@ -63,5 +69,28 @@ export const InstallmentStore = signalStore(
                 })
             )
         ),
+        createInstallment: rxMethod<{ installment: Installment }>(
+            pipe(
+                switchMap(({installment}) => {
+                    return installmentRestService.createInstallment(store.projectId()!, installment)
+                        .pipe(
+                            tap(installment => {
+                                patchState(store, {
+                                    installment: installment,
+                                    installmentsNeedRefresh: true,
+                                    installmentNeedsRefresh: false
+                                });
+                                financialDataStore.setProjectFinancialDataNeedsUpdate();
+                                messageService.add({
+                                    severity: MessageSeverity.SUCCESS,
+                                    summary: `New installment created`,
+                                    detail: `New installment was successfully created.`,
+                                })
+                            })
+                        )
+                })
+            )
+        )
+
     }))
 )

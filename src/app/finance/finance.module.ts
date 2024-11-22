@@ -40,6 +40,7 @@ import {
     ContractorJobListShellComponent
 } from './contractor-job/contractor-job-list-shell/contractor-job-list-shell.component';
 import {AddContractorJobComponent} from './contractor-job/add-contractor-job/add-contractor-job.component';
+import {AddInstallmentComponent} from './installment/add-installment/add-installment.component';
 
 @NgModule({
     declarations: [
@@ -55,7 +56,8 @@ import {AddContractorJobComponent} from './contractor-job/add-contractor-job/add
         SupplyListComponent,
         SupplyListShellComponent,
         ContractorJobListShellComponent,
-        AddContractorJobComponent
+        AddContractorJobComponent,
+        AddInstallmentComponent
     ],
     imports: [
         CommonModule,

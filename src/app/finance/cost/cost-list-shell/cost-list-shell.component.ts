@@ -32,16 +32,16 @@ export class CostListShellComponent implements OnInit{
         });
     }
 
+    ngOnInit(): void {
+        this.costStore.setProjectId(this.projectId);
+        this.costStore.loadCostsProjectData({});
+    }
+
     onClickAdd() {
         this.showAddCostComponent = true;
     }
 
     onNotify(event: boolean) {
         this.showAddCostComponent = false;
-    }
-
-    ngOnInit(): void {
-        this.costStore.setProjectId(this.projectId);
-        this.costStore.loadCostsProjectData({});
     }
 }

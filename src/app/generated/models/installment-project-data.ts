@@ -5,4 +5,5 @@ import { ProjectFinancialPartialData } from '../models/project-financial-partial
 export interface InstallmentProjectData {
   financialData?: ProjectFinancialPartialData;
   installments?: Array<Installment>;
+  stagesWithoutInstallment?: Array<number>;
 }
