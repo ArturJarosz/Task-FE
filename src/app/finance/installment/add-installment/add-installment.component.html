@@ -1,0 +1,58 @@
+<p-dialog header='header' [(visible)]="visible" appendTo="body" [modal]="true"
+          [style]="{ width: '50vw', 'max-width': '800px'}"
+          (onHide)="onClose()">
+    <ng-template pTemplate="header">
+        <div class="flex flex-column gap-2">
+            <h1 class="m-0 text-900 font-semibold line-height-3">{{ header }}</h1>
+        </div>
+    </ng-template>
+    <form [formGroup]="addInstallmentForm">
+        <div class="grid grid-nogutter surface-border p-1 ">
+            <div class="md:col-4 p-1">
+                <label for="stage" class="block  text-color text-base">Stage</label>
+                <span>
+                <p-dropdown [options]="stagesWithoutInstallment" optionLabel="name" optionValue="id"
+                            formControlName="stageId" class="w-full" appendTo="body" id="stage">
+                </p-dropdown>
+            </span>
+            </div>
+            <div class="md:col-4 p-1">
+                <div class="text-500 font-medium">Value</div>
+                <input formControlName="value" id="value" pInputText>
+            </div>
+        </div>
+        <div class="grid grid-nogutter surface-border p-1 ">
+            <div class="md:col-4 p-1">
+                <label for="paid" class="block  text-color text-base">Paid</label>
+                <span class="p-input-icon-left w-full">
+                    <p-inputSwitch formControlName="paid" id="paid"></p-inputSwitch>
+                </span>
+            </div>
+            <div class="md:col-4 p-1">
+                <div class="text-500 font-medium ">Date</div>
+                <p-calendar formControlName="paymentDate" id="date" dateFormat="yy-mm-dd">
+                </p-calendar>
+            </div>
+            <div class="md:col-4 p-1">
+                <div class="text-500 font-medium ">Has Invoice</div>
+                <p-inputSwitch formControlName="hasInvoice" id="hasInvoice"></p-inputSwitch>
+            </div>
+        </div>
+        <div class="grid grid-nogutter surface-border p-1 ">
+            <div class="md:col-8 p-1">
+                <div class="text-500 font-medium  h-2rem">Note</div>
+                <textarea formControlName="note" id="note" type="text" pInputTextarea rows="2"
+                          [autoResize]="true" style="height: 4rem;overflow: hidden;"></textarea>
+            </div>
+        </div>
+
+    </form>
+    <ng-template pTemplate="footer">
+        <div class="flex gap-3 justify-content-end border-top-1 surface-border pt-5">
+            <p-button label="Cancel" styleClass="p-button-outlined p-button-secondary"
+                      (onClick)="onCancel()"></p-button>
+            <p-button label="Save" styleClass="p-button-outlined" [disabled]="!isSaveEnabled()"
+                      (onClick)="onSave()"></p-button>
+        </div>
+    </ng-template>
+</p-dialog>

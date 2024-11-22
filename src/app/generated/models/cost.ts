@@ -12,5 +12,6 @@ export interface Cost {
   note?: string;
   paid?: boolean;
   payable?: boolean;
+  paymentDate?: string;
   value?: number;
 }

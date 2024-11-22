@@ -16,8 +16,6 @@ import {AbstractAddEditComponent} from "../../../shared";
 export class AddCostComponent implements OnInit, AbstractAddEditComponent {
     @Input()
     visible = false;
-    @Input()
-    projectId!: number;
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 

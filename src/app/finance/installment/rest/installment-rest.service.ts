@@ -5,9 +5,12 @@ import {MessageService} from "primeng/api";
 import {AbstractRestService} from "../../../shared/rest/abstract-rest.service";
 import {Injectable} from "@angular/core";
 import {InstallmentProjectData} from "../../../generated/models/installment-project-data";
+import {Installment} from "../../../generated/models/installment";
 
 export abstract class InstallmentRestService {
     abstract getProjectInstallmentData(projectId: number): Observable<InstallmentProjectData>;
+
+    abstract createInstallment(projectId: number, installment: Installment): Observable<Installment>;
 }
 
 @Injectable()
@@ -24,6 +27,15 @@ export class InstallmentRestServiceImpl extends AbstractRestService implements I
                 catchError(error => this.handleError(error,
                     this.messageService, `Error getting installment project data for project with id: ${projectId}`))
             );
+    }
+
+    createInstallment(projectId: number, installment: Installment): Observable<Installment> {
+        return this.httpClient.post<Installment>(
+            `${this.projectsUrl}/${projectId}/stages/${installment.stageId}/installments`, installment)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error creating installment for project with id: ${projectId}.`))
+            )
     }
 
 }
