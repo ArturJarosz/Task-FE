@@ -18,6 +18,8 @@ import {SupplierListShellComponent} from './supplier-list-shell/supplier-list-sh
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {RippleModule} from "primeng/ripple";
 import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.guard";
+import { SuppliesListComponent } from './supplies-list/supplies-list.component';
+import { SuppliesListShellComponent } from './supplies-list-shell/supplies-list-shell.component';
 
 @NgModule({
     declarations: [
@@ -25,7 +27,9 @@ import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.gu
         AddSupplierComponent,
         SupplierDetailShellComponent,
         SupplierDetailComponent,
-        SupplierListShellComponent
+        SupplierListShellComponent,
+        SuppliesListComponent,
+        SuppliesListShellComponent
     ],
     imports: [
         CommonModule,

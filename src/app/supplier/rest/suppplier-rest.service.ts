@@ -5,6 +5,7 @@ import {HttpClient} from "@angular/common/http";
 import {MessageService} from "primeng/api";
 import {environment} from "../../../environments/environment";
 import {Supplier} from "../../generated/models/supplier";
+import {SupplierSuppliesData} from "../../generated/models/supplier-supplies-data";
 
 export abstract class SupplierRestService {
     abstract getSuppliers(): Observable<Supplier[]>;
@@ -16,6 +17,8 @@ export abstract class SupplierRestService {
     abstract deleteSupplier(supplierId: number): Observable<void>;
 
     abstract updateSupplier(supplierId: number, supplier: Supplier): Observable<Supplier>;
+
+    abstract getSuppliesData(supplierId: number): Observable<SupplierSuppliesData>;
 }
 
 @Injectable()
@@ -62,5 +65,13 @@ export class SupplierRestServiceImpl extends AbstractRestService implements Supp
                 catchError(error => this.handleError(error, this.messageService,
                     `Error updating supplier with id ${supplierId}`))
             );
+    }
+
+    getSuppliesData(supplierId: number): Observable<SupplierSuppliesData> {
+        return this.httpClient.get<SupplierSuppliesData>(`${this.supplierUrl}/${supplierId}/supplies`)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error loading supplies data for supplier with id ${supplierId}`))
+            )
     }
 }

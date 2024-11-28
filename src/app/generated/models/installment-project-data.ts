@@ -1,9 +1,9 @@
 /* tslint:disable */
 /* eslint-disable */
+import { FinancialPartialData } from '../models/financial-partial-data';
 import { Installment } from '../models/installment';
-import { ProjectFinancialPartialData } from '../models/project-financial-partial-data';
 export interface InstallmentProjectData {
-  financialData?: ProjectFinancialPartialData;
+  financialData?: FinancialPartialData;
   installments?: Array<Installment>;
   stagesWithoutInstallment?: Array<number>;
 }

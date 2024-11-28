@@ -1,8 +1,9 @@
 /* tslint:disable */
 /* eslint-disable */
 import { FinancialPartialData } from '../models/financial-partial-data';
-import { Supply } from '../models/supply';
-export interface SupplyProjectData {
+import { Supplies } from '../models/supplies';
+export interface SupplierSuppliesData {
+  averageFinancialData?: FinancialPartialData;
   financialData?: FinancialPartialData;
-  supplies?: Array<Supply>;
+  supplies?: Supplies;
 }

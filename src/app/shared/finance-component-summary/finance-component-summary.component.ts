@@ -12,4 +12,8 @@ import {
 export class FinanceComponentSummaryComponent {
     @Input()
     financeComponentDataForm!: FormGroup<FinanceObjectSummaryForm>;
+    @Input()
+    hasAveragedData: boolean = false;
+    @Input()
+    averageFinanceComponentDataForm!: FormGroup<FinanceObjectSummaryForm>;
 }
