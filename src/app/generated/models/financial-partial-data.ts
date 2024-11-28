@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-export interface ProjectFinancialPartialData {
+export interface FinancialPartialData {
   count?: number;
   grossValue?: number;
   incomeTax?: number;

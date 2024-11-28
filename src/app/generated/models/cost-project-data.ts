@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 import { Cost } from '../models/cost';
-import { ProjectFinancialPartialData } from '../models/project-financial-partial-data';
+import { FinancialPartialData } from '../models/financial-partial-data';
 export interface CostProjectData {
   costs?: Array<Cost>;
-  financialData?: ProjectFinancialPartialData;
+  financialData?: FinancialPartialData;
 }

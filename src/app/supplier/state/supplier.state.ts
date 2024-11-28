@@ -4,9 +4,10 @@ import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {inject} from "@angular/core";
 import {MessageService} from "primeng/api";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {catchError, of, pipe, switchMap, tap} from "rxjs";
+import {of, pipe, switchMap, tap} from "rxjs";
 import {MessageSeverity} from "../../shared";
 import {SupplierRestService} from "../rest/suppplier-rest.service";
+import {SupplierSuppliesData} from "../../generated/models/supplier-supplies-data";
 
 export interface SupplierState extends AppState {
     suppliers: Supplier[];
@@ -14,6 +15,8 @@ export interface SupplierState extends AppState {
     supplierId: number | undefined;
     suppliersNeedRefresh: boolean;
     supplierNeedsRefresh: boolean;
+    suppliesData: SupplierSuppliesData;
+    suppliesDataNeedRefresh: boolean;
 }
 
 export const initialState: SupplierState = {
@@ -21,7 +24,9 @@ export const initialState: SupplierState = {
     supplier: null,
     supplierId: undefined,
     suppliersNeedRefresh: true,
-    supplierNeedsRefresh: true
+    supplierNeedsRefresh: true,
+    suppliesData: {},
+    suppliesDataNeedRefresh: true
 }
 
 export const SupplierStore = signalStore(
@@ -32,11 +37,15 @@ export const SupplierStore = signalStore(
             setSupplierId(supplierId: number) {
                 if (store.supplierId() !== supplierId) {
                     this.setSupplierNeedsRefresh();
+                    this.setSuppliesDataNeedsRefresh();
                 }
                 patchState(store, {supplierId: supplierId});
             },
             setSupplierNeedsRefresh() {
                 patchState(store, {supplierNeedsRefresh: true});
+            },
+            setSuppliesDataNeedsRefresh() {
+                patchState(store, {suppliesDataNeedRefresh: true});
             },
             loadSuppliers: rxMethod<{}>(
                 pipe(
@@ -113,6 +122,21 @@ export const SupplierStore = signalStore(
                                         summary: `Supplier removed.`,
                                         detail: `Supplier with id ${store.supplierId()!} was removed.`,
                                     });
+                                })
+                            )
+                    })
+                )
+            ),
+            loadSupplierData: rxMethod<{}>(
+                pipe(
+                    switchMap(() => {
+                        return supplierRestService.getSuppliesData(store.supplierId()!)
+                            .pipe(
+                                tap(suppliesData => {
+                                    patchState(store, {
+                                        suppliesData: suppliesData,
+                                        suppliesDataNeedRefresh: false,
+                                    })
                                 })
                             )
                     })

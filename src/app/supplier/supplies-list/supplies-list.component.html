@@ -1,0 +1,29 @@
+<finance-component-summary
+        [hasAveragedData]="true"
+        [financeComponentDataForm]="suppliesSummaryForm"
+        [averageFinanceComponentDataForm]="averageSuppliesSummaryForm">
+    <div wrapper-list>
+        <p-table [value]="supplierSuppliesData.supplies!" [tableStyle]="{ 'min-width': '50rem' }">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Name</th>
+                    <th>Project Name</th>
+                    <th>Value</th>
+                    <th class="max-w-4rem text-center">Invoice</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-supply>
+                <tr>
+                    <td>{{ supply.name }}</td>
+                    <td>{{ this.projectNameById.get(supply.projectId) }}</td>
+                    <td>{{ supply.value | currency: ' ':'code':'2.2-2' }}</td>
+                    <td class="max-w-4rem text-center">
+                        <i *ngIf="supply.hasInvoice" class="pi pi-check"></i>
+                        <i *ngIf="!supply.hasInvoice" class="pi pi-times"></i>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</finance-component-summary>

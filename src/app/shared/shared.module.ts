@@ -10,6 +10,7 @@ import {authHttpInterceptorFn, provideAuth0} from "@auth0/auth0-angular";
 import {auth_config} from "../auth.config";
 import { FinanceComponentSummaryComponent } from './finance-component-summary/finance-component-summary.component';
 import {BreadcrumbService, BreadcrumbServiceImpl} from "./breadcrumb/breadcrumb.service";
+import {AccordionModule} from "primeng/accordion";
 
 @NgModule({
     declarations: [
@@ -21,7 +22,8 @@ import {BreadcrumbService, BreadcrumbServiceImpl} from "./breadcrumb/breadcrumb.
         SharedPrimeNgModule,
         ToastModule,
         NgIf,
-        CurrencyPipe
+        CurrencyPipe,
+        AccordionModule
     ],
     exports: [
         ReactiveFormsModule,
