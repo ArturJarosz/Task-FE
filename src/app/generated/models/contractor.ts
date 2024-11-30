@@ -9,5 +9,6 @@ export interface Contractor {
   lastModifiedDateTime?: string;
   name?: string;
   note?: string;
+  numberOfContractorJobs?: number;
   telephone?: string;
 }

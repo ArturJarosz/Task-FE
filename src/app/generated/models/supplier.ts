@@ -9,5 +9,6 @@ export interface Supplier {
   lastModifiedDateTime?: string;
   name?: string;
   note?: string;
+  numberOfSupplies?: number;
   telephone?: string;
 }
