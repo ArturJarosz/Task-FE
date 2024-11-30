@@ -7,16 +7,18 @@
                     <th>Name</th>
                     <th></th>
                     <th>Category</th>
+                    <th class="max-w-4rem text-center">Number of Jobs</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-contractor>
                 <tr [routerLink]="['/contractors', contractor.id]" class="cursor-pointer">
-                    <td>{{contractor.id}}</td>
-                    <td>{{contractor.name}}</td>
+                    <td>{{ contractor.id }}</td>
+                    <td>{{ contractor.name }}</td>
                     <td>
                         <button pButton pRipple class="p-button-text p-button-plain p-0" icon="pi pi-times" (click)="onDeleteContractor($event, contractor)" size="small"></button>
                     </td>
-                    <td>{{getLabelFromCategory(contractor.category)}}</td>
+                    <td>{{ getLabelFromCategory(contractor.category) }}</td>
+                    <td class="max-w-4rem text-center">{{ contractor.numberOfContractorJobs }}</td>
                 </tr>
             </ng-template>
         </p-table>
