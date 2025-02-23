@@ -13,7 +13,6 @@ RUN npm run build --prod
 FROM nginx:1.25.3-alpine
 
 COPY --from=build /application/dist/task-fe /usr/share/nginx/html
-COPY /nginx.conf /etc/nginx/conf.d/default.conf.template
 
 RUN addgroup task && adduser --disabled-password task --ingroup task
 RUN mkdir /fe-app
