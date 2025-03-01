@@ -8,6 +8,7 @@ import {ContractorJob} from "../../../generated/models/contractor-job";
 import {MessageService} from "primeng/api";
 import {FinancialDataStore} from "../../project-financial-summary/state/financial-data.state";
 import {MessageSeverity} from "../../../shared";
+import {ContractorStore} from "../../../contractor/state";
 
 export interface ContractorJobState {
     contractorJob: ContractorJob;
@@ -28,7 +29,7 @@ export const ContractorJobStore = signalStore(
     withState(initialState),
     withMethods(
         (store, contractorJobRestService = inject(ContractorJobRestService), messageService = inject(MessageService),
-         financialDataStore = inject(FinancialDataStore)) => ({
+         financialDataStore = inject(FinancialDataStore), contractorStore = inject(ContractorStore)) => ({
             setProjectId(projectId: number) {
                 if (store.projectId() !== projectId) {
                     this.setContractorJobsNeedRefresh();
@@ -68,6 +69,9 @@ export const ContractorJobStore = signalStore(
                                             summary: 'New contractor job created',
                                             detail: `New contractor ${createdContractorJob.name} job created successfully.`
                                         });
+                                    financialDataStore.setProjectFinancialDataNeedsUpdate();
+                                    contractorStore.setContractorsNeedRefresh();
+                                    contractorStore.setContractorNeedsRefresh();
                                 })
                             )
                     })
