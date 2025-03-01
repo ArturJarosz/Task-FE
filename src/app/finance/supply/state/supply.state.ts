@@ -8,6 +8,7 @@ import {of, pipe, switchMap, tap} from "rxjs";
 import {MessageService} from "primeng/api";
 import {MessageSeverity} from "../../../shared";
 import {FinancialDataStore} from "../../project-financial-summary/state/financial-data.state";
+import {SupplierStore} from "../../../supplier/state";
 
 export interface SupplyState {
     supply: Supply,
@@ -29,7 +30,7 @@ export const SupplyStore = signalStore(
     {providedIn: 'root'},
     withState(initialState),
     withMethods((store, supplyRestService = inject(SupplyRestService), messageService = inject(MessageService),
-                 financialDataStore = inject(FinancialDataStore)) => ({
+                 financialDataStore = inject(FinancialDataStore), supplierStore = inject(SupplierStore)) => ({
         setProjectId(projectId: number) {
             if (store.projectId() !== projectId) {
                 this.setSuppliesNeedRefresh();
@@ -69,6 +70,9 @@ export const SupplyStore = signalStore(
                                     detail: `New supply ${createdSupply.name} was created successfully.`,
                                 });
                                 financialDataStore.setProjectFinancialDataNeedsUpdate();
+                                supplierStore.setSuppliersNeedRefresh();
+                                supplierStore.setSupplierNeedsRefresh();
+                                supplierStore.setSuppliesDataNeedsRefresh();
                             })
                         )
                 })

@@ -47,6 +47,9 @@ export const SupplierStore = signalStore(
             setSuppliesDataNeedsRefresh() {
                 patchState(store, {suppliesDataNeedRefresh: true});
             },
+            setSuppliersNeedRefresh() {
+                patchState(store, {suppliersNeedRefresh: true});
+            },
             loadSuppliers: rxMethod<{}>(
                 pipe(
                     switchMap(() => {
