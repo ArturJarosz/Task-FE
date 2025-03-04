@@ -18,6 +18,8 @@ import {AccordionModule} from "primeng/accordion";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {RippleModule} from "primeng/ripple";
 import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.guard";
+import {ContractorJobListShellComponent} from './contractor-job-list-shell/contractor-job-list-shell.component';
+import {ContractorJobListComponent} from './contractor-job-list/contractor-job-list.component';
 
 @NgModule({
     declarations: [
@@ -25,7 +27,9 @@ import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.gu
         AddContractorComponent,
         ContractorListShellComponent,
         ContractorDetailShellComponent,
-        ContractorDetailComponent
+        ContractorDetailComponent,
+        ContractorJobListShellComponent,
+        ContractorJobListComponent
     ],
     imports: [
         CommonModule,
@@ -33,7 +37,8 @@ import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.gu
             {
                 path: 'contractors',
                 component: ContractorListShellComponent,
-                canActivate: [loggedInGuardGuard]},
+                canActivate: [loggedInGuardGuard]
+            },
             {
                 path: 'contractors/:contractorId',
                 component: ContractorDetailShellComponent,

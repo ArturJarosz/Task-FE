@@ -5,6 +5,7 @@ import {MessageService} from "primeng/api";
 import {environment} from "../../../environments/environment";
 import {Injectable} from "@angular/core";
 import {Contractor} from "../../generated/models/contractor";
+import {ContractorContractorJobsData} from "../../generated/models/contractor-contractor-jobs-data";
 
 export abstract class ContractorRestService {
     abstract getContractors(): Observable<Contractor[]>;
@@ -16,6 +17,8 @@ export abstract class ContractorRestService {
     abstract updateContractor(contractorId: number, contractor: Contractor): Observable<Contractor>;
 
     abstract deleteContractor(contractorId: number): Observable<void>;
+
+    abstract getContractorJobsData(contractorId: number): Observable<ContractorContractorJobsData>;
 }
 
 @Injectable()
@@ -63,5 +66,13 @@ export class ContractorRestServiceImpl extends AbstractRestService implements Co
                 catchError(error => this.handleError(error, this.messageService,
                     `Error removing contractor with id: ${contractorId}`))
             );
+    }
+
+    getContractorJobsData(contractorId: number): Observable<ContractorContractorJobsData> {
+        return this.httpClient.get<ContractorContractorJobsData>(`${this.contractorUrl}/${contractorId}/contractor-jobs`)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error loading contractor jobs data for contractor with id: ${contractorId}`))
+            )
     }
 }

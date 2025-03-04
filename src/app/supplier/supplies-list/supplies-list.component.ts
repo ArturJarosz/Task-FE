@@ -32,9 +32,11 @@ export class SuppliesListComponent implements OnChanges {
             this.fillAverageFormData();
         }
         this.projectNameById = new Map<number, string>();
+        console.log("suppliers 1" + JSON.stringify(this.projects));
         this.projects.forEach(project => {
             this.projectNameById.set(project.id!, project.name!);
         })
+        console.log("suppliers 2" + JSON.stringify(this.projectNameById));
     }
 
     private fillFormData() {
