@@ -70,8 +70,8 @@ export class SupplierRestServiceImpl extends AbstractRestService implements Supp
     getSuppliesData(supplierId: number): Observable<SupplierSuppliesData> {
         return this.httpClient.get<SupplierSuppliesData>(`${this.supplierUrl}/${supplierId}/supplies`)
             .pipe(
-                catchError(error => this.handleError(error, this.messageService,
-                    `Error loading supplies data for supplier with id ${supplierId}`))
+                    catchError(error => this.handleError(error, this.messageService,
+                        `Error loading supplies data for supplier with id ${supplierId}`))
             )
     }
 }

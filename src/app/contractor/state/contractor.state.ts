@@ -7,6 +7,7 @@ import {ContractorRestService} from "../rest/contractor-rest.service";
 import {inject} from "@angular/core";
 import {MessageSeverity} from "../../shared";
 import {MessageService} from "primeng/api";
+import {ContractorContractorJobsData} from "../../generated/models/contractor-contractor-jobs-data";
 
 export interface ContractorState extends AppState {
     contractors: Contractor[];
@@ -14,6 +15,8 @@ export interface ContractorState extends AppState {
     contractorId: number | undefined;
     contractorsNeedRefresh: boolean;
     contractorNeedsRefresh: boolean
+    contractorJobsData: ContractorContractorJobsData;
+    contractorJobsDataNeedRefresh: boolean;
 }
 
 export const initialState: ContractorState = {
@@ -21,7 +24,9 @@ export const initialState: ContractorState = {
     contractor: null,
     contractorId: undefined,
     contractorsNeedRefresh: true,
-    contractorNeedsRefresh: true
+    contractorNeedsRefresh: true,
+    contractorJobsData: {},
+    contractorJobsDataNeedRefresh: true,
 }
 
 export const ContractorStore = signalStore(
@@ -32,6 +37,7 @@ export const ContractorStore = signalStore(
             setContractorId(contractorId: number) {
                 if (store.contractorId() !== contractorId) {
                     this.setContractorNeedsRefresh();
+                    this.setContractorJobsDataNeedRefresh();
                 }
                 patchState(store, {contractorId: contractorId});
             },
@@ -41,14 +47,19 @@ export const ContractorStore = signalStore(
             setContractorsNeedRefresh() {
                 patchState(store, {contractorsNeedRefresh: true});
             },
+            setContractorJobsDataNeedRefresh() {
+                patchState(store, {contractorJobsDataNeedRefresh: true});
+            },
             loadContractors: rxMethod<{}>(
                 pipe(
                     switchMap(() => {
                         if (store.contractorsNeedRefresh()) {
                             return contractorRestService.getContractors()
                                 .pipe(
-                                    tap(contractors => patchState(store,
-                                        {contractors: contractors, contractorsNeedRefresh: false}))
+                                    tap(contractors => patchState(store, {
+                                        contractors: contractors,
+                                        contractorsNeedRefresh: false
+                                    }))
                                 )
                         }
                         return of({});
@@ -61,8 +72,10 @@ export const ContractorStore = signalStore(
                         if (store.contractorNeedsRefresh()) {
                             return contractorRestService.getContractor(store.contractorId()!)
                                 .pipe(
-                                    tap(contractor => patchState(store,
-                                        {contractor: contractor, contractorNeedsRefresh: false}))
+                                    tap(contractor => patchState(store, {
+                                        contractor: contractor,
+                                        contractorNeedsRefresh: false
+                                    }))
                                 )
                         }
                         return of({});
@@ -118,7 +131,27 @@ export const ContractorStore = signalStore(
                                         summary: `Contractor removed.`,
                                         detail: `Contractor with id ${store.contractorId()!} was removed.`,
                                     });
-                                    patchState(store, {contractorsNeedRefresh: true, contractorId: undefined});
+                                    patchState(store, {
+                                        contractorsNeedRefresh: true,
+                                        contractorId: undefined,
+                                        contractor: null,
+                                    });
+                                })
+                            )
+                    })
+                )
+            ),
+            loadContractorJobsData: rxMethod<{}>(
+                pipe(
+                    switchMap(() => {
+                        console.log("Loading contractor jobs data");
+                        return contractorRestService.getContractorJobsData(store.contractorId()!)
+                            .pipe(
+                                tap(contractorJobsData => {
+                                    patchState(store, {
+                                        contractorJobsData: contractorJobsData,
+                                        contractorJobsDataNeedRefresh: false,
+                                    })
                                 })
                             )
                     })

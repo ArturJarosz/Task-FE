@@ -56,8 +56,10 @@ export const SupplierStore = signalStore(
                         if (store.suppliersNeedRefresh()) {
                             return supplierRestService.getSuppliers()
                                 .pipe(
-                                    tap(suppliers => patchState(store,
-                                        {suppliers: suppliers, suppliersNeedRefresh: false}))
+                                    tap(suppliers => patchState(store, {
+                                        suppliers: suppliers,
+                                        suppliersNeedRefresh: false
+                                    }))
                                 )
                         }
                         return of({});
@@ -70,8 +72,10 @@ export const SupplierStore = signalStore(
                         if (store.supplierNeedsRefresh()) {
                             return supplierRestService.getSupplier(store.supplierId()!)
                                 .pipe(
-                                    tap(supplier => patchState(store,
-                                        {supplier: supplier, supplierNeedsRefresh: false}))
+                                    tap(supplier => patchState(store, {
+                                        supplier: supplier,
+                                        supplierNeedsRefresh: false
+                                    }))
                                 )
                         }
                         return of({});
@@ -84,7 +88,9 @@ export const SupplierStore = signalStore(
                         return supplierRestService.createSupplier(supplier)
                             .pipe(
                                 tap(supplier => {
-                                    patchState(store, {suppliersNeedRefresh: true});
+                                    patchState(store, {
+                                        suppliersNeedRefresh: true
+                                    });
                                     messageService.add({
                                         severity: MessageSeverity.INFO,
                                         summary: `New supplier created`,
@@ -101,8 +107,11 @@ export const SupplierStore = signalStore(
                         return supplierRestService.updateSupplier(store.supplierId()!, supplier)
                             .pipe(
                                 tap(supplier => {
-                                    patchState(store,
-                                        {supplier: supplier, suppliersNeedRefresh: true, supplierNeedsRefresh: true});
+                                    patchState(store, {
+                                        supplier: supplier,
+                                        suppliersNeedRefresh: true,
+                                        supplierNeedsRefresh: true
+                                    });
                                     messageService.add({
                                         severity: MessageSeverity.INFO,
                                         summary: `Supplier updated.`,
@@ -125,6 +134,11 @@ export const SupplierStore = signalStore(
                                         summary: `Supplier removed.`,
                                         detail: `Supplier with id ${store.supplierId()!} was removed.`,
                                     });
+                                    patchState(store, {
+                                        supplier: null,
+                                        supplierId: undefined,
+                                        supplierNeedsRefresh: true,
+                                    })
                                 })
                             )
                     })
