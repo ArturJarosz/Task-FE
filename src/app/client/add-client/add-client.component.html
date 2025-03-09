@@ -14,7 +14,7 @@
                  [ngSwitch]="clientForm.get('clientType')?.value">
                 <div class="flex gap-3" *ngSwitchCase="ClientType.PRIVATE.toString()">
                     <div class="w-6">
-                        <label for="firstName" class="block  text-color text-base">First Name</label>
+                        <label for="firstName" class="block  text-color text-base top-label">First Name</label>
                         <span class="p-input-icon-left w-full">
                             <input type="text" class="w-full" id="firstName" formControlName="firstName"
                                    pInputText
@@ -27,7 +27,7 @@
                         </span>
                     </div>
                     <div class="w-6">
-                        <label for="lastName" class="block text-color text-base">Last Name</label>
+                        <label for="lastName" class="block text-color text-base top-label">Last Name</label>
                         <span class="p-input-icon-left w-full">
                             <input type="text" formControlName="lastName" class="w-full" id="lastName"
                                    pInputText
@@ -42,7 +42,7 @@
                 </div>
                 <div class="flex gap-3" *ngSwitchCase="ClientType.CORPORATE.toString()">
                     <div class="w-full">
-                        <label for="companyName" class="block  text-color text-base">Company Name</label>
+                        <label for="companyName" class="block  text-color text-base top-label">Company Name</label>
                         <span class="p-input-icon-left w-full">
                             <input type="text" formControlName="companyName" class="w-full" id="companyName"
                                    pInputText
@@ -59,7 +59,7 @@
             <div class="flex flex-column gap-3 mt-3 pt-2" formGroupName="contact">
                 <div class="flex gap-3">
                     <div class="w-6">
-                        <label for="email" class="block  text-color text-base">Email</label>
+                        <label for="email" class="block  text-color text-base top-label">Email</label>
                         <span class="p-input-icon-left w-full">
                             <input type="text" class="w-full" id="email" formControlName="email"
                                    pInputText
@@ -68,7 +68,7 @@
                         </span>
                     </div>
                     <div class="w-6">
-                        <label for="telephone" class="block  text-color text-base">Phone</label>
+                        <label for="telephone" class="block  text-color text-base top-label">Phone</label>
                         <span class="p-input-icon-left w-full">
                             <input type="text" formControlName="telephone" class="w-full" id="telephone"
                                    pInputText
@@ -80,7 +80,7 @@
                 <div formGroupName="address">
                     <div class="flex gap-3">
                         <div class="w-6">
-                            <label for="city" class="block  text-color text-base">City</label>
+                            <label for="city" class="block  text-color text-base top-label">City</label>
                             <span class="p-input-icon-left w-full">
                             <input type="text" class="w-full" id="city" formControlName="city"
                                    pInputText
@@ -89,7 +89,7 @@
                         </span>
                         </div>
                         <div class="w-6">
-                            <label for="postCode" class="block  text-color text-base">Post code</label>
+                            <label for="postCode" class="block  text-color text-base top-label">Post code</label>
                             <span class="p-input-icon-left w-full">
                             <input type="text" formControlName="postCode" class="w-full" id="postCode"
                                    pInputText
@@ -100,7 +100,7 @@
                     </div>
                     <div class="flex gap-3">
                         <div class="w-12">
-                            <label for="street" class="block  text-color text-base">Street</label>
+                            <label for="street" class="block  text-color text-base top-label">Street</label>
                             <span class="p-input-icon-left w-full">
                             <input type="text" formControlName="street" class="w-full" id="street"
                                    pInputText
@@ -114,7 +114,7 @@
             <div class="flex flex-column gap-3 mt-3 pt-2">
                 <div class="flex gap-3">
                     <div class="w-full">
-                        <label for="note" class="block  text-color text-base">Note</label>
+                        <label for="note" class="block  text-color text-base top-label">Note</label>
                         <span class="p-input-icon-left w-full">
                             <textarea rows="5" cols="30" pInputTextarea type="text" formControlName="note"
                                       class="w-full" id="note"
