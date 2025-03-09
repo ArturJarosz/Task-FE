@@ -1,6 +1,6 @@
 export const environment = {
     production: true,
-    baseUrl: 'BASE_URL',
+    baseUrl: '/task-backend',
     auth: {
         auth0: {
             domain: 'AUTH0_DOMAIN',
