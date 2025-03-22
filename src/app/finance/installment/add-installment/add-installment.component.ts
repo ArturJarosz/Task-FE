@@ -34,7 +34,7 @@ export class AddInstallmentComponent implements OnInit, AbstractAddEditComponent
     }
 
     ngOnInit(): void {
-        this.addInstallmentForm = this.addInstallmentFormProvider.getAddInstallmentForm();
+        this.addInstallmentForm = this.addInstallmentFormProvider.getInstallmentForm();
         this.addInstallmentForm.valueChanges.subscribe(form => {
             if (this.addInstallmentForm.value.paid && this.addInstallmentForm.controls.paymentDate.disabled) {
                 this.addInstallmentForm.controls.paymentDate.enable()
@@ -90,6 +90,6 @@ export class AddInstallmentComponent implements OnInit, AbstractAddEditComponent
     }
 
     private resetFields(): void {
-        this.addInstallmentForm = this.addInstallmentFormProvider.getAddInstallmentForm();
+        this.addInstallmentForm = this.addInstallmentFormProvider.getInstallmentForm();
     }
 }

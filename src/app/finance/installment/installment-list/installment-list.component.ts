@@ -6,7 +6,6 @@ import {
     ProjectFinancialSummaryFormProvider
 } from "../../project-financial-summary/form/project-financial-summary-form-provider";
 import {isUndefinedOrEmpty} from "../../../shared/utils/data-validation-util";
-import {Stage} from "../../../generated/models/stage";
 
 @Component({
     selector: 'installment-list',
@@ -16,6 +15,8 @@ import {Stage} from "../../../generated/models/stage";
 export class InstallmentListComponent implements OnChanges {
     @Input()
     installmentProjectData!: InstallmentProjectData;
+    @Input()
+    projectId: number = 0;
 
     installmentsDetailForm!: FormGroup<FinanceObjectSummaryForm>;
 

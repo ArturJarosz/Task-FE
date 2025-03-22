@@ -77,8 +77,7 @@ export const InstallmentStore = signalStore(
                             tap(installment => {
                                 patchState(store, {
                                     installment: installment,
-                                    installmentsNeedRefresh: true,
-                                    installmentNeedsRefresh: false
+                                    installmentsNeedRefresh: true
                                 });
                                 financialDataStore.setProjectFinancialDataNeedsUpdate();
                                 messageService.add({
@@ -88,6 +87,23 @@ export const InstallmentStore = signalStore(
                                 })
                             })
                         )
+                })
+            )
+        ),
+        loadInstallment: rxMethod<{}>(
+            pipe(
+                switchMap(() => {
+                    if (store.installmentNeedsRefresh()) {
+                        return installmentRestService.getInstallment(store.projectId()!, store.installmentId()!)
+                            .pipe(
+                                tap(installment => {
+                                    patchState(store, {
+                                        installment: installment,
+                                        installmentNeedsRefresh: false
+                                    });
+                                }))
+                    }
+                    return of({})
                 })
             )
         )
