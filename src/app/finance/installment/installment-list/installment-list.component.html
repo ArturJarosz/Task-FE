@@ -10,7 +10,7 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-installment>
-                <tr>
+                <tr [routerLink]="['/projects', projectId, 'installments', installment.id]" class="cursor-pointer">
                     <td>{{ installment.stageName }}</td>
                     <td>{{ installment.value | currency: ' ':'code':'2.2-2' }}</td>
                     <td class="max-w-4rem text-center">

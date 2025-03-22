@@ -10,11 +10,13 @@
                         <div class="grid grid-nogutter surface-border  p-1">
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium">Name</div>
-                                <input formControlName="name" id="name" pInputText>
+                                <div class="col-8 pr-3">
+                                    <input formControlName="name" id="name" pInputText>
+                                </div>
                             </div>
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium">Category</div>
-                                <span class="p-input-icon-left w-full">
+                                <span class="p-input-icon-left w-full col-8 pr-3">
                                     <p-dropdown [options]="costCategories!" optionLabel="label" optionValue="id"
                                                 formControlName="category" class="w-full">
                                     </p-dropdown>
@@ -22,28 +24,38 @@
                             </div>
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium ">Paid</div>
-                                <p-inputSwitch formControlName="paid" id="paid"></p-inputSwitch>
+                                <div class="col-8 pr-3">
+                                    <p-inputSwitch formControlName="paid" id="paid"></p-inputSwitch>
+                                </div>
                             </div>
                         </div>
                         <div class="grid grid-nogutter surface-border  p-1 ">
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium ">Date</div>
-                                <p-calendar formControlName="date" id="date" dateFormat="yy-mm-dd"></p-calendar>
+                                <div class="col-8 pr-3">
+                                    <p-calendar formControlName="date" id="date" dateFormat="yy-mm-dd"></p-calendar>
+                                </div>
                             </div>
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium ">Value</div>
-                                <input formControlName="value" id="value" pInputText>
+                                <div class="col-8 pr-3">
+                                    <input formControlName="value" id="value" pInputText>
+                                </div>
                             </div>
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium ">Has Invoice</div>
-                                <p-inputSwitch formControlName="hasInvoice" id="hasInvoice"></p-inputSwitch>
+                                <div class="col-8 pr-3">
+                                    <p-inputSwitch formControlName="hasInvoice" id="hasInvoice"></p-inputSwitch>
+                                </div>
                             </div>
                         </div>
                         <div class="grid grid-nogutter surface-border  p-1 ">
                             <div class="md:col-12 p-1">
                                 <div class="text-500 font-medium ">Note</div>
+                                <div class="col-8 pr-3">
                                 <textarea formControlName="note" id="note" type="text" pInputTextarea rows="2"
                                           [autoResize]="true"></textarea>
+                                </div>
                             </div>
                         </div>
                     </div>

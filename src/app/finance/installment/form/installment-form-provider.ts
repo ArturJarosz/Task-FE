@@ -9,10 +9,11 @@ export class InstallmentFormProvider {
     constructor(private formBuilder: FormBuilder) {
     }
 
-    public getAddInstallmentForm(): FormGroup<InstallmentForm> {
+    public getInstallmentForm(): FormGroup<InstallmentForm> {
         return this.formBuilder.nonNullable.group<InstallmentForm>({
             value: this.formBuilder.nonNullable.control<number>(0.0, [Validators.required]),
             stageId: this.formBuilder.nonNullable.control<number>(0, []),
+            stageName: this.formBuilder.nonNullable.control<string>(""),
             hasInvoice: this.formBuilder.nonNullable.control<boolean>(false, [Validators.required]),
             note: this.formBuilder.control<string>(''),
             paid: this.formBuilder.nonNullable.control<boolean>(false, [Validators.required]),
@@ -24,6 +25,7 @@ export class InstallmentFormProvider {
 export interface InstallmentForm {
     value: FormControl<number>,
     stageId: FormControl<number>,
+    stageName: FormControl<string>,
     hasInvoice: FormControl<boolean>,
     note: FormControl<string | null>
     paid: FormControl<boolean>,

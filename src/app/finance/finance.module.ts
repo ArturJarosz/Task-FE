@@ -71,6 +71,11 @@ import {AddInstallmentComponent} from './installment/add-installment/add-install
                 canActivate: [loggedInGuardGuard],
             },
             {
+                path: 'projects/:projectId/installments/:installmentId',
+                component: InstallmentDetailShellComponent,
+                canActivate: [loggedInGuardGuard],
+            },
+            {
                 path: 'projects/:projectId/finance',
                 component: ProjectFinancialDetailShellComponent,
                 canActivate: [loggedInGuardGuard]
