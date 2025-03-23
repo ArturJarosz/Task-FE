@@ -33,7 +33,7 @@
         <div class="grid grid-nogutter surface-border p-1 ">
             <div class="md:col-4 p-1">
                 <div class="text-500 font-medium">Value</div>
-                <input formControlName="value" id="value" pInputText>
+                <p-inputNumber formControlName="installmentValue" id="installmentValue" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2"></p-inputNumber>
             </div>
             <div class="md:col-4 p-1">
                 <div class="text-500 font-medium ">Has Invoice</div>

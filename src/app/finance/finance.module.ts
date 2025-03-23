@@ -45,6 +45,7 @@ import {
     InstallmentDetailShellComponent
 } from './installment/installment-detail-shell/installment-detail-shell.component';
 import { InstallmentDetailComponent } from './installment/installment-detail/installment-detail.component';
+import {InputNumberModule} from "primeng/inputnumber";
 
 @NgModule({
     declarations: [
@@ -96,7 +97,8 @@ import { InstallmentDetailComponent } from './installment/installment-detail/ins
         InputSwitchModule,
         InputTextareaModule,
         DialogModule,
-        DropdownModule
+        DropdownModule,
+        InputNumberModule
     ],
     exports: [
         CostListComponent,
