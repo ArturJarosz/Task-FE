@@ -46,7 +46,7 @@
         <div *ngIf="addStageForm.get('hasInstallment')?.value!" class="grid grid-nogutter surface-border p-1">
             <div class="col-4 p-1 grid grid-nogutter">
                 <div class="col-4 text-500 flex align-items-center">Value:</div>
-                <input formControlName="installmentValue" class="col-8 pr-3" id="installmentValue" pInputText>
+                <p-inputNumber formControlName="installmentValue" id="installmentValue" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2"></p-inputNumber>
             </div>
             <div class="col-4 p-1 grid grid-nogutter">
                 <div class="col-4 text-500 flex align-items-center">Has invoice:</div>
