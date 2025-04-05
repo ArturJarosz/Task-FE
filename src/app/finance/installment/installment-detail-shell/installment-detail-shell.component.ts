@@ -29,4 +29,8 @@ export class InstallmentDetailShellComponent implements OnInit {
         this.installmentStore.loadInstallment({});
     }
 
+    updateInstallment($event: Installment) {
+        this.installmentStore.updateInstallment({installment: $event});
+    }
+
 }

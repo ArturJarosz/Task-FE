@@ -124,7 +124,7 @@ export const CostStore = signalStore(
         updateCost: rxMethod<{ cost: Cost }>(
             pipe(
                 switchMap(({cost}) => {
-                    return costRestService.updateCost(store.projectId()!, cost)
+                    return costRestService.updateCost(store.projectId()!, store.costId()!, cost)
                         .pipe(
                             tap(cost => {
                                 patchState(store, {cost: cost, costsNeedRefresh: true, costNeedsRefresh: false});

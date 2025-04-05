@@ -5,12 +5,13 @@
                 <form [formGroup]="installmentDetailForm">
                     <div class="p-2">
                         <div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
+                            <p-button title="Update installment" icon="pi pi-arrow-down" [disabled]="!isFormChanged()" (onClick)="onSave()" [outlined]="true" [rounded]="true" class="update-button transition-colors transition-duration-300"></p-button>
                         </div>
                         <div class="grid grid-nogutter surface-border  p-1">
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium">Stage name</div>
                                 <div class="col-8 pr-3">
-                                    <input formControlName="stageName" id="stageName" pInputText>
+                                    <input formControlName="stageName" id="stageName" pInputText [readOnly]="true">
                                 </div>
                             </div>
                             <div class="md:col-4 p-1">

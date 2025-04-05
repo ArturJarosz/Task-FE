@@ -18,7 +18,7 @@ export abstract class CostRestService {
 
     abstract getProjectCostsData(projectId: number): Observable<CostProjectData>;
 
-    abstract updateCost(projectId: number, cost: Cost): Observable<Cost>;
+    abstract updateCost(projectId: number, costId: number, cost: Cost): Observable<Cost>;
 
 }
 
@@ -62,8 +62,8 @@ export class CostRestServiceImpl extends AbstractRestService implements CostRest
             );
     }
 
-    updateCost(projectId: number, cost: Cost): Observable<Cost> {
-        return this.httpClient.put<Cost>(`${this.projectsUrl}/${projectId}/costs/${cost.id}`, cost)
+    updateCost(projectId: number, costId: number, cost: Cost): Observable<Cost> {
+        return this.httpClient.put<Cost>(`${this.projectsUrl}/${projectId}/costs/${costId}`, cost)
             .pipe(
                 catchError(error => this.handleError(error, this.messageService,
                     `Error updating cost : ${cost.name}`))
