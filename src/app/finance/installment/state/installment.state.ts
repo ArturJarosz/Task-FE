@@ -106,6 +106,30 @@ export const InstallmentStore = signalStore(
                     return of({})
                 })
             )
+        ),
+        updateInstallment: rxMethod<{ installment: Installment }>(
+            pipe(
+                switchMap(({installment}) => {
+                    return installmentRestService.updateInstallment(store.projectId()!, store.installmentId()!,
+                        installment)
+                        .pipe(
+                            tap(installment => {
+                                    patchState(store, {
+                                        installment: installment,
+                                        installmentsNeedRefresh: true,
+                                        installmentNeedsRefresh: false
+                                    });
+                                    messageService.add({
+                                        severity: MessageSeverity.SUCCESS,
+                                        summary: `Installment updated`,
+                                        detail: `Installment for stage ${installment.stageName} was successfully updated.`,
+                                    });
+                                    financialDataStore.setProjectFinancialDataNeedsUpdate();
+                                }
+                            )
+                        )
+                })
+            )
         )
 
     }))

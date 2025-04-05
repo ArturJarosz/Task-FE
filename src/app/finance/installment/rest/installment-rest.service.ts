@@ -13,6 +13,9 @@ export abstract class InstallmentRestService {
     abstract createInstallment(projectId: number, installment: Installment): Observable<Installment>;
 
     abstract getInstallment(projectId: number, installmentId: number): Observable<Installment>;
+
+    abstract updateInstallment(projectId: number, installmentId: number,
+                               installment: Installment): Observable<Installment>;
 }
 
 @Injectable()
@@ -45,6 +48,15 @@ export class InstallmentRestServiceImpl extends AbstractRestService implements I
             .pipe(
                 catchError(error => this.handleError(error, this.messageService,
                     `Error getting installment with id: ${installmentId}`))
+            )
+    }
+
+    updateInstallment(projectId: number, installmentId: number, installment: Installment): Observable<Installment> {
+        return this.httpClient.put<Installment>(`${this.projectsUrl}/${projectId}/installments/${installmentId}`,
+            installment)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error updating installment with id: ${installmentId} for stage: ${installment.stageName}.`))
             )
     }
 

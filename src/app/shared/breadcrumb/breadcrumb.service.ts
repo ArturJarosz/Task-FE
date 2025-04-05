@@ -101,7 +101,6 @@ export class BreadcrumbServiceImpl implements BreadcrumbService {
         }
         return RouteIdResolver.DEFAULT;
     }
-
 }
 
 enum RouteIdResolver {

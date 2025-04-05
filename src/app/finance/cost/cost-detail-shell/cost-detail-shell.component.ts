@@ -33,4 +33,8 @@ export class CostDetailShellComponent implements OnInit {
         this.configurationStore.loadConfiguration({});
         this.costStore.loadCost({});
     }
+
+    updateCost($event: Cost) {
+        this.costStore.updateCost({cost: $event});
+    }
 }
