@@ -157,11 +157,9 @@ export class ProjectDetailComponent implements OnChanges {
         }
         let newContractForm = (this.projectDetailsForm.get('contract') as FormGroup<ProjectContractForm>);
         let changedValues: any[] = [];
-        console.log(" ================================================================ ");
         Object.keys(this.initialContractForm.controls)
             .forEach(key => {
                 if (!(this.initialContractForm.get(key)?.value === newContractForm.get(key)?.value)) {
-                    console.log(" ---- key: ", key, "initial: ",this.initialContractForm.get(key)?.value, "new: ", newContractForm.get(key)?.value);
                     changedValues.push(key);
                 }
             });
@@ -173,11 +171,8 @@ export class ProjectDetailComponent implements OnChanges {
             return false;
         }
         let changedValues: any[] = [];
-        console.log(" ================================================================ ");
         Object.keys(this.initialProjectForm.controls)
             .forEach(key => {
-                console.log(" ---- key: ", key, "initial: ",this.initialProjectForm.get(key)?.value, "new: ", this.projectDetailsForm.get(key)?.value);
-
                 if (key === "contract") {
                     return;
                 }

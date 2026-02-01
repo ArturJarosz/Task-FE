@@ -50,7 +50,8 @@ import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.gu
         TableModule,
         RouterModule.forChild([
             {path: 'projects', component: ProjectListShellComponent, canActivate: [loggedInGuardGuard]},
-            {path: 'projects/:projectId', component: ProjectDetailShellComponent, canActivate: [loggedInGuardGuard]}
+            {path: 'projects/:projectId', component: ProjectDetailShellComponent, canActivate: [loggedInGuardGuard]},
+            {path: 'projects/:projectId/stages', component: ProjectDetailShellComponent, canActivate: [loggedInGuardGuard]},
         ]),
         DialogModule,
         DropdownModule,

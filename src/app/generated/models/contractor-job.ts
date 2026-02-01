@@ -10,5 +10,6 @@ export interface ContractorJob {
   note?: string;
   paid?: boolean;
   payable?: boolean;
+  projectId?: number;
   value?: number;
 }

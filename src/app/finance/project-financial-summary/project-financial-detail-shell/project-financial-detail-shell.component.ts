@@ -26,6 +26,8 @@ export class ProjectFinancialDetailShellComponent implements OnInit {
     $costsNeedRefresh: Signal<boolean> = this.costStore.costsNeedRefresh!;
     $projectName: Signal<string> = this.projectStore.projectName!;
 
+    showAddSupervisionDialog: boolean = false;
+
     constructor(private route: ActivatedRoute) {
         effect(() => {
             if (this.$projectFinancialSummaryNeedsRefresh()) {
@@ -46,5 +48,4 @@ export class ProjectFinancialDetailShellComponent implements OnInit {
         this.costStore.setProjectId(this.projectId);
         this.costStore.loadCostsProjectData({});
     }
-
 }

@@ -12,6 +12,7 @@ export { Contact } from './models/contact';
 export { Contract } from './models/contract';
 export { Contractor } from './models/contractor';
 export { ContractorCategory } from './models/contractor-category';
+export { ContractorContractorJobsData } from './models/contractor-contractor-jobs-data';
 export { ContractorJob } from './models/contractor-job';
 export { ContractorJobProjectData } from './models/contractor-job-project-data';
 export { Contractors } from './models/contractors';
