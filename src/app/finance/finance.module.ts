@@ -44,8 +44,13 @@ import {AddInstallmentComponent} from './installment/add-installment/add-install
 import {
     InstallmentDetailShellComponent
 } from './installment/installment-detail-shell/installment-detail-shell.component';
-import { InstallmentDetailComponent } from './installment/installment-detail/installment-detail.component';
+import {InstallmentDetailComponent} from './installment/installment-detail/installment-detail.component';
 import {InputNumberModule} from "primeng/inputnumber";
+import {SupervisionShellComponent} from './supervision/supervision-shell/supervision-shell.component';
+import {SupervisionComponent} from './supervision/supervision/supervision.component';
+import {SupervisionRestService, SupervisionRestServiceImpl} from "./supervision/rest/supervision-rest.service";
+import {AddSupervisionComponent} from './supervision/add-supervision/add-supervision.component';
+import {AddSupervisionVisitComponent} from './supervision/add-supervision-visit/add-supervision-visit.component';
 
 @NgModule({
     declarations: [
@@ -64,7 +69,11 @@ import {InputNumberModule} from "primeng/inputnumber";
         AddContractorJobComponent,
         AddInstallmentComponent,
         InstallmentDetailShellComponent,
-        InstallmentDetailComponent
+        InstallmentDetailComponent,
+        SupervisionShellComponent,
+        SupervisionComponent,
+        AddSupervisionComponent,
+        AddSupervisionVisitComponent
     ],
     imports: [
         CommonModule,
@@ -107,14 +116,17 @@ import {InputNumberModule} from "primeng/inputnumber";
         ContractorJobListComponent,
         SupplyListComponent,
         SupplyListShellComponent,
-        ContractorJobListShellComponent
+        ContractorJobListShellComponent,
+        SupervisionShellComponent,
+        AddSupervisionComponent
     ],
     providers: [
         {provide: CostRestService, useClass: CostRestServiceImpl},
         {provide: FinancialRestService, useClass: FinancialRestServiceImpl},
         {provide: InstallmentRestService, useClass: InstallmentRestServiceImpl},
         {provide: SupplyRestService, useClass: SupplyRestServiceImpl},
-        {provide: ContractorJobRestService, useClass: ContractorJobRestServiceImpl}
+        {provide: ContractorJobRestService, useClass: ContractorJobRestServiceImpl},
+        {provide: SupervisionRestService, useClass: SupervisionRestServiceImpl}
     ]
 })
 export class FinanceModule {

@@ -38,11 +38,9 @@ export class SuppliesListComponent implements OnChanges {
     }
 
     private fillFormData() {
-        console.log("filling form data")
         if (isUndefinedOrEmpty(this.supplierSuppliesData) || !this.suppliesSummaryForm) {
             return;
         }
-        console.log("filling data")
         let paidCount = this.supplierSuppliesData.supplies!.filter(supply => {
             return supply.paid
         }).length;
@@ -58,11 +56,9 @@ export class SuppliesListComponent implements OnChanges {
     }
 
     private fillAverageFormData() {
-        console.log("filling average form data")
         if (isUndefinedOrEmpty(this.supplierSuppliesData) || !this.averageSuppliesSummaryForm) {
             return;
         }
-        console.log("filling average data")
         this.averageSuppliesSummaryForm.patchValue({
             netValue: this.supplierSuppliesData.averageFinancialData?.netValue,
             grossValue: this.supplierSuppliesData.averageFinancialData?.grossValue,

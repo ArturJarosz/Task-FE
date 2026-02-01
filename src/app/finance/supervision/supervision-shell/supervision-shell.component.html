@@ -1,0 +1,17 @@
+<supervision
+        (notify)="onClickAdd($event)"
+        (notifyAddVisit)="onClickAddVisit()"
+        [supervision]="supervisionStore.supervision()"
+        [supervisionVisits]="$supervisionVisits()">
+</supervision>
+<add-supervision
+        [projectId]="projectId"
+        [visible]="showAddSupervisionDialog"
+        (notify)="onNotifyAddSupervision($event)">
+</add-supervision>
+<add-supervision-visit
+        *ngIf="supervisionStore.supervisionId()"
+        [supervisionId]="supervisionStore.supervisionId()!"
+        [visible]="showAddSupervisionVisitDialog"
+        (notify)="onNotifyAddSupervisionVisit($event)">
+</add-supervision-visit>

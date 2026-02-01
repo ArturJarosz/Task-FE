@@ -16,7 +16,8 @@ export interface ProjectState extends AppState {
     project: Project | null,
     projectId: number | undefined,
     projectsNeedRefresh: boolean,
-    projectNeedsRefresh: boolean
+    projectNeedsRefresh: boolean,
+    projectHasSupervision: boolean,
 }
 
 export const initialState: ProjectState = {
@@ -25,7 +26,8 @@ export const initialState: ProjectState = {
     project: null,
     projectId: undefined,
     projectsNeedRefresh: true,
-    projectNeedsRefresh: true
+    projectNeedsRefresh: true,
+    projectHasSupervision: false,
 }
 
 export const ProjectStore = signalStore(
@@ -39,6 +41,12 @@ export const ProjectStore = signalStore(
             return '';
         })
     })),
+    withComputed(({project, projectId}) => ({
+            projectHasSupervision: computed(() => {
+                return project() && project()?.supervision != null;
+            })
+        }
+    )),
     withMethods((store, projectRestService = inject(ProjectRestService), messageService = inject(MessageService),
                  financialDataStore = inject(FinancialDataStore)) => ({
         setProjectId(projectId: number) {
@@ -132,5 +140,9 @@ export const ProjectStore = signalStore(
                 })
             )
         ),
+        refreshProjectById(projectId: number): void {
+            patchState(store, {projectId: projectId, projectNeedsRefresh: true});
+            this.loadProject({});
+        },
     }))
 )

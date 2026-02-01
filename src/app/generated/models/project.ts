@@ -7,6 +7,7 @@ import { Cost } from '../models/cost';
 import { ProjectStatus } from '../models/project-status';
 import { ProjectType } from '../models/project-type';
 import { Stage } from '../models/stage';
+import { Supervision } from '../models/supervision';
 export interface Project {
   architect?: Architect;
   client?: Client;
@@ -24,5 +25,6 @@ export interface Project {
   stages?: Array<Stage>;
   startDate?: string;
   status?: ProjectStatus;
+  supervision?: Supervision;
   type?: ProjectType;
 }
