@@ -14,6 +14,8 @@ export interface ContractorJobState {
     contractorJob: ContractorJob;
     contractorsJobsProjectData: ContractorJobProjectData;
     contractorJobsNeedRefresh: boolean;
+    contractorJobNeedsRefresh: boolean;
+    contractorJobId: number | undefined;
     projectId: number | undefined;
 }
 
@@ -21,6 +23,8 @@ export const initialState: ContractorJobState = {
     contractorJob: {},
     contractorsJobsProjectData: {},
     contractorJobsNeedRefresh: true,
+    contractorJobNeedsRefresh: true,
+    contractorJobId: undefined,
     projectId: undefined,
 }
 
@@ -38,6 +42,15 @@ export const ContractorJobStore = signalStore(
             },
             setContractorJobsNeedRefresh() {
                 patchState(store, {contractorJobsNeedRefresh: true});
+            },
+            setContractorJobNeedsRefresh() {
+                patchState(store, {contractorJobNeedsRefresh: true});
+            },
+            setContractorJobId(contractorJobId: number) {
+                if (store.contractorJobId() !== contractorJobId) {
+                    this.setContractorJobNeedsRefresh();
+                }
+                patchState(store, {contractorJobId: contractorJobId});
             },
             loadContractorsJobsProjectData: rxMethod<{}>(
                 pipe(
@@ -76,6 +89,68 @@ export const ContractorJobStore = signalStore(
                             )
                     })
                 )
-            )
+            ),
+            loadContractorJob: rxMethod<{}>(
+                pipe(
+                    switchMap(() => {
+                        if (store.contractorJobNeedsRefresh() && store.projectId() && store.contractorJobId()) {
+                            return contractorJobRestService.getContractorJob(store.projectId()!, store.contractorJobId()!)
+                                .pipe(tap(contractorJob => patchState(store, {
+                                    contractorJob: contractorJob,
+                                    contractorJobNeedsRefresh: false
+                                })));
+                        }
+                        return of(null);
+                    })
+                )
+            ),
+            updateContractorJob: rxMethod<{ contractorJob: ContractorJob }>(
+                pipe(
+                    switchMap(({contractorJob}) => {
+                        return contractorJobRestService.updateContractorJob(store.projectId()!, store.contractorJobId()!, contractorJob)
+                            .pipe(
+                                tap(updatedContractorJob => {
+                                    patchState(store, {
+                                        contractorJob: updatedContractorJob,
+                                        contractorJobsNeedRefresh: true
+                                    });
+                                    messageService.add({
+                                        severity: MessageSeverity.INFO,
+                                        summary: 'Contractor job updated',
+                                        detail: `Contractor job ${updatedContractorJob.name} updated successfully.`
+                                    });
+                                    financialDataStore.setProjectFinancialDataNeedsUpdate();
+                                    contractorStore.setContractorsNeedRefresh();
+                                    contractorStore.setContractorNeedsRefresh();
+                                    contractorStore.setContractorJobsDataNeedRefresh();
+                                })
+                            );
+                    })
+                )
+            ),
+            deleteContractorJob: rxMethod<{}>(
+                pipe(
+                    switchMap(() => {
+                        return contractorJobRestService.deleteContractorJob(store.projectId()!, store.contractorJobId()!)
+                            .pipe(
+                                tap(() => {
+                                    patchState(store, {
+                                        contractorJob: {},
+                                        contractorJobsNeedRefresh: true
+                                    });
+                                    messageService.add({
+                                        severity: MessageSeverity.INFO,
+                                        summary: 'Contractor job deleted',
+                                        detail: `Contractor job deleted successfully.`
+                                    });
+                                    financialDataStore.setProjectFinancialDataNeedsUpdate();
+                                    contractorStore.setContractorsNeedRefresh();
+                                    contractorStore.setContractorNeedsRefresh();
+                                    contractorStore.setContractorJobsDataNeedRefresh();
+                                })
+                            );
+                    })
+                )
+            ),
         }))
 )

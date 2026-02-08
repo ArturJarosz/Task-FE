@@ -18,6 +18,17 @@ export class ContractorJobFormProvider {
             contractorId: this.formBuilder.nonNullable.control<number>(0)
         })
     }
+
+    public getContractorJobDetailForm(): FormGroup<ContractorJobDetailForm> {
+        return this.formBuilder.nonNullable.group<ContractorJobDetailForm>({
+            name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
+            value: this.formBuilder.nonNullable.control<number>(0.0, [Validators.required]),
+            hasInvoice: this.formBuilder.nonNullable.control<boolean>(false, [Validators.required]),
+            paid: this.formBuilder.nonNullable.control<boolean>(false, [Validators.required]),
+            note: this.formBuilder.nonNullable.control<string>(''),
+            contractorId: this.formBuilder.nonNullable.control<number>(0)
+        })
+    }
 }
 
 export interface AddContractorJobForm {
@@ -27,4 +38,13 @@ export interface AddContractorJobForm {
     hasInvoice: FormControl<boolean>,
     paid: FormControl<boolean>,
     contractorId: FormControl<number>
+}
+
+export interface ContractorJobDetailForm {
+    name: FormControl<string>;
+    value: FormControl<number>;
+    hasInvoice: FormControl<boolean>;
+    paid: FormControl<boolean>;
+    note: FormControl<string>;
+    contractorId: FormControl<number>;
 }
