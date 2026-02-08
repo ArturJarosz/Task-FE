@@ -15,6 +15,8 @@ export interface SupplyState {
     supplies: Supply[];
     supplyProjectData: SupplyProjectData;
     suppliesNeedRefresh: boolean;
+    supplyNeedsRefresh: boolean;
+    supplyId: number | undefined;
     projectId: number | undefined;
 }
 
@@ -23,6 +25,8 @@ export const initialState: SupplyState = {
     supplies: [],
     supplyProjectData: {},
     suppliesNeedRefresh: true,
+    supplyNeedsRefresh: true,
+    supplyId: undefined,
     projectId: undefined
 }
 
@@ -39,6 +43,15 @@ export const SupplyStore = signalStore(
         },
         setSuppliesNeedRefresh() {
             patchState(store, {suppliesNeedRefresh: true})
+        },
+        setSupplyNeedsRefresh() {
+            patchState(store, {supplyNeedsRefresh: true})
+        },
+        setSupplyId(supplyId: number) {
+            if (store.supplyId() !== supplyId) {
+                this.setSupplyNeedsRefresh();
+            }
+            patchState(store, {supplyId: supplyId});
         },
         loadProjectSupplies: rxMethod<{}>(
             pipe(
@@ -77,6 +90,68 @@ export const SupplyStore = signalStore(
                         )
                 })
             )
-        )
+        ),
+        loadSupply: rxMethod<{}>(
+            pipe(
+                switchMap(() => {
+                    if (store.supplyNeedsRefresh() && store.projectId() && store.supplyId()) {
+                        return supplyRestService.getSupply(store.projectId()!, store.supplyId()!)
+                            .pipe(tap(supply => patchState(store, {
+                                supply: supply,
+                                supplyNeedsRefresh: false
+                            })));
+                    }
+                    return of(null);
+                })
+            )
+        ),
+        updateSupply: rxMethod<{ supply: Supply }>(
+            pipe(
+                switchMap(({supply}) => {
+                    return supplyRestService.updateSupply(store.projectId()!, store.supplyId()!, supply)
+                        .pipe(
+                            tap(updatedSupply => {
+                                patchState(store, {
+                                    supply: updatedSupply,
+                                    suppliesNeedRefresh: true
+                                });
+                                messageService.add({
+                                    severity: MessageSeverity.INFO,
+                                    summary: 'Supply updated',
+                                    detail: `Supply ${updatedSupply.name} updated successfully.`
+                                });
+                                financialDataStore.setProjectFinancialDataNeedsUpdate();
+                                supplierStore.setSuppliersNeedRefresh();
+                                supplierStore.setSupplierNeedsRefresh();
+                                supplierStore.setSuppliesDataNeedsRefresh();
+                            })
+                        );
+                })
+            )
+        ),
+        deleteSupply: rxMethod<{}>(
+            pipe(
+                switchMap(() => {
+                    return supplyRestService.deleteSupply(store.projectId()!, store.supplyId()!)
+                        .pipe(
+                            tap(() => {
+                                patchState(store, {
+                                    supply: {},
+                                    suppliesNeedRefresh: true
+                                });
+                                messageService.add({
+                                    severity: MessageSeverity.INFO,
+                                    summary: 'Supply deleted',
+                                    detail: `Supply deleted successfully.`
+                                });
+                                financialDataStore.setProjectFinancialDataNeedsUpdate();
+                                supplierStore.setSuppliersNeedRefresh();
+                                supplierStore.setSupplierNeedsRefresh();
+                                supplierStore.setSuppliesDataNeedsRefresh();
+                            })
+                        );
+                })
+            )
+        ),
     }))
 )

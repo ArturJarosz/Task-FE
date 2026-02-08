@@ -14,7 +14,7 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-supply>
-                <tr>
+                <tr [routerLink]="['/projects', supply.projectId, 'supplies', supply.id]" class="cursor-pointer">
                     <td>{{ supply.name }}</td>
                     <td>{{ this.projectNameById.get(supply.projectId) }}</td>
                     <td>{{ supply.value | currency: ' ':'code':'2.2-2' }}</td>

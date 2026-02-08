@@ -11,6 +11,12 @@ export abstract class SupplyRestService {
     abstract getProjectSuppliesData(projectId: number): Observable<SupplyProjectData>;
 
     abstract createSupply(projectId: number, supply: Supply): Observable<Supply>;
+
+    abstract getSupply(projectId: number, supplyId: number): Observable<Supply>;
+
+    abstract updateSupply(projectId: number, supplyId: number, supply: Supply): Observable<Supply>;
+
+    abstract deleteSupply(projectId: number, supplyId: number): Observable<void>;
 }
 
 @Injectable()
@@ -35,6 +41,24 @@ export class SupplyRestServiceImpl extends AbstractRestService implements Supply
                 error => this.handleError(error, this.messageService,
                     `Error creating supply for project with id: ${projectId}`))
             );
+    }
+
+    getSupply(projectId: number, supplyId: number): Observable<Supply> {
+        return this.httpClient.get<Supply>(`${this.projectUrl}/${projectId}/supplies/${supplyId}`)
+            .pipe(catchError(error => this.handleError(error, this.messageService,
+                `Error loading supply with id: ${supplyId}`)));
+    }
+
+    updateSupply(projectId: number, supplyId: number, supply: Supply): Observable<Supply> {
+        return this.httpClient.put<Supply>(`${this.projectUrl}/${projectId}/supplies/${supplyId}`, supply)
+            .pipe(catchError(error => this.handleError(error, this.messageService,
+                `Error updating supply with id: ${supplyId}`)));
+    }
+
+    deleteSupply(projectId: number, supplyId: number): Observable<void> {
+        return this.httpClient.delete<void>(`${this.projectUrl}/${projectId}/supplies/${supplyId}`)
+            .pipe(catchError(error => this.handleError(error, this.messageService,
+                `Error deleting supply with id: ${supplyId}`)));
     }
 
 }
