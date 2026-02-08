@@ -15,6 +15,12 @@ export abstract class SupervisionRestService {
     abstract getSupervisionVisits(supervisionId: number): Observable<SupervisionVisit[]>;
 
     abstract createSupervisionVisit(supervisionId: number, visit: SupervisionVisit): Observable<SupervisionVisit>;
+
+    abstract getSupervisionVisit(supervisionId: number, visitId: number): Observable<SupervisionVisit>;
+
+    abstract updateSupervisionVisit(supervisionId: number, visitId: number, visit: SupervisionVisit): Observable<SupervisionVisit>;
+
+    abstract deleteSupervisionVisit(supervisionId: number, visitId: number): Observable<void>;
 }
 
 @Injectable()
@@ -48,5 +54,23 @@ export class SupervisionRestServiceImpl extends AbstractRestService implements S
         return this.httpClient.post<SupervisionVisit>(`${this.supervisionUrl}/${supervisionId}/visits`, visit)
             .pipe(catchError(error => this.handleError(error, this.messageService,
                 `Error creating visit for supervision with id: ${supervisionId}`)));
+    }
+
+    getSupervisionVisit(supervisionId: number, visitId: number): Observable<SupervisionVisit> {
+        return this.httpClient.get<SupervisionVisit>(`${this.supervisionUrl}/${supervisionId}/visits/${visitId}`)
+            .pipe(catchError(error => this.handleError(error, this.messageService,
+                `Error loading visit with id: ${visitId}`)));
+    }
+
+    updateSupervisionVisit(supervisionId: number, visitId: number, visit: SupervisionVisit): Observable<SupervisionVisit> {
+        return this.httpClient.put<SupervisionVisit>(`${this.supervisionUrl}/${supervisionId}/visits/${visitId}`, visit)
+            .pipe(catchError(error => this.handleError(error, this.messageService,
+                `Error updating visit with id: ${visitId}`)));
+    }
+
+    deleteSupervisionVisit(supervisionId: number, visitId: number): Observable<void> {
+        return this.httpClient.delete<void>(`${this.supervisionUrl}/${supervisionId}/visits/${visitId}`)
+            .pipe(catchError(error => this.handleError(error, this.messageService,
+                `Error deleting visit with id: ${visitId}`)));
     }
 }

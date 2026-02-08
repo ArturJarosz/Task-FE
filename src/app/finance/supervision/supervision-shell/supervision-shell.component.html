@@ -2,7 +2,9 @@
         (notify)="onClickAdd($event)"
         (notifyAddVisit)="onClickAddVisit()"
         [supervision]="supervisionStore.supervision()"
-        [supervisionVisits]="$supervisionVisits()">
+        [supervisionVisits]="$supervisionVisits()"
+        [projectId]="projectId"
+        [supervisionId]="supervisionStore.supervisionId()!">
 </supervision>
 <add-supervision
         [projectId]="projectId"

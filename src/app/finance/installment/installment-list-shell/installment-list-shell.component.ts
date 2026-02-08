@@ -25,9 +25,7 @@ export class InstallmentListShellComponent implements OnInit {
 
     constructor(private route: ActivatedRoute) {
         effect(() => {
-            if (this.$installmentsNeedRefresh()) {
-                this.installmentStore.loadProjectInstallments({});
-            }
+            this.installmentStore.loadProjectInstallments({});
             if (this.$stagesNeedRefresh()) {
                 this.stageStore.loadStages({});
             }

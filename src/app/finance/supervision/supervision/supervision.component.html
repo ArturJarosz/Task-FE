@@ -62,7 +62,8 @@
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-visit>
-                            <tr>
+                            <tr [routerLink]="['/projects', projectId, 'supervision', supervisionId, 'visits', visit.id]"
+                                class="cursor-pointer hover:surface-hover">
                                 <td>{{ visit.dateOfVisit | date:'yyyy-MM-dd' }}</td>
                                 <td>{{ visit.hoursCount }}</td>
                                 <td class="max-w-4rem text-center">
