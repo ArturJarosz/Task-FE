@@ -58,6 +58,10 @@ import {
     SupervisionVisitDetailComponent
 } from './supervision/supervision-visit-detail/supervision-visit-detail.component';
 import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {
+    SupplyDetailShellComponent
+} from './supply/supply-detail-shell/supply-detail-shell.component';
+import {SupplyDetailComponent} from './supply/supply-detail/supply-detail.component';
 
 @NgModule({
     declarations: [
@@ -82,7 +86,9 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
         AddSupervisionComponent,
         AddSupervisionVisitComponent,
         SupervisionVisitDetailShellComponent,
-        SupervisionVisitDetailComponent
+        SupervisionVisitDetailComponent,
+        SupplyDetailShellComponent,
+        SupplyDetailComponent
     ],
     imports: [
         CommonModule,
@@ -111,6 +117,11 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
                 canActivate: [loggedInGuardGuard],
             },
             {
+                path: 'projects/:projectId/supplies/:supplyId',
+                component: SupplyDetailShellComponent,
+                canActivate: [loggedInGuardGuard],
+            },
+            {
                 path: 'projects/:projectId/costs',
                 redirectTo: '/projects/:projectId/finance?tab=costs'
             },
@@ -126,6 +137,14 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
                 path: 'projects/:projectId/contractorJobs',
                 redirectTo: 'projects/:projectId/finance?tab=contractorJobs'
             },
+            {
+                path: 'projects/:projectId/supervision',
+                redirectTo: 'projects/:projectId/finance?tab=supervision'
+            },
+            {
+                path: 'projects/:projectId/supervision/:supervisionId/visits',
+                redirectTo: 'projects/:projectId/finance?tab=supervision'
+            }
         ]),
         InputTextModule,
         CalendarModule,

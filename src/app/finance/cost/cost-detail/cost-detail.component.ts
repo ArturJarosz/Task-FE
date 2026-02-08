@@ -31,6 +31,7 @@ export class CostDetailComponent implements OnInit, OnChanges {
     ngOnInit(): void {
         this.costDetailsForm = this.formProvider.getCostDetailForm();
         this.fillFormData();
+        this.initialCostDetailsForm = cloneDeep(this.costDetailsForm);
     }
 
     ngOnChanges(changes: SimpleChanges): void {

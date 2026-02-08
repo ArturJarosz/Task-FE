@@ -1,0 +1,7 @@
+<supply-detail
+    [supply]="$supply()"
+    [suppliers]="$suppliers()"
+    (updateSupplyEvent)="updateSupply($event)"
+    (deleteSupplyEvent)="deleteSupply($event)">
+</supply-detail>
+<p-confirmDialog></p-confirmDialog>

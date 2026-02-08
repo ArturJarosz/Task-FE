@@ -104,3 +104,6 @@ Models in `src/app/generated/models/` are auto-generated from backend OpenAPI sp
 - Dev backend URL: `http://0.0.0.0:8100`
 - Auth0 domain: `task-app-test.uk.auth0.com`
 - Environment configs in `src/environments/`
+
+### Important things to remember
+- Always make all according to the current theme in other components, including buttons, and inputs

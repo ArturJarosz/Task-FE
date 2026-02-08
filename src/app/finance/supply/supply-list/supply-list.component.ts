@@ -15,6 +15,8 @@ import {isUndefinedOrEmpty} from "../../../shared/utils/data-validation-util";
 })
 export class SupplyListComponent implements OnChanges{
     @Input()
+    projectId: number = 0;
+    @Input()
     supplyProjectData!: SupplyProjectData | null;
     @Input()
     suppliers! : Supplier[];
