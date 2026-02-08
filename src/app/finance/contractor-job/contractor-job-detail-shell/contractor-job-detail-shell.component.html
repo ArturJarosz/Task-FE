@@ -1,0 +1,7 @@
+<contractor-job-detail
+    [contractorJob]="$contractorJob()"
+    [contractors]="$contractors()"
+    (updateContractorJobEvent)="updateContractorJob($event)"
+    (deleteContractorJobEvent)="deleteContractorJob($event)">
+</contractor-job-detail>
+<p-confirmDialog></p-confirmDialog>

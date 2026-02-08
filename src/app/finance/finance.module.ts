@@ -62,6 +62,12 @@ import {
     SupplyDetailShellComponent
 } from './supply/supply-detail-shell/supply-detail-shell.component';
 import {SupplyDetailComponent} from './supply/supply-detail/supply-detail.component';
+import {
+    ContractorJobDetailShellComponent
+} from './contractor-job/contractor-job-detail-shell/contractor-job-detail-shell.component';
+import {
+    ContractorJobDetailComponent
+} from './contractor-job/contractor-job-detail/contractor-job-detail.component';
 
 @NgModule({
     declarations: [
@@ -88,7 +94,9 @@ import {SupplyDetailComponent} from './supply/supply-detail/supply-detail.compon
         SupervisionVisitDetailShellComponent,
         SupervisionVisitDetailComponent,
         SupplyDetailShellComponent,
-        SupplyDetailComponent
+        SupplyDetailComponent,
+        ContractorJobDetailShellComponent,
+        ContractorJobDetailComponent
     ],
     imports: [
         CommonModule,
@@ -119,6 +127,11 @@ import {SupplyDetailComponent} from './supply/supply-detail/supply-detail.compon
             {
                 path: 'projects/:projectId/supplies/:supplyId',
                 component: SupplyDetailShellComponent,
+                canActivate: [loggedInGuardGuard],
+            },
+            {
+                path: 'projects/:projectId/contractorJob/:contractorJobId',
+                component: ContractorJobDetailShellComponent,
                 canActivate: [loggedInGuardGuard],
             },
             {

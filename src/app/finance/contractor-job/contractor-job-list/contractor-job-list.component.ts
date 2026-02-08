@@ -15,6 +15,8 @@ import {Contractor} from "../../../generated/models/contractor";
 })
 export class ContractorJobListComponent implements OnChanges {
     @Input()
+    projectId: number = 0;
+    @Input()
     contractorsJobsProjectData!: ContractorJobProjectData;
     @Input()
     contractors!: Contractor[];

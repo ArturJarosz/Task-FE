@@ -11,6 +11,12 @@ export abstract class ContractorJobRestService {
     abstract getProjectContractorsJobsData(projectId: number): Observable<ContractorJobProjectData>;
 
     abstract createContractorJob(projectId: number, contractorJob: ContractorJob): Observable<ContractorJob>;
+
+    abstract getContractorJob(projectId: number, contractorJobId: number): Observable<ContractorJob>;
+
+    abstract updateContractorJob(projectId: number, contractorJobId: number, contractorJob: ContractorJob): Observable<ContractorJob>;
+
+    abstract deleteContractorJob(projectId: number, contractorJobId: number): Observable<void>;
 }
 
 @Injectable()
@@ -35,6 +41,24 @@ export class ContractorJobRestServiceImpl extends AbstractRestService implements
                 catchError(error => this.handleError(error, this.messageService,
                     `Error creating contractor job for project with id: ${projectId}`))
             );
+    }
+
+    getContractorJob(projectId: number, contractorJobId: number): Observable<ContractorJob> {
+        return this.httpClient.get<ContractorJob>(`${this.projectUrl}/${projectId}/contractor-jobs/${contractorJobId}`)
+            .pipe(catchError(error => this.handleError(error, this.messageService,
+                `Error loading contractor job with id: ${contractorJobId}`)));
+    }
+
+    updateContractorJob(projectId: number, contractorJobId: number, contractorJob: ContractorJob): Observable<ContractorJob> {
+        return this.httpClient.put<ContractorJob>(`${this.projectUrl}/${projectId}/contractor-jobs/${contractorJobId}`, contractorJob)
+            .pipe(catchError(error => this.handleError(error, this.messageService,
+                `Error updating contractor job with id: ${contractorJobId}`)));
+    }
+
+    deleteContractorJob(projectId: number, contractorJobId: number): Observable<void> {
+        return this.httpClient.delete<void>(`${this.projectUrl}/${projectId}/contractor-jobs/${contractorJobId}`)
+            .pipe(catchError(error => this.handleError(error, this.messageService,
+                `Error deleting contractor job with id: ${contractorJobId}`)));
     }
 
 }
