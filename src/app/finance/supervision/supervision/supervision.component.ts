@@ -21,6 +21,12 @@ export class SupervisionComponent implements OnChanges {
     @Input()
     supervisionVisits: SupervisionVisit[] = [];
 
+    @Input()
+    projectId: number = 0;
+
+    @Input()
+    supervisionId: number = 0;
+
     supervisionSummaryForm = new FormGroup({
         baseRate: new FormControl<number>(0),
         hourlyRate: new FormControl<number>(0),

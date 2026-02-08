@@ -1,0 +1,38 @@
+<wrapper [title]="'Supervision Visit - ' + (supervisionVisit?.dateOfVisit | date:'yyyy-MM-dd')">
+    <div wrapper-body>
+        <p-accordion [multiple]="true">
+            <p-accordionTab [selected]="true" header="Visit details" class="text-900 font-medium">
+                <form [formGroup]="visitDetailForm">
+                    <div class="p-2">
+                        <div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
+                            <p-button icon="pi pi-arrow-down" [disabled]="!isFormChanged()" (onClick)="onSave()" [outlined]="true" [rounded]="true" class="update-button transition-colors transition-duration-300"></p-button>
+                            <p-button icon="pi pi-times" [outlined]="true" [rounded]="true" (onClick)="onDelete()" class="remove-button transition-colors px-1"></p-button>
+                        </div>
+                        <div class="grid grid-nogutter surface-border p-1">
+                            <div class="md:col-4 p-1">
+                                <div class="text-500 font-medium">Date of Visit</div>
+                                <div class="col-8 pr-3">
+                                    <p-calendar formControlName="dateOfVisit" id="dateOfVisit" dateFormat="yy-mm-dd" appendTo="body"></p-calendar>
+                                </div>
+                            </div>
+                            <div class="md:col-4 p-1">
+                                <div class="text-500 font-medium">Hours Count</div>
+                                <div class="col-8 pr-3">
+                                    <p-inputNumber formControlName="hoursCount" id="hoursCount" [min]="0" mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="2"></p-inputNumber>
+                                </div>
+                            </div>
+                            <div class="md:col-4 p-1">
+                                <div class="text-500 font-medium">Payable</div>
+                                <div class="col-8 pr-3">
+                                    <p-inputSwitch formControlName="payable" id="payable"></p-inputSwitch>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </p-accordionTab>
+        </p-accordion>
+    </div>
+    <div wrapper-buttons>
+    </div>
+</wrapper>

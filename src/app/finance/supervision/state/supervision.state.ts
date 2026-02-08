@@ -14,18 +14,24 @@ import {ProjectStore} from "../../../project/state";
 export interface SupervisionState extends AppState {
     supervision: Supervision | null;
     supervisionVisits: SupervisionVisit[];
+    supervisionVisit: SupervisionVisit | null;
     supervisionNeedsRefresh: boolean;
     supervisionVisitsNeedRefresh: boolean;
+    supervisionVisitNeedsRefresh: boolean;
     supervisionId: number | undefined;
+    visitId: number | undefined;
     projectId: number | undefined;
 }
 
 export const initialState: SupervisionState = {
     supervision: null,
     supervisionVisits: [],
+    supervisionVisit: null,
     supervisionNeedsRefresh: true,
     supervisionVisitsNeedRefresh: true,
+    supervisionVisitNeedsRefresh: true,
     supervisionId: undefined,
+    visitId: undefined,
     projectId: undefined
 }
 
@@ -47,6 +53,21 @@ export const SupervisionStore = signalStore(
         },
         setSupervisionVisitsNeedRefresh() {
             patchState(store, {supervisionVisitsNeedRefresh: true})
+        },
+        setSupervisionVisitNeedsRefresh() {
+            patchState(store, {supervisionVisitNeedsRefresh: true})
+        },
+        setVisitId(visitId: number) {
+            if (store.visitId() !== visitId) {
+                this.setSupervisionVisitNeedsRefresh();
+            }
+            patchState(store, {visitId: visitId});
+        },
+        setSupervisionId(supervisionId: number) {
+            if (store.supervisionId() !== supervisionId) {
+                this.setSupervisionVisitsNeedRefresh();
+            }
+            patchState(store, {supervisionId: supervisionId});
         },
         loadSupervision: rxMethod<{}>(
             pipe(
@@ -112,6 +133,64 @@ export const SupervisionStore = signalStore(
                                     severity: MessageSeverity.INFO,
                                     summary: 'Supervision visit created',
                                     detail: `New supervision visit created successfully.`
+                                });
+                                financialDataStore.setProjectFinancialDataNeedsUpdate();
+                            })
+                        );
+                })
+            )
+        ),
+        loadSupervisionVisit: rxMethod<{}>(
+            pipe(
+                switchMap(() => {
+                    if (store.supervisionVisitNeedsRefresh() && store.supervisionId() && store.visitId()) {
+                        return supervisionRestService.getSupervisionVisit(store.supervisionId()!, store.visitId()!)
+                            .pipe(tap(visit => patchState(store, {
+                                supervisionVisit: visit,
+                                supervisionVisitNeedsRefresh: false
+                            })));
+                    }
+                    return of(null);
+                })
+            )
+        ),
+        updateSupervisionVisit: rxMethod<{ supervisionVisit: SupervisionVisit }>(
+            pipe(
+                switchMap(({supervisionVisit}) => {
+                    return supervisionRestService.updateSupervisionVisit(store.supervisionId()!, store.visitId()!, supervisionVisit)
+                        .pipe(
+                            tap(updatedVisit => {
+                                patchState(store, {
+                                    supervisionVisit: updatedVisit,
+                                    supervisionVisitsNeedRefresh: true,
+                                    supervisionNeedsRefresh: true
+                                });
+                                messageService.add({
+                                    severity: MessageSeverity.INFO,
+                                    summary: 'Supervision visit updated',
+                                    detail: `Supervision visit updated successfully.`
+                                });
+                                financialDataStore.setProjectFinancialDataNeedsUpdate();
+                            })
+                        );
+                })
+            )
+        ),
+        deleteSupervisionVisit: rxMethod<{}>(
+            pipe(
+                switchMap(() => {
+                    return supervisionRestService.deleteSupervisionVisit(store.supervisionId()!, store.visitId()!)
+                        .pipe(
+                            tap(() => {
+                                patchState(store, {
+                                    supervisionVisit: null,
+                                    supervisionVisitsNeedRefresh: true,
+                                    supervisionNeedsRefresh: true
+                                });
+                                messageService.add({
+                                    severity: MessageSeverity.INFO,
+                                    summary: 'Supervision visit deleted',
+                                    detail: `Supervision visit deleted successfully.`
                                 });
                                 financialDataStore.setProjectFinancialDataNeedsUpdate();
                             })

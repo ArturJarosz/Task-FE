@@ -51,6 +51,13 @@ import {SupervisionComponent} from './supervision/supervision/supervision.compon
 import {SupervisionRestService, SupervisionRestServiceImpl} from "./supervision/rest/supervision-rest.service";
 import {AddSupervisionComponent} from './supervision/add-supervision/add-supervision.component';
 import {AddSupervisionVisitComponent} from './supervision/add-supervision-visit/add-supervision-visit.component';
+import {
+    SupervisionVisitDetailShellComponent
+} from './supervision/supervision-visit-detail-shell/supervision-visit-detail-shell.component';
+import {
+    SupervisionVisitDetailComponent
+} from './supervision/supervision-visit-detail/supervision-visit-detail.component';
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @NgModule({
     declarations: [
@@ -73,7 +80,9 @@ import {AddSupervisionVisitComponent} from './supervision/add-supervision-visit/
         SupervisionShellComponent,
         SupervisionComponent,
         AddSupervisionComponent,
-        AddSupervisionVisitComponent
+        AddSupervisionVisitComponent,
+        SupervisionVisitDetailShellComponent,
+        SupervisionVisitDetailComponent
     ],
     imports: [
         CommonModule,
@@ -96,10 +105,27 @@ import {AddSupervisionVisitComponent} from './supervision/add-supervision-visit/
                 component: ProjectFinancialDetailShellComponent,
                 canActivate: [loggedInGuardGuard]
             },
-            {path: 'projects/:projectId/costs', redirectTo: '/projects/:projectId/finance?tab=costs'},
-            {path: 'projects/:projectId/installments', redirectTo: 'projects/:projectId/finance?tab=installments'},
-            {path: 'projects/:projectId/supplies', redirectTo: 'projects/:projectId/finance?tab=supplies'},
-            {path: 'projects/:projectId/contractorJobs', redirectTo: 'projects/:projectId/finance?tab=contractorJobs'},
+            {
+                path: 'projects/:projectId/supervision/:supervisionId/visits/:visitId',
+                component: SupervisionVisitDetailShellComponent,
+                canActivate: [loggedInGuardGuard],
+            },
+            {
+                path: 'projects/:projectId/costs',
+                redirectTo: '/projects/:projectId/finance?tab=costs'
+            },
+            {
+                path: 'projects/:projectId/installments',
+                redirectTo: 'projects/:projectId/finance?tab=installments'
+            },
+            {
+                path: 'projects/:projectId/supplies',
+                redirectTo: 'projects/:projectId/finance?tab=supplies'
+            },
+            {
+                path: 'projects/:projectId/contractorJobs',
+                redirectTo: 'projects/:projectId/finance?tab=contractorJobs'
+            },
         ]),
         InputTextModule,
         CalendarModule,
@@ -107,7 +133,8 @@ import {AddSupervisionVisitComponent} from './supervision/add-supervision-visit/
         InputTextareaModule,
         DialogModule,
         DropdownModule,
-        InputNumberModule
+        InputNumberModule,
+        ConfirmDialogModule
     ],
     exports: [
         CostListComponent,
