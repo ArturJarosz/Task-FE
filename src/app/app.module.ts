@@ -20,6 +20,7 @@ import {EffectsModule} from '@ngrx/effects';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {ContractorModule} from "./contractor/contractor.module";
 import {SupplierModule} from "./supplier/supplier.module";
+import {FinancialReportModule} from "./financial-report/financial-report.module";
 import {StageModule} from "./stage/stage.module";
 import {TaskModule} from "./task/task.module";
 import {BreadcrumbModule} from "primeng/breadcrumb";
@@ -42,6 +43,7 @@ import {loggedInGuardGuard} from "./security/logged-in-guard/logged-in-guard.gua
         TaskModule,
         ContractorModule,
         SupplierModule,
+        FinancialReportModule,
         RouterModule.forRoot([
             {path: 'home', component: MainComponent, canActivate: [loggedInGuardGuard]},
             {path: '', redirectTo: 'home', pathMatch: 'full'},

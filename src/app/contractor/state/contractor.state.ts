@@ -144,7 +144,6 @@ export const ContractorStore = signalStore(
             loadContractorJobsData: rxMethod<{}>(
                 pipe(
                     switchMap(() => {
-                        console.log("Loading contractor jobs data");
                         return contractorRestService.getContractorJobsData(store.contractorId()!)
                             .pipe(
                                 tap(contractorJobsData => {

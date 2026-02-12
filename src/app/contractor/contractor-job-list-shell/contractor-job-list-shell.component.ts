@@ -31,7 +31,6 @@ export class ContractorJobListShellComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        console.log("ContractorJobListShellComponent.ngOnInit");
         this.contractorStore.loadContractorJobsData({});
         this.projectStore.loadProjects({});
     }

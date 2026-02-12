@@ -72,8 +72,8 @@ export class CostDetailComponent implements OnInit, OnChanges {
     }
 
     onSave(): void {
-        let cost: Cost;
-        cost = {
+        let costToUpdate: Cost;
+        costToUpdate = {
             name: this.costDetailsForm.value.name,
             category: this.costDetailsForm.value.category,
             note: this.costDetailsForm.value.note!,
@@ -83,6 +83,6 @@ export class CostDetailComponent implements OnInit, OnChanges {
             hasInvoice: this.costDetailsForm.value.hasInvoice,
             date: toTimeZoneString(this.costDetailsForm.value.date)
         }
-        this.updateCostEvent.emit(cost);
+        this.updateCostEvent.emit(costToUpdate);
     }
 }
