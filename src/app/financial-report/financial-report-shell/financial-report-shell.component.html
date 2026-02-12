@@ -1,0 +1,10 @@
+<financial-report-view
+        [financialReport]="$financialReport()"
+        [startDate]="$startDate()"
+        [endDate]="$endDate()"
+        [periodType]="$periodType()"
+        [loading]="$loading()"
+        (dateRangeChange)="onDateRangeChange($event)"
+        (periodTypeChange)="onPeriodTypeChange($event)"
+        (generate)="onGenerate()">
+</financial-report-view>

@@ -1,0 +1,82 @@
+<wrapper [title]="title">
+    <div wrapper-body>
+        <div class="report-controls mb-3">
+            <div class="flex align-items-center gap-2">
+                <label class="text-500 font-medium">Start date:</label>
+                <p-calendar [ngModel]="selectedStartDate"
+                            (ngModelChange)="onStartDateChange($event)"
+                            dateFormat="yy-mm-dd">
+                </p-calendar>
+            </div>
+            <div class="flex align-items-center gap-2">
+                <label class="text-500 font-medium">End date:</label>
+                <p-calendar [ngModel]="selectedEndDate"
+                            (ngModelChange)="onEndDateChange($event)"
+                            dateFormat="yy-mm-dd">
+                </p-calendar>
+            </div>
+            <div class="flex align-items-center gap-2">
+                <label class="text-500 font-medium">Period:</label>
+                <p-dropdown [options]="periodTypeOptions"
+                            [ngModel]="selectedPeriodType"
+                            (ngModelChange)="onPeriodTypeChange($event)"
+                            optionLabel="label"
+                            optionValue="value">
+                </p-dropdown>
+            </div>
+            <p-button label="Generate" (onClick)="onGenerate()" [loading]="loading" size="small" severity="secondary" class="top-menu-button"></p-button>
+        </div>
+
+        <div *ngIf="financialReport">
+            <div class="flex align-items-center gap-2 mb-3">
+                <label class="text-500 font-medium">Values:</label>
+                <p-selectButton [options]="valueTypeOptions"
+                                [(ngModel)]="selectedValueType"
+                                (ngModelChange)="onValueTypeChange()"
+                                optionLabel="label"
+                                optionValue="value"
+                                styleClass="secondary-toggle">
+                </p-selectButton>
+            </div>
+
+            <div class="chart-container mb-4 border-1 surface-border border-round-2xl py-4 px-5">
+                <div class="flex align-items-center gap-4 mb-4">
+                    <div class="flex-1 text-900 font-semibold">Financial Analytics</div>
+                    <div class="flex align-items-center gap-4">
+                        <div *ngFor="let item of legendItems" class="flex align-items-center gap-2">
+                            <div class="legend-dot" [style.backgroundColor]="item.color"></div>
+                            <span class="font-medium text-900">{{ item.label }}</span>
+                        </div>
+                    </div>
+                </div>
+                <p-chart type="bar" [data]="chartData" [options]="chartOptions" height="20rem"></p-chart>
+            </div>
+
+            <div class="summary-table">
+                <p-table [value]="summaryRows">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Category</th>
+                            <th>Gross</th>
+                            <th>Net</th>
+                            <th>Income Tax</th>
+                            <th>VAT</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-row>
+                        <tr *ngIf="row.isHeader" class="group-header">
+                            <td colspan="5">{{ row.label }}</td>
+                        </tr>
+                        <tr *ngIf="!row.isHeader" [class.total-row]="row.isBold">
+                            <td [class.pl-5]="!row.isBold">{{ row.label }}</td>
+                            <td>{{ row.grossValue | number:'1.2-2' }}</td>
+                            <td>{{ row.netValue | number:'1.2-2' }}</td>
+                            <td>{{ row.incomeTax | number:'1.2-2' }}</td>
+                            <td>{{ row.vatTax | number:'1.2-2' }}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+</wrapper>

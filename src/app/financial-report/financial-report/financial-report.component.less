@@ -1,0 +1,78 @@
+.report-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.chart-container {
+    width: 100%;
+}
+
+.legend-dot {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+}
+
+:host ::ng-deep .secondary-toggle.p-selectbutton .p-button {
+    padding: 0.4375rem 0.65rem;
+    font-size: 0.875rem;
+    background: #64748B;
+    border-color: #64748B;
+    color: #ffffff;
+
+    &:not(.p-highlight):not(.p-disabled) {
+        background: transparent;
+        border-color: #64748B;
+        color: #64748B;
+
+        &:hover {
+            background: rgba(100, 116, 139, 0.04);
+            border-color: #64748B;
+            color: #64748B;
+        }
+    }
+
+    &.p-highlight {
+        background: #64748B;
+        border-color: #64748B;
+        color: #ffffff;
+
+        &:hover {
+            background: #475569;
+            border-color: #475569;
+            color: #ffffff;
+        }
+    }
+}
+
+:host ::ng-deep .summary-table .p-datatable .p-datatable-thead > tr > th {
+    text-align: right;
+}
+
+:host ::ng-deep .summary-table .p-datatable .p-datatable-thead > tr > th:first-child {
+    text-align: left;
+}
+
+:host ::ng-deep .summary-table .p-datatable .p-datatable-tbody > tr > td {
+    text-align: right;
+}
+
+:host ::ng-deep .summary-table .p-datatable .p-datatable-tbody > tr > td:first-child {
+    text-align: left;
+}
+
+:host ::ng-deep .summary-table .p-datatable .p-datatable-tbody > tr.group-header > td {
+    text-align: left;
+    font-weight: 700;
+    background-color: var(--surface-ground);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+:host ::ng-deep .summary-table .p-datatable .p-datatable-tbody > tr.total-row > td {
+    font-weight: 700;
+    border-top: 2px solid var(--surface-border);
+}
