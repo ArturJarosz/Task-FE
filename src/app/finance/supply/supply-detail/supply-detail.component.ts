@@ -4,6 +4,7 @@ import {Supplier} from "../../../generated/models/supplier";
 import {FormGroup} from '@angular/forms';
 import {SupplyDetailForm, SupplyFormProvider} from "../form";
 import {cloneDeep} from "lodash";
+import {toDateIfExists, toTimeZoneString} from "../../../shared/utils/date-utils";
 
 @Component({
     selector: 'supply-detail',
@@ -40,6 +41,13 @@ export class SupplyDetailComponent implements OnInit, OnChanges {
         this.supplyDetailForm = this.supplyFormProvider.getSupplyDetailForm();
         this.fillFormData();
         this.initialSupplyDetailForm = cloneDeep(this.supplyDetailForm);
+        this.supplyDetailForm.valueChanges.subscribe(() => {
+            if (this.supplyDetailForm.value.paid && this.supplyDetailForm.controls.paymentDate.disabled) {
+                this.supplyDetailForm.controls.paymentDate.enable();
+            } else if (!this.supplyDetailForm.value.paid && this.supplyDetailForm.controls.paymentDate.enabled) {
+                this.supplyDetailForm.controls.paymentDate.disable();
+            }
+        });
     }
 
     private fillFormData(): void {
@@ -51,9 +59,15 @@ export class SupplyDetailComponent implements OnInit, OnChanges {
             value: this.supply.value,
             hasInvoice: this.supply.hasInvoice,
             paid: this.supply.paid,
+            paymentDate: toDateIfExists(this.supply.paymentDate),
             note: this.supply.note,
             supplierId: this.supply.supplierId
         })
+        if (this.supply.paid) {
+            this.supplyDetailForm.controls.paymentDate.enable();
+        } else {
+            this.supplyDetailForm.controls.paymentDate.disable();
+        }
     }
 
     isFormChanged(): boolean {
@@ -74,6 +88,7 @@ export class SupplyDetailComponent implements OnInit, OnChanges {
             value: this.supplyDetailForm.value.value,
             hasInvoice: this.supplyDetailForm.value.hasInvoice,
             paid: this.supplyDetailForm.value.paid,
+            paymentDate: this.supplyDetailForm.value.paid ? toTimeZoneString(this.supplyDetailForm.controls.paymentDate.value!) : undefined,
             note: this.supplyDetailForm.value.note,
             supplierId: this.supplyDetailForm.value.supplierId,
             payable: this.supply?.payable

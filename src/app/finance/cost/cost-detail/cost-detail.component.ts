@@ -32,6 +32,13 @@ export class CostDetailComponent implements OnInit, OnChanges {
         this.costDetailsForm = this.formProvider.getCostDetailForm();
         this.fillFormData();
         this.initialCostDetailsForm = cloneDeep(this.costDetailsForm);
+        this.costDetailsForm.valueChanges.subscribe(() => {
+            if (this.costDetailsForm.value.paid && this.costDetailsForm.controls.paymentDate.disabled) {
+                this.costDetailsForm.controls.paymentDate.enable();
+            } else if (!this.costDetailsForm.value.paid && this.costDetailsForm.controls.paymentDate.enabled) {
+                this.costDetailsForm.controls.paymentDate.disable();
+            }
+        });
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -54,8 +61,14 @@ export class CostDetailComponent implements OnInit, OnChanges {
             value: this.cost.value,
             note: this.cost.note,
             hasInvoice: this.cost.hasInvoice,
-            paid: this.cost.paid
+            paid: this.cost.paid,
+            paymentDate: toDateIfExists(this.cost.paymentDate)
         })
+        if (this.cost.paid) {
+            this.costDetailsForm.controls.paymentDate.enable();
+        } else {
+            this.costDetailsForm.controls.paymentDate.disable();
+        }
     }
 
     private resolveLabels() {
@@ -81,7 +94,8 @@ export class CostDetailComponent implements OnInit, OnChanges {
             value: this.costDetailsForm.value.value,
             payable: true,
             hasInvoice: this.costDetailsForm.value.hasInvoice,
-            date: toTimeZoneString(this.costDetailsForm.value.date)
+            date: toTimeZoneString(this.costDetailsForm.value.date),
+            paymentDate: this.costDetailsForm.value.paid ? toTimeZoneString(this.costDetailsForm.controls.paymentDate.value!) : undefined
         }
         this.updateCostEvent.emit(costToUpdate);
     }

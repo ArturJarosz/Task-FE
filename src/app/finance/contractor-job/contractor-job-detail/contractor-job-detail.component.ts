@@ -4,6 +4,7 @@ import {Contractor} from "../../../generated/models/contractor";
 import {FormGroup} from '@angular/forms';
 import {ContractorJobDetailForm, ContractorJobFormProvider} from "../form/contractor-job-form-provider";
 import {cloneDeep} from "lodash";
+import {toDateIfExists, toTimeZoneString} from "../../../shared/utils/date-utils";
 
 @Component({
     selector: 'contractor-job-detail',
@@ -40,6 +41,13 @@ export class ContractorJobDetailComponent implements OnInit, OnChanges {
         this.contractorJobDetailForm = this.contractorJobFormProvider.getContractorJobDetailForm();
         this.fillFormData();
         this.initialContractorJobDetailForm = cloneDeep(this.contractorJobDetailForm);
+        this.contractorJobDetailForm.valueChanges.subscribe(() => {
+            if (this.contractorJobDetailForm.value.paid && this.contractorJobDetailForm.controls.paymentDate.disabled) {
+                this.contractorJobDetailForm.controls.paymentDate.enable();
+            } else if (!this.contractorJobDetailForm.value.paid && this.contractorJobDetailForm.controls.paymentDate.enabled) {
+                this.contractorJobDetailForm.controls.paymentDate.disable();
+            }
+        });
     }
 
     private fillFormData(): void {
@@ -51,9 +59,15 @@ export class ContractorJobDetailComponent implements OnInit, OnChanges {
             value: this.contractorJob.value,
             hasInvoice: this.contractorJob.hasInvoice,
             paid: this.contractorJob.paid,
+            paymentDate: toDateIfExists(this.contractorJob.paymentDate),
             note: this.contractorJob.note,
             contractorId: this.contractorJob.contractorId
         })
+        if (this.contractorJob.paid) {
+            this.contractorJobDetailForm.controls.paymentDate.enable();
+        } else {
+            this.contractorJobDetailForm.controls.paymentDate.disable();
+        }
     }
 
     isFormChanged(): boolean {
@@ -74,6 +88,7 @@ export class ContractorJobDetailComponent implements OnInit, OnChanges {
             value: this.contractorJobDetailForm.value.value,
             hasInvoice: this.contractorJobDetailForm.value.hasInvoice,
             paid: this.contractorJobDetailForm.value.paid,
+            paymentDate: this.contractorJobDetailForm.value.paid ? toTimeZoneString(this.contractorJobDetailForm.controls.paymentDate.value!) : undefined,
             note: this.contractorJobDetailForm.value.note,
             contractorId: this.contractorJobDetailForm.value.contractorId,
             payable: this.contractorJob?.payable

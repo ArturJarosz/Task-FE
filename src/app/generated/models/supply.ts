@@ -10,6 +10,7 @@ export interface Supply {
   note?: string;
   paid?: boolean;
   payable?: boolean;
+  paymentDate?: string;
   projectId?: number;
   supplierId?: number;
   value?: number;

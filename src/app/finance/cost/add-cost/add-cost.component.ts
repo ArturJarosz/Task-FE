@@ -33,6 +33,13 @@ export class AddCostComponent implements OnInit, AbstractAddEditComponent {
     ngOnInit(): void {
         this.configurationStore.loadConfiguration({});
         this.addCostForm = this.addCostFormProvider.getAddCostForm();
+        this.addCostForm.valueChanges.subscribe(() => {
+            if (this.addCostForm.value.paid && this.addCostForm.controls['paymentDate'].disabled) {
+                this.addCostForm.controls['paymentDate'].enable();
+            } else if (!this.addCostForm.value.paid && this.addCostForm.controls['paymentDate'].enabled) {
+                this.addCostForm.controls['paymentDate'].disable();
+            }
+        });
     }
 
     onClose(): void {
@@ -62,6 +69,7 @@ export class AddCostComponent implements OnInit, AbstractAddEditComponent {
             value: this.addCostForm.get('value')?.value,
             hasInvoice: this.addCostForm.get('hasInvoice')?.value,
             paid: this.addCostForm.get('paid')?.value,
+            paymentDate: this.addCostForm.get('paid')?.value ? toTimeZoneString(this.addCostForm.controls['paymentDate'].value) : undefined,
             payable: true,
             note: this.addCostForm.get('note')?.value,
         };

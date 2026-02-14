@@ -6,6 +6,7 @@ import {AddContractorJobForm, ContractorJobFormProvider} from "../form/contracto
 import {FormGroup} from "@angular/forms";
 import {AbstractAddEditComponent} from "../../../shared";
 import {ContractorJob} from "../../../generated/models/contractor-job";
+import {toTimeZoneString} from "../../../shared/utils/date-utils";
 
 @Component({
     selector: 'add-contractor-job',
@@ -34,6 +35,13 @@ export class AddContractorJobComponent implements OnInit, AbstractAddEditCompone
     ngOnInit(): void {
         this.contractorStore.loadContractors({});
         this.addContractorJobForm = this.formProvider.getAddContractorJobForm();
+        this.addContractorJobForm.valueChanges.subscribe(() => {
+            if (this.addContractorJobForm.value.paid && this.addContractorJobForm.controls.paymentDate.disabled) {
+                this.addContractorJobForm.controls.paymentDate.enable();
+            } else if (!this.addContractorJobForm.value.paid && this.addContractorJobForm.controls.paymentDate.enabled) {
+                this.addContractorJobForm.controls.paymentDate.disable();
+            }
+        });
     }
 
     onCancel(): void {
@@ -70,6 +78,7 @@ export class AddContractorJobComponent implements OnInit, AbstractAddEditCompone
             value: this.addContractorJobForm.value.value,
             hasInvoice: this.addContractorJobForm.value.hasInvoice,
             note: this.addContractorJobForm.value.note,
+            paymentDate: this.addContractorJobForm.value.paid ? toTimeZoneString(this.addContractorJobForm.controls.paymentDate.value!) : undefined,
             payable: true
         }
         return contractorJob;

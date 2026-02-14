@@ -6,6 +6,7 @@ import {AddSupplyForm, SupplyFormProvider} from "../form";
 import {FormGroup} from "@angular/forms";
 import {SupplyStore} from "../state/supply.state";
 import {Supply} from "../../../generated/models/supply";
+import {toTimeZoneString} from "../../../shared/utils/date-utils";
 
 @Component({
     selector: 'add-supply',
@@ -34,6 +35,13 @@ export class AddSupplyComponent implements OnInit, AbstractAddEditComponent {
     ngOnInit(): void {
         this.supplierStore.loadSuppliers({});
         this.addSupplyForm = this.formProvider.getAddSupplyForm();
+        this.addSupplyForm.valueChanges.subscribe(() => {
+            if (this.addSupplyForm.value.paid && this.addSupplyForm.controls.paymentDate.disabled) {
+                this.addSupplyForm.controls.paymentDate.enable();
+            } else if (!this.addSupplyForm.value.paid && this.addSupplyForm.controls.paymentDate.enabled) {
+                this.addSupplyForm.controls.paymentDate.disable();
+            }
+        });
     }
 
     onClose(): void {
@@ -62,6 +70,7 @@ export class AddSupplyComponent implements OnInit, AbstractAddEditComponent {
             value: this.addSupplyForm.value.value,
             hasInvoice: this.addSupplyForm.value.hasInvoice,
             note: this.addSupplyForm.value.note,
+            paymentDate: this.addSupplyForm.value.paid ? toTimeZoneString(this.addSupplyForm.controls.paymentDate.value!) : undefined,
             payable: true
         }
         return supply;
