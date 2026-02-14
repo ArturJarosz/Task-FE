@@ -20,6 +20,7 @@ export class AddCostFormProvider {
             date: this.formBuilder.nonNullable.control<Date>(new Date(), [Validators.required]),
             hasInvoice: this.formBuilder.nonNullable.control<boolean>(false, [Validators.required]),
             paid: this.formBuilder.nonNullable.control<boolean>(false, [Validators.required]),
+            paymentDate: this.formBuilder.control<Date | null>({value: null, disabled: true}),
             note: this.formBuilder.control<string>('')
         })
     }
@@ -32,5 +33,6 @@ interface AddCostForm {
     date: FormControl<Date>,
     hasInvoice: FormControl<boolean>,
     paid: FormControl<boolean>,
+    paymentDate: FormControl<Date | null>,
     note: FormControl<string | null>
 }

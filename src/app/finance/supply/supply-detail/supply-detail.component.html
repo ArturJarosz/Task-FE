@@ -32,16 +32,16 @@
                         </div>
                         <div class="grid grid-nogutter surface-border p-1">
                             <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium">Paid</div>
-                                <div class="col-8 pr-3">
-                                    <p-inputSwitch formControlName="paid"></p-inputSwitch>
-                                </div>
+                                <div class="text-500 font-medium">Has Invoice</div>
+                                <p-inputSwitch formControlName="hasInvoice"></p-inputSwitch>
                             </div>
                             <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium">Has Invoice</div>
-                                <div class="col-8 pr-3">
-                                    <p-inputSwitch formControlName="hasInvoice"></p-inputSwitch>
-                                </div>
+                                <div class="text-500 font-medium">Paid</div>
+                                <p-inputSwitch formControlName="paid"></p-inputSwitch>
+                            </div>
+                            <div class="md:col-4 p-1">
+                                <div class="text-500 font-medium">Payment Date</div>
+                                <p-calendar formControlName="paymentDate" id="paymentDate" dateFormat="yy-mm-dd"></p-calendar>
                             </div>
                         </div>
                         <div class="grid grid-nogutter surface-border p-1">

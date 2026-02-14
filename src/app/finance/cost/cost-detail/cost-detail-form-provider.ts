@@ -19,7 +19,8 @@ export class CostDetailFormProvider {
             note: this.formBuilder.control<string>(''),
             hasInvoice: this.formBuilder.nonNullable.control<boolean>(true, [Validators.required]),
             payable: this.formBuilder.nonNullable.control<boolean>(true, [Validators.required]),
-            paid: this.formBuilder.nonNullable.control<boolean>(true, [Validators.required])
+            paid: this.formBuilder.nonNullable.control<boolean>(true, [Validators.required]),
+            paymentDate: this.formBuilder.control<Date | null>({value: null, disabled: true})
         })
     }
 }
@@ -33,6 +34,6 @@ export interface CostForm {
     note: FormControl<string | null>,
     hasInvoice: FormControl<boolean>,
     payable: FormControl<boolean>,
-    paid: FormControl<boolean>
-
+    paid: FormControl<boolean>,
+    paymentDate: FormControl<Date | null>
 }

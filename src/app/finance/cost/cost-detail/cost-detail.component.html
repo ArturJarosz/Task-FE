@@ -7,55 +7,45 @@
                         <div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
                             <p-button title="Update cost" icon="pi pi-arrow-down" [disabled]="!isFormChanged()" (onClick)="onSave()" [outlined]="true" [rounded]="true" class="update-button transition-colors transition-duration-300"></p-button>
                         </div>
-                        <div class="grid grid-nogutter surface-border  p-1">
+                        <div class="grid grid-nogutter surface-border p-1">
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium">Name</div>
-                                <div class="col-8 pr-3">
-                                    <input formControlName="name" id="name" pInputText>
-                                </div>
+                                <input formControlName="name" id="name" pInputText class="w-full">
                             </div>
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium">Category</div>
-                                <span class="p-input-icon-left w-full col-8 pr-3">
-                                    <p-dropdown [options]="costCategories!" optionLabel="label" optionValue="id"
-                                                formControlName="category" class="w-full">
-                                    </p-dropdown>
-                                </span>
-                            </div>
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium ">Paid</div>
-                                <div class="col-8 pr-3">
-                                    <p-inputSwitch formControlName="paid" id="paid"></p-inputSwitch>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="grid grid-nogutter surface-border  p-1 ">
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium ">Date</div>
-                                <div class="col-8 pr-3">
-                                    <p-calendar formControlName="date" id="date" dateFormat="yy-mm-dd"></p-calendar>
-                                </div>
+                                <p-dropdown [options]="costCategories!" optionLabel="label" optionValue="id"
+                                            formControlName="category" class="w-full" styleClass="w-full">
+                                </p-dropdown>
                             </div>
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium ">Value</div>
-                                <div class="col-8 pr-3">
-                                    <p-inputNumber formControlName="value" id="value" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2"></p-inputNumber>
-                                </div>
+                                <p-inputNumber formControlName="value" id="value" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" styleClass="w-full"></p-inputNumber>
+                            </div>
+                        </div>
+                        <div class="grid grid-nogutter surface-border  p-1 ">
+                            <div class="md:col-2 p-1">
+                                <div class="text-500 font-medium ">Has Invoice</div>
+                                <p-inputSwitch formControlName="hasInvoice" id="hasInvoice"></p-inputSwitch>
+                            </div>
+                            <div class="md:col-2 p-1">
+                                <div class="text-500 font-medium ">Paid</div>
+                                <p-inputSwitch formControlName="paid" id="paid"></p-inputSwitch>
                             </div>
                             <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium ">Has Invoice</div>
-                                <div class="col-8 pr-3">
-                                    <p-inputSwitch formControlName="hasInvoice" id="hasInvoice"></p-inputSwitch>
-                                </div>
+                                <div class="text-500 font-medium ">Date</div>
+                                <p-calendar formControlName="date" id="date" dateFormat="yy-mm-dd"></p-calendar>
+                            </div>
+                            <div class="md:col-4 p-1">
+                                <div class="text-500 font-medium ">Payment Date</div>
+                                <p-calendar formControlName="paymentDate" id="paymentDate" dateFormat="yy-mm-dd"></p-calendar>
                             </div>
                         </div>
                         <div class="grid grid-nogutter surface-border  p-1 ">
                             <div class="md:col-12 p-1">
                                 <div class="text-500 font-medium ">Note</div>
-                                <div class="col-8 pr-3">
                                 <textarea formControlName="note" id="note" type="text" pInputTextarea rows="2"
-                                          [autoResize]="true"></textarea>
-                                </div>
+                                          [autoResize]="true" class="w-full"></textarea>
                             </div>
                         </div>
                     </div>

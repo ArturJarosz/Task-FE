@@ -24,20 +24,22 @@
                 </span>
             </div>
             <div class="md:col-4 p-1">
-                <label for="paid" class="block  text-color text-base">Paid</label>
-                <span class="p-input-icon-left w-full">
-                    <p-inputSwitch formControlName="paid" id="paid"></p-inputSwitch>
-                </span>
+                <div class="text-500 font-medium">Value</div>
+                <p-inputNumber formControlName="value" id="value" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2"></p-inputNumber>
             </div>
         </div>
         <div class="grid grid-nogutter surface-border p-1 ">
             <div class="md:col-4 p-1">
-                <div class="text-500 font-medium">Value</div>
-                <p-inputNumber formControlName="value" id="value" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2"></p-inputNumber>
-            </div>
-            <div class="md:col-4 p-1">
                 <div class="text-500 font-medium ">Has Invoice</div>
                 <p-inputSwitch formControlName="hasInvoice" id="hasInvoice"></p-inputSwitch>
+            </div>
+            <div class="md:col-4 p-1">
+                <div class="text-500 font-medium ">Paid</div>
+                <p-inputSwitch formControlName="paid" id="paid"></p-inputSwitch>
+            </div>
+            <div class="md:col-4 p-1">
+                <div class="text-500 font-medium ">Payment Date</div>
+                <p-calendar formControlName="paymentDate" id="paymentDate" dateFormat="yy-mm-dd" appendTo="body"></p-calendar>
             </div>
         </div>
         <div class="grid grid-nogutter surface-border p-1 ">

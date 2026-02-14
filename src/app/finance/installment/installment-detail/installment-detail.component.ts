@@ -3,6 +3,7 @@ import {Installment} from "../../../generated/models/installment";
 import {FormGroup} from '@angular/forms';
 import {InstallmentForm, InstallmentFormProvider} from "../form/installment-form-provider";
 import {cloneDeep} from "lodash";
+import {toDateIfExists, toTimeZoneString} from "../../../shared/utils/date-utils";
 
 @Component({
     selector: 'installment-detail',
@@ -31,6 +32,13 @@ export class InstallmentDetailComponent implements OnInit, OnChanges {
     ngOnInit(): void {
         this.installmentDetailForm = this.installmentFormProvider.getInstallmentForm();
         this.fillFormData();
+        this.installmentDetailForm.valueChanges.subscribe(() => {
+            if (this.installmentDetailForm.value.paid && this.installmentDetailForm.controls.paymentDate.disabled) {
+                this.installmentDetailForm.controls.paymentDate.enable();
+            } else if (!this.installmentDetailForm.value.paid && this.installmentDetailForm.controls.paymentDate.enabled) {
+                this.installmentDetailForm.controls.paymentDate.disable();
+            }
+        });
     }
 
     private fillFormData(): void {
@@ -40,9 +48,15 @@ export class InstallmentDetailComponent implements OnInit, OnChanges {
         this.installmentDetailForm.patchValue({
             stageName: this.installment.stageName,
             paid: this.installment.paid,
+            paymentDate: toDateIfExists(this.installment.paymentDate),
             value: this.installment.value,
             hasInvoice: this.installment.hasInvoice,
         })
+        if (this.installment.paid) {
+            this.installmentDetailForm.controls.paymentDate.enable();
+        } else {
+            this.installmentDetailForm.controls.paymentDate.disable();
+        }
     }
 
     isFormChanged(): boolean {
@@ -57,6 +71,7 @@ export class InstallmentDetailComponent implements OnInit, OnChanges {
         installment = {
             stageName: this.installmentDetailForm.value.stageName,
             paid: this.installmentDetailForm.value.paid,
+            paymentDate: this.installmentDetailForm.value.paid ? toTimeZoneString(this.installmentDetailForm.controls.paymentDate.value!) : undefined,
             value: this.installmentDetailForm.value.value,
             hasInvoice: this.installmentDetailForm.value.hasInvoice,
         }
