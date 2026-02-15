@@ -7,20 +7,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Architect } from '../../models/architect';
+import { User } from '../../models/user';
 
-export interface CreateArchitect$Params {
-  
-    /**
-     * New architect data
-     */
-    body: Architect
+export interface GetCurrentUser$Params {
 }
 
-export function createArchitect(http: HttpClient, rootUrl: string, params: CreateArchitect$Params, context?: HttpContext): Observable<StrictHttpResponse<Architect>> {
-  const rb = new RequestBuilder(rootUrl, createArchitect.PATH, 'post');
+export function getCurrentUser(http: HttpClient, rootUrl: string, params?: GetCurrentUser$Params, context?: HttpContext): Observable<StrictHttpResponse<User>> {
+  const rb = new RequestBuilder(rootUrl, getCurrentUser.PATH, 'get');
   if (params) {
-    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -28,9 +22,9 @@ export function createArchitect(http: HttpClient, rootUrl: string, params: Creat
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Architect>;
+      return r as StrictHttpResponse<User>;
     })
   );
 }
 
-createArchitect.PATH = '/architects';
+getCurrentUser.PATH = '/users/current';

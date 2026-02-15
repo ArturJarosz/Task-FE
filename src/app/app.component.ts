@@ -1,10 +1,12 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, effect, inject, OnInit, ViewChild} from '@angular/core';
 import {MenuItem} from "primeng/api";
 import {ConfigurationStore} from "./shared/configuration/state";
+import {UserStore} from "./shared/user/state";
 import {AuthorizationService} from "./security/authorization.service";
 import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {filter} from "rxjs";
 import {BreadcrumbService} from "./shared/breadcrumb/breadcrumb.service";
+import {Menu} from "primeng/menu";
 
 @Component({
     selector: 'app-root',
@@ -15,11 +17,23 @@ export class AppComponent implements OnInit {
     title = 'Task-FE';
 
     breadcrumbItems: MenuItem[] = [];
+    userMenuItems: MenuItem[] = [];
+
+    @ViewChild('userMenu') userMenu!: Menu;
 
     readonly configurationStore = inject(ConfigurationStore);
+    readonly userStore = inject(UserStore);
 
     constructor(protected authorizationService: AuthorizationService, private router: Router,
                 private activatedRoute: ActivatedRoute, private breadcrumbService: BreadcrumbService) {
+        effect(() => {
+            const user = this.userStore.currentUser();
+            this.userMenuItems = [
+                {label: user?.username || '', disabled: true, styleClass: 'font-bold'},
+                {separator: true},
+                {label: 'Logout', icon: 'pi pi-sign-out', command: () => this.logout()}
+            ];
+        });
     }
 
     ngOnInit(): void {
@@ -27,6 +41,7 @@ export class AppComponent implements OnInit {
             .subscribe(isAuthenticated => {
                 if (isAuthenticated) {
                     this.configurationStore.loadConfiguration({});
+                    this.userStore.loadCurrentUser({});
                 }
             })
 
@@ -43,5 +58,17 @@ export class AppComponent implements OnInit {
 
     logout(): void {
         this.authorizationService.logout();
+    }
+
+    getUserInitial(): string {
+        const user = this.userStore.currentUser();
+        if (user?.username) {
+            return user.username.charAt(0).toUpperCase();
+        }
+        return '?';
+    }
+
+    toggleUserMenu(event: Event): void {
+        this.userMenu.toggle(event);
     }
 }

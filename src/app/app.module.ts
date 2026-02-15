@@ -24,6 +24,8 @@ import {FinancialReportModule} from "./financial-report/financial-report.module"
 import {StageModule} from "./stage/stage.module";
 import {TaskModule} from "./task/task.module";
 import {BreadcrumbModule} from "primeng/breadcrumb";
+import {AvatarModule} from "primeng/avatar";
+import {MenuModule} from "primeng/menu";
 import {AuthorizationService, AuthorizationServiceImpl} from "./security/authorization.service";
 import {SecurityModule} from "./security/security.module";
 import {loggedInGuardGuard} from "./security/logged-in-guard/logged-in-guard.guard";
@@ -60,6 +62,8 @@ import {loggedInGuardGuard} from "./security/logged-in-guard/logged-in-guard.gua
         StoreDevtoolsModule.instrument({name: "TASK app", maxAge: 25, logOnly: !isDevMode()}),
         StoreDevtoolsModule.instrument({maxAge: 25, logOnly: !isDevMode()}),
         BreadcrumbModule,
+        AvatarModule,
+        MenuModule,
         SecurityModule
     ],
     providers: [

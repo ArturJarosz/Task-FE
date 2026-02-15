@@ -171,3 +171,5 @@ export type { GetSystemParameter$Params as GetSystemParameter$Params } from './f
 export { getSystemParameter as getSystemParameter } from './fn/system-parameter/get-system-parameter';
 export type { UpdateSystemParameter$Params as UpdateSystemParameter$Params } from './fn/system-parameter/update-system-parameter';
 export { updateSystemParameter as updateSystemParameter } from './fn/system-parameter/update-system-parameter';
+export type { GetCurrentUser$Params as GetCurrentUser$Params } from './fn/user/get-current-user';
+export { getCurrentUser as getCurrentUser } from './fn/user/get-current-user';

@@ -9,7 +9,10 @@
             <i class="pi pi-ellipsis-v text-2xl"></i>
         </a>
         <ul class="list-none p-3 lg:p-0 m-0 lg:align-items-center select-none flex-column lg:flex-row absolute hidden lg:flex lg:static surface-overlay right-0 top-100 z-1 shadow-2 lg:shadow-none">
-            Personal menu placeholder
+            <li *ngIf="(authorizationService.isAuthenticated() | async) === true">
+                <p-avatar [label]="getUserInitial()" shape="circle" styleClass="cursor-pointer bg-primary text-white" (click)="toggleUserMenu($event)"></p-avatar>
+                <p-menu #userMenu [model]="userMenuItems" [popup]="true" styleClass="mt-2"></p-menu>
+            </li>
         </ul>
     </div>
     <ul class="list-none py-3 px-5 m-0 surface-section flex align-items-center font-medium overflow-x-auto border-top-1 border-bottom-1 surface-border">
@@ -95,12 +98,6 @@
                         <a pRipple class="flex align-items-center cursor-pointer p-3 text-700 hover:surface-100 transition-duration-150 transition-colors border-right-2 border-transparent" (click)="login()">
                             <i class="pi pi-sign-in mr-2"></i>
                             <span class="font-medium">Login</span>
-                        </a>
-                    </div>
-                    <div *ngIf="(authorizationService.isAuthenticated() | async) === true" [routerLinkActive]="['active', 'bg-purple-50', 'text-purple-500', 'border-purple-500', 'border-right-2']">
-                        <a pRipple class="flex align-items-center cursor-pointer p-3 text-700 hover:surface-100 transition-duration-150 transition-colors border-right-2 border-transparent" (click)="logout()">
-                            <i class="pi pi-sign-out mr-2"></i>
-                            <span class="font-medium">Logout</span>
                         </a>
                     </div>
                 </div>

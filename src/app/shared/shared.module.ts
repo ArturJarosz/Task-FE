@@ -5,6 +5,7 @@ import {provideHttpClient, withInterceptors} from "@angular/common/http";
 import {SharedModule as SharedPrimeNgModule} from "primeng/api";
 import {ToastModule} from "primeng/toast";
 import {ConfigurationRestService, ConfigurationRestServiceImpl} from "./configuration/rest/configuration.rest";
+import {UserRestService, UserRestServiceImpl} from "./user/rest/user-rest.service";
 import {CurrencyPipe, NgIf} from "@angular/common";
 import {authHttpInterceptorFn, provideAuth0} from "@auth0/auth0-angular";
 import {auth_config} from "../auth.config";
@@ -34,6 +35,7 @@ import {AccordionModule} from "primeng/accordion";
     ],
     providers: [
         {provide: ConfigurationRestService, useClass: ConfigurationRestServiceImpl},
+        {provide: UserRestService, useClass: UserRestServiceImpl},
         {provide: BreadcrumbService, useClass: BreadcrumbServiceImpl},
         provideHttpClient(withInterceptors([authHttpInterceptorFn])),
         provideAuth0(auth_config)
