@@ -58,4 +58,5 @@ export type { Tasks } from './models/tasks';
 export { TaskStatus } from './models/task-status';
 export { TaskType } from './models/task-type';
 export type { TotalProjectFinancialSummary } from './models/total-project-financial-summary';
+export type { User } from './models/user';
 export type { ValidatorError } from './models/validator-error';
