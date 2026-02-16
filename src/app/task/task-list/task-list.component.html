@@ -1,22 +1,24 @@
 <p-table *ngIf="tasks" [value]="tasks" [tableStyle]="{ 'min-width': '50rem' }">
     <ng-template pTemplate="header">
         <tr>
-            <th>Id</th>
+            <th style="width: 5rem">Architect</th>
             <th>Name</th>
-            <th></th>
             <th>Type</th>
             <th>Status</th>
+            <th style="width: 5rem">Menu</th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-task>
         <tr [routerLink]="['/projects', projectId, 'stages', stageId, 'tasks', task.id]" class="cursor-pointer">
-            <td>{{ task.id }}</td>
+            <td class="text-center">
+                <p-avatar [label]="getArchitectInitials(task.architectId)" shape="circle" styleClass="bg-primary text-white" size="normal" [pTooltip]="getArchitectName(task.architectId)" tooltipPosition="top"></p-avatar>
+            </td>
             <td>{{ task.name }}</td>
+            <td>{{ getTypeLabel(task.type) }}</td>
+            <td>{{ getStatusLabel(task.status) }}</td>
             <td>
                 <button pButton pRipple class="p-button-text p-button-plain p-0" icon="pi pi-times" (click)="deleteTask($event, task.name, task.id)" size="small"></button>
             </td>
-            <td>{{ getTypeLabel(task.type) }}</td>
-            <td>{{ getStatusLabel(task.status) }}</td>
         </tr>
     </ng-template>
 </p-table>

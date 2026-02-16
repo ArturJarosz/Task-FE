@@ -21,7 +21,8 @@ export class TaskFormProvider {
             endDate: this.formBuilder.nonNullable.control<Date>(new Date(), [Validators.required]),
             status: this.formBuilder.nonNullable.control<TaskStatus>(DEFAULT_STATUS),
             type: this.formBuilder.nonNullable.control<TaskType>(DEFAULT_TYPE),
-            note: this.formBuilder.nonNullable.control('')
+            note: this.formBuilder.nonNullable.control(''),
+            architectId: this.formBuilder.control<number | null>(null)
         });
     };
 
@@ -30,7 +31,8 @@ export class TaskFormProvider {
             name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
             startDate: this.formBuilder.control<Date>(new Date()),
             type: this.formBuilder.nonNullable.control<TaskType>(DEFAULT_TYPE),
-            note: this.formBuilder.control('')
+            note: this.formBuilder.control(''),
+            architectId: this.formBuilder.control<number | null>(null)
         })
     }
 }
@@ -42,14 +44,16 @@ export interface TaskForm {
     endDate: FormControl<Date>;
     status: FormControl<TaskStatus>,
     type: FormControl<TaskType>,
-    note: FormControl<string>
+    note: FormControl<string>,
+    architectId: FormControl<number | null>
 }
 
 export interface AddTaskForm {
     name: FormControl<string>,
     startDate: FormControl<Date | null>,
     type: FormControl<TaskType>,
-    note: FormControl<string | null>
+    note: FormControl<string | null>,
+    architectId: FormControl<number | null>
 }
 
 

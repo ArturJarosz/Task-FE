@@ -6,6 +6,8 @@ import {ConfigurationStore} from "../../shared/configuration/state";
 import {DeleteTaskDto, UpdateTaskDto, UpdateTaskStatus} from "../model/task";
 import {ConfirmationService} from "primeng/api";
 import {Task} from "../../generated/models/task";
+import {ArchitectStore} from "../../architect/state/architect.state";
+import {Architect} from "../../generated/models/architect";
 
 @Component({
     selector: 'task-detail-shell',
@@ -19,13 +21,16 @@ export class TaskDetailShellComponent implements OnInit {
 
     readonly taskStore = inject(TaskStore);
     readonly configurationStore = inject(ConfigurationStore);
+    readonly architectStore = inject(ArchitectStore);
     $task: Signal<Task | null> = this.taskStore.task;
     $taskTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.taskTypes;
     $taskStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.taskStatuses;
+    $architects: Signal<Architect[]> = this.architectStore.architects;
 
     constructor(private route: ActivatedRoute, private router: Router,
                 private confirmationService: ConfirmationService) {
         this.configurationStore.loadConfiguration({});
+        this.architectStore.loadArchitects({});
     }
 
     ngOnInit(): void {

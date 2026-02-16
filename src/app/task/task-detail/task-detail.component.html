@@ -24,6 +24,18 @@
                                             optionLabel="label" optionValue="id"></p-dropdown>
 
                             </div>
+                            <div class="md:col-4 p-1">
+                                <div class="text-500 font-medium ">Architect</div>
+                                <p-dropdown formControlName="architectId" [options]="architects!"
+                                            optionLabel="firstName" optionValue="id">
+                                    <ng-template pTemplate="selectedItem" let-architect>
+                                        <span>{{architect.firstName}} {{architect.lastName}}</span>
+                                    </ng-template>
+                                    <ng-template pTemplate="item" let-architect>
+                                        <span>{{architect.firstName}} {{architect.lastName}}</span>
+                                    </ng-template>
+                                </p-dropdown>
+                            </div>
                         </div>
                         <div class="grid grid-nogutter surface-border  p-1 ">
                             <div class="md:col-6 p-1">

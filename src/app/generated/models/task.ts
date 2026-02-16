@@ -4,6 +4,7 @@
 import { TaskStatus } from '../models/task-status';
 import { TaskType } from '../models/task-type';
 export interface Task {
+  architectId?: number;
   createdDateTime?: string;
   endDate?: string;
   id?: number;
