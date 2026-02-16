@@ -17,6 +17,8 @@ import {DialogModule} from "primeng/dialog";
 import {DropdownModule} from "primeng/dropdown";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {RippleModule} from "primeng/ripple";
+import {AvatarModule} from "primeng/avatar";
+import {TooltipModule} from "primeng/tooltip";
 
 
 @NgModule({
@@ -45,7 +47,9 @@ import {RippleModule} from "primeng/ripple";
         DialogModule,
         DropdownModule,
         ConfirmDialogModule,
-        RippleModule
+        RippleModule,
+        AvatarModule,
+        TooltipModule
     ],
     providers: [
         {provide: TaskRestService, useClass: TaskRestServiceImpl}

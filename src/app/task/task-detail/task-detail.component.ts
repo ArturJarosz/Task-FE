@@ -8,6 +8,7 @@ import {TaskStatus} from "../../generated/models/task-status";
 import {cloneDeep} from "lodash";
 import {DeleteTaskDto, UpdateTaskDto} from "../model/task";
 import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
+import {Architect} from "../../generated/models/architect";
 
 @Component({
     selector: 'task-detail',
@@ -21,6 +22,8 @@ export class TaskDetailComponent implements OnInit, OnChanges {
     taskTypes!: ConfigurationEntry[] | null;
     @Input()
     taskStatuses!: ConfigurationEntry[] | null;
+    @Input()
+    architects!: Architect[] | null;
     @Output()
     updateStatusEvent: EventEmitter<UpdateTaskDto> = new EventEmitter<UpdateTaskDto>();
     @Output()
@@ -31,7 +34,7 @@ export class TaskDetailComponent implements OnInit, OnChanges {
 
     taskDetailForm!: FormGroup<TaskForm>;
     initialTaskDetailForm!: FormGroup<TaskForm>;
-    fieldsToUpdate: string[] = ["name", "type", "startDate", "endDate", "note"];
+    fieldsToUpdate: string[] = ["name", "type", "startDate", "endDate", "note", "architectId"];
 
     constructor(private formProvider: TaskFormProvider) {
     }
@@ -76,7 +79,8 @@ export class TaskDetailComponent implements OnInit, OnChanges {
             endDate: toDateIfExists(this.task.endDate!),
             status: this.task.status,
             type: this.task.type,
-            note: this.task.note
+            note: this.task.note,
+            architectId: this.task.architectId || null
         })
     }
 
@@ -125,6 +129,7 @@ export class TaskDetailComponent implements OnInit, OnChanges {
         task.endDate = toTimeZoneString(this.taskDetailForm.value.endDate);
         task.type = this.taskDetailForm.value.type;
         task.note = this.taskDetailForm.value.note;
+        task.architectId = this.taskDetailForm.value.architectId ?? undefined;
         return task;
     }
 

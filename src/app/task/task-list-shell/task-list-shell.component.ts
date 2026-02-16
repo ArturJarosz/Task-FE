@@ -5,6 +5,8 @@ import {ConfigurationStore} from "../../shared/configuration/state";
 import {ConfirmationService} from "primeng/api";
 import {TaskStore} from "../state/task.state";
 import {DeleteTaskDto} from "../model/task";
+import {ArchitectStore} from "../../architect/state/architect.state";
+import {Architect} from "../../generated/models/architect";
 
 @Component({
     selector: 'task-list-shell',
@@ -21,12 +23,15 @@ export class TaskListShellComponent {
 
     readonly taskStore = inject(TaskStore);
     readonly configurationStore = inject(ConfigurationStore);
+    readonly architectStore = inject(ArchitectStore);
     $taskTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.taskTypes;
     $taskStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.taskStatuses;
+    $architects: Signal<Architect[]> = this.architectStore.architects;
 
     showAddTaskComponent: boolean = false;
 
     constructor(private confirmationService: ConfirmationService) {
+        this.architectStore.loadArchitects({});
     }
 
     onAddTask() {
