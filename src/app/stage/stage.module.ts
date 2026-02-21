@@ -23,6 +23,8 @@ import {InputSwitchModule} from "primeng/inputswitch";
 import {CheckboxModule} from "primeng/checkbox";
 import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.guard";
 import {InputNumberModule} from "primeng/inputnumber";
+import {AvatarModule} from "primeng/avatar";
+import {TooltipModule} from "primeng/tooltip";
 
 @NgModule({
     declarations: [
@@ -58,7 +60,9 @@ import {InputNumberModule} from "primeng/inputnumber";
         ToggleButtonModule,
         InputSwitchModule,
         CheckboxModule,
-        InputNumberModule
+        InputNumberModule,
+        AvatarModule,
+        TooltipModule
     ],
     exports: [
         StageListComponent,

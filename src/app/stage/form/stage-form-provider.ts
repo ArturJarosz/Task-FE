@@ -22,7 +22,8 @@ export class StageFormProvider {
             startDate: this.formBuilder.nonNullable.control(new Date()),
             deadline: this.formBuilder.nonNullable.control(new Date()),
             endDate: this.formBuilder.nonNullable.control(new Date()),
-            note: this.formBuilder.control<string>('')
+            note: this.formBuilder.control<string>(''),
+            architectId: this.formBuilder.control<number | null>(null)
         })
     };
 
@@ -32,9 +33,12 @@ export class StageFormProvider {
             deadline: this.formBuilder.nonNullable.control<Date>(new Date()),
             type: this.formBuilder.nonNullable.control<StageType>(DEFAULT_TYPE),
             note: this.formBuilder.control<string>(''),
+            architectId: this.formBuilder.control<number | null>(null),
             hasInstallment: this.formBuilder.nonNullable.control<boolean>(false, [Validators.required]),
             installmentValue: this.formBuilder.control<number>(0),
             hasInvoice: this.formBuilder.control<boolean>(true, [Validators.required]),
+            paid: this.formBuilder.control<boolean>(false, [Validators.required]),
+            paymentDate: this.formBuilder.control<Date | null>(null),
         })
     }
 }
@@ -47,16 +51,19 @@ export interface StageForm {
     startDate: FormControl<Date>,
     deadline: FormControl<Date>,
     endDate: FormControl<Date>,
-    note: FormControl<string | null>
+    note: FormControl<string | null>,
+    architectId: FormControl<number | null>
 }
 
 export interface AddStageForm {
     name: FormControl<string>,
     deadline: FormControl<Date>,
     type: FormControl<StageType>,
-    note: FormControl<string | null>
+    note: FormControl<string | null>,
+    architectId: FormControl<number | null>,
     hasInstallment: FormControl<boolean>,
     installmentValue?: FormControl<number | null>,
-    hasInvoice?: FormControl<boolean | null>
-
+    hasInvoice?: FormControl<boolean | null>,
+    paid?: FormControl<boolean | null>,
+    paymentDate?: FormControl<Date | null>
 }

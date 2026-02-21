@@ -88,7 +88,8 @@ Extend `AbstractRestService` from `src/app/shared/rest/abstract-rest.service.ts`
 
 ### Generated Models
 
-Models in `src/app/generated/models/` are auto-generated from backend OpenAPI spec.
+Models in `src/app/generated/models/` are auto-generated from backend OpenAPI spec. These are used for type safety and
+code completion and should not be edited manually. Also they are used in API services.
 
 - Do not manually edit these files
 - Run `utils/generate-models.sh` to regenerate after backend changes
@@ -106,4 +107,5 @@ Models in `src/app/generated/models/` are auto-generated from backend OpenAPI sp
 - Environment configs in `src/environments/`
 
 ### Important things to remember
+
 - Always make all according to the current theme in other components, including buttons, and inputs

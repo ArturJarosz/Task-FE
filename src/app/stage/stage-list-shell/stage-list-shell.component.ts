@@ -6,6 +6,8 @@ import {StageStore} from "../state";
 import {StageDto} from "../model/stage";
 import {ConfirmationService} from "primeng/api";
 import {Router} from "@angular/router";
+import {ArchitectStore} from "../../architect/state/architect.state";
+import {Architect} from "../../generated/models/architect";
 
 @Component({
     selector: 'stage-list-shell',
@@ -20,8 +22,10 @@ export class StageListShellComponent implements OnInit {
 
     readonly stageStore = inject(StageStore);
     readonly configurationStore = inject(ConfigurationStore);
+    readonly architectStore = inject(ArchitectStore);
     $stageStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.stageStatuses;
     $stageTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.stageTypes;
+    $architects: Signal<Architect[]> = this.architectStore.architects;
 
     showAddStageComponent: boolean = false;
 
@@ -30,6 +34,7 @@ export class StageListShellComponent implements OnInit {
 
     ngOnInit(): void {
         this.configurationStore.loadConfiguration({});
+        this.architectStore.loadArchitects({});
         this.stageStore.setProjectId(this.projectId);
     }
 

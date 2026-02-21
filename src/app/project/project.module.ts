@@ -23,6 +23,8 @@ import {AccordionModule} from "primeng/accordion";
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {StageModule} from "../stage/stage.module";
 import {FinanceModule} from "../finance/finance.module";
+import {AvatarModule} from "primeng/avatar";
+import {TooltipModule} from "primeng/tooltip";
 import {
     ProjectFinancialDetailShellComponent
 } from "../finance/project-financial-summary/project-financial-detail-shell/project-financial-detail-shell.component";
@@ -62,7 +64,9 @@ import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.gu
         AccordionModule,
         InputTextareaModule,
         StageModule,
-        FinanceModule
+        FinanceModule,
+        AvatarModule,
+        TooltipModule
     ],
     providers: [
         {provide: ProjectRestService, useClass: ProjectRestServiceImpl},

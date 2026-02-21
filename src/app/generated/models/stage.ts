@@ -6,6 +6,7 @@ import { StageStatus } from '../models/stage-status';
 import { StageType } from '../models/stage-type';
 import { Task } from '../models/task';
 export interface Stage {
+  architectId?: number;
   createdDateTime?: string;
   deadline?: string;
   endDate?: string;
