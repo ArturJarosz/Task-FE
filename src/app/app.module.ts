@@ -1,5 +1,7 @@
 import {isDevMode, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
+import {providePrimeNG} from 'primeng/config';
+import Lara from '@primeng/themes/lara';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
@@ -67,6 +69,14 @@ import {loggedInGuardGuard} from "./security/logged-in-guard/logged-in-guard.gua
         SecurityModule
     ],
     providers: [
+        providePrimeNG({
+            theme: {
+                preset: Lara,
+                options: {
+                    darkModeSelector: false  // disables dark mode entirely
+                }
+            }
+        }),
         {provide: AuthorizationService, useClass: AuthorizationServiceImpl}
     ],
     bootstrap: [AppComponent]

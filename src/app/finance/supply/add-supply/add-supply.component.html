@@ -18,9 +18,9 @@
             <div class="md:col-4 p-1">
                 <label for="supplier" class="block  text-color text-base">Supplier</label>
                 <span class="p-input-icon-left w-full">
-                    <p-dropdown [options]="$suppliers()" optionLabel="name" optionValue="id"
+                    <p-select [options]="$suppliers()" optionLabel="name" optionValue="id"
                                 formControlName="supplierId" class="w-full" appendTo="body" id="supplier">
-                    </p-dropdown>
+                    </p-select>
                 </span>
             </div>
             <div class="md:col-4 p-1">
@@ -31,15 +31,15 @@
         <div class="grid grid-nogutter surface-border p-1 ">
             <div class="md:col-4 p-1">
                 <div class="text-500 font-medium ">Has Invoice</div>
-                <p-inputSwitch formControlName="hasInvoice" id="hasInvoice"></p-inputSwitch>
+                <p-toggleSwitch formControlName="hasInvoice" id="hasInvoice"></p-toggleSwitch>
             </div>
             <div class="md:col-4 p-1">
                 <div class="text-500 font-medium ">Paid</div>
-                <p-inputSwitch formControlName="paid" id="paid"></p-inputSwitch>
+                <p-toggleSwitch formControlName="paid" id="paid"></p-toggleSwitch>
             </div>
             <div class="md:col-4 p-1">
                 <div class="text-500 font-medium ">Payment Date</div>
-                <p-calendar formControlName="paymentDate" id="paymentDate" dateFormat="yy-mm-dd" appendTo="body"></p-calendar>
+                <p-datePicker formControlName="paymentDate" id="paymentDate" dateFormat="yy-mm-dd" appendTo="body"></p-datePicker>
             </div>
         </div>
         <div class="grid grid-nogutter surface-border p-1 ">

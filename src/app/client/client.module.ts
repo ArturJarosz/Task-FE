@@ -8,12 +8,12 @@ import {PanelModule} from "primeng/panel";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {DialogModule} from "primeng/dialog";
 import {ButtonModule} from "primeng/button";
-import {DropdownModule} from "primeng/dropdown";
+import {SelectModule} from "primeng/select";
 import {FormsModule} from "@angular/forms";
 import {InputTextModule} from "primeng/inputtext";
 import {KeyFilterModule} from "primeng/keyfilter";
 import {RippleModule} from "primeng/ripple";
-import {InputTextareaModule} from "primeng/inputtextarea";
+import {Textarea} from "primeng/inputtextarea";
 import {DividerModule} from "primeng/divider";
 import {SharedModule} from "../shared/shared.module";
 import {AddClientComponent} from "./add-client";
@@ -49,12 +49,12 @@ import { ClientProjectsSummaryShellComponent } from './client-projects-summary-s
         ]),
         DialogModule,
         ButtonModule,
-        DropdownModule,
+        SelectModule,
         FormsModule,
         InputTextModule,
         KeyFilterModule,
         RippleModule,
-        InputTextareaModule,
+        Textarea,
         DividerModule,
         ConfirmDialogModule,
         AccordionModule

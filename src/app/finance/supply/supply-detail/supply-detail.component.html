@@ -18,9 +18,9 @@
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium">Supplier</div>
                                 <div class="col-8 pr-3">
-                                    <p-dropdown [options]="suppliers" optionLabel="name" optionValue="id"
+                                    <p-select [options]="suppliers" optionLabel="name" optionValue="id"
                                                 formControlName="supplierId" class="w-full" appendTo="body">
-                                    </p-dropdown>
+                                    </p-select>
                                 </div>
                             </div>
                             <div class="md:col-4 p-1">
@@ -33,15 +33,15 @@
                         <div class="grid grid-nogutter surface-border p-1">
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium">Has Invoice</div>
-                                <p-inputSwitch formControlName="hasInvoice"></p-inputSwitch>
+                                <p-toggleSwitch formControlName="hasInvoice"></p-toggleSwitch>
                             </div>
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium">Paid</div>
-                                <p-inputSwitch formControlName="paid"></p-inputSwitch>
+                                <p-toggleSwitch formControlName="paid"></p-toggleSwitch>
                             </div>
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium">Payment Date</div>
-                                <p-calendar formControlName="paymentDate" id="paymentDate" dateFormat="yy-mm-dd"></p-calendar>
+                                <p-datePicker formControlName="paymentDate" id="paymentDate" dateFormat="yy-mm-dd"></p-datePicker>
                             </div>
                         </div>
                         <div class="grid grid-nogutter surface-border p-1">

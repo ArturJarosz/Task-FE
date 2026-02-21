@@ -15,18 +15,18 @@
                             </div>
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium ">Type</div>
-                                <p-dropdown formControlName="type" [options]="taskTypes!"
-                                            optionLabel="label" optionValue="id"></p-dropdown>
+                                <p-select formControlName="type" [options]="taskTypes!"
+                                            optionLabel="label" optionValue="id"></p-select>
                             </div>
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium ">Status</div>
-                                <p-dropdown formControlName="status" [options]="availableTaskStatuses"
-                                            optionLabel="label" optionValue="id"></p-dropdown>
+                                <p-select formControlName="status" [options]="availableTaskStatuses"
+                                            optionLabel="label" optionValue="id"></p-select>
 
                             </div>
                             <div class="md:col-4 p-1">
                                 <div class="text-500 font-medium ">Architect</div>
-                                <p-dropdown formControlName="architectId" [options]="architects!"
+                                <p-select formControlName="architectId" [options]="architects!"
                                             optionLabel="firstName" optionValue="id">
                                     <ng-template pTemplate="selectedItem" let-architect>
                                         <span>{{architect.firstName}} {{architect.lastName}}</span>
@@ -34,17 +34,17 @@
                                     <ng-template pTemplate="item" let-architect>
                                         <span>{{architect.firstName}} {{architect.lastName}}</span>
                                     </ng-template>
-                                </p-dropdown>
+                                </p-select>
                             </div>
                         </div>
                         <div class="grid grid-nogutter surface-border  p-1 ">
                             <div class="md:col-6 p-1">
                                 <div class="text-500 font-medium ">Start date</div>
-                                <p-calendar formControlName="startDate" id="startDate" dateFormat="yy-mm-dd"></p-calendar>
+                                <p-datePicker formControlName="startDate" id="startDate" dateFormat="yy-mm-dd"></p-datePicker>
                             </div>
                             <div class="md:col-6 p-1">
                                 <div class="text-500 font-medium ">End date</div>
-                                <p-calendar formControlName="endDate" id="endDate" dateFormat="yy-mm-dd"></p-calendar>
+                                <p-datePicker formControlName="endDate" id="endDate" dateFormat="yy-mm-dd"></p-datePicker>
                             </div>
                         </div>
                         <div class="grid grid-nogutter surface-border  p-1 ">

@@ -12,13 +12,14 @@ import {
 import {TableModule} from "primeng/table";
 import {SharedModule} from "../shared/shared.module";
 import {AccordionModule} from "primeng/accordion";
+import {ButtonModule} from "primeng/button";
 import {RouterModule} from "@angular/router";
 import {InputTextModule} from "primeng/inputtext";
-import {CalendarModule} from "primeng/calendar";
-import {InputSwitchModule} from "primeng/inputswitch";
-import {InputTextareaModule} from "primeng/inputtextarea";
+import {DatePickerModule} from "primeng/datepicker";
+import {ToggleSwitchModule} from "primeng/toggleswitch";
+import {Textarea} from "primeng/inputtextarea";
 import {DialogModule} from "primeng/dialog";
-import {DropdownModule} from "primeng/dropdown";
+import {SelectModule} from "primeng/select";
 import {FinancialRestService, FinancialRestServiceImpl} from "./project-financial-summary/rest/financial-rest.service";
 import {
     ProjectFinancialDetailShellComponent
@@ -160,13 +161,14 @@ import {
             }
         ]),
         InputTextModule,
-        CalendarModule,
-        InputSwitchModule,
-        InputTextareaModule,
+        DatePickerModule,
+        ToggleSwitchModule,
+        Textarea,
         DialogModule,
-        DropdownModule,
+        SelectModule,
         InputNumberModule,
-        ConfirmDialogModule
+        ConfirmDialogModule,
+        ButtonModule
     ],
     exports: [
         CostListComponent,

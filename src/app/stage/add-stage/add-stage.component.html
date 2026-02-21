@@ -21,13 +21,13 @@
             </div>
             <div class="col-4 p-1 grid grid-nogutter">
                 <div class="col-4 text-500 flex align-items-center">Type:</div>
-                <p-dropdown class="col-8 pr-3" [options]="$stageTypes()" optionLabel="label" optionValue="id"
+                <p-select class="col-8 pr-3" [options]="$stageTypes()" optionLabel="label" optionValue="id"
                             formControlName="type" appendTo="body" id="type">
-                </p-dropdown>
+                </p-select>
             </div>
             <div class="col-4 p-1 grid grid-nogutter">
                 <div class="col-4 text-500 flex align-items-center">Architect:</div>
-                <p-dropdown class="col-8 pr-3" [options]="$architects()" optionLabel="firstName" optionValue="id"
+                <p-select class="col-8 pr-3" [options]="$architects()" optionLabel="firstName" optionValue="id"
                             formControlName="architectId" appendTo="body" id="architect">
                     <ng-template pTemplate="selectedItem" let-architect>
                         <span>{{architect.firstName}} {{architect.lastName}}</span>
@@ -35,13 +35,13 @@
                     <ng-template pTemplate="item" let-architect>
                         <span>{{architect.firstName}} {{architect.lastName}}</span>
                     </ng-template>
-                </p-dropdown>
+                </p-select>
             </div>
         </div>
         <div class="grid grid-nogutter surface-border p-1">
             <div class="col-4 p-1 grid grid-nogutter">
                 <div class="col-4 text-500 flex align-items-center">Deadline:</div>
-                <p-calendar class="col-8 pr-3" formControlName="deadline" id="deadline" dateFormat="yy-mm-dd"></p-calendar>
+                <p-datePicker class="col-8 pr-3" formControlName="deadline" id="deadline" dateFormat="yy-mm-dd"></p-datePicker>
             </div>
         </div>
         <div class="grid grid-nogutter surface-border p-1">
@@ -54,7 +54,7 @@
         <div class="grid grid-nogutter surface-border p-1">
             <div class="col-4 p-1 grid grid-nogutter">
                 <div class="col-6 text-500 font-medium ">Installment</div>
-                <p-inputSwitch formControlName="hasInstallment" class="col-6" id="hasInstallment"></p-inputSwitch>
+                <p-toggleSwitch formControlName="hasInstallment" class="col-6" id="hasInstallment"></p-toggleSwitch>
             </div>
         </div>
         <div *ngIf="addStageForm.get('hasInstallment')?.value!" class="grid grid-nogutter surface-border p-1">
@@ -64,17 +64,17 @@
             </div>
             <div class="col-4 p-1 grid grid-nogutter">
                 <div class="col-4 text-500 flex align-items-center">Has invoice:</div>
-                <p-inputSwitch formControlName="hasInvoice" class="col-8 pr-3" id="hasInvoice"></p-inputSwitch>
+                <p-toggleSwitch formControlName="hasInvoice" class="col-8 pr-3" id="hasInvoice"></p-toggleSwitch>
             </div>
         </div>
         <div *ngIf="addStageForm.get('hasInstallment')?.value!" class="grid grid-nogutter surface-border p-1">
             <div class="col-4 p-1 grid grid-nogutter">
                 <div class="col-4 text-500 flex align-items-center">Paid:</div>
-                <p-inputSwitch formControlName="paid" class="col-8 pr-3" id="paid"></p-inputSwitch>
+                <p-toggleSwitch formControlName="paid" class="col-8 pr-3" id="paid"></p-toggleSwitch>
             </div>
             <div class="col-4 p-1 grid grid-nogutter" *ngIf="addStageForm.get('paid')?.value!">
                 <div class="col-4 text-500 flex align-items-center">Payment date:</div>
-                <p-calendar class="col-8 pr-3" formControlName="paymentDate" id="paymentDate" dateFormat="yy-mm-dd" appendTo="body"></p-calendar>
+                <p-datePicker class="col-8 pr-3" formControlName="paymentDate" id="paymentDate" dateFormat="yy-mm-dd" appendTo="body"></p-datePicker>
             </div>
         </div>
     </form>

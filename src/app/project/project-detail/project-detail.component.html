@@ -16,26 +16,26 @@
                             </div>
                             <div class="col-4 p-1 grid grid-nogutter">
                                 <div class="col-4 text-500 flex align-items-center">Status:</div>
-                                <p-dropdown class="col-8 pr-3" formControlName="status" [options]="availableContractStatuses"
-                                            optionLabel="label" optionValue="id"></p-dropdown>
+                                <p-select class="col-8 pr-3" formControlName="status" [options]="availableContractStatuses"
+                                            optionLabel="label" optionValue="id"></p-select>
                             </div>
                             <div class="col-4 p-1 grid grid-nogutter">
                                 <div class="col-4 text-500 flex align-items-center">Signing date:</div>
-                                <p-calendar class="col-8 pr-3" formControlName="signingDate" id="signingDate" dateFormat="yy-mm-dd"></p-calendar>
+                                <p-datePicker class="col-8 pr-3" formControlName="signingDate" id="signingDate" dateFormat="yy-mm-dd"></p-datePicker>
                             </div>
                         </div>
                         <div class="grid grid-nogutter surface-border p-1">
                             <div class="col-4 p-1 grid grid-nogutter">
                                 <div class="col-4 text-500 flex align-items-center">Deadline:</div>
-                                <p-calendar class="col-8 pr-3" formControlName="deadline" id="deadline" dateFormat="yy-mm-dd"></p-calendar>
+                                <p-datePicker class="col-8 pr-3" formControlName="deadline" id="deadline" dateFormat="yy-mm-dd"></p-datePicker>
                             </div>
                             <div class="col-4 p-1 grid grid-nogutter">
                                 <div class="col-4 text-500 flex align-items-center">Start date:</div>
-                                <p-calendar class="col-8 pr-3" formControlName="startDate" id="contractStartDate" dateFormat="yy-mm-dd"></p-calendar>
+                                <p-datePicker class="col-8 pr-3" formControlName="startDate" id="contractStartDate" dateFormat="yy-mm-dd"></p-datePicker>
                             </div>
                             <div class="col-4 p-1 grid grid-nogutter">
                                 <div class="col-4 text-500 flex align-items-center">End date:</div>
-                                <p-calendar class="col-8 pr-3" formControlName="endDate" id="contractEndDate" dateFormat="yy-mm-dd"></p-calendar>
+                                <p-datePicker class="col-8 pr-3" formControlName="endDate" id="contractEndDate" dateFormat="yy-mm-dd"></p-datePicker>
                             </div>
                         </div>
                     </div>
@@ -58,8 +58,8 @@
                             </div>
                             <div class="col-4 p-1 grid grid-nogutter">
                                 <div class="col-4 text-500 flex align-items-center">Type:</div>
-                                <p-dropdown class="col-8 pr-3" formControlName="type" [options]="projectTypes!"
-                                            optionLabel="label" optionValue="id"></p-dropdown>
+                                <p-select class="col-8 pr-3" formControlName="type" [options]="projectTypes!"
+                                            optionLabel="label" optionValue="id"></p-select>
                             </div>
                         </div>
                         <div class="grid grid-nogutter surface-border p-1">
@@ -75,7 +75,7 @@
                         <div class="grid grid-nogutter surface-border p-1">
                             <div class="col-4 p-1 grid grid-nogutter">
                                 <div class="col-4 text-500 flex align-items-center">Start date:</div>
-                                <p-calendar class="col-8 pr-3" formControlName="startDate" id="startDate" dateFormat="yy-mm-dd"></p-calendar>
+                                <p-datePicker class="col-8 pr-3" formControlName="startDate" id="startDate" dateFormat="yy-mm-dd"></p-datePicker>
                             </div>
                             <div class="col-4 p-1 grid grid-nogutter">
                                 <div class="col-4 text-500 flex align-items-center">End date:</div>

@@ -9,12 +9,13 @@ import {RouterModule} from "@angular/router";
 import {SharedModule} from "../shared/shared.module";
 import {TaskRestService, TaskRestServiceImpl} from "./rest/task-rest.service";
 import {AccordionModule} from "primeng/accordion";
+import {ButtonModule} from "primeng/button";
 import {InputTextModule} from "primeng/inputtext";
-import {CalendarModule} from "primeng/calendar";
-import {InputTextareaModule} from "primeng/inputtextarea";
+import {DatePickerModule} from "primeng/datepicker";
+import {Textarea} from "primeng/inputtextarea";
 import {AddTaskComponent} from './add-task/add-task.component';
 import {DialogModule} from "primeng/dialog";
-import {DropdownModule} from "primeng/dropdown";
+import {SelectModule} from "primeng/select";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {RippleModule} from "primeng/ripple";
 import {AvatarModule} from "primeng/avatar";
@@ -42,10 +43,11 @@ import {TooltipModule} from "primeng/tooltip";
         SharedModule,
         AccordionModule,
         InputTextModule,
-        CalendarModule,
-        InputTextareaModule,
+        DatePickerModule,
+        Textarea,
         DialogModule,
-        DropdownModule,
+        SelectModule,
+        ButtonModule,
         ConfirmDialogModule,
         RippleModule,
         AvatarModule,

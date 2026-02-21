@@ -8,8 +8,8 @@
     </ng-template>
     <div>
         <form [formGroup]="clientForm">
-            <p-dropdown [options]="$clientTypes()!" formControlName="clientType" optionLabel="label" optionValue="id">
-            </p-dropdown>
+            <p-select [options]="$clientTypes()!" formControlName="clientType" optionLabel="label" optionValue="id">
+            </p-select>
             <div class="flex flex-column gap-3 mt-3 surface-border pt-2"
                  [ngSwitch]="clientForm.get('clientType')?.value">
                 <div class="flex gap-3" *ngSwitchCase="ClientType.PRIVATE.toString()">

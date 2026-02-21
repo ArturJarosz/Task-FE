@@ -9,8 +9,8 @@ import {AddSupplierComponent} from './add-supplier/add-supplier.component';
 import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
 import {InputTextModule} from "primeng/inputtext";
-import {DropdownModule} from "primeng/dropdown";
-import {InputTextareaModule} from "primeng/inputtextarea";
+import {SelectModule} from "primeng/select";
+import {Textarea} from "primeng/inputtextarea";
 import {SupplierDetailShellComponent} from './supplier-detail-shell/supplier-detail-shell.component';
 import {SupplierDetailComponent} from './supplier-detail/supplier-detail.component';
 import {AccordionModule} from "primeng/accordion";
@@ -42,8 +42,8 @@ import { SuppliesListShellComponent } from './supplies-list-shell/supplies-list-
         ButtonModule,
         DialogModule,
         InputTextModule,
-        DropdownModule,
-        InputTextareaModule,
+        SelectModule,
+        Textarea,
         AccordionModule,
         ConfirmDialogModule,
         RippleModule

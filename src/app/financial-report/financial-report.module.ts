@@ -2,10 +2,11 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {SharedModule} from "../shared/shared.module";
 import {TableModule} from "primeng/table";
-import {CalendarModule} from "primeng/calendar";
-import {DropdownModule} from "primeng/dropdown";
+import {DatePickerModule} from "primeng/datepicker";
+import {SelectModule} from "primeng/select";
 import {ChartModule} from "primeng/chart";
 import {SelectButtonModule} from "primeng/selectbutton";
+import {ButtonModule} from "primeng/button";
 import {RouterModule} from "@angular/router";
 import {FormsModule} from "@angular/forms";
 import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.guard";
@@ -23,10 +24,11 @@ import {FinancialReportComponent} from "./financial-report/financial-report.comp
         SharedModule,
         FormsModule,
         TableModule,
-        CalendarModule,
-        DropdownModule,
+        DatePickerModule,
+        SelectModule,
         ChartModule,
         SelectButtonModule,
+        ButtonModule,
         RouterModule.forChild([
             {
                 path: 'financial-report',

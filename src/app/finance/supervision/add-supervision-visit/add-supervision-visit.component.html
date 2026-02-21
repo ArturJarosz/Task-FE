@@ -10,9 +10,9 @@
         <div class="grid grid-nogutter surface-border p-1">
             <div class="md:col-4 p-1">
                 <div class="text-500 font-medium">Date of Visit</div>
-                <p-calendar formControlName="dateOfVisit" id="dateOfVisit"
+                <p-datePicker formControlName="dateOfVisit" id="dateOfVisit"
                             dateFormat="yy-mm-dd" appendTo="body">
-                </p-calendar>
+                </p-datePicker>
             </div>
             <div class="md:col-4 p-1">
                 <div class="text-500 font-medium">Hours Count</div>
@@ -23,7 +23,7 @@
             </div>
             <div class="md:col-4 p-1">
                 <div class="text-500 font-medium">Payable</div>
-                <p-inputSwitch formControlName="payable" id="payable"></p-inputSwitch>
+                <p-toggleSwitch formControlName="payable" id="payable"></p-toggleSwitch>
             </div>
         </div>
     </form>

@@ -21,15 +21,15 @@
             <div class="md:col-6 p-1">
                 <label for="type" class="block  text-color text-base">Type</label>
                 <span class="p-input-icon-left w-full">
-                    <p-dropdown [options]="$taskTypes()" optionLabel="label" optionValue="id"
+                    <p-select [options]="$taskTypes()" optionLabel="label" optionValue="id"
                                 formControlName="type" class="w-full" appendTo="body" id="type">
-                    </p-dropdown>
+                    </p-select>
                 </span>
             </div>
             <div class="md:col-6 p-1">
                 <label for="architect" class="block  text-color text-base">Architect</label>
                 <span class="p-input-icon-left w-full">
-                    <p-dropdown [options]="$architects()" optionLabel="firstName" optionValue="id"
+                    <p-select [options]="$architects()" optionLabel="firstName" optionValue="id"
                                 formControlName="architectId" class="w-full" appendTo="body" id="architect">
                         <ng-template pTemplate="selectedItem" let-architect>
                             <span>{{architect.firstName}} {{architect.lastName}}</span>
@@ -37,7 +37,7 @@
                         <ng-template pTemplate="item" let-architect>
                             <span>{{architect.firstName}} {{architect.lastName}}</span>
                         </ng-template>
-                    </p-dropdown>
+                    </p-select>
                 </span>
             </div>
         </div>

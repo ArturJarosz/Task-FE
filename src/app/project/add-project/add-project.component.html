@@ -22,9 +22,9 @@
                     <div class="w-6">
                         <label for="type" class="block  text-color text-base top-label">Type</label>
                         <span style="width: 100%">
-                            <p-dropdown [options]="$projectTypes()" optionLabel="label" optionValue="id"
+                            <p-select [options]="$projectTypes()" optionLabel="label" optionValue="id"
                                         formControlName="type" class="w-full" appendTo="body" id="type">
-                            </p-dropdown>
+                            </p-select>
                         </span>
                     </div>
                 </div>
@@ -33,15 +33,15 @@
                 <div class="flex gap-3">
                     <div class="w-6">
                         <label for="client" class="block  text-color text-base w-full top-label">Client</label>
-                        <p-dropdown [options]="$clientsForm()" optionLabel="resolvedName" optionValue="id"
+                        <p-select [options]="$clientsForm()" optionLabel="resolvedName" optionValue="id"
                                     formControlName="clientId" class="w-full" appendTo="body" id="client">
-                        </p-dropdown>
+                        </p-select>
                     </div>
                     <div class="w-6">
                         <label for="architect" class="block  text-color text-base w-full top-label">Architect</label>
-                        <p-dropdown [options]="$architectsModel()!" optionLabel="resolvedName" optionValue="id"
+                        <p-select [options]="$architectsModel()!" optionLabel="resolvedName" optionValue="id"
                                     formControlName="architectId" appendTo="body" id="architect">
-                        </p-dropdown>
+                        </p-select>
                     </div>
                 </div>
             </div>

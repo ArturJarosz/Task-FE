@@ -10,17 +10,17 @@ import {RouterModule} from "@angular/router";
 import {ProjectRestService, ProjectRestServiceImpl} from "./rest/project-rest.service";
 import {AddProjectComponent} from "./add-project/add-project.component";
 import {DialogModule} from "primeng/dialog";
-import {DropdownModule} from "primeng/dropdown";
+import {SelectModule} from "primeng/select";
 import {InputTextModule} from "primeng/inputtext";
 import {ProjectListShellComponent} from "./project-list-shell/project-list-shell.component";
 import {ProjectDetailComponent} from "./project-detail/project-detail.component";
 import {ProjectDetailShellComponent} from "./project-detail-shell/project-detail-shell.component";
-import {CalendarModule} from "primeng/calendar";
+import {DatePickerModule} from "primeng/datepicker";
 import {ContractRestService, ContractRestServiceImpl} from "./rest/contract-rest.service";
 import {TabViewModule} from "primeng/tabview";
 import {DragDropModule} from "primeng/dragdrop";
 import {AccordionModule} from "primeng/accordion";
-import {InputTextareaModule} from "primeng/inputtextarea";
+import {Textarea} from "primeng/inputtextarea";
 import {StageModule} from "../stage/stage.module";
 import {FinanceModule} from "../finance/finance.module";
 import {AvatarModule} from "primeng/avatar";
@@ -56,13 +56,13 @@ import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.gu
             {path: 'projects/:projectId/stages', component: ProjectDetailShellComponent, canActivate: [loggedInGuardGuard]},
         ]),
         DialogModule,
-        DropdownModule,
+        SelectModule,
         InputTextModule,
-        CalendarModule,
+        DatePickerModule,
         TabViewModule,
         DragDropModule,
         AccordionModule,
-        InputTextareaModule,
+        Textarea,
         StageModule,
         FinanceModule,
         AvatarModule,
