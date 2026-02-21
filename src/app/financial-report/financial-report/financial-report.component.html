@@ -3,26 +3,26 @@
         <div class="report-controls mb-3">
             <div class="flex align-items-center gap-2">
                 <label class="text-500 font-medium">Start date:</label>
-                <p-calendar [ngModel]="selectedStartDate"
+                <p-datePicker [ngModel]="selectedStartDate"
                             (ngModelChange)="onStartDateChange($event)"
                             dateFormat="yy-mm-dd">
-                </p-calendar>
+                </p-datePicker>
             </div>
             <div class="flex align-items-center gap-2">
                 <label class="text-500 font-medium">End date:</label>
-                <p-calendar [ngModel]="selectedEndDate"
+                <p-datePicker [ngModel]="selectedEndDate"
                             (ngModelChange)="onEndDateChange($event)"
                             dateFormat="yy-mm-dd">
-                </p-calendar>
+                </p-datePicker>
             </div>
             <div class="flex align-items-center gap-2">
                 <label class="text-500 font-medium">Period:</label>
-                <p-dropdown [options]="periodTypeOptions"
+                <p-select [options]="periodTypeOptions"
                             [ngModel]="selectedPeriodType"
                             (ngModelChange)="onPeriodTypeChange($event)"
                             optionLabel="label"
                             optionValue="value">
-                </p-dropdown>
+                </p-select>
             </div>
             <p-button label="Generate" (onClick)="onGenerate()" [loading]="loading" size="small" severity="secondary" class="top-menu-button"></p-button>
         </div>

@@ -18,9 +18,9 @@
             <div class="md:col-6 p-1">
                 <label for="category" class="block  text-color text-base">Type</label>
                 <span class="p-input-icon-left w-full">
-                    <p-dropdown [options]="$supplierTypes()" optionLabel="label" optionValue="id"
+                    <p-select [options]="$supplierTypes()" optionLabel="label" optionValue="id"
                                 formControlName="category" class="w-full" appendTo="body" id="category">
-                    </p-dropdown>
+                    </p-select>
                 </span>
             </div>
         </div>

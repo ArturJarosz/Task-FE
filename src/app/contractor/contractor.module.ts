@@ -8,9 +8,9 @@ import {TableModule} from "primeng/table";
 import {AddContractorComponent} from './add-contractor/add-contractor.component';
 import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
-import {DropdownModule} from "primeng/dropdown";
+import {SelectModule} from "primeng/select";
 import {InputTextModule} from "primeng/inputtext";
-import {InputTextareaModule} from "primeng/inputtextarea";
+import {Textarea} from "primeng/inputtextarea";
 import {ContractorListShellComponent} from './contractor-list-shell/contractor-list-shell.component';
 import {ContractorDetailShellComponent} from './contractor-detail-shell/contractor-detail-shell.component';
 import {ContractorDetailComponent} from './contractor-detail/contractor-detail.component';
@@ -49,9 +49,9 @@ import {ContractorJobListComponent} from './contractor-job-list/contractor-job-l
         TableModule,
         ButtonModule,
         DialogModule,
-        DropdownModule,
+        SelectModule,
         InputTextModule,
-        InputTextareaModule,
+        Textarea,
         AccordionModule,
         ConfirmDialogModule,
         RippleModule

@@ -11,9 +11,9 @@
             <div class="md:col-4 p-1">
                 <label for="stage" class="block  text-color text-base">Stage</label>
                 <span>
-                <p-dropdown [options]="stagesWithoutInstallment" optionLabel="name" optionValue="id"
+                <p-select [options]="stagesWithoutInstallment" optionLabel="name" optionValue="id"
                             formControlName="stageId" class="w-full" appendTo="body" id="stage">
-                </p-dropdown>
+                </p-select>
             </span>
             </div>
             <div class="md:col-4 p-1">
@@ -25,17 +25,17 @@
             <div class="md:col-4 p-1">
                 <label for="paid" class="block  text-color text-base">Paid</label>
                 <span class="p-input-icon-left w-full">
-                    <p-inputSwitch formControlName="paid" id="paid"></p-inputSwitch>
+                    <p-toggleSwitch formControlName="paid" id="paid"></p-toggleSwitch>
                 </span>
             </div>
             <div class="md:col-4 p-1">
                 <div class="text-500 font-medium ">Date</div>
-                <p-calendar formControlName="paymentDate" id="date" dateFormat="yy-mm-dd">
-                </p-calendar>
+                <p-datePicker formControlName="paymentDate" id="date" dateFormat="yy-mm-dd">
+                </p-datePicker>
             </div>
             <div class="md:col-4 p-1">
                 <div class="text-500 font-medium ">Has Invoice</div>
-                <p-inputSwitch formControlName="hasInvoice" id="hasInvoice"></p-inputSwitch>
+                <p-toggleSwitch formControlName="hasInvoice" id="hasInvoice"></p-toggleSwitch>
             </div>
         </div>
         <div class="grid grid-nogutter surface-border p-1 ">

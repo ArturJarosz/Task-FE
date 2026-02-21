@@ -6,9 +6,9 @@ import {Cost} from '../../../generated/models/cost';
 import {CostCategory} from '../../../generated/models/cost-category';
 import {ConfigurationEntry} from '../../../generated/models/configuration-entry';
 import {SimpleChange, NO_ERRORS_SCHEMA} from '@angular/core';
-import {DropdownModule} from 'primeng/dropdown';
-import {InputSwitchModule} from 'primeng/inputswitch';
-import {CalendarModule} from 'primeng/calendar';
+import {SelectModule} from 'primeng/select';
+import {ToggleSwitchModule} from 'primeng/toggleswitch';
+import {DatePickerModule} from 'primeng/datepicker';
 import {InputNumberModule} from 'primeng/inputnumber';
 
 const MOCK_COST: Cost = {
@@ -36,9 +36,9 @@ describe('CostDetailComponent', () => {
         await TestBed.configureTestingModule({
             imports: [
                 ReactiveFormsModule,
-                DropdownModule,
-                InputSwitchModule,
-                CalendarModule,
+                SelectModule,
+                ToggleSwitchModule,
+                DatePickerModule,
                 InputNumberModule
             ],
             declarations: [CostDetailComponent],

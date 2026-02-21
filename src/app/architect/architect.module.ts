@@ -8,9 +8,9 @@ import {ArchitectRestService, ArchitectRestServiceImpl} from "./rest/architect-r
 import {SharedModule} from "../shared/shared.module";
 import { ArchitectDetailComponent } from './architect-detail/architect-detail.component';
 import {DialogModule} from "primeng/dialog";
-import {DropdownModule} from "primeng/dropdown";
+import {SelectModule} from "primeng/select";
 import {InputTextModule} from "primeng/inputtext";
-import {InputTextareaModule} from "primeng/inputtextarea";
+import {Textarea} from "primeng/inputtextarea";
 import {CurrencyPipe, NgIf, NgSwitchCase} from "@angular/common";
 import {loggedInGuardGuard} from "../security/logged-in-guard/logged-in-guard.guard";
 import {ArchitectProjectsSummaryComponent} from "./architect-projects-summary/architect-projects-summary.component";
@@ -34,9 +34,9 @@ import {AccordionModule} from "primeng/accordion";
         SharedModule,
         TableModule,
         DialogModule,
-        DropdownModule,
+        SelectModule,
         InputTextModule,
-        InputTextareaModule,
+        Textarea,
         NgIf,
         NgSwitchCase,
         AccordionModule,
