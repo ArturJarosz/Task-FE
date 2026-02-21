@@ -6,6 +6,8 @@ import {Stage} from "../../generated/models/stage";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {StageDto} from "../model/stage";
 import {ConfirmationService} from "primeng/api";
+import {ArchitectStore} from "../../architect/state/architect.state";
+import {Architect} from "../../generated/models/architect";
 
 @Component({
     selector: 'stage-detail-shell',
@@ -18,10 +20,12 @@ export class StageDetailShellComponent implements OnInit {
 
     readonly configurationStore = inject(ConfigurationStore);
     readonly stageStore = inject(StageStore);
+    readonly architectStore = inject(ArchitectStore);
     $stage: Signal<Stage | null> = this.stageStore.stage;
     $stageNeedsRefresh: Signal<boolean> = this.stageStore.stageNeedsRefresh;
     $stageTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.stageTypes;
     $stageStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.stageStatuses;
+    $architects: Signal<Architect[]> = this.architectStore.architects;
 
 
     constructor(private route: ActivatedRoute, private confirmationService: ConfirmationService,
@@ -44,6 +48,7 @@ export class StageDetailShellComponent implements OnInit {
 
         this.stageStore.loadStage({});
         this.configurationStore.loadConfiguration({});
+        this.architectStore.loadArchitects({});
     }
 
     deleteStage($event: StageDto) {

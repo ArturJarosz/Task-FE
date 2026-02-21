@@ -8,6 +8,7 @@ import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
 import {StageDto} from "../model/stage";
 import {StageStatus} from "../../generated/models/stage-status";
 import {cloneDeep} from "lodash";
+import {Architect} from "../../generated/models/architect";
 
 @Component({
     selector: 'stage-detail',
@@ -23,6 +24,8 @@ export class StageDetailComponent implements OnInit, OnChanges {
     stageStatuses!: ConfigurationEntry[] | null;
     @Input()
     stageTypes!: ConfigurationEntry[] | null;
+    @Input()
+    architects!: Architect[] | null;
     @Output()
     deleteStageEvent: EventEmitter<StageDto> = new EventEmitter<StageDto>();
     @Output()
@@ -40,7 +43,7 @@ export class StageDetailComponent implements OnInit, OnChanges {
 
     initialStageForm!: FormGroup<StageForm>;
 
-    fieldsToUpdate: string[] = ["name", "type", "startDate", "endDate", "deadline", "note"];
+    fieldsToUpdate: string[] = ["name", "type", "startDate", "endDate", "deadline", "note", "architectId"];
 
     constructor(private formProvider: StageFormProvider) {
     }
@@ -73,7 +76,8 @@ export class StageDetailComponent implements OnInit, OnChanges {
             deadline: toDateIfExists(this.stage.deadline),
             startDate: toDateIfExists(this.stage.startDate),
             endDate: toDateIfExists(this.stage.endDate),
-            note: this.stage.note
+            note: this.stage.note,
+            architectId: this.stage.architectId || null
         })
     }
 
@@ -113,7 +117,8 @@ export class StageDetailComponent implements OnInit, OnChanges {
             startDate: toTimeZoneString(this.stageDetailsForm.value.startDate),
             endDate: toTimeZoneString(this.stageDetailsForm.value.endDate),
             deadline: toTimeZoneString(this.stageDetailsForm.value.deadline),
-            note: this.stageDetailsForm.value.note!
+            note: this.stageDetailsForm.value.note!,
+            architectId: this.stageDetailsForm.value.architectId ?? undefined
         }
         this.updateEvent.emit(stage);
     }

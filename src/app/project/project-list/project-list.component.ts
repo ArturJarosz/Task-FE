@@ -1,7 +1,9 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {resolveLabel} from "../../shared/utils/label-utils";
-import {Client, ClientType, ConfigurationEntry, Project} from "../../generated/models";
+import {Architect, Client, ClientType, ConfigurationEntry, Project} from "../../generated/models";
 import {ProjectDto} from "../model/project.model";
+
+const ARCHITECT_NOT_FOUND_INITIAL = '?';
 
 @Component({
     selector: 'project-list',
@@ -32,6 +34,20 @@ export class ProjectListComponent {
             return client.companyName;
         }
         return `${client.firstName} ${client.lastName}`;
+    }
+
+    getArchitectInitials(architect?: Architect): string {
+        if (architect?.firstName && architect?.lastName) {
+            return `${architect.firstName.charAt(0)}${architect.lastName.charAt(0)}`.toUpperCase();
+        }
+        return ARCHITECT_NOT_FOUND_INITIAL;
+    }
+
+    getArchitectName(architect?: Architect): string {
+        if (architect?.firstName && architect?.lastName) {
+            return `${architect.firstName} ${architect.lastName}`;
+        }
+        return '';
     }
 
     deleteProject($event: MouseEvent, name: string, id: number) {
