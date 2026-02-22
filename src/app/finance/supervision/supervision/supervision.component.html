@@ -1,56 +1,58 @@
 <div *ngIf="supervision">
-    <p-accordion>
-        <p-accordionTab [selected]="true" header="Supervision" class="text-900 font-medium">
-            <div class="grid grid-nogutter surface-border">
-                <div class="col-3 border-bottom-1 surface-border pb-3 max-w-16rem">
-                    <div class="p-2 text-xl text-900">
+    <p-accordion value="0">
+        <p-accordion-panel value="0">
+            <p-accordion-header>Supervision</p-accordion-header>
+            <p-accordion-content>
+            <div class="grid grid-cols-12 gap-4 border-surface">
+                <div class="col-span-3 border-b border-surface pb-4 max-w-64">
+                    <div class="p-2 text-xl text-surface-900 dark:text-surface-0">
                         Summary
                     </div>
                     <form [formGroup]="supervisionSummaryForm">
-                        <div class="p-2 grid grid-nogutter">
-                            <div class="col-5 text-500 flex align-items-center">Base rate:</div>
-                            <div class="col-7 pl-4 pr-3 cell-right">{{ supervisionSummaryForm.value.baseRate | currency: ' ':'code':'2.2-2' }}</div>
+                        <div class="p-2 grid grid-cols-12 gap-4">
+                            <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Base rate:</div>
+                            <div class="col-span-7 pl-6 pr-4 cell-right">{{ supervisionSummaryForm.value.baseRate | currency: ' ':'code':'2.2-2' }}</div>
                         </div>
-                        <div class="p-2 grid grid-nogutter">
-                            <div class="col-5 text-500 flex align-items-center">Hourly rate:</div>
-                            <div class="col-7 pl-4 pr-3 cell-right">{{ supervisionSummaryForm.value.hourlyRate | currency: ' ':'code':'2.2-2' }}</div>
+                        <div class="p-2 grid grid-cols-12 gap-4">
+                            <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Hourly rate:</div>
+                            <div class="col-span-7 pl-6 pr-4 cell-right">{{ supervisionSummaryForm.value.hourlyRate | currency: ' ':'code':'2.2-2' }}</div>
                         </div>
-                        <div class="p-2 grid grid-nogutter">
-                            <div class="col-5 text-500 flex align-items-center">Hours count:</div>
-                            <div class="col-7 pl-4 pr-3 cell-right">{{ supervisionSummaryForm.value.hoursCount }}</div>
+                        <div class="p-2 grid grid-cols-12 gap-4">
+                            <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Hours count:</div>
+                            <div class="col-span-7 pl-6 pr-4 cell-right">{{ supervisionSummaryForm.value.hoursCount }}</div>
                         </div>
-                        <div class="p-2 grid grid-nogutter">
-                            <div class="col-5 text-500 flex align-items-center">Visit rate:</div>
-                            <div class="col-7 pl-4 pr-3 cell-right">{{ supervisionSummaryForm.value.visitRate | currency: ' ':'code':'2.2-2' }}</div>
+                        <div class="p-2 grid grid-cols-12 gap-4">
+                            <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Visit rate:</div>
+                            <div class="col-span-7 pl-6 pr-4 cell-right">{{ supervisionSummaryForm.value.visitRate | currency: ' ':'code':'2.2-2' }}</div>
                         </div>
-                        <div class="p-2 grid grid-nogutter">
-                            <div class="col-5 text-500 flex align-items-center">Visit count:</div>
-                            <div class="col-7 pl-4 pr-3 cell-right">{{ supervisionSummaryForm.value.visitsCount }}</div>
+                        <div class="p-2 grid grid-cols-12 gap-4">
+                            <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Visit count:</div>
+                            <div class="col-span-7 pl-6 pr-4 cell-right">{{ supervisionSummaryForm.value.visitsCount }}</div>
                         </div>
-                        <div class="p-2 grid grid-nogutter">
-                            <div class="col-5 text-500 flex align-items-center">Gross value:</div>
-                            <div class="col-7 pl-4 pr-3 cell-right">{{ supervisionSummaryForm.value.grossValue | currency: ' ':'code':'2.2-2' }}</div>
+                        <div class="p-2 grid grid-cols-12 gap-4">
+                            <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Gross value:</div>
+                            <div class="col-span-7 pl-6 pr-4 cell-right">{{ supervisionSummaryForm.value.grossValue | currency: ' ':'code':'2.2-2' }}</div>
                         </div>
-                        <div class="p-2 grid grid-nogutter">
-                            <div class="col-5 text-500 flex align-items-center">Nett value:</div>
-                            <div class="col-7 pl-4 pr-3 cell-right">{{ supervisionSummaryForm.value.netValue | currency: ' ':'code':'2.2-2' }}</div>
+                        <div class="p-2 grid grid-cols-12 gap-4">
+                            <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Nett value:</div>
+                            <div class="col-span-7 pl-6 pr-4 cell-right">{{ supervisionSummaryForm.value.netValue | currency: ' ':'code':'2.2-2' }}</div>
                         </div>
-                        <div class="p-2 grid grid-nogutter">
-                            <div class="col-5 text-500 flex align-items-center">Tax:</div>
-                            <div class="col-7 pl-4 pr-3 cell-right">{{ supervisionSummaryForm.value.tax | currency: ' ':'code':'2.2-2' }}</div>
+                        <div class="p-2 grid grid-cols-12 gap-4">
+                            <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Tax:</div>
+                            <div class="col-span-7 pl-6 pr-4 cell-right">{{ supervisionSummaryForm.value.tax | currency: ' ':'code':'2.2-2' }}</div>
                         </div>
-                        <div class="p-2 grid grid-nogutter">
-                            <div class="col-5 text-500 flex align-items-center">VAT:</div>
-                            <div class="col-7 pl-4 pr-3 cell-right">{{ supervisionSummaryForm.value.vat | currency: ' ':'code':'2.2-2' }}</div>
+                        <div class="p-2 grid grid-cols-12 gap-4">
+                            <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">VAT:</div>
+                            <div class="col-span-7 pl-6 pr-4 cell-right">{{ supervisionSummaryForm.value.vat | currency: ' ':'code':'2.2-2' }}</div>
                         </div>
                     </form>
                 </div>
-                <div class="col-9">
-                    <div class="flex flex-column lg:flex-row lg:justify-content-between align-items-center mb-3">
-                        <div class="p-2 text-xl text-900">Visits</div>
+                <div class="col-span-9">
+                    <div class="flex flex-col lg:flex-row lg:justify-between items-center mb-4">
+                        <div class="p-2 text-xl text-surface-900 dark:text-surface-0">Visits</div>
                         <p-button title="Add supervision visit" icon="pi pi-plus"
                                   (onClick)="onAddVisitClick()" [rounded]="true"
-                                  class="add-button transition-colors transition-duration-300">
+                                  class="add-button transition-colors duration-300">
                         </p-button>
                     </div>
                     <p-table [value]="supervisionVisits" [tableStyle]="{ 'min-width': '30rem' }">
@@ -58,15 +60,15 @@
                             <tr>
                                 <th>Date of Visit</th>
                                 <th>Hours</th>
-                                <th class="max-w-4rem text-center">Payable</th>
+                                <th class="max-w-16 text-center">Payable</th>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-visit>
                             <tr [routerLink]="['/projects', projectId, 'supervision', supervisionId, 'visits', visit.id]"
-                                class="cursor-pointer hover:surface-hover">
+                                class="cursor-pointer hover:bg-emphasis">
                                 <td>{{ visit.dateOfVisit | date:'yyyy-MM-dd' }}</td>
                                 <td>{{ visit.hoursCount }}</td>
-                                <td class="max-w-4rem text-center">
+                                <td class="max-w-16 text-center">
                                     <i *ngIf="visit.payable" class="pi pi-check"></i>
                                     <i *ngIf="!visit.payable" class="pi pi-times"></i>
                                 </td>
@@ -80,12 +82,13 @@
                     </p-table>
                 </div>
             </div>
-        </p-accordionTab>
+            </p-accordion-content>
+        </p-accordion-panel>
     </p-accordion>
 </div>
 
 <div *ngIf="!supervision">
-    <div class="text-center mb-3">Project does not have supervision. Do you want to add it?</div>
+    <div class="text-center mb-4">Project does not have supervision. Do you want to add it?</div>
     <div class="text-center">
         <p-button label="Add Supervision" size="small" severity="secondary" class="top-menu-button" (onClick)="onAddSupervisionClick()"/>
     </div>

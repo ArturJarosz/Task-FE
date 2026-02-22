@@ -9,19 +9,30 @@ import {
     ViewChild
 } from '@angular/core';
 import {TotalProjectFinancialSummary} from "../../../generated/models/total-project-financial-summary";
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {
     ProjectFinancialSummaryForm,
     ProjectFinancialSummaryFormProvider
 } from "../form/project-financial-summary-form-provider";
 import {Cost} from "../../../generated/models/cost";
-import {TabView, TabViewChangeEvent} from "primeng/tabview";
-import {ActivatedRoute} from "@angular/router";
+import {TabView, TabViewChangeEvent, TabViewModule} from "primeng/tabview";
+import {ActivatedRoute, RouterLink} from "@angular/router";
+import {WrapperComponent} from "../../../shared/wrapper/wrapper.component";
+import {Accordion, AccordionPanel, AccordionHeader, AccordionContent} from "primeng/accordion";
+import {ButtonModule} from "primeng/button";
+import {NgIf, CurrencyPipe} from "@angular/common";
+import {CostListShellComponent} from "../../cost/cost-list-shell/cost-list-shell.component";
+import {InstallmentListShellComponent} from "../../installment/installment-list-shell/installment-list-shell.component";
+import {SupplyListShellComponent} from "../../supply/supply-list-shell/supply-list-shell.component";
+import {ContractorJobListShellComponent} from "../../contractor-job/contractor-job-list-shell/contractor-job-list-shell.component";
+import {SupervisionShellComponent} from "../../supervision/supervision-shell/supervision-shell.component";
 
 @Component({
     selector: 'project-financial-detail',
     templateUrl: './project-financial-detail.component.html',
-    styleUrl: './project-financial-detail.component.less'
+    styleUrl: './project-financial-detail.component.less',
+    standalone: true,
+    imports: [WrapperComponent, Accordion, AccordionPanel, AccordionHeader, AccordionContent, TabViewModule, CostListShellComponent, InstallmentListShellComponent, SupplyListShellComponent, ContractorJobListShellComponent, SupervisionShellComponent, ReactiveFormsModule, NgIf, ButtonModule, RouterLink, CurrencyPipe]
 })
 export class ProjectFinancialDetailComponent implements OnInit, OnChanges, AfterViewInit {
     @Input()

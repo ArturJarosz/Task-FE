@@ -3,11 +3,18 @@ import {resolveLabel} from "../../shared/utils/label-utils";
 import {Supplier} from "../../generated/models/supplier";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {SupplierDto} from "../model/supplier";
+import {WrapperComponent} from "../../shared/wrapper/wrapper.component";
+import {AddSupplierComponent} from "../add-supplier/add-supplier.component";
+import {TableModule} from "primeng/table";
+import {ButtonModule} from "primeng/button";
+import {RouterLink} from "@angular/router";
 
 @Component({
     selector: 'supplier-list',
     templateUrl: './supplier-list.component.html',
-    styleUrls: ['./supplier-list.component.less']
+    styleUrls: ['./supplier-list.component.less'],
+    standalone: true,
+    imports: [WrapperComponent, AddSupplierComponent, TableModule, ButtonModule, RouterLink]
 })
 export class SupplierListComponent {
     pageTitle = "Suppliers";

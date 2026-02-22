@@ -6,11 +6,15 @@ import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {ActivatedRoute, Router} from "@angular/router";
 import {SupplierDto} from "../model/supplier";
 import {ConfirmationService} from "primeng/api";
+import {SupplierDetailComponent} from "../supplier-detail/supplier-detail.component";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @Component({
     selector: 'supplier-detail-shell',
     templateUrl: './supplier-detail-shell.component.html',
-    styleUrl: './supplier-detail-shell.component.less'
+    styleUrl: './supplier-detail-shell.component.less',
+    standalone: true,
+    imports: [SupplierDetailComponent, ConfirmDialogModule]
 })
 export class SupplierDetailShellComponent implements OnInit {
     supplierId!: number;

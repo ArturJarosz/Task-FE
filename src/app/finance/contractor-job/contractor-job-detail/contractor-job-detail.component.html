@@ -1,53 +1,55 @@
 <wrapper [title]="'Contractor Job - ' + (contractorJob?.name)">
     <div wrapper-body>
-        <p-accordion [multiple]="true">
-            <p-accordionTab [selected]="true" header="Contractor job details" class="text-900 font-medium">
+        <p-accordion [multiple]="true" [value]="['0']">
+            <p-accordion-panel value="0">
+                <p-accordion-header>Contractor job details</p-accordion-header>
+                <p-accordion-content>
                 <form [formGroup]="contractorJobDetailForm">
                     <div class="p-2">
-                        <div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
-                            <p-button icon="pi pi-arrow-down" [disabled]="!isFormChanged()" (onClick)="onSave()" [outlined]="true" [rounded]="true" class="update-button transition-colors transition-duration-300"></p-button>
+                        <div class="flex flex-col lg:flex-row lg:justify-end items-center justify-end">
+                            <p-button icon="pi pi-arrow-down" [disabled]="!isFormChanged()" (onClick)="onSave()" [outlined]="true" [rounded]="true" class="update-button transition-colors duration-300"></p-button>
                             <p-button icon="pi pi-times" [outlined]="true" [rounded]="true" (onClick)="onDelete()" class="remove-button transition-colors px-1"></p-button>
                         </div>
-                        <div class="grid grid-nogutter surface-border p-1">
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium">Name</div>
-                                <div class="col-8 pr-3">
+                        <div class="grid grid-cols-12 gap-4 border-surface p-1">
+                            <div class="md:col-span-4 p-1">
+                                <div class="text-surface-500 dark:text-surface-300 font-medium">Name</div>
+                                <div class="col-span-8 pr-4">
                                     <input type="text" class="w-full" formControlName="name" pInputText placeholder="contractor job name"/>
                                 </div>
                             </div>
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium">Contractor</div>
-                                <div class="col-8 pr-3">
+                            <div class="md:col-span-4 p-1">
+                                <div class="text-surface-500 dark:text-surface-300 font-medium">Contractor</div>
+                                <div class="col-span-8 pr-4">
                                     <p-select [options]="contractors" optionLabel="name" optionValue="id"
                                                 formControlName="contractorId" class="w-full" appendTo="body">
                                     </p-select>
                                 </div>
                             </div>
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium">Value</div>
-                                <div class="col-8 pr-3">
+                            <div class="md:col-span-4 p-1">
+                                <div class="text-surface-500 dark:text-surface-300 font-medium">Value</div>
+                                <div class="col-span-8 pr-4">
                                     <p-inputNumber formControlName="value" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2"></p-inputNumber>
                                 </div>
                             </div>
                         </div>
-                        <div class="grid grid-nogutter surface-border p-1">
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium">Has Invoice</div>
+                        <div class="grid grid-cols-12 gap-4 border-surface p-1">
+                            <div class="md:col-span-4 p-1">
+                                <div class="text-surface-500 dark:text-surface-300 font-medium">Has Invoice</div>
                                 <p-toggleSwitch formControlName="hasInvoice"></p-toggleSwitch>
                             </div>
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium">Paid</div>
+                            <div class="md:col-span-4 p-1">
+                                <div class="text-surface-500 dark:text-surface-300 font-medium">Paid</div>
                                 <p-toggleSwitch formControlName="paid"></p-toggleSwitch>
                             </div>
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium">Payment Date</div>
+                            <div class="md:col-span-4 p-1">
+                                <div class="text-surface-500 dark:text-surface-300 font-medium">Payment Date</div>
                                 <p-datePicker formControlName="paymentDate" id="paymentDate" dateFormat="yy-mm-dd"></p-datePicker>
                             </div>
                         </div>
-                        <div class="grid grid-nogutter surface-border p-1">
-                            <div class="md:col-8 p-1">
-                                <div class="text-500 font-medium">Note</div>
-                                <div class="col-8 pr-3">
+                        <div class="grid grid-cols-12 gap-4 border-surface p-1">
+                            <div class="md:col-span-8 p-1">
+                                <div class="text-surface-500 dark:text-surface-300 font-medium">Note</div>
+                                <div class="col-span-8 pr-4">
                                     <textarea formControlName="note" type="text" pInputTextarea rows="2"
                                               [autoResize]="true" style="height: 4rem;overflow: hidden;"></textarea>
                                 </div>
@@ -55,7 +57,8 @@
                         </div>
                     </div>
                 </form>
-            </p-accordionTab>
+                </p-accordion-content>
+            </p-accordion-panel>
         </p-accordion>
     </div>
     <div wrapper-buttons>

@@ -4,13 +4,22 @@ import {resolveLabel} from "../../shared/utils/label-utils";
 import {Task} from "../../generated/models/task";
 import {DeleteTaskDto} from "../model/task";
 import {Architect} from "../../generated/models/architect";
+import {TableModule} from "primeng/table";
+import {AvatarModule} from "primeng/avatar";
+import {ButtonModule} from "primeng/button";
+import {RouterLink} from "@angular/router";
+import {NgIf} from "@angular/common";
+import {TooltipModule} from "primeng/tooltip";
+import {RippleModule} from "primeng/ripple";
 
 const ARCHITECT_NOT_FOUND_INITIAL = '?';
 
 @Component({
     selector: 'task-list',
     templateUrl: './task-list.component.html',
-    styleUrl: './task-list.component.less'
+    styleUrl: './task-list.component.less',
+    standalone: true,
+    imports: [TableModule, AvatarModule, ButtonModule, RouterLink, NgIf, TooltipModule, RippleModule]
 })
 export class TaskListComponent {
 

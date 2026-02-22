@@ -5,11 +5,15 @@ import {ContractorStore} from "../state";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {ContractorDto} from "../model/contractor";
 import {ConfirmationService} from "primeng/api";
+import {ContractorListComponent} from "../contractor-list/contractor-list.component";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @Component({
     selector: 'contractor-list-shell',
     templateUrl: './contractor-list-shell.component.html',
-    styleUrl: './contractor-list-shell.component.less'
+    styleUrl: './contractor-list-shell.component.less',
+    standalone: true,
+    imports: [ContractorListComponent, ConfirmDialogModule]
 })
 export class ContractorListShellComponent implements OnInit {
 

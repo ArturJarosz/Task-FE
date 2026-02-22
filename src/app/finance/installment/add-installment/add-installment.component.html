@@ -2,45 +2,45 @@
           [style]="{ width: '50vw', 'max-width': '800px'}"
           (onHide)="onClose()">
     <ng-template pTemplate="header">
-        <div class="flex flex-column gap-2">
-            <h1 class="m-0 text-900 font-semibold line-height-3">{{ header }}</h1>
+        <div class="flex flex-col gap-2">
+            <h1 class="m-0 text-surface-900 dark:text-surface-0 font-semibold leading-normal">{{ header }}</h1>
         </div>
     </ng-template>
     <form [formGroup]="addInstallmentForm">
-        <div class="grid grid-nogutter surface-border p-1 ">
-            <div class="md:col-4 p-1">
-                <label for="stage" class="block  text-color text-base">Stage</label>
+        <div class="grid grid-cols-12 gap-4 border-surface p-1">
+            <div class="md:col-span-4 p-1">
+                <label for="stage" class="block text-color text-base">Stage</label>
                 <span>
                 <p-select [options]="stagesWithoutInstallment" optionLabel="name" optionValue="id"
                             formControlName="stageId" class="w-full" appendTo="body" id="stage">
                 </p-select>
             </span>
             </div>
-            <div class="md:col-4 p-1">
-                <div class="text-500 font-medium">Value</div>
+            <div class="md:col-span-4 p-1">
+                <div class="text-surface-500 dark:text-surface-300 font-medium">Value</div>
                 <p-inputNumber formControlName="value" id="value" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2"></p-inputNumber>
             </div>
         </div>
-        <div class="grid grid-nogutter surface-border p-1 ">
-            <div class="md:col-4 p-1">
-                <label for="paid" class="block  text-color text-base">Paid</label>
+        <div class="grid grid-cols-12 gap-4 border-surface p-1">
+            <div class="md:col-span-4 p-1">
+                <label for="paid" class="block text-color text-base">Paid</label>
                 <span class="p-input-icon-left w-full">
                     <p-toggleSwitch formControlName="paid" id="paid"></p-toggleSwitch>
                 </span>
             </div>
-            <div class="md:col-4 p-1">
-                <div class="text-500 font-medium ">Date</div>
+            <div class="md:col-span-4 p-1">
+                <div class="text-surface-500 dark:text-surface-300 font-medium">Date</div>
                 <p-datePicker formControlName="paymentDate" id="date" dateFormat="yy-mm-dd">
                 </p-datePicker>
             </div>
-            <div class="md:col-4 p-1">
-                <div class="text-500 font-medium ">Has Invoice</div>
+            <div class="md:col-span-4 p-1">
+                <div class="text-surface-500 dark:text-surface-300 font-medium">Has Invoice</div>
                 <p-toggleSwitch formControlName="hasInvoice" id="hasInvoice"></p-toggleSwitch>
             </div>
         </div>
-        <div class="grid grid-nogutter surface-border p-1 ">
-            <div class="md:col-8 p-1">
-                <div class="text-500 font-medium  h-2rem">Note</div>
+        <div class="grid grid-cols-12 gap-4 border-surface p-1">
+            <div class="md:col-span-8 p-1">
+                <div class="text-surface-500 dark:text-surface-300 font-medium h-8">Note</div>
                 <textarea formControlName="note" id="note" type="text" pInputTextarea rows="2"
                           [autoResize]="true" style="height: 4rem;overflow: hidden;"></textarea>
             </div>
@@ -48,7 +48,7 @@
 
     </form>
     <ng-template pTemplate="footer">
-        <div class="flex gap-3 justify-content-end border-top-1 surface-border pt-5">
+        <div class="flex gap-4 justify-end border-t border-surface pt-8">
             <p-button label="Cancel" styleClass="p-button-outlined p-button-secondary"
                       (onClick)="onCancel()"></p-button>
             <p-button label="Save" styleClass="p-button-outlined" [disabled]="!isSaveEnabled()"

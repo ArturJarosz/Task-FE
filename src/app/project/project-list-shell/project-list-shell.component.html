@@ -8,7 +8,7 @@
         <p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}" class="overlay-dialog"></p-confirmDialog>
     </div>
     <div wrapper-buttons>
-        <p-button icon="pi pi-plus" (click)="onClick()" [rounded]="true" class="add-button transition-colors transition-duration-300"></p-button>
+        <p-button icon="pi pi-plus" (click)="onClick()" [rounded]="true" class="add-button transition-colors duration-300"></p-button>
     </div>
     <add-project [visible]="showComponent" (notify)="onNotify($event)"></add-project>
 </wrapper>

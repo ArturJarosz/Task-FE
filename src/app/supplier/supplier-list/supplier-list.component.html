@@ -7,7 +7,7 @@
                     <th>Name</th>
                     <th></th>
                     <th>Category</th>
-                    <th class="max-w-4rem text-center">Number of supplies</th>
+                    <th class="max-w-16 text-center">Number of supplies</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-supplier>
@@ -18,13 +18,13 @@
                         <button pButton pRipple class="p-button-text p-button-plain p-0" icon="pi pi-times" (click)="onDeleteSupplier($event, supplier)" size="small"></button>
                     </td>
                     <td>{{ getLabelFromCategory(supplier.category) }}</td>
-                    <td class="max-w-4rem text-center">{{ supplier.numberOfSupplies }}</td>
+                    <td class="max-w-16 text-center">{{ supplier.numberOfSupplies }}</td>
                 </tr>
             </ng-template>
         </p-table>
     </div>
     <div wrapper-buttons>
-        <p-button icon="pi pi-plus" (click)="onClick()" [rounded]="true" class="add-button transition-colors transition-duration-300"></p-button>
+        <p-button icon="pi pi-plus" (click)="onClick()" [rounded]="true" class="add-button transition-colors duration-300"></p-button>
     </div>
     <add-supplier [visible]="showAddComponent" (notify)="onNotify($event)"></add-supplier>
 </wrapper>

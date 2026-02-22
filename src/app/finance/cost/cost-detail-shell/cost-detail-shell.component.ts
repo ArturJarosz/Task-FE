@@ -5,10 +5,14 @@ import {ConfigurationStore} from "../../../shared/configuration/state";
 import {Cost} from "../../../generated/models/cost";
 import {ConfigurationEntry} from "../../../generated/models/configuration-entry";
 
+import {CostDetailComponent} from "../cost-detail/cost-detail.component";
+
 @Component({
     selector: 'cost-detail-shell',
     templateUrl: './cost-detail-shell.component.html',
-    styleUrl: './cost-detail-shell.component.less'
+    styleUrl: './cost-detail-shell.component.less',
+    standalone: true,
+    imports: [CostDetailComponent]
 })
 export class CostDetailShellComponent implements OnInit {
     projectId: number = 0;

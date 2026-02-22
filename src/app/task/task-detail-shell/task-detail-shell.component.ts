@@ -8,11 +8,15 @@ import {ConfirmationService} from "primeng/api";
 import {Task} from "../../generated/models/task";
 import {ArchitectStore} from "../../architect/state/architect.state";
 import {Architect} from "../../generated/models/architect";
+import {TaskDetailComponent} from "../task-detail/task-detail.component";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @Component({
     selector: 'task-detail-shell',
     templateUrl: './task-detail-shell.component.html',
-    styleUrl: './task-detail-shell.component.less'
+    styleUrl: './task-detail-shell.component.less',
+    standalone: true,
+    imports: [TaskDetailComponent, ConfirmDialogModule]
 })
 export class TaskDetailShellComponent implements OnInit {
     projectId!: number;

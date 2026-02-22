@@ -1,8 +1,20 @@
-@import '../node_modules/primeflex/primeflex.min.css';
-@import "app/theme/general";
+@import "tailwindcss";
+@plugin "tailwindcss-primeui";
+/* Disable Tailwind dark mode variant - dark mode is not supported */
+@variant dark (&:where(.dark-mode-disabled, .dark-mode-disabled *));
+
+
+  :root {
+    /* toast message */
+    --toast-message-maring: 0 0 0 0.8rem;
+    --toast-message-width: 35rem;
+    --toast-message-main-icon-width: 1.5rem;
+    --toast-message-main-icon-height: 1.5rem;
+    --toast-message-font-size: 0.9rem;
+}
 
 body {
-    background: var(--surface-ground);
+    background: var(--p-surface-ground);
 }
 
 client-list p-confirmDialog .p-component-overlay {
@@ -10,7 +22,7 @@ client-list p-confirmDialog .p-component-overlay {
 }
 
 .card {
-    background: var(--surface-section);
+    background: var(--p-surface-card);
     padding: 1.5rem;
     border-radius: 12px;
     box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 24px 36px rgba(0, 0, 0, 0.04);
@@ -59,30 +71,30 @@ textarea {
 }
 
 .add-button button {
-    background: var(--green-600);
+    background: var(--p-green-700);
     color: white;
 }
 
 .add-button:hover button {
-    background: var(--green-700);
+    background: var(--p-green-700);
 }
 
 .remove-button button {
-    background: var(--red-600);
+    background: var(--p-red-600);
     color: white;
 }
 
 .remove-button:hover button {
-    background: var(--red-700);
+    background: var(--p-red-700);
 }
 
 .update-button button {
-    background: var(--blue-600);
+    background: var(--p-blue-600);
     color: white;
 }
 
 .update-button:hover button {
-    background: var(--blue-700);
+    background: var(--p-blue-700);
 }
 
 .top-menu-button button {
@@ -116,7 +128,7 @@ textarea {
     padding: 1rem 0;
 }
 
-// toast message
+/* toast message */
 
 .p-toast {
     min-height: 1rem !important;
@@ -149,15 +161,14 @@ textarea {
 }
 
 .p-breadcrumb {
+    --p-breadcrumb-padding: 0;
     border: 0;
-    padding: 0;
 }
 
 .text-primary {
-    color: var(--gray-600)!important;
+    color: var(--p-gray-600)!important;
 }
 
 .top-label {
     padding: 0.5rem 0;
 }
-

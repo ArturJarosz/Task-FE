@@ -1,14 +1,24 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Client, ClientType, ConfigurationEntry, Contact} from "../../generated/models";
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {ClientForm, ClientFormProvider} from "../form/client-form-provider";
 import {cloneDeep} from "lodash";
 import {ClientDto} from "../model/client";
+import {WrapperComponent} from "../../shared";
+import {ClientProjectsSummaryShellComponent} from "../client-projects-summary-shell/client-projects-summary-shell.component";
+import {Accordion, AccordionPanel, AccordionHeader, AccordionContent} from "primeng/accordion";
+import {SelectModule} from "primeng/select";
+import {InputTextModule} from "primeng/inputtext";
+import {Textarea} from "primeng/inputtextarea";
+import {ButtonModule} from "primeng/button";
+import {NgSwitch, NgSwitchCase} from "@angular/common";
 
 @Component({
     selector: 'client-detail',
     templateUrl: './client-detail.component.html',
-    styleUrls: ['./client-detail.component.less']
+    styleUrls: ['./client-detail.component.less'],
+    standalone: true,
+    imports: [WrapperComponent, ClientProjectsSummaryShellComponent, Accordion, AccordionPanel, AccordionHeader, AccordionContent, SelectModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule, NgSwitch, NgSwitchCase]
 })
 export class ClientDetailComponent implements OnInit, OnChanges {
     @Input()

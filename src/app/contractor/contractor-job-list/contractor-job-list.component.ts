@@ -5,13 +5,19 @@ import {
     FinanceObjectSummaryForm,
     ProjectFinancialSummaryFormProvider
 } from "../../finance/project-financial-summary/form/project-financial-summary-form-provider";
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {isUndefinedOrEmpty} from "../../shared/utils/data-validation-util";
+import {FinanceComponentSummaryComponent} from "../../shared/finance-component-summary/finance-component-summary.component";
+import {TableModule} from "primeng/table";
+import {RouterLink} from "@angular/router";
+import {NgIf, CurrencyPipe} from "@angular/common";
 
 @Component({
     selector: 'contractor-job-list',
     templateUrl: './contractor-job-list.component.html',
-    styleUrl: './contractor-job-list.component.less'
+    styleUrl: './contractor-job-list.component.less',
+    standalone: true,
+    imports: [FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, NgIf, CurrencyPipe]
 })
 export class ContractorJobListComponent implements OnChanges {
     @Input() contractorJobsData!: ContractorContractorJobsData;

@@ -5,10 +5,16 @@ import {ConfigurationEntry} from "../../../generated/models/configuration-entry"
 import {CostStore} from "../state";
 import {CostProjectData} from "../../../generated/models/cost-project-data";
 
+import {CostListComponent} from "../cost-list/cost-list.component";
+import {AddCostComponent} from "../add-cost/add-cost.component";
+import {ButtonModule} from "primeng/button";
+
 @Component({
     selector: 'cost-list-shell',
     templateUrl: './cost-list-shell.component.html',
-    styleUrl: './cost-list-shell.component.less'
+    styleUrl: './cost-list-shell.component.less',
+    standalone: true,
+    imports: [CostListComponent, AddCostComponent, ButtonModule]
 })
 export class CostListShellComponent implements OnInit{
     @Input()

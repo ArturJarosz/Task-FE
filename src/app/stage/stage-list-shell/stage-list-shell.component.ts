@@ -8,11 +8,17 @@ import {ConfirmationService} from "primeng/api";
 import {Router} from "@angular/router";
 import {ArchitectStore} from "../../architect/state/architect.state";
 import {Architect} from "../../generated/models/architect";
+import {StageListComponent} from "../stage-list/stage-list.component";
+import {AddStageComponent} from "../add-stage/add-stage.component";
+import {ButtonModule} from "primeng/button";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @Component({
     selector: 'stage-list-shell',
     templateUrl: './stage-list-shell.component.html',
-    styleUrl: './stage-list-shell.component.less'
+    styleUrl: './stage-list-shell.component.less',
+    standalone: true,
+    imports: [StageListComponent, AddStageComponent, ButtonModule, ConfirmDialogModule]
 })
 export class StageListShellComponent implements OnInit {
     @Input()

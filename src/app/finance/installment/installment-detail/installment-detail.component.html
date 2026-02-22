@@ -1,47 +1,50 @@
 <wrapper [title]="installment?.stageName!">
     <div wrapper-body>
-        <p-accordion [multiple]="true">
-            <p-accordionTab [selected]="true" header="Installment details" class="text-900 font-medium">
+        <p-accordion [multiple]="true" [value]="['0']">
+            <p-accordion-panel value="0">
+                <p-accordion-header>Installment details</p-accordion-header>
+                <p-accordion-content>
                 <form [formGroup]="installmentDetailForm">
                     <div class="p-2">
-                        <div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
-                            <p-button title="Update installment" icon="pi pi-arrow-down" [disabled]="!isFormChanged()" (onClick)="onSave()" [outlined]="true" [rounded]="true" class="update-button transition-colors transition-duration-300"></p-button>
+                        <div class="flex flex-col lg:flex-row lg:justify-end items-center justify-end">
+                            <p-button title="Update installment" icon="pi pi-arrow-down" [disabled]="!isFormChanged()" (onClick)="onSave()" [outlined]="true" [rounded]="true" class="update-button transition-colors duration-300"></p-button>
                         </div>
-                        <div class="grid grid-nogutter surface-border  p-1">
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium">Stage name</div>
-                                <div class="col-8 pr-3">
+                        <div class="grid grid-cols-12 gap-4 border-surface p-1">
+                            <div class="md:col-span-4 p-1">
+                                <div class="text-surface-500 dark:text-surface-300 font-medium">Stage name</div>
+                                <div class="col-span-8 pr-4">
                                     <input formControlName="stageName" id="stageName" pInputText [readOnly]="true">
                                 </div>
                             </div>
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium ">Paid</div>
-                                <div class="col-8 pr-3">
+                            <div class="md:col-span-4 p-1">
+                                <div class="text-surface-500 dark:text-surface-300 font-medium">Paid</div>
+                                <div class="col-span-8 pr-4">
                                     <p-toggleSwitch formControlName="paid" id="paid"></p-toggleSwitch>
                                 </div>
                             </div>
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium ">Payment Date</div>
+                            <div class="md:col-span-4 p-1">
+                                <div class="text-surface-500 dark:text-surface-300 font-medium">Payment Date</div>
                                 <p-datePicker formControlName="paymentDate" id="paymentDate" dateFormat="yy-mm-dd"></p-datePicker>
                             </div>
                         </div>
-                        <div class="grid grid-nogutter surface-border  p-1 ">
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium ">Value</div>
-                                <div class="col-8 pr-3">
+                        <div class="grid grid-cols-12 gap-4 border-surface p-1">
+                            <div class="md:col-span-4 p-1">
+                                <div class="text-surface-500 dark:text-surface-300 font-medium">Value</div>
+                                <div class="col-span-8 pr-4">
                                     <p-inputNumber formControlName="value" id="value" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2"></p-inputNumber>
                                 </div>
                             </div>
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium ">Has Invoice</div>
-                                <div class="col-8 pr-3">
+                            <div class="md:col-span-4 p-1">
+                                <div class="text-surface-500 dark:text-surface-300 font-medium">Has Invoice</div>
+                                <div class="col-span-8 pr-4">
                                     <p-toggleSwitch formControlName="hasInvoice" id="hasInvoice"></p-toggleSwitch>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </form>
-            </p-accordionTab>
+                </p-accordion-content>
+            </p-accordion-panel>
         </p-accordion>
     </div>
     <div wrapper-buttons>

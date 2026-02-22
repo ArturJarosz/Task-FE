@@ -1,14 +1,20 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {ClientFormProvider, ClientProjectsSummaryForm} from "../form/client-form-provider";
 import {EntityProjectsSummary} from "../../generated/models/entity-projects-summary";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {resolveLabel} from "../../shared/utils/label-utils";
+import {Accordion, AccordionPanel, AccordionHeader, AccordionContent} from "primeng/accordion";
+import {TableModule} from "primeng/table";
+import {RouterLink} from "@angular/router";
+import {CurrencyPipe} from "@angular/common";
 
 @Component({
     selector: 'client-projects-summary',
     templateUrl: './client-projects-summary.component.html',
-    styleUrl: './client-projects-summary.component.less'
+    styleUrl: './client-projects-summary.component.less',
+    standalone: true,
+    imports: [Accordion, AccordionPanel, AccordionHeader, AccordionContent, TableModule, RouterLink, ReactiveFormsModule, CurrencyPipe]
 })
 export class ClientProjectsSummaryComponent implements OnInit, OnChanges {
     @Input()

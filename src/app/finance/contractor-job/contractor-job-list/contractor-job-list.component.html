@@ -6,8 +6,8 @@
                     <th>Name</th>
                     <th>Contractor</th>
                     <th>Value</th>
-                    <th class="max-w-4rem text-center">Invoice</th>
-                    <th class="max-w-4rem text-center">Paid</th>
+                    <th class="max-w-16 text-center">Invoice</th>
+                    <th class="max-w-16 text-center">Paid</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-contractorjob>
@@ -15,11 +15,11 @@
                     <td>{{ contractorjob.name }}</td>
                     <td>{{ this.contractorIdToContractorName.get(contractorjob.contractorId) }}</td>
                     <td>{{ contractorjob.value | currency: ' ':'code':'2.2-2' }}</td>
-                    <td class="max-w-4rem text-center">
+                    <td class="max-w-16 text-center">
                         <i *ngIf="contractorjob.hasInvoice" class="pi pi-check"></i>
                         <i *ngIf="!contractorjob.hasInvoice" class="pi pi-times"></i>
                     </td>
-                    <td class="max-w-4rem text-center">
+                    <td class="max-w-16 text-center">
                         <i *ngIf="contractorjob.paid" class="pi pi-check"></i>
                         <i *ngIf="!contractorjob.paid" class="pi pi-times"></i>
                     </td>

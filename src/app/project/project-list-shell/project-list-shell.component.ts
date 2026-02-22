@@ -6,12 +6,19 @@ import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {Router} from "@angular/router";
 import {ConfirmationService} from "primeng/api";
 import {ProjectDto} from "../model/project.model";
+import {ProjectListComponent} from "../project-list/project-list.component";
+import {AddProjectComponent} from "../add-project/add-project.component";
+import {ButtonModule} from "primeng/button";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {WrapperComponent} from "../../shared/wrapper/wrapper.component";
 
 @Component({
     selector: 'project-list-shell',
     templateUrl: './project-list-shell.component.html',
     styleUrls: ['./project-list-shell.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [ProjectListComponent, AddProjectComponent, ButtonModule, ConfirmDialogModule, WrapperComponent]
 })
 export class ProjectListShellComponent {
 

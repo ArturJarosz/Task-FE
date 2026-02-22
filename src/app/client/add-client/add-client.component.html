@@ -2,19 +2,19 @@
           col-form-label
           (onHide)="onClose()">
     <ng-template pTemplate="header">
-        <div class="flex flex-column gap-2">
-            <h1 class="m-0 text-900 font-semibold line-height-3">Add new client</h1>
+        <div class="flex flex-col gap-2">
+            <h1 class="m-0 text-surface-900 dark:text-surface-0 font-semibold leading-normal">Add new client</h1>
         </div>
     </ng-template>
     <div>
         <form [formGroup]="clientForm">
             <p-select [options]="$clientTypes()!" formControlName="clientType" optionLabel="label" optionValue="id">
             </p-select>
-            <div class="flex flex-column gap-3 mt-3 surface-border pt-2"
+            <div class="flex flex-col gap-4 mt-4 border-surface pt-2"
                  [ngSwitch]="clientForm.get('clientType')?.value">
-                <div class="flex gap-3" *ngSwitchCase="ClientType.PRIVATE.toString()">
-                    <div class="w-6">
-                        <label for="firstName" class="block  text-color text-base top-label">First Name</label>
+                <div class="flex gap-4" *ngSwitchCase="ClientType.PRIVATE.toString()">
+                    <div class="w-6/12">
+                        <label for="firstName" class="block text-color text-base top-label">First Name</label>
                         <span class="p-input-icon-left w-full">
                             <input type="text" class="w-full" id="firstName" formControlName="firstName"
                                    pInputText
@@ -26,7 +26,7 @@
                                 Please enter first name!
                         </span>
                     </div>
-                    <div class="w-6">
+                    <div class="w-6/12">
                         <label for="lastName" class="block text-color text-base top-label">Last Name</label>
                         <span class="p-input-icon-left w-full">
                             <input type="text" formControlName="lastName" class="w-full" id="lastName"
@@ -40,9 +40,9 @@
                         </span>
                     </div>
                 </div>
-                <div class="flex gap-3" *ngSwitchCase="ClientType.CORPORATE.toString()">
+                <div class="flex gap-4" *ngSwitchCase="ClientType.CORPORATE.toString()">
                     <div class="w-full">
-                        <label for="companyName" class="block  text-color text-base top-label">Company Name</label>
+                        <label for="companyName" class="block text-color text-base top-label">Company Name</label>
                         <span class="p-input-icon-left w-full">
                             <input type="text" formControlName="companyName" class="w-full" id="companyName"
                                    pInputText
@@ -56,10 +56,10 @@
                     </div>
                 </div>
             </div>
-            <div class="flex flex-column gap-3 mt-3 pt-2" formGroupName="contact">
-                <div class="flex gap-3">
-                    <div class="w-6">
-                        <label for="email" class="block  text-color text-base top-label">Email</label>
+            <div class="flex flex-col gap-4 mt-4 pt-2" formGroupName="contact">
+                <div class="flex gap-4">
+                    <div class="w-6/12">
+                        <label for="email" class="block text-color text-base top-label">Email</label>
                         <span class="p-input-icon-left w-full">
                             <input type="text" class="w-full" id="email" formControlName="email"
                                    pInputText
@@ -67,8 +67,8 @@
                             />
                         </span>
                     </div>
-                    <div class="w-6">
-                        <label for="telephone" class="block  text-color text-base top-label">Phone</label>
+                    <div class="w-6/12">
+                        <label for="telephone" class="block text-color text-base top-label">Phone</label>
                         <span class="p-input-icon-left w-full">
                             <input type="text" formControlName="telephone" class="w-full" id="telephone"
                                    pInputText
@@ -78,9 +78,9 @@
                     </div>
                 </div>
                 <div formGroupName="address">
-                    <div class="flex gap-3">
-                        <div class="w-6">
-                            <label for="city" class="block  text-color text-base top-label">City</label>
+                    <div class="flex gap-4">
+                        <div class="w-6/12">
+                            <label for="city" class="block text-color text-base top-label">City</label>
                             <span class="p-input-icon-left w-full">
                             <input type="text" class="w-full" id="city" formControlName="city"
                                    pInputText
@@ -88,8 +88,8 @@
                             />
                         </span>
                         </div>
-                        <div class="w-6">
-                            <label for="postCode" class="block  text-color text-base top-label">Post code</label>
+                        <div class="w-6/12">
+                            <label for="postCode" class="block text-color text-base top-label">Post code</label>
                             <span class="p-input-icon-left w-full">
                             <input type="text" formControlName="postCode" class="w-full" id="postCode"
                                    pInputText
@@ -98,9 +98,9 @@
                         </span>
                         </div>
                     </div>
-                    <div class="flex gap-3">
-                        <div class="w-12">
-                            <label for="street" class="block  text-color text-base top-label">Street</label>
+                    <div class="flex gap-4">
+                        <div class="w-full">
+                            <label for="street" class="block text-color text-base top-label">Street</label>
                             <span class="p-input-icon-left w-full">
                             <input type="text" formControlName="street" class="w-full" id="street"
                                    pInputText
@@ -111,10 +111,10 @@
                 </div>
                 </div>
             </div>
-            <div class="flex flex-column gap-3 mt-3 pt-2">
-                <div class="flex gap-3">
+            <div class="flex flex-col gap-4 mt-4 pt-2">
+                <div class="flex gap-4">
                     <div class="w-full">
-                        <label for="note" class="block  text-color text-base top-label">Note</label>
+                        <label for="note" class="block text-color text-base top-label">Note</label>
                         <span class="p-input-icon-left w-full">
                             <textarea rows="5" cols="30" pInputTextarea type="text" formControlName="note"
                                       class="w-full" id="note"
@@ -128,7 +128,7 @@
         </form>
     </div>
     <ng-template pTemplate="footer">
-        <div class="flex gap-3 justify-content-end border-top-1 surface-border pt-5">
+        <div class="flex gap-4 justify-end border-t border-surface pt-8">
             <p-button label="Cancel" styleClass="p-button-outlined p-button-secondary"
                       (onClick)="onCancel()"></p-button>
             <p-button label="Save" styleClass="p-button-outlined" [disabled]="!isSaveEnabled()"

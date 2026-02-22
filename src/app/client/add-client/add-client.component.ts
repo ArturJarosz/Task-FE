@@ -13,11 +13,17 @@ import {
     STREET,
     TELEPHONE
 } from "../model/client";
-import {FormGroup, Validators} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ClientFormProvider} from "../form/client-form-provider";
 import {ClientStore} from "../state";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {Client, ClientType, ConfigurationEntry} from "../../generated/models";
+import {DialogModule} from "primeng/dialog";
+import {SelectModule} from "primeng/select";
+import {InputTextModule} from "primeng/inputtext";
+import {Textarea} from "primeng/inputtextarea";
+import {ButtonModule} from "primeng/button";
+import {NgClass, NgIf, NgSwitch, NgSwitchCase} from "@angular/common";
 
 @Injectable({
     providedIn: 'root',
@@ -26,6 +32,8 @@ import {Client, ClientType, ConfigurationEntry} from "../../generated/models";
     selector: 'add-client',
     templateUrl: './add-client.component.html',
     styleUrls: ['./add-client.component.less'],
+    standalone: true,
+    imports: [DialogModule, SelectModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule, NgIf, NgSwitch, NgSwitchCase, NgClass]
 })
 export class AddClientComponent implements OnInit {
     @Input()

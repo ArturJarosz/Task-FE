@@ -1,11 +1,16 @@
 import {Component, effect, inject, OnInit, Signal} from '@angular/core';
 import {ArchitectStore} from "../state";
 import {Architect} from "../../generated/models/architect";
+import {WrapperComponent} from "../../shared/wrapper/wrapper.component";
+import {TableModule} from "primeng/table";
+import {RouterLink} from "@angular/router";
 
 @Component({
     selector: 'architect-list',
     templateUrl: './architect-list.component.html',
-    styleUrls: ['./architect-list.component.less']
+    styleUrls: ['./architect-list.component.less'],
+    standalone: true,
+    imports: [WrapperComponent, TableModule, RouterLink]
 })
 export class ArchitectListComponent implements OnInit {
     architectStore = inject(ArchitectStore);

@@ -1,14 +1,23 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Installment} from "../../../generated/models/installment";
-import {FormGroup} from '@angular/forms';
+import {FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {InstallmentForm, InstallmentFormProvider} from "../form/installment-form-provider";
 import {cloneDeep} from "lodash";
 import {toDateIfExists, toTimeZoneString} from "../../../shared/utils/date-utils";
+import {WrapperComponent} from "../../../shared/wrapper/wrapper.component";
+import {Accordion, AccordionPanel, AccordionHeader, AccordionContent} from "primeng/accordion";
+import {InputNumberModule} from "primeng/inputnumber";
+import {ToggleSwitchModule} from "primeng/toggleswitch";
+import {DatePickerModule} from "primeng/datepicker";
+import {InputTextModule} from "primeng/inputtext";
+import {ButtonModule} from "primeng/button";
 
 @Component({
     selector: 'installment-detail',
     templateUrl: './installment-detail.component.html',
-    styleUrl: './installment-detail.component.less'
+    styleUrl: './installment-detail.component.less',
+    standalone: true,
+    imports: [WrapperComponent, Accordion, AccordionPanel, AccordionHeader, AccordionContent, InputNumberModule, ToggleSwitchModule, DatePickerModule, InputTextModule, ButtonModule, ReactiveFormsModule]
 })
 export class InstallmentDetailComponent implements OnInit, OnChanges {
     @Input()

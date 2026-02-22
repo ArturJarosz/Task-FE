@@ -2,6 +2,12 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Architect, Client, ClientType, ConfigurationEntry, Project} from "../../generated/models";
 import {ProjectDto} from "../model/project.model";
+import {TableModule} from "primeng/table";
+import {AvatarModule} from "primeng/avatar";
+import {ButtonModule} from "primeng/button";
+import {RouterLink} from "@angular/router";
+import {TooltipModule} from "primeng/tooltip";
+import {RippleModule} from "primeng/ripple";
 
 const ARCHITECT_NOT_FOUND_INITIAL = '?';
 
@@ -9,7 +15,9 @@ const ARCHITECT_NOT_FOUND_INITIAL = '?';
     selector: 'project-list',
     templateUrl: './project-list.component.html',
     styleUrls: ['./project-list.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [TableModule, AvatarModule, ButtonModule, RouterLink, TooltipModule, RippleModule]
 })
 export class ProjectListComponent {
     @Input()

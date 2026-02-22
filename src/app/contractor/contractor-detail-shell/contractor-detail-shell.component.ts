@@ -6,11 +6,15 @@ import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ContractorDto} from "../model/contractor";
 import {ConfirmationService} from "primeng/api";
+import {ContractorDetailComponent} from "../contractor-detail/contractor-detail.component";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @Component({
     selector: 'contractor-detail-shell',
     templateUrl: './contractor-detail-shell.component.html',
-    styleUrl: './contractor-detail-shell.component.less'
+    styleUrl: './contractor-detail-shell.component.less',
+    standalone: true,
+    imports: [ContractorDetailComponent, ConfirmDialogModule]
 })
 export class ContractorDetailShellComponent implements OnInit {
     contractorId!: number;

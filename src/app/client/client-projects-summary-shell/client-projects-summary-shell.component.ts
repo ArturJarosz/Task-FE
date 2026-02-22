@@ -4,11 +4,14 @@ import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {ClientStore} from "../state";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {EntityProjectsSummary} from "../../generated/models/entity-projects-summary";
+import {ClientProjectsSummaryComponent} from "../client-projects-summary/client-projects-summary.component";
 
 @Component({
     selector: 'client-projects-summary-shell',
     templateUrl: './client-projects-summary-shell.component.html',
-    styleUrl: './client-projects-summary-shell.component.less'
+    styleUrl: './client-projects-summary-shell.component.less',
+    standalone: true,
+    imports: [ClientProjectsSummaryComponent]
 })
 export class ClientProjectsSummaryShellComponent implements OnInit{
     readonly clientStore = inject(ClientStore);

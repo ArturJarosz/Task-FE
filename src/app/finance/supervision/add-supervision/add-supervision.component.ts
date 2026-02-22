@@ -1,14 +1,20 @@
 import {Component, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {AddSupervisionForm, AddSupervisionFormProvider} from "./add-supervision-form-provider";
 import {Supervision} from "../../../generated/models/supervision";
 import {AbstractAddEditComponent} from "../../../shared";
 import {SupervisionStore} from "../state/supervision.state";
+import {DialogModule} from "primeng/dialog";
+import {InputNumberModule} from "primeng/inputnumber";
+import {ToggleSwitchModule} from "primeng/toggleswitch";
+import {ButtonModule} from "primeng/button";
 
 @Component({
     selector: 'add-supervision',
     templateUrl: './add-supervision.component.html',
-    styleUrl: './add-supervision.component.less'
+    styleUrl: './add-supervision.component.less',
+    standalone: true,
+    imports: [DialogModule, InputNumberModule, ToggleSwitchModule, ButtonModule, ReactiveFormsModule]
 })
 export class AddSupervisionComponent implements OnInit, AbstractAddEditComponent{
     @Input()

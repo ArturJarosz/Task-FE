@@ -63,11 +63,23 @@ const EXPENSE_HOVER_PALETTE: string[] = [
     '#942F22'
 ];
 
+import {WrapperComponent} from "../../shared";
+import {DatePickerModule} from "primeng/datepicker";
+import {SelectModule} from "primeng/select";
+import {SelectButtonModule} from "primeng/selectbutton";
+import {ChartModule} from "primeng/chart";
+import {TableModule} from "primeng/table";
+import {ButtonModule} from "primeng/button";
+import {FormsModule} from "@angular/forms";
+import {NgIf, NgFor, DecimalPipe} from "@angular/common";
+
 @Component({
     selector: 'financial-report-view',
     templateUrl: './financial-report.component.html',
     styleUrl: './financial-report.component.less',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [WrapperComponent, DatePickerModule, SelectModule, SelectButtonModule, ChartModule, TableModule, ButtonModule, FormsModule, NgIf, NgFor, DecimalPipe]
 })
 export class FinancialReportComponent implements OnInit, OnChanges {
     @Input()

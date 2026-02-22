@@ -1,21 +1,21 @@
-<div class="min-h-screen flex flex-column surface-ground">
+<div class="min-h-screen flex flex-col bg-surface-50 dark:bg-surface-950">
     <p-toast [life]="12000"></p-toast>
-    <div class="surface-overlay py-3 px-4 flex align-items-center justify-content-between relative lg:static">
-        <a pRipple class="cursor-pointer inline-flex align-items-center justify-content-center lg:hidden text-700" pStyleClass="#app-sidebar-12" enterFromClass="hidden" enterActiveClass="fadeinleft" leaveToClass="hidden" leaveActiveClass="fadeoutleft" [hideOnOutsideClick]="true">
+    <div class="bg-surface-0 dark:bg-surface-900 py-4 px-6 flex items-center justify-between relative lg:static">
+        <a pRipple class="cursor-pointer inline-flex items-center justify-center lg:hidden text-surface-700 dark:text-surface-100" pStyleClass="#app-sidebar-12" enterFromClass="hidden" enterActiveClass="fadeinleft" leaveToClass="hidden" leaveActiveClass="fadeoutleft" [hideOnOutsideClick]="true">
             <i class="pi pi-bars text-4xl"></i>
         </a>
-        <img src="assets/images/logo.svg" alt="Image" height="40" class="mr-0 lg:mr-6">
-        <a pRipple class="cursor-pointer block lg:hidden text-700" pStyleClass="@next" enterFromClass="hidden" leaveToClass="hidden" [hideOnOutsideClick]="true">
+        <img src="assets/images/logo.svg" alt="Image" class="h-10 mr-0 lg:mr-12">
+        <a pRipple class="cursor-pointer block lg:hidden text-surface-700 dark:text-surface-100" pStyleClass="@next" enterFromClass="hidden" leaveToClass="hidden" [hideOnOutsideClick]="true">
             <i class="pi pi-ellipsis-v text-2xl"></i>
         </a>
-        <ul class="list-none p-3 lg:p-0 m-0 lg:align-items-center select-none flex-column lg:flex-row absolute hidden lg:flex lg:static surface-overlay right-0 top-100 z-1 shadow-2 lg:shadow-none">
+        <ul class="list-none p-4 lg:p-0 m-0 lg:items-center select-none flex-col lg:flex-row absolute hidden lg:flex lg:static bg-surface-0 dark:bg-surface-900 right-0 top-full z-10 shadow lg:shadow-none">
             <li *ngIf="(authorizationService.isAuthenticated() | async) === true">
                 <p-avatar [label]="getUserInitial()" shape="circle" styleClass="cursor-pointer bg-primary text-white" (click)="toggleUserMenu($event)"></p-avatar>
                 <p-menu #userMenu [model]="userMenuItems" [popup]="true" styleClass="mt-2"></p-menu>
             </li>
         </ul>
     </div>
-    <ul class="list-none py-3 px-5 m-0 surface-section flex align-items-center font-medium overflow-x-auto border-top-1 border-bottom-1 surface-border">
+    <ul class="list-none py-4 px-8 m-0 bg-surface-0 dark:bg-surface-950 flex items-center font-medium overflow-x-auto border-t border-b border-surface">
         <p-breadcrumb class="max-w-full" [model]="breadcrumbItems">
             <ng-template pTemplate="item" let-item>
                 <ng-container *ngIf="item.route; else elseBlock">
@@ -32,59 +32,59 @@
             </ng-template>
         </p-breadcrumb>
     </ul>
-    <div class="flex relative lg:static p-4 flex-auto">
-        <div id="app-sidebar-12" class="surface-card hidden lg:block flex-shrink-0 absolute lg:static left-0 top-0 z-1 select-none shadow-2" style="width:280px;border-radius: 12px">
-            <div class="flex flex-column h-full">
+    <div class="flex relative lg:static p-6 flex-auto">
+        <div id="app-sidebar-12" class="bg-surface-0 dark:bg-surface-900 hidden lg:block shrink-0 absolute lg:static left-0 top-0 z-10 select-none shadow" style="width:280px;border-radius: 12px">
+            <div class="flex flex-col h-full">
                 <div class="overflow-y-auto">
-                    <div class="p-3">
+                    <div class="p-4">
                         <div class="p-input-icon-left w-full">
-                            <input type="text" pInputText class="border-1 surface-border w-full" placeholder="Search" style="border-radius: 30px">
+                            <input type="text" pInputText class="border border-surface w-full" placeholder="Search" style="border-radius: 30px">
                         </div>
                     </div>
-                    <ul class="list-none px-3 pb-3 pt-0 m-0" >
+                    <ul class="list-none px-4 pb-4 pt-0 m-0" >
                         <li>
-                            <div class="p-3 flex align-items-center justify-content-between text-600">
-                                <span class="font-medium text-sm text-900">MENU</span>
+                            <div class="p-4 flex items-center justify-between text-surface-600 dark:text-surface-200">
+                                <span class="font-medium text-sm text-surface-900 dark:text-surface-0">MENU</span>
                             </div>
                             <ul class="list-none p-0 m-0 overflow-hidden">
                                 <li [routerLinkActive]="['active', 'bg-purple-50', 'text-purple-500', 'border-purple-500', 'border-right-2']">
-                                    <a pRipple class="flex align-items-center cursor-pointer p-3 text-700 hover:surface-100 transition-duration-150 transition-colors border-right-2 border-transparent" [routerLink]="'/home'">
+                                    <a pRipple class="flex items-center cursor-pointer p-4 text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors border-r-2 border-transparent" [routerLink]="'/home'">
                                         <i class="pi pi-home mr-2"></i>
                                         <span class="font-medium">Dashboard</span>
                                     </a>
                                 </li>
                                 <li [routerLinkActive]="['active', 'bg-purple-50', 'text-purple-500', 'border-purple-500', 'border-right-2']">
-                                    <a pRipple class="flex align-items-center cursor-pointer p-3 text-700 hover:surface-100 transition-duration-150 transition-colors border-right-2 border-transparent" [routerLink]="'/projects'">
+                                    <a pRipple class="flex items-center cursor-pointer p-4 text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors border-r-2 border-transparent" [routerLink]="'/projects'">
                                         <i class="pi pi-file-edit mr-2"></i>
                                         <span class="font-medium">Projects</span>
                                     </a>
                                 </li>
                                 <li [routerLinkActive]="['active', 'bg-purple-50', 'text-purple-500', 'border-purple-500', 'border-right-2']">
-                                    <a pRipple class="flex align-items-center cursor-pointer p-3 text-700 hover:surface-100 transition-duration-150 transition-colors border-right-2 border-transparent" [routerLink]="'/architects'">
+                                    <a pRipple class="flex items-center cursor-pointer p-4 text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors border-r-2 border-transparent" [routerLink]="'/architects'">
                                         <i class="pi pi-users mr-2"></i>
                                         <span class="font-medium">Architects</span>
                                     </a>
                                 </li>
                                 <li [routerLinkActive]="['active', 'bg-purple-50', 'text-purple-500', 'border-purple-500', 'border-right-2']">
-                                    <a pRipple class="flex align-items-center cursor-pointer p-3 text-700 hover:surface-100 transition-duration-150 transition-colors border-right-2 border-transparent" [routerLink]="'/clients'">
+                                    <a pRipple class="flex items-center cursor-pointer p-4 text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors border-r-2 border-transparent" [routerLink]="'/clients'">
                                         <i class="pi pi-users mr-2"></i>
                                         <span class="font-medium">Clients</span>
                                     </a>
                                 </li>
                                 <li [routerLinkActive]="['active', 'bg-purple-50', 'text-purple-500', 'border-purple-500', 'border-right-2']">
-                                    <a pRipple class="flex align-items-center cursor-pointer p-3 text-700 hover:surface-100 transition-duration-150 transition-colors border-right-2 border-transparent" [routerLink]="'/contractors'">
+                                    <a pRipple class="flex items-center cursor-pointer p-4 text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors border-r-2 border-transparent" [routerLink]="'/contractors'">
                                         <i class="pi pi-users mr-2"></i>
                                         <span class="font-medium">Contractors</span>
                                     </a>
                                 </li>
                                 <li [routerLinkActive]="['active', 'bg-purple-50', 'text-purple-500', 'border-purple-500', 'border-right-2']">
-                                    <a pRipple class="flex align-items-center cursor-pointer p-3 text-700 hover:surface-100 transition-duration-150 transition-colors border-right-2 border-transparent" [routerLink]="'/suppliers'">
+                                    <a pRipple class="flex items-center cursor-pointer p-4 text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors border-r-2 border-transparent" [routerLink]="'/suppliers'">
                                         <i class="pi pi-users mr-2"></i>
                                         <span class="font-medium">Suppliers</span>
                                     </a>
                                 </li>
                                 <li [routerLinkActive]="['active', 'bg-purple-50', 'text-purple-500', 'border-purple-500', 'border-right-2']">
-                                    <a pRipple class="flex align-items-center cursor-pointer p-3 text-700 hover:surface-100 transition-duration-150 transition-colors border-right-2 border-transparent" [routerLink]="'/financial-report'">
+                                    <a pRipple class="flex items-center cursor-pointer p-4 text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors border-r-2 border-transparent" [routerLink]="'/financial-report'">
                                         <i class="pi pi-chart-bar mr-2"></i>
                                         <span class="font-medium">Financial Report</span>
                                     </a>
@@ -93,9 +93,9 @@
                         </li>
                     </ul>
                 </div>
-                <div class="mt-auto border-top-1 surface-border p-3 flex justify-content-between">
+                <div class="mt-auto border-t border-surface p-4 flex justify-between">
                     <div *ngIf="(authorizationService.isAuthenticated() | async) === false" [routerLinkActive]="['active', 'bg-purple-50', 'text-purple-500', 'border-purple-500', 'border-right-2']">
-                        <a pRipple class="flex align-items-center cursor-pointer p-3 text-700 hover:surface-100 transition-duration-150 transition-colors border-right-2 border-transparent" (click)="login()">
+                        <a pRipple class="flex items-center cursor-pointer p-4 text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors border-r-2 border-transparent" (click)="login()">
                             <i class="pi pi-sign-in mr-2"></i>
                             <span class="font-medium">Login</span>
                         </a>
@@ -103,8 +103,8 @@
                 </div>
             </div>
         </div>
-        <div class="flex flex-column flex-auto">
-            <div class="flex-auto lg:ml-4">
+        <div class="flex flex-col flex-auto">
+            <div class="flex-auto lg:ml-6">
                 <router-outlet></router-outlet>
             </div>
         </div>

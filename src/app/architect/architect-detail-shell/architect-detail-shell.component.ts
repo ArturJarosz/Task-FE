@@ -5,11 +5,14 @@ import {ActivatedRoute} from "@angular/router";
 import {EntityProjectsSummary} from "../../generated/models/entity-projects-summary";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {ConfigurationStore} from "../../shared/configuration/state";
+import {ArchitectDetailComponent} from "../architect-detail/architect-detail.component";
 
 @Component({
     selector: 'architect-detail-shell',
     templateUrl: './architect-detail-shell.component.html',
-    styleUrl: './architect-detail-shell.component.less'
+    styleUrl: './architect-detail-shell.component.less',
+    standalone: true,
+    imports: [ArchitectDetailComponent]
 })
 export class ArchitectDetailShellComponent implements OnInit {
     readonly architectStore = inject(ArchitectStore);

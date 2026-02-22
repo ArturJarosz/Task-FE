@@ -10,7 +10,7 @@
                     <th>Name</th>
                     <th>Project Name</th>
                     <th>Value</th>
-                    <th class="max-w-4rem text-center">Invoice</th>
+                    <th class="max-w-16 text-center">Invoice</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-contractorJob>
@@ -18,7 +18,7 @@
                     <td>{{ contractorJob.name }}</td>
                     <td>{{ this.projectNameById.get(contractorJob.projectId) }}</td>
                     <td>{{ contractorJob.value | currency: ' ':'code':'2.2-2' }}</td>
-                    <td class="max-w-4rem text-center">
+                    <td class="max-w-16 text-center">
                         <i *ngIf="contractorJob.hasInvoice" class="pi pi-check"></i>
                         <i *ngIf="!contractorJob.hasInvoice" class="pi pi-times"></i>
                     </td>

@@ -7,11 +7,17 @@ import {TaskStore} from "../state/task.state";
 import {DeleteTaskDto} from "../model/task";
 import {ArchitectStore} from "../../architect/state/architect.state";
 import {Architect} from "../../generated/models/architect";
+import {TaskListComponent} from "../task-list/task-list.component";
+import {AddTaskComponent} from "../add-task/add-task.component";
+import {ButtonModule} from "primeng/button";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @Component({
     selector: 'task-list-shell',
     templateUrl: './task-list-shell.component.html',
-    styleUrl: './task-list-shell.component.less'
+    styleUrl: './task-list-shell.component.less',
+    standalone: true,
+    imports: [TaskListComponent, AddTaskComponent, ButtonModule, ConfirmDialogModule]
 })
 export class TaskListShellComponent {
     @Input()

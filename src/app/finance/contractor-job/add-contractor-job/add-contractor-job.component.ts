@@ -3,15 +3,26 @@ import {ContractorJobStore} from "../state/contractor-job.state";
 import {ContractorStore} from "../../../contractor/state";
 import {Contractor} from "../../../generated/models/contractor";
 import {AddContractorJobForm, ContractorJobFormProvider} from "../form/contractor-job-form-provider";
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {AbstractAddEditComponent} from "../../../shared";
 import {ContractorJob} from "../../../generated/models/contractor-job";
 import {toTimeZoneString} from "../../../shared/utils/date-utils";
+import {DialogModule} from "primeng/dialog";
+import {SelectModule} from "primeng/select";
+import {InputNumberModule} from "primeng/inputnumber";
+import {ToggleSwitchModule} from "primeng/toggleswitch";
+import {DatePickerModule} from "primeng/datepicker";
+import {InputTextModule} from "primeng/inputtext";
+import {Textarea} from "primeng/inputtextarea";
+import {ButtonModule} from "primeng/button";
+import {NgClass} from "@angular/common";
 
 @Component({
     selector: 'add-contractor-job',
     templateUrl: './add-contractor-job.component.html',
-    styleUrl: './add-contractor-job.component.less'
+    styleUrl: './add-contractor-job.component.less',
+    standalone: true,
+    imports: [DialogModule, SelectModule, InputNumberModule, ToggleSwitchModule, DatePickerModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule, NgClass]
 })
 export class AddContractorJobComponent implements OnInit, AbstractAddEditComponent {
 

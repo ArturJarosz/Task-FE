@@ -3,11 +3,18 @@ import {resolveLabel} from "../../shared/utils/label-utils";
 import {Contractor} from "../../generated/models/contractor";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {ContractorDto} from "../model/contractor";
+import {WrapperComponent} from "../../shared/wrapper/wrapper.component";
+import {AddContractorComponent} from "../add-contractor/add-contractor.component";
+import {TableModule} from "primeng/table";
+import {ButtonModule} from "primeng/button";
+import {RouterLink} from "@angular/router";
 
 @Component({
     selector: 'contractor-list',
     templateUrl: './contractor-list.component.html',
-    styleUrls: ['./contractor-list.component.less']
+    styleUrls: ['./contractor-list.component.less'],
+    standalone: true,
+    imports: [WrapperComponent, AddContractorComponent, TableModule, ButtonModule, RouterLink]
 })
 export class ContractorListComponent {
     pageTitle = "Contractors";

@@ -2,15 +2,24 @@ import {Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, Simpl
 import {InstallmentStore} from "../state/installment.state";
 import {AbstractAddEditComponent} from "../../../shared";
 import {Stage} from "../../../generated/models/stage";
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {InstallmentForm, InstallmentFormProvider} from "../form/installment-form-provider";
 import {Installment} from "../../../generated/models/installment";
 import {toTimeZoneString} from "../../../shared/utils/date-utils";
+import {DialogModule} from "primeng/dialog";
+import {SelectModule} from "primeng/select";
+import {InputNumberModule} from "primeng/inputnumber";
+import {ToggleSwitchModule} from "primeng/toggleswitch";
+import {DatePickerModule} from "primeng/datepicker";
+import {Textarea} from "primeng/inputtextarea";
+import {ButtonModule} from "primeng/button";
 
 @Component({
     selector: 'add-installment',
     templateUrl: './add-installment.component.html',
-    styleUrl: './add-installment.component.less'
+    styleUrl: './add-installment.component.less',
+    standalone: true,
+    imports: [DialogModule, SelectModule, InputNumberModule, ToggleSwitchModule, DatePickerModule, Textarea, ButtonModule, ReactiveFormsModule]
 })
 export class AddInstallmentComponent implements OnInit, AbstractAddEditComponent, OnChanges {
     @Input()

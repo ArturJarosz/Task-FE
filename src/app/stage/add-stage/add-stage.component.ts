@@ -1,7 +1,7 @@
 import {Component, EventEmitter, effect, inject, Input, OnInit, Output, Signal} from '@angular/core';
 import {StageStore} from "../state";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {AddStageForm, StageFormProvider} from "../form/stage-form-provider";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {Stage} from "../../generated/models/stage";
@@ -10,11 +10,22 @@ import {Installment} from "../../generated/models/installment";
 import {ArchitectStore} from "../../architect/state/architect.state";
 import {ProjectStore} from "../../project/state/project.state";
 import {Architect} from "../../generated/models/architect";
+import {DialogModule} from "primeng/dialog";
+import {SelectModule} from "primeng/select";
+import {DatePickerModule} from "primeng/datepicker";
+import {InputTextModule} from "primeng/inputtext";
+import {Textarea} from "primeng/inputtextarea";
+import {ToggleSwitchModule} from "primeng/toggleswitch";
+import {InputNumberModule} from "primeng/inputnumber";
+import {ButtonModule} from "primeng/button";
+import {NgIf, NgClass} from "@angular/common";
 
 @Component({
     selector: 'add-stage',
     templateUrl: './add-stage.component.html',
-    styleUrls: ['./add-stage.component.less']
+    styleUrls: ['./add-stage.component.less'],
+    standalone: true,
+    imports: [DialogModule, SelectModule, DatePickerModule, InputTextModule, Textarea, ToggleSwitchModule, InputNumberModule, ButtonModule, ReactiveFormsModule, NgIf, NgClass]
 })
 export class AddStageComponent implements OnInit {
     @Input()

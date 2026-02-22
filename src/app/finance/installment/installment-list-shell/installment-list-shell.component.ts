@@ -4,11 +4,16 @@ import {ActivatedRoute} from "@angular/router";
 import {InstallmentProjectData} from "../../../generated/models/installment-project-data";
 import {Stage} from "../../../generated/models/stage";
 import {StageStore} from "../../../stage/state";
+import {InstallmentListComponent} from "../installment-list/installment-list.component";
+import {AddInstallmentComponent} from "../add-installment/add-installment.component";
+import {ButtonModule} from "primeng/button";
 
 @Component({
     selector: 'installment-list-shell',
     templateUrl: './installment-list-shell.component.html',
-    styleUrl: './installment-list-shell.component.less'
+    styleUrl: './installment-list-shell.component.less',
+    standalone: true,
+    imports: [InstallmentListComponent, AddInstallmentComponent, ButtonModule]
 })
 export class InstallmentListShellComponent implements OnInit {
     projectId!: number;

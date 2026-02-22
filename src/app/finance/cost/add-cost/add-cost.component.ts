@@ -8,10 +8,23 @@ import {ConfigurationEntry} from "../../../generated/models/configuration-entry"
 import {toTimeZoneString} from "../../../shared/utils/date-utils";
 import {AbstractAddEditComponent} from "../../../shared";
 
+import {ReactiveFormsModule} from "@angular/forms";
+import {DialogModule} from "primeng/dialog";
+import {SelectModule} from "primeng/select";
+import {InputNumberModule} from "primeng/inputnumber";
+import {ToggleSwitchModule} from "primeng/toggleswitch";
+import {DatePickerModule} from "primeng/datepicker";
+import {InputTextModule} from "primeng/inputtext";
+import {Textarea} from "primeng/inputtextarea";
+import {ButtonModule} from "primeng/button";
+import {NgClass} from "@angular/common";
+
 @Component({
     selector: 'add-cost',
     templateUrl: './add-cost.component.html',
-    styleUrl: './add-cost.component.less'
+    styleUrl: './add-cost.component.less',
+    standalone: true,
+    imports: [DialogModule, SelectModule, InputNumberModule, ToggleSwitchModule, DatePickerModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule, NgClass]
 })
 export class AddCostComponent implements OnInit, AbstractAddEditComponent {
     @Input()

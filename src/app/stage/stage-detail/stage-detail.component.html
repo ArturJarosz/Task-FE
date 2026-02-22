@@ -1,31 +1,33 @@
 <wrapper [title]="stage?.name! + ',&nbsp;'" [secondaryTitle]="resolvedTypeLabel">
     <div wrapper-body>
-        <p-accordion [multiple]="true">
+        <p-accordion [multiple]="true" [value]="['0', '1']">
             <form [formGroup]="stageDetailsForm">
-                <p-accordionTab [selected]="true" header="Stage details" class="text-900 font-medium">
+                <p-accordion-panel value="0">
+                    <p-accordion-header>Stage details</p-accordion-header>
+                    <p-accordion-content>
                     <div class="p-2">
-                        <div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
+                        <div class="flex flex-col lg:flex-row lg:justify-end items-center justify-end">
                             <p-button icon="pi pi-undo" [disabled]="!canReopen" [outlined]="true" [rounded]="true" (onClick)="onReopen()" class="update-button transition-colors px-1"></p-button>
                             <p-button icon="pi pi-ban" [disabled]="!canReject" [outlined]="true" [rounded]="true" (onClick)="onReject()" class="remove-button transition-colors px-1"></p-button>
                             <p-button *ngIf="stageDetailsForm && initialStageForm" icon="pi pi-arrow-down" [disabled]="!isUpdated()" [outlined]="true" [rounded]="true" (onClick)="onSave()" class="update-button transition-colors px-1"></p-button>
                             <p-button icon="pi pi-times" [outlined]="true" [rounded]="true" (onClick)="onDelete()" class="remove-button transition-colors px-1"></p-button>
                         </div>
-                        <div class="grid grid-nogutter surface-border  p-1 ">
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium ">Stage name</div>
+                        <div class="grid grid-cols-12 gap-4 border-surface p-1">
+                            <div class="md:col-span-4 p-1">
+                                <div class="text-surface-500 dark:text-surface-300 font-medium">Stage name</div>
                                 <input formControlName="name" id="name" pInputText>
                             </div>
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium ">Type</div>
+                            <div class="md:col-span-4 p-1">
+                                <div class="text-surface-500 dark:text-surface-300 font-medium">Type</div>
                                 <p-select formControlName="type" [options]="stageTypes!"
                                             optionLabel="label" optionValue="id"></p-select>
                             </div>
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium ">Status</div>
+                            <div class="md:col-span-4 p-1">
+                                <div class="text-surface-500 dark:text-surface-300 font-medium">Status</div>
                                 <div class="p-1" id="status">{{ resolvedStatusLabel }}</div>
                             </div>
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium ">Architect</div>
+                            <div class="md:col-span-4 p-1">
+                                <div class="text-surface-500 dark:text-surface-300 font-medium">Architect</div>
                                 <p-select formControlName="architectId" [options]="architects!"
                                             optionLabel="firstName" optionValue="id">
                                     <ng-template pTemplate="selectedItem" let-architect>
@@ -37,35 +39,39 @@
                                 </p-select>
                             </div>
                         </div>
-                        <div class="grid grid-nogutter surface-border  p-1 ">
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium ">Start date</div>
+                        <div class="grid grid-cols-12 gap-4 border-surface p-1">
+                            <div class="md:col-span-4 p-1">
+                                <div class="text-surface-500 dark:text-surface-300 font-medium">Start date</div>
                                 <p-datePicker formControlName="startDate" id="startDate" dateFormat="yy-mm-dd"></p-datePicker>
                             </div>
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium ">Deadline</div>
+                            <div class="md:col-span-4 p-1">
+                                <div class="text-surface-500 dark:text-surface-300 font-medium">Deadline</div>
                                 <p-datePicker formControlName="deadline" id="deadline" dateFormat="yy-mm-dd"></p-datePicker>
                             </div>
-                            <div class="md:col-4 p-1">
-                                <div class="text-500 font-medium ">End date</div>
+                            <div class="md:col-span-4 p-1">
+                                <div class="text-surface-500 dark:text-surface-300 font-medium">End date</div>
                                 <p-datePicker formControlName="endDate" id="endDate" dateFormat="yy-mm-dd"></p-datePicker>
                             </div>
                         </div>
-                        <div class="grid grid-nogutter surface-border  p-1 ">
-                            <div class="md:col-12 p-1">
-                                <div class="text-500 font-medium ">Note</div>
+                        <div class="grid grid-cols-12 gap-4 border-surface p-1">
+                            <div class="md:col-span-12 p-1">
+                                <div class="text-surface-500 dark:text-surface-300 font-medium">Note</div>
                                 <textarea formControlName="note" id="note" type="text" pInputTextarea rows="2"
                                           [autoResize]="true"></textarea>
                             </div>
                         </div>
                     </div>
-                </p-accordionTab>
-                <p-accordionTab [selected]="true" header="Tasks" class="text-900 font-medium">
-                    <div *ngIf="stage" class="lg:px-2 md:px-2 px-2 py-1 ng-star-inserted surface-border">
+                    </p-accordion-content>
+                </p-accordion-panel>
+                <p-accordion-panel value="1">
+                    <p-accordion-header>Tasks</p-accordion-header>
+                    <p-accordion-content>
+                    <div *ngIf="stage" class="lg:px-2 md:px-2 px-2 py-1 ng-star-inserted border-surface">
                         <task-list-shell [tasks]="stage.tasks!" [stageId]="stage.id!" [projectId]="projectId">
                         </task-list-shell>
                     </div>
-                </p-accordionTab>
+                    </p-accordion-content>
+                </p-accordion-panel>
             </form>
         </p-accordion>
     </div>

@@ -8,10 +8,23 @@ import {SupplyStore} from "../state/supply.state";
 import {Supply} from "../../../generated/models/supply";
 import {toTimeZoneString} from "../../../shared/utils/date-utils";
 
+import {ReactiveFormsModule} from "@angular/forms";
+import {DialogModule} from "primeng/dialog";
+import {SelectModule} from "primeng/select";
+import {InputNumberModule} from "primeng/inputnumber";
+import {ToggleSwitchModule} from "primeng/toggleswitch";
+import {DatePickerModule} from "primeng/datepicker";
+import {InputTextModule} from "primeng/inputtext";
+import {Textarea} from "primeng/inputtextarea";
+import {ButtonModule} from "primeng/button";
+import {NgClass} from "@angular/common";
+
 @Component({
     selector: 'add-supply',
     templateUrl: './add-supply.component.html',
-    styleUrl: './add-supply.component.less'
+    styleUrl: './add-supply.component.less',
+    standalone: true,
+    imports: [DialogModule, SelectModule, InputNumberModule, ToggleSwitchModule, DatePickerModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule, NgClass]
 })
 export class AddSupplyComponent implements OnInit, AbstractAddEditComponent {
     @Input()

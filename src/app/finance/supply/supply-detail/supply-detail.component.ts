@@ -1,15 +1,26 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Supply} from "../../../generated/models/supply";
 import {Supplier} from "../../../generated/models/supplier";
-import {FormGroup} from '@angular/forms';
+import {FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {SupplyDetailForm, SupplyFormProvider} from "../form";
 import {cloneDeep} from "lodash";
 import {toDateIfExists, toTimeZoneString} from "../../../shared/utils/date-utils";
+import {WrapperComponent} from "../../../shared/wrapper/wrapper.component";
+import {Accordion, AccordionPanel, AccordionHeader, AccordionContent} from "primeng/accordion";
+import {SelectModule} from "primeng/select";
+import {InputNumberModule} from "primeng/inputnumber";
+import {ToggleSwitchModule} from "primeng/toggleswitch";
+import {DatePickerModule} from "primeng/datepicker";
+import {InputTextModule} from "primeng/inputtext";
+import {Textarea} from "primeng/inputtextarea";
+import {ButtonModule} from "primeng/button";
 
 @Component({
     selector: 'supply-detail',
     templateUrl: './supply-detail.component.html',
-    styleUrl: './supply-detail.component.less'
+    styleUrl: './supply-detail.component.less',
+    standalone: true,
+    imports: [WrapperComponent, Accordion, AccordionPanel, AccordionHeader, AccordionContent, SelectModule, InputNumberModule, ToggleSwitchModule, DatePickerModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule]
 })
 export class SupplyDetailComponent implements OnInit, OnChanges {
     @Input()

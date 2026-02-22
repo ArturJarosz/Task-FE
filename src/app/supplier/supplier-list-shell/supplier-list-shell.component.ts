@@ -5,11 +5,15 @@ import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {Supplier} from "../../generated/models/supplier";
 import {SupplierDto} from "../model/supplier";
 import {ConfirmationService} from "primeng/api";
+import {SupplierListComponent} from "../supplier-list/supplier-list.component";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @Component({
     selector: 'app-supplier-list-shell',
     templateUrl: './supplier-list-shell.component.html',
-    styleUrl: './supplier-list-shell.component.less'
+    styleUrl: './supplier-list-shell.component.less',
+    standalone: true,
+    imports: [SupplierListComponent, ConfirmDialogModule]
 })
 export class SupplierListShellComponent implements OnInit {
 
