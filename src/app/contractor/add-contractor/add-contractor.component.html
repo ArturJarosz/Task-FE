@@ -2,21 +2,21 @@
           [style]="{ width: '50vw', 'max-width': '800px'}"
           (onHide)="onClose()">
     <ng-template pTemplate="header">
-        <div class="flex flex-column gap-2">
-            <h1 class="m-0 text-900 font-semibold line-height-3">{{ header }}</h1>
+        <div class="flex flex-col gap-2">
+            <h1 class="m-0 text-surface-900 dark:text-surface-0 font-semibold leading-normal">{{ header }}</h1>
         </div>
     </ng-template>
     <form [formGroup]="addContractorForm">
-        <div class="grid grid-nogutter surface-border  p-1">
-            <div class="md:col-6 p-1">
-                <label for="name" class="block  text-color text-base">Name</label>
+        <div class="grid grid-cols-12 gap-4 border-surface p-1">
+            <div class="md:col-span-6 p-1">
+                <label for="name" class="block text-color text-base">Name</label>
                 <span class="p-input-icon-left w-full">
                     <input type="text" class="w-full" id="name" formControlName="name" pInputText placeholder="Contractor name"
                            [ngClass]="{'is-invalid': (addContractorForm.get('name')?.touched || addContractorForm.get('name')?.dirty) && !addContractorForm.get('name')?.valid }"/>
                 </span>
             </div>
-            <div class="md:col-6 p-1">
-                <label for="category" class="block  text-color text-base">Type</label>
+            <div class="md:col-span-6 p-1">
+                <label for="category" class="block text-color text-base">Type</label>
                 <span class="p-input-icon-left w-full">
                     <p-select [options]="$contractorTypes()" optionLabel="label" optionValue="id"
                                 formControlName="category" class="w-full" appendTo="body" id="category">
@@ -24,9 +24,9 @@
                 </span>
             </div>
         </div>
-        <div class="grid grid-nogutter surface-border  p-1">
-            <div class="md:col-6 p-1">
-                <label for="email" class="block  text-color text-base">Email</label>
+        <div class="grid grid-cols-12 gap-4 border-surface p-1">
+            <div class="md:col-span-6 p-1">
+                <label for="email" class="block text-color text-base">Email</label>
                 <span class="p-input-icon-left w-full">
                 <input type="text" class="w-full" id="email" formControlName="email"
                        pInputText
@@ -34,8 +34,8 @@
                 />
                 </span>
             </div>
-            <div class="md:col-6 p-1">
-                <label for="telephone" class="block  text-color text-base">Phone</label>
+            <div class="md:col-span-6 p-1">
+                <label for="telephone" class="block text-color text-base">Phone</label>
                 <span class="p-input-icon-left w-full">
                 <input type="text" formControlName="telephone" class="w-full" id="telephone"
                        pInputText
@@ -44,9 +44,9 @@
                 </span>
             </div>
         </div>
-        <div class="grid grid-nogutter surface-border  p-1">
+        <div class="grid grid-cols-12 gap-4 border-surface p-1">
             <div class="w-full">
-                <label for="note" class="block  text-color text-base">Note</label>
+                <label for="note" class="block text-color text-base">Note</label>
                 <span class="p-input-icon-left w-full">
                 <textarea rows="5" cols="30" pInputTextarea type="text" formControlName="note"
                           class="w-full" id="note"
@@ -59,7 +59,7 @@
 
     </form>
     <ng-template pTemplate="footer">
-        <div class="flex gap-3 justify-content-end border-top-1 surface-border pt-5">
+        <div class="flex gap-4 justify-end border-t border-surface pt-8">
             <p-button label="Cancel" styleClass="p-button-outlined p-button-secondary"
                       (onClick)="onCancel()"></p-button>
             <p-button label="Save" styleClass="p-button-outlined" [disabled]="!isSaveEnabled()"

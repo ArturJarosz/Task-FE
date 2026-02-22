@@ -5,11 +5,15 @@ import {ClientDto} from "../model/client";
 import {ConfirmationService} from "primeng/api";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
+import {ClientListComponent} from "../client-list/client-list.component";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @Component({
     selector: 'client-list-shell',
     templateUrl: './client-list-shell.component.html',
-    styleUrl: './client-list-shell.component.less'
+    styleUrl: './client-list-shell.component.less',
+    standalone: true,
+    imports: [ClientListComponent, ConfirmDialogModule]
 })
 export class ClientListShellComponent implements OnInit{
     readonly clientStore = inject(ClientStore);

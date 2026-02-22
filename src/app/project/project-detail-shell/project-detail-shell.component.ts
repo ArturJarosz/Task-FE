@@ -9,12 +9,17 @@ import {Architect} from "../../generated/models/architect";
 import {Project} from "../../generated/models/project";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {ConfirmationService} from "primeng/api";
+import {ProjectDetailComponent} from "../project-detail/project-detail.component";
+import {AsyncPipe} from "@angular/common";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @Component({
     selector: 'project-detail-shell',
     templateUrl: './project-detail-shell.component.html',
     styleUrls: ['./project-detail-shell.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [ProjectDetailComponent, AsyncPipe, ConfirmDialogModule]
 })
 export class ProjectDetailShellComponent implements OnInit {
     architects$!: Observable<Architect[]>;

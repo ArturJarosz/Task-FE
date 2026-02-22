@@ -2,11 +2,14 @@ import {Component, inject, OnInit, Signal} from '@angular/core';
 import {InstallmentStore} from "../state/installment.state";
 import {ActivatedRoute} from "@angular/router";
 import {Installment} from "../../../generated/models/installment";
+import {InstallmentDetailComponent} from "../installment-detail/installment-detail.component";
 
 @Component({
     selector: 'installment-detail-shell',
     templateUrl: './installment-detail-shell.component.html',
-    styleUrl: './installment-detail-shell.component.less'
+    styleUrl: './installment-detail-shell.component.less',
+    standalone: true,
+    imports: [InstallmentDetailComponent]
 })
 export class InstallmentDetailShellComponent implements OnInit {
     projectId: number = 0;

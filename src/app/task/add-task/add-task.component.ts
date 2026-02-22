@@ -2,17 +2,25 @@ import {Component, EventEmitter, effect, inject, Input, OnInit, Output, Signal} 
 import {TaskStore} from "../state/task.state";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {TaskFormProvider} from "../form/task-form-provider";
 import {Task} from "../../generated/models/task";
 import {ArchitectStore} from "../../architect/state/architect.state";
 import {ProjectStore} from "../../project/state/project.state";
 import {Architect} from "../../generated/models/architect";
+import {DialogModule} from "primeng/dialog";
+import {SelectModule} from "primeng/select";
+import {InputTextModule} from "primeng/inputtext";
+import {Textarea} from "primeng/inputtextarea";
+import {ButtonModule} from "primeng/button";
+import {NgClass} from "@angular/common";
 
 @Component({
     selector: 'add-task',
     templateUrl: './add-task.component.html',
-    styleUrl: './add-task.component.less'
+    styleUrl: './add-task.component.less',
+    standalone: true,
+    imports: [DialogModule, SelectModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule, NgClass]
 })
 export class AddTaskComponent implements OnInit {
     @Input()

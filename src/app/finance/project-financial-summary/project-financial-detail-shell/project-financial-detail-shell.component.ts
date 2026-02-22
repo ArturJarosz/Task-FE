@@ -6,11 +6,14 @@ import {ConfigurationStore} from "../../../shared/configuration/state";
 import {CostStore} from "../../cost";
 import {Cost} from "../../../generated/models/cost";
 import {ProjectStore} from "../../../project/state";
+import {ProjectFinancialDetailComponent} from "../project-financial-detail/project-financial-detail.component";
 
 @Component({
     selector: 'project-financial-detail-shell',
     templateUrl: './project-financial-detail-shell.component.html',
-    styleUrl: './project-financial-detail-shell.component.less'
+    styleUrl: './project-financial-detail-shell.component.less',
+    standalone: true,
+    imports: [ProjectFinancialDetailComponent]
 })
 export class ProjectFinancialDetailShellComponent implements OnInit {
     projectId: number = 0;

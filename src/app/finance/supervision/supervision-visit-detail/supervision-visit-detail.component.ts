@@ -1,14 +1,23 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {SupervisionVisit} from "../../../generated/models/supervision-visit";
-import {FormGroup} from '@angular/forms';
+import {FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {SupervisionVisitForm, SupervisionVisitFormProvider} from "../form/supervision-visit-form-provider";
 import {cloneDeep} from "lodash";
 import {toDateIfExists, toTimeZoneString} from "../../../shared/utils/date-utils";
+import {WrapperComponent} from "../../../shared/wrapper/wrapper.component";
+import {Accordion, AccordionPanel, AccordionHeader, AccordionContent} from "primeng/accordion";
+import {DatePickerModule} from "primeng/datepicker";
+import {InputNumberModule} from "primeng/inputnumber";
+import {ToggleSwitchModule} from "primeng/toggleswitch";
+import {ButtonModule} from "primeng/button";
+import {DatePipe} from "@angular/common";
 
 @Component({
     selector: 'supervision-visit-detail',
     templateUrl: './supervision-visit-detail.component.html',
-    styleUrl: './supervision-visit-detail.component.less'
+    styleUrl: './supervision-visit-detail.component.less',
+    standalone: true,
+    imports: [WrapperComponent, Accordion, AccordionPanel, AccordionHeader, AccordionContent, DatePickerModule, InputNumberModule, ToggleSwitchModule, ButtonModule, ReactiveFormsModule, DatePipe]
 })
 export class SupervisionVisitDetailComponent implements OnInit, OnChanges {
     @Input()

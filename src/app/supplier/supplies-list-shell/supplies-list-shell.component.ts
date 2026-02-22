@@ -4,10 +4,14 @@ import {SupplierSuppliesData} from "../../generated/models/supplier-supplies-dat
 import {ProjectStore} from "../../project/state";
 import {Project} from "../../generated/models/project";
 
+import {SuppliesListComponent} from "../supplies-list/supplies-list.component";
+
 @Component({
     selector: 'supplier-supplies-list-shell',
     templateUrl: './supplies-list-shell.component.html',
-    styleUrl: './supplies-list-shell.component.less'
+    styleUrl: './supplies-list-shell.component.less',
+    standalone: true,
+    imports: [SuppliesListComponent]
 })
 export class SuppliesListShellComponent implements OnInit {
     readonly supplierStore = inject(SupplierStore);

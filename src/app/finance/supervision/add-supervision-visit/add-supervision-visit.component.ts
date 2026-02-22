@@ -1,15 +1,22 @@
 import {Component, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {AddSupervisionVisitForm, AddSupervisionVisitFormProvider} from "./add-supervision-visit-form-provider";
 import {SupervisionVisit} from "../../../generated/models/supervision-visit";
 import {AbstractAddEditComponent} from "../../../shared";
 import {SupervisionStore} from "../state/supervision.state";
 import {toTimeZoneString} from "../../../shared/utils/date-utils";
+import {DialogModule} from "primeng/dialog";
+import {DatePickerModule} from "primeng/datepicker";
+import {InputNumberModule} from "primeng/inputnumber";
+import {ToggleSwitchModule} from "primeng/toggleswitch";
+import {ButtonModule} from "primeng/button";
 
 @Component({
     selector: 'add-supervision-visit',
     templateUrl: './add-supervision-visit.component.html',
-    styleUrl: './add-supervision-visit.component.less'
+    styleUrl: './add-supervision-visit.component.less',
+    standalone: true,
+    imports: [DialogModule, DatePickerModule, InputNumberModule, ToggleSwitchModule, ButtonModule, ReactiveFormsModule]
 })
 export class AddSupervisionVisitComponent implements OnInit, AbstractAddEditComponent {
     @Input()

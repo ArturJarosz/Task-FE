@@ -1,106 +1,141 @@
 <wrapper [title]="project?.name! + ',&nbsp;'" [secondaryTitle]="resolvedProjectTypeLabel">
     <div wrapper-body>
-        <p-accordion [multiple]="true">
+        <p-accordion [multiple]="true" [value]="['0', '1', '2']">
             <form [formGroup]="projectDetailsForm">
-                <p-accordionTab [selected]="true" header="Contract details" class="text-900 font-medium">
-                    <div class="p-1 ng-star-inserted surface-border" formGroupName="contract">
-                        <div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
-                            <p-button title="Update contract" icon="pi pi-arrow-down" [disabled]="!shouldUpdateContract()" (click)="onContractUpdate()" [outlined]="true" [rounded]="true" class="update-button transition-colors transition-duration-300"></p-button>
-                            <p-button title="Remove project" icon="pi pi-times" [outlined]="true" [rounded]="true" (onClick)="onDelete()" class="remove-button transition-colors transition-duration-300 px-1"></p-button>
+                <p-accordion-panel value="0">
+                    <p-accordion-header>Contract details</p-accordion-header>
+                    <p-accordion-content>
+                        <div class="p-1 ng-star-inserted border-surface" formGroupName="contract">
+                            <div class="flex flex-col lg:flex-row lg:justify-end items-center justify-end">
+                                <p-button title="Update contract" icon="pi pi-arrow-down" [disabled]="!shouldUpdateContract()" (click)="onContractUpdate()" [outlined]="true" [rounded]="true" class="update-button transition-colors duration-300"></p-button>
+                                <p-button title="Remove project" icon="pi pi-times" [outlined]="true" [rounded]="true" (onClick)="onDelete()" class="remove-button transition-colors duration-300 px-1"></p-button>
 
-                        </div>
-                        <div class="grid grid-nogutter surface-border p-1">
-                            <div class="col-4 p-1 grid grid-nogutter">
-                                <div class="col-4 text-500 flex align-items-center">Project value:</div>
-                                <div class="col-8 flex align-items-center pl-4 pr-3" id="value">{{ projectDetailsForm.get(['contract', 'offerValue'])?.value | currency: ' ':'code':'2.2-2' }}</div>
                             </div>
-                            <div class="col-4 p-1 grid grid-nogutter">
-                                <div class="col-4 text-500 flex align-items-center">Status:</div>
-                                <p-select class="col-8 pr-3" formControlName="status" [options]="availableContractStatuses"
-                                            optionLabel="label" optionValue="id"></p-select>
-                            </div>
-                            <div class="col-4 p-1 grid grid-nogutter">
-                                <div class="col-4 text-500 flex align-items-center">Signing date:</div>
-                                <p-datePicker class="col-8 pr-3" formControlName="signingDate" id="signingDate" dateFormat="yy-mm-dd"></p-datePicker>
-                            </div>
-                        </div>
-                        <div class="grid grid-nogutter surface-border p-1">
-                            <div class="col-4 p-1 grid grid-nogutter">
-                                <div class="col-4 text-500 flex align-items-center">Deadline:</div>
-                                <p-datePicker class="col-8 pr-3" formControlName="deadline" id="deadline" dateFormat="yy-mm-dd"></p-datePicker>
-                            </div>
-                            <div class="col-4 p-1 grid grid-nogutter">
-                                <div class="col-4 text-500 flex align-items-center">Start date:</div>
-                                <p-datePicker class="col-8 pr-3" formControlName="startDate" id="contractStartDate" dateFormat="yy-mm-dd"></p-datePicker>
-                            </div>
-                            <div class="col-4 p-1 grid grid-nogutter">
-                                <div class="col-4 text-500 flex align-items-center">End date:</div>
-                                <p-datePicker class="col-8 pr-3" formControlName="endDate" id="contractEndDate" dateFormat="yy-mm-dd"></p-datePicker>
-                            </div>
-                        </div>
-                    </div>
-                </p-accordionTab>
-                <p-accordionTab [selected]="true" header="Project details" class="text-900 font-medium">
-                    <div class="p-1 ng-star-inserted surface-border">
-                        <div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
-                            <p-button title="Update project" icon="pi pi-arrow-down" *ngIf="projectDetailsForm && initialProjectForm" [disabled]="!shouldUpdateProject()" (click)="onProjectUpdate()" [outlined]="true" [rounded]="true" class="update-button transition-colors transition-duration-300"></p-button>
-                        </div>
-                        <div class="grid grid-nogutter surface-border p-1">
-                            <div class="col-4 p-1 grid grid-nogutter">
-                                <div class="col-4 text-500 flex align-items-center">Name:</div>
-                                <div class="col-8 pr-3">
-                                    <input  formControlName="name" pInputText>
+                            <div class="grid grid-cols-12 gap-4 border-surface p-1">
+                                <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
+                                    <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">
+                                        Project value:
+                                    </div>
+                                    <div class="col-span-8 flex items-center pl-6 pr-4" id="value">{{ projectDetailsForm.get(['contract', 'offerValue'])?.value | currency: ' ':'code':'2.2-2' }}</div>
+                                </div>
+                                <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
+                                    <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">
+                                        Status:
+                                    </div>
+                                    <p-select class="col-span-8 pr-4" formControlName="status" [options]="availableContractStatuses"
+                                              optionLabel="label" optionValue="id" appendTo="body"></p-select>
+                                </div>
+                                <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
+                                    <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">
+                                        Signing date:
+                                    </div>
+                                    <p-datePicker class="col-span-8 pr-4" formControlName="signingDate" id="signingDate" dateFormat="yy-mm-dd"></p-datePicker>
                                 </div>
                             </div>
-                            <div class="col-4 p-1 grid grid-nogutter">
-                                <div class="col-4 text-500 flex align-items-center">Status:</div>
-                                <div class="col-8 pl-4 pr-3 flex align-items-center" id="status">{{ resolvedProjectStatusLabel }}</div>
-                            </div>
-                            <div class="col-4 p-1 grid grid-nogutter">
-                                <div class="col-4 text-500 flex align-items-center">Type:</div>
-                                <p-select class="col-8 pr-3" formControlName="type" [options]="projectTypes!"
-                                            optionLabel="label" optionValue="id"></p-select>
-                            </div>
-                        </div>
-                        <div class="grid grid-nogutter surface-border p-1">
-                            <div class="col-4 p-1 grid grid-nogutter">
-                                <div class="col-4 text-500 flex align-items-center">Architect:</div>
-                                <div class="col-8 pr-3 pl-4" id="architect">{{ architectName }}</div>
-                            </div>
-                            <div class="col-4 p-1 grid grid-nogutter">
-                                <div class="col-4 text-500 flex align-items-center">Client:</div>
-                                <div class="col-8 pr-3 pl-4" id="client">{{ clientName }}</div>
-                            </div>
-                        </div>
-                        <div class="grid grid-nogutter surface-border p-1">
-                            <div class="col-4 p-1 grid grid-nogutter">
-                                <div class="col-4 text-500 flex align-items-center">Start date:</div>
-                                <p-datePicker class="col-8 pr-3" formControlName="startDate" id="startDate" dateFormat="yy-mm-dd"></p-datePicker>
-                            </div>
-                            <div class="col-4 p-1 grid grid-nogutter">
-                                <div class="col-4 text-500 flex align-items-center">End date:</div>
-                                <div class="col-8 pr-3" id="endDate">{{projectDetailsForm.value.endDate}}</div>
+                            <div class="grid grid-cols-12 gap-4 border-surface p-1">
+                                <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
+                                    <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">
+                                        Deadline:
+                                    </div>
+                                    <p-datePicker class="col-span-8 pr-4" formControlName="deadline" id="deadline" dateFormat="yy-mm-dd"></p-datePicker>
+                                </div>
+                                <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
+                                    <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">
+                                        Start date:
+                                    </div>
+                                    <p-datePicker class="col-span-8 pr-4" formControlName="startDate" id="contractStartDate" dateFormat="yy-mm-dd"></p-datePicker>
+                                </div>
+                                <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
+                                    <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">End
+                                        date:
+                                    </div>
+                                    <p-datePicker class="col-span-8 pr-4" formControlName="endDate" id="contractEndDate" dateFormat="yy-mm-dd"></p-datePicker>
+                                </div>
                             </div>
                         </div>
-                        <div class="grid grid-nogutter surface-border p-1">
-                            <div class="col-12 p-1 pr-3">
-                                <div class="text-500 font-medium mb-1">Note: </div>
-                                <textarea formControlName="note" type="text" pInputTextarea rows="2"
-                                          [autoResize]="true"></textarea>
+                    </p-accordion-content>
+                </p-accordion-panel>
+                <p-accordion-panel value="1">
+                    <p-accordion-header>Project details</p-accordion-header>
+                    <p-accordion-content>
+                        <div class="p-1 ng-star-inserted border-surface">
+                            <div class="flex flex-col lg:flex-row lg:justify-end items-center justify-end">
+                                <p-button title="Update project" icon="pi pi-arrow-down" *ngIf="projectDetailsForm && initialProjectForm" [disabled]="!shouldUpdateProject()" (click)="onProjectUpdate()" [outlined]="true" [rounded]="true" class="update-button transition-colors duration-300"></p-button>
+                            </div>
+                            <div class="grid grid-cols-12 gap-4 border-surface p-1">
+                                <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
+                                    <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">
+                                        Name:
+                                    </div>
+                                    <div class="col-span-8 pr-4">
+                                        <input formControlName="name" pInputText>
+                                    </div>
+                                </div>
+                                <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
+                                    <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">
+                                        Status:
+                                    </div>
+                                    <div class="col-span-8 pl-6 pr-4 flex items-center" id="status">{{ resolvedProjectStatusLabel }}</div>
+                                </div>
+                                <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
+                                    <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">
+                                        Type:
+                                    </div>
+                                    <p-select class="col-span-8 pr-4" formControlName="type" [options]="projectTypes!"
+                                              optionLabel="label" optionValue="id" appendTo="body"></p-select>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-12 gap-4 border-surface p-1">
+                                <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
+                                    <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">
+                                        Architect:
+                                    </div>
+                                    <div class="col-span-8 pr-4 pl-6" id="architect">{{ architectName }}</div>
+                                </div>
+                                <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
+                                    <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">
+                                        Client:
+                                    </div>
+                                    <div class="col-span-8 pr-4 pl-6" id="client">{{ clientName }}</div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-12 gap-4 border-surface p-1">
+                                <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
+                                    <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">
+                                        Start date:
+                                    </div>
+                                    <p-datePicker class="col-span-8 pr-4" formControlName="startDate" id="startDate" dateFormat="yy-mm-dd"></p-datePicker>
+                                </div>
+                                <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
+                                    <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">End
+                                        date:
+                                    </div>
+                                    <div class="col-span-8 pr-4" id="endDate">{{ projectDetailsForm.value.endDate }}</div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-12 gap-4 border-surface p-1">
+                                <div class="col-span-12 p-1 pr-4">
+                                    <div class="text-surface-500 dark:text-surface-300 font-medium mb-1">Note:</div>
+                                    <textarea formControlName="note" type="text" pInputTextarea rows="2"
+                                              [autoResize]="true"></textarea>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </p-accordionTab>
+                    </p-accordion-content>
+                </p-accordion-panel>
             </form>
-            <p-accordionTab [selected]="true" header="Stages" class="text-900 font-medium">
-                <div *ngIf="project" class="p-1 ng-star-inserted surface-border">
-                    <stage-list-shell [stages]="project.stages!" [projectId]="project!.id!"></stage-list-shell>
-                </div>
-            </p-accordionTab>
+            <p-accordion-panel value="2">
+                <p-accordion-header>Stages</p-accordion-header>
+                <p-accordion-content>
+                    <div *ngIf="project" class="p-1 ng-star-inserted border-surface">
+                        <stage-list-shell [stages]="project.stages!" [projectId]="project!.id!"></stage-list-shell>
+                    </div>
+                </p-accordion-content>
+            </p-accordion-panel>
         </p-accordion>
     </div>
     <div wrapper-buttons>
-        <p-button *ngIf="project" [routerLink]="['/projects', project!.id, 'finance'] "label="Financial details" size="small" severity="secondary" class="top-menu-button"/>
+        <p-button *ngIf="project" [routerLink]="['/projects', project!.id, 'finance'] " label="Financial details" size="small" severity="secondary" class="top-menu-button"/>
     </div>
 </wrapper>
 

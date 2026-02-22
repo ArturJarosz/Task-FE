@@ -11,7 +11,7 @@ import {
     Signal,
     SimpleChanges
 } from '@angular/core';
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {ClientStore} from "../../client/state";
 import {ArchitectStore} from "../../architect/state";
 import {ProjectStore} from "../state";
@@ -24,11 +24,19 @@ import {ProjectFormProvider} from "../form/project-form-provider";
 import {Architect} from "../../generated/models/architect";
 import {ArchitectFormModel} from "../../architect/model/architect";
 import {cloneDeep} from "lodash";
+import {DialogModule} from "primeng/dialog";
+import {SelectModule} from "primeng/select";
+import {DatePickerModule} from "primeng/datepicker";
+import {InputTextModule} from "primeng/inputtext";
+import {ButtonModule} from "primeng/button";
+import {NgClass} from "@angular/common";
 
 @Component({
     selector: 'add-project',
     templateUrl: './add-project.component.html',
-    styleUrls: ['./add-project.component.less']
+    styleUrls: ['./add-project.component.less'],
+    standalone: true,
+    imports: [DialogModule, SelectModule, DatePickerModule, InputTextModule, ButtonModule, ReactiveFormsModule, NgClass]
 })
 export class AddProjectComponent implements OnInit, OnChanges {
     @Input()

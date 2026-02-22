@@ -5,10 +5,14 @@ import {ContractorContractorJobsData} from "../../generated/models/contractor-co
 import {Project} from "../../generated/models/project";
 
 
+import {ContractorJobListComponent} from "../contractor-job-list/contractor-job-list.component";
+
 @Component({
     selector: 'contractor-job-list-shell',
     templateUrl: './contractor-job-list-shell.component.html',
-    styleUrl: './contractor-job-list-shell.component.less'
+    styleUrl: './contractor-job-list-shell.component.less',
+    standalone: true,
+    imports: [ContractorJobListComponent]
 })
 export class ContractorJobListShellComponent implements OnInit {
     readonly contractorStore = inject(ContractorStore);

@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {StageForm, StageFormProvider} from "../form/stage-form-provider";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Stage} from "../../generated/models/stage";
@@ -9,11 +9,23 @@ import {StageDto} from "../model/stage";
 import {StageStatus} from "../../generated/models/stage-status";
 import {cloneDeep} from "lodash";
 import {Architect} from "../../generated/models/architect";
+import {WrapperComponent} from "../../shared";
+import {TaskListShellComponent} from "../../task/task-list-shell/task-list-shell.component";
+import {Accordion, AccordionPanel, AccordionHeader, AccordionContent} from "primeng/accordion";
+import {SelectModule} from "primeng/select";
+import {DatePickerModule} from "primeng/datepicker";
+import {ButtonModule} from "primeng/button";
+import {InputTextModule} from "primeng/inputtext";
+import {Textarea} from "primeng/inputtextarea";
+import {ToggleSwitchModule} from "primeng/toggleswitch";
+import {NgIf} from "@angular/common";
 
 @Component({
     selector: 'stage-detail',
     templateUrl: './stage-detail.component.html',
-    styleUrls: ['./stage-detail.component.less']
+    styleUrls: ['./stage-detail.component.less'],
+    standalone: true,
+    imports: [WrapperComponent, TaskListShellComponent, Accordion, AccordionPanel, AccordionHeader, AccordionContent, SelectModule, DatePickerModule, ButtonModule, InputTextModule, Textarea, ToggleSwitchModule, ReactiveFormsModule, NgIf]
 })
 export class StageDetailComponent implements OnInit, OnChanges {
     @Input()

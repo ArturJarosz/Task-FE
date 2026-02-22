@@ -2,11 +2,18 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Client, ClientType, ConfigurationEntry} from "../../generated/models";
 import {ClientDto} from "../model/client";
+import {WrapperComponent} from "../../shared";
+import {AddClientComponent} from "../add-client";
+import {TableModule} from "primeng/table";
+import {ButtonModule} from "primeng/button";
+import {RouterLink} from "@angular/router";
 
 @Component({
     selector: 'client-list',
     templateUrl: './client-list.component.html',
-    styleUrls: ['./client-list.component.less',]
+    styleUrls: ['./client-list.component.less',],
+    standalone: true,
+    imports: [WrapperComponent, AddClientComponent, TableModule, ButtonModule, RouterLink]
 })
 export class ClientListComponent {
     showComponent: boolean = false;

@@ -3,15 +3,24 @@ import {MenuItem} from "primeng/api";
 import {ConfigurationStore} from "./shared/configuration/state";
 import {UserStore} from "./shared/user/state";
 import {AuthorizationService} from "./security/authorization.service";
-import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
+import {ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
 import {filter} from "rxjs";
 import {BreadcrumbService} from "./shared/breadcrumb/breadcrumb.service";
 import {Menu} from "primeng/menu";
+import {ToastModule} from "primeng/toast";
+import {AvatarModule} from "primeng/avatar";
+import {BreadcrumbModule} from "primeng/breadcrumb";
+import {RippleModule} from "primeng/ripple";
+import {StyleClassModule} from "primeng/styleclass";
+import {InputTextModule} from "primeng/inputtext";
+import {NgIf, NgClass, AsyncPipe} from "@angular/common";
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.less']
+    styleUrls: ['./app.component.less'],
+    standalone: true,
+    imports: [ToastModule, AvatarModule, Menu, BreadcrumbModule, RippleModule, StyleClassModule, InputTextModule, NgIf, NgClass, AsyncPipe, RouterLink, RouterLinkActive, RouterOutlet]
 })
 export class AppComponent implements OnInit {
     title = 'Task-FE';

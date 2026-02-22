@@ -1,16 +1,22 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {InstallmentProjectData} from "../../../generated/models/installment-project-data";
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {
     FinanceObjectSummaryForm,
     ProjectFinancialSummaryFormProvider
 } from "../../project-financial-summary/form/project-financial-summary-form-provider";
 import {isUndefinedOrEmpty} from "../../../shared/utils/data-validation-util";
+import {FinanceComponentSummaryComponent} from "../../../shared/finance-component-summary/finance-component-summary.component";
+import {TableModule} from "primeng/table";
+import {RouterLink} from "@angular/router";
+import {NgIf, CurrencyPipe} from "@angular/common";
 
 @Component({
     selector: 'installment-list',
     templateUrl: './installment-list.component.html',
-    styleUrl: './installment-list.component.less'
+    styleUrl: './installment-list.component.less',
+    standalone: true,
+    imports: [FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, NgIf, CurrencyPipe]
 })
 export class InstallmentListComponent implements OnChanges {
     @Input()

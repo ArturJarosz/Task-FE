@@ -6,10 +6,15 @@ import {ConfirmationService} from "primeng/api";
 import {SupplierStore} from "../../../supplier/state";
 import {Supplier} from "../../../generated/models/supplier";
 
+import {SupplyDetailComponent} from "../supply-detail/supply-detail.component";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+
 @Component({
     selector: 'supply-detail-shell',
     templateUrl: './supply-detail-shell.component.html',
-    styleUrl: './supply-detail-shell.component.less'
+    styleUrl: './supply-detail-shell.component.less',
+    standalone: true,
+    imports: [SupplyDetailComponent, ConfirmDialogModule]
 })
 export class SupplyDetailShellComponent implements OnInit {
     projectId: number = 0;

@@ -1,16 +1,27 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {CostDetailFormProvider, CostForm} from "./cost-detail-form-provider";
 import {resolveLabel} from "../../../shared/utils/label-utils";
 import {Cost} from "../../../generated/models/cost";
 import {ConfigurationEntry} from "../../../generated/models/configuration-entry";
 import {toDateIfExists, toTimeZoneString} from "../../../shared/utils/date-utils";
 import {cloneDeep} from "lodash";
+import {WrapperComponent} from "../../../shared/wrapper/wrapper.component";
+import {Accordion, AccordionPanel, AccordionHeader, AccordionContent} from "primeng/accordion";
+import {SelectModule} from "primeng/select";
+import {InputNumberModule} from "primeng/inputnumber";
+import {ToggleSwitchModule} from "primeng/toggleswitch";
+import {DatePickerModule} from "primeng/datepicker";
+import {InputTextModule} from "primeng/inputtext";
+import {Textarea} from "primeng/inputtextarea";
+import {ButtonModule} from "primeng/button";
 
 @Component({
     selector: 'cost-detail',
     templateUrl: './cost-detail.component.html',
-    styleUrl: './cost-detail.component.less'
+    styleUrl: './cost-detail.component.less',
+    standalone: true,
+    imports: [WrapperComponent, Accordion, AccordionPanel, AccordionHeader, AccordionContent, SelectModule, InputNumberModule, ToggleSwitchModule, DatePickerModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule]
 })
 export class CostDetailComponent implements OnInit, OnChanges {
     @Input()

@@ -8,7 +8,7 @@ import {
     Output,
     SimpleChanges
 } from '@angular/core';
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {ProjectContractForm, ProjectCreateForm, ProjectFormProvider} from "../form/project-form-provider";
 import {cloneDeep} from 'lodash';
 import {resolveLabel} from "../../shared/utils/label-utils";
@@ -17,12 +17,25 @@ import {Project} from "../../generated/models/project";
 import {ConfigurationEntry, Contract, ContractStatus, ProjectStatus} from "../../generated/models";
 import {ContractStore} from "../contract-status/state/contract.store";
 import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
+import {WrapperComponent} from "../../shared";
+import {StageListShellComponent} from "../../stage/stage-list-shell/stage-list-shell.component";
+import {Accordion, AccordionPanel, AccordionHeader, AccordionContent} from "primeng/accordion";
+import {SelectModule} from "primeng/select";
+import {DatePickerModule} from "primeng/datepicker";
+import {ButtonModule} from "primeng/button";
+import {InputTextModule} from "primeng/inputtext";
+import {Textarea} from "primeng/inputtextarea";
+import {NgIf, CurrencyPipe} from "@angular/common";
+import {RouterLink} from "@angular/router";
+import {TooltipModule} from "primeng/tooltip";
 
 @Component({
     selector: 'project-detail',
     templateUrl: './project-detail.component.html',
     styleUrls: ['./project-detail.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [WrapperComponent, StageListShellComponent, Accordion, AccordionPanel, AccordionHeader, AccordionContent, SelectModule, DatePickerModule, ButtonModule, InputTextModule, Textarea, ReactiveFormsModule, NgIf, RouterLink, CurrencyPipe, TooltipModule]
 })
 export class ProjectDetailComponent implements OnChanges {
     @Input()

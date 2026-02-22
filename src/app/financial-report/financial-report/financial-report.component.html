@@ -1,22 +1,22 @@
 <wrapper [title]="title">
     <div wrapper-body>
-        <div class="report-controls mb-3">
-            <div class="flex align-items-center gap-2">
-                <label class="text-500 font-medium">Start date:</label>
+        <div class="report-controls mb-4">
+            <div class="flex items-center gap-2">
+                <label class="text-surface-500 dark:text-surface-300 font-medium">Start date:</label>
                 <p-datePicker [ngModel]="selectedStartDate"
                             (ngModelChange)="onStartDateChange($event)"
                             dateFormat="yy-mm-dd">
                 </p-datePicker>
             </div>
-            <div class="flex align-items-center gap-2">
-                <label class="text-500 font-medium">End date:</label>
+            <div class="flex items-center gap-2">
+                <label class="text-surface-500 dark:text-surface-300 font-medium">End date:</label>
                 <p-datePicker [ngModel]="selectedEndDate"
                             (ngModelChange)="onEndDateChange($event)"
                             dateFormat="yy-mm-dd">
                 </p-datePicker>
             </div>
-            <div class="flex align-items-center gap-2">
-                <label class="text-500 font-medium">Period:</label>
+            <div class="flex items-center gap-2">
+                <label class="text-surface-500 dark:text-surface-300 font-medium">Period:</label>
                 <p-select [options]="periodTypeOptions"
                             [ngModel]="selectedPeriodType"
                             (ngModelChange)="onPeriodTypeChange($event)"
@@ -28,8 +28,8 @@
         </div>
 
         <div *ngIf="financialReport">
-            <div class="flex align-items-center gap-2 mb-3">
-                <label class="text-500 font-medium">Values:</label>
+            <div class="flex items-center gap-2 mb-4">
+                <label class="text-surface-500 dark:text-surface-300 font-medium">Values:</label>
                 <p-selectButton [options]="valueTypeOptions"
                                 [(ngModel)]="selectedValueType"
                                 (ngModelChange)="onValueTypeChange()"
@@ -39,13 +39,13 @@
                 </p-selectButton>
             </div>
 
-            <div class="chart-container mb-4 border-1 surface-border border-round-2xl py-4 px-5">
-                <div class="flex align-items-center gap-4 mb-4">
-                    <div class="flex-1 text-900 font-semibold">Financial Analytics</div>
-                    <div class="flex align-items-center gap-4">
-                        <div *ngFor="let item of legendItems" class="flex align-items-center gap-2">
+            <div class="chart-container mb-6 border border-surface rounded-2xl py-6 px-8">
+                <div class="flex items-center gap-6 mb-6">
+                    <div class="flex-1 text-surface-900 dark:text-surface-0 font-semibold">Financial Analytics</div>
+                    <div class="flex items-center gap-6">
+                        <div *ngFor="let item of legendItems" class="flex items-center gap-2">
                             <div class="legend-dot" [style.backgroundColor]="item.color"></div>
-                            <span class="font-medium text-900">{{ item.label }}</span>
+                            <span class="font-medium text-surface-900 dark:text-surface-0">{{ item.label }}</span>
                         </div>
                     </div>
                 </div>

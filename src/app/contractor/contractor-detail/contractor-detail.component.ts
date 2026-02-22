@@ -1,15 +1,24 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Contractor} from "../../generated/models/contractor";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {ContractorForm, ContractorFormProvider} from "../form/contractor-form-provider";
 import {cloneDeep} from "lodash";
 import {ContractorDto} from "../model/contractor";
+import {WrapperComponent} from "../../shared/wrapper/wrapper.component";
+import {ContractorJobListShellComponent} from "../contractor-job-list-shell/contractor-job-list-shell.component";
+import {Accordion, AccordionPanel, AccordionHeader, AccordionContent} from "primeng/accordion";
+import {SelectModule} from "primeng/select";
+import {InputTextModule} from "primeng/inputtext";
+import {Textarea} from "primeng/inputtextarea";
+import {ButtonModule} from "primeng/button";
 
 @Component({
     selector: 'contractor-detail',
     templateUrl: './contractor-detail.component.html',
-    styleUrl: './contractor-detail.component.less'
+    styleUrl: './contractor-detail.component.less',
+    standalone: true,
+    imports: [WrapperComponent, ContractorJobListShellComponent, Accordion, AccordionPanel, AccordionHeader, AccordionContent, SelectModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule]
 })
 export class ContractorDetailComponent implements OnInit, OnChanges {
     @Input()

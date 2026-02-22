@@ -4,13 +4,22 @@ import {Stage} from "../../generated/models/stage";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {StageDto} from "../model/stage";
 import {Architect} from "../../generated/models/architect";
+import {TableModule} from "primeng/table";
+import {AvatarModule} from "primeng/avatar";
+import {ButtonModule} from "primeng/button";
+import {RouterLink} from "@angular/router";
+import {NgIf} from "@angular/common";
+import {TooltipModule} from "primeng/tooltip";
+import {RippleModule} from "primeng/ripple";
 
 const ARCHITECT_NOT_FOUND_INITIAL = '?';
 
 @Component({
     selector: 'stage-list',
     templateUrl: 'stage-list.component.html',
-    styleUrls: ['stage-list.component.less']
+    styleUrls: ['stage-list.component.less'],
+    standalone: true,
+    imports: [TableModule, AvatarModule, ButtonModule, RouterLink, NgIf, TooltipModule, RippleModule]
 })
 export class StageListComponent {
     @Input()

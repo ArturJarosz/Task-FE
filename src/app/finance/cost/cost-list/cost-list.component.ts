@@ -8,13 +8,19 @@ import {
     FinanceObjectSummaryForm,
     ProjectFinancialSummaryFormProvider
 } from "../../project-financial-summary/form/project-financial-summary-form-provider";
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {isUndefinedOrEmpty} from "../../../shared/utils/data-validation-util";
+import {FinanceComponentSummaryComponent} from "../../../shared/finance-component-summary/finance-component-summary.component";
+import {TableModule} from "primeng/table";
+import {RouterLink} from "@angular/router";
+import {NgIf, CurrencyPipe} from "@angular/common";
 
 @Component({
     selector: 'cost-list',
     templateUrl: './cost-list.component.html',
-    styleUrl: './cost-list.component.less'
+    styleUrl: './cost-list.component.less',
+    standalone: true,
+    imports: [FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, NgIf, CurrencyPipe]
 })
 export class CostListComponent implements OnChanges {
     costs: Array<Cost> | null = [];

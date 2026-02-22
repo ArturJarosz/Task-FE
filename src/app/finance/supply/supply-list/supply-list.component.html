@@ -6,8 +6,8 @@
                     <th>Name</th>
                     <th>Supplier</th>
                     <th>Value</th>
-                    <th class="max-w-4rem text-center">Invoice</th>
-                    <th class="max-w-4rem text-center">Paid</th>
+                    <th class="max-w-16 text-center">Invoice</th>
+                    <th class="max-w-16 text-center">Paid</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-supply>
@@ -15,11 +15,11 @@
                     <td>{{ supply.name }}</td>
                     <td>{{ this.supplierIdToSupplier.get(supply.supplierId) }}</td>
                     <td>{{ supply.value | currency: ' ':'code':'2.2-2' }}</td>
-                    <td class="max-w-4rem text-center">
+                    <td class="max-w-16 text-center">
                         <i *ngIf="supply.hasInvoice" class="pi pi-check"></i>
                         <i *ngIf="!supply.hasInvoice" class="pi pi-times"></i>
                     </td>
-                    <td class="max-w-4rem text-center">
+                    <td class="max-w-16 text-center">
                         <i *ngIf="supply.paid" class="pi pi-check"></i>
                         <i *ngIf="!supply.paid" class="pi pi-times"></i>
                     </td>

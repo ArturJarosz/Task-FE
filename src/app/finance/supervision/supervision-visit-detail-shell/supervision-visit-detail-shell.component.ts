@@ -3,11 +3,15 @@ import {SupervisionStore} from "../state/supervision.state";
 import {ActivatedRoute, Router} from "@angular/router";
 import {SupervisionVisit} from "../../../generated/models/supervision-visit";
 import {ConfirmationService} from "primeng/api";
+import {SupervisionVisitDetailComponent} from "../supervision-visit-detail/supervision-visit-detail.component";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @Component({
     selector: 'supervision-visit-detail-shell',
     templateUrl: './supervision-visit-detail-shell.component.html',
-    styleUrl: './supervision-visit-detail-shell.component.less'
+    styleUrl: './supervision-visit-detail-shell.component.less',
+    standalone: true,
+    imports: [SupervisionVisitDetailComponent, ConfirmDialogModule]
 })
 export class SupervisionVisitDetailShellComponent implements OnInit {
     projectId: number = 0;

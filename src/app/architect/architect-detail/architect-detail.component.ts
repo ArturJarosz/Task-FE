@@ -1,6 +1,6 @@
 import {Component, Input, OnChanges, Signal, SimpleChanges} from '@angular/core';
 import {Architect} from "../../generated/models/architect";
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {
     ArchitectDetailsForm,
     ArchitectFormProvider,
@@ -9,11 +9,17 @@ import {
 import {isUndefinedOrEmpty} from "../../shared/utils/data-validation-util";
 import {EntityProjectsSummary} from "../../generated/models/entity-projects-summary";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
+import {WrapperComponent} from "../../shared/wrapper/wrapper.component";
+import {ArchitectProjectsSummaryComponent} from "../architect-projects-summary/architect-projects-summary.component";
+import {Accordion, AccordionPanel, AccordionHeader, AccordionContent} from "primeng/accordion";
+import {InputTextModule} from "primeng/inputtext";
 
 @Component({
     selector: 'architect-detail',
     templateUrl: './architect-detail.component.html',
-    styleUrls: ['./architect-detail.component.less']
+    styleUrls: ['./architect-detail.component.less'],
+    standalone: true,
+    imports: [WrapperComponent, ArchitectProjectsSummaryComponent, Accordion, AccordionPanel, AccordionHeader, AccordionContent, InputTextModule, ReactiveFormsModule]
 })
 export class ArchitectDetailComponent implements OnChanges {
     pageTitle: string = "";

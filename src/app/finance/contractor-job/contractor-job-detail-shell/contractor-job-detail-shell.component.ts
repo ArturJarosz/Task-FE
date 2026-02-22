@@ -5,11 +5,15 @@ import {ContractorJob} from "../../../generated/models/contractor-job";
 import {ConfirmationService} from "primeng/api";
 import {ContractorStore} from "../../../contractor/state";
 import {Contractor} from "../../../generated/models/contractor";
+import {ContractorJobDetailComponent} from "../contractor-job-detail/contractor-job-detail.component";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @Component({
     selector: 'contractor-job-detail-shell',
     templateUrl: './contractor-job-detail-shell.component.html',
-    styleUrl: './contractor-job-detail-shell.component.less'
+    styleUrl: './contractor-job-detail-shell.component.less',
+    standalone: true,
+    imports: [ContractorJobDetailComponent, ConfirmDialogModule]
 })
 export class ContractorJobDetailShellComponent implements OnInit {
     projectId: number = 0;

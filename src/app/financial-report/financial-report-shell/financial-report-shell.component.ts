@@ -3,10 +3,14 @@ import {FinancialReportStore} from "../state/financial-report.state";
 import {FinancialReport} from "../../generated/models/financial-report";
 import {PeriodType} from "../../generated/models/period-type";
 
+import {FinancialReportComponent} from "../financial-report/financial-report.component";
+
 @Component({
     selector: 'financial-report-shell',
     templateUrl: './financial-report-shell.component.html',
-    styleUrl: './financial-report-shell.component.less'
+    styleUrl: './financial-report-shell.component.less',
+    standalone: true,
+    imports: [FinancialReportComponent]
 })
 export class FinancialReportShellComponent implements OnInit {
     readonly financialReportStore = inject(FinancialReportStore);

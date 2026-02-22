@@ -1,16 +1,25 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Supplier} from "../../generated/models/supplier";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {SupplierForm, SupplierFormProvider} from "../form/supplier-form-provider.service";
 import {cloneDeep} from "lodash";
 import {SupplierDto} from "../model/supplier";
 import {isUndefinedOrEmpty} from "../../shared/utils/data-validation-util";
+import {WrapperComponent} from "../../shared";
+import {SuppliesListShellComponent} from "../supplies-list-shell/supplies-list-shell.component";
+import {Accordion, AccordionPanel, AccordionHeader, AccordionContent} from "primeng/accordion";
+import {SelectModule} from "primeng/select";
+import {InputTextModule} from "primeng/inputtext";
+import {Textarea} from "primeng/inputtextarea";
+import {ButtonModule} from "primeng/button";
 
 @Component({
     selector: 'supplier-detail',
     templateUrl: './supplier-detail.component.html',
-    styleUrl: './supplier-detail.component.less'
+    styleUrl: './supplier-detail.component.less',
+    standalone: true,
+    imports: [WrapperComponent, SuppliesListShellComponent, Accordion, AccordionPanel, AccordionHeader, AccordionContent, SelectModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule]
 })
 export class SupplierDetailComponent implements OnChanges {
     @Input()

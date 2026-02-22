@@ -8,11 +8,15 @@ import {StageDto} from "../model/stage";
 import {ConfirmationService} from "primeng/api";
 import {ArchitectStore} from "../../architect/state/architect.state";
 import {Architect} from "../../generated/models/architect";
+import {StageDetailComponent} from "../stage-detail/stage-detail.component";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @Component({
     selector: 'stage-detail-shell',
     templateUrl: './stage-detail-shell.component.html',
-    styleUrls: ['./stage-detail-shell.component.less']
+    styleUrls: ['./stage-detail-shell.component.less'],
+    standalone: true,
+    imports: [StageDetailComponent, ConfirmDialogModule]
 })
 export class StageDetailShellComponent implements OnInit {
     projectId!: number;

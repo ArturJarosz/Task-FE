@@ -35,7 +35,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.less",
+              "src/styles.css",
               "node_modules/primeicons/primeicons.css"
             ],
             "scripts": [],
@@ -76,10 +76,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "Task-FE:build:production"
+              "buildTarget": "Task-FE:build:production"
             },
             "development": {
-              "browserTarget": "Task-FE:build:development"
+              "buildTarget": "Task-FE:build:development"
             }
           },
           "defaultConfiguration": "development",
@@ -90,7 +90,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "Task-FE:build"
+            "buildTarget": "Task-FE:build"
           }
         },
         "test": {
@@ -107,9 +107,8 @@
               "src/resources"
             ],
             "styles": [
-              "src/styles.less",
-              "node_modules/primeicons/primeicons.css",
-              "node_modules/primeflex/primeflex.css"
+              "src/styles.css",
+              "node_modules/primeicons/primeicons.css"
             ],
             "scripts": []
           }

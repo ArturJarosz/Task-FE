@@ -2,33 +2,33 @@
           [style]="{ width: '50vw', 'max-width': '600px'}"
           (onHide)="onClose()">
     <ng-template pTemplate="header">
-        <div class="flex flex-column gap-2">
-            <h1 class="m-0 text-900 font-semibold line-height-3">{{ header }}</h1>
+        <div class="flex flex-col gap-2">
+            <h1 class="m-0 text-surface-900 dark:text-surface-0 font-semibold leading-normal">{{ header }}</h1>
         </div>
     </ng-template>
     <form [formGroup]="addSupervisionVisitForm">
-        <div class="grid grid-nogutter surface-border p-1">
-            <div class="md:col-4 p-1">
-                <div class="text-500 font-medium">Date of Visit</div>
+        <div class="grid grid-cols-12 gap-4 border-surface p-1">
+            <div class="md:col-span-4 p-1">
+                <div class="text-surface-500 dark:text-surface-300 font-medium">Date of Visit</div>
                 <p-datePicker formControlName="dateOfVisit" id="dateOfVisit"
                             dateFormat="yy-mm-dd" appendTo="body">
                 </p-datePicker>
             </div>
-            <div class="md:col-4 p-1">
-                <div class="text-500 font-medium">Hours Count</div>
+            <div class="md:col-span-4 p-1">
+                <div class="text-surface-500 dark:text-surface-300 font-medium">Hours Count</div>
                 <p-inputNumber formControlName="hoursCount" id="hoursCount"
                                mode="decimal" [minFractionDigits]="1" [maxFractionDigits]="2"
                                [min]="0">
                 </p-inputNumber>
             </div>
-            <div class="md:col-4 p-1">
-                <div class="text-500 font-medium">Payable</div>
+            <div class="md:col-span-4 p-1">
+                <div class="text-surface-500 dark:text-surface-300 font-medium">Payable</div>
                 <p-toggleSwitch formControlName="payable" id="payable"></p-toggleSwitch>
             </div>
         </div>
     </form>
     <ng-template pTemplate="footer">
-        <div class="flex gap-3 justify-content-end border-top-1 surface-border pt-5">
+        <div class="flex gap-4 justify-end border-t border-surface pt-8">
             <p-button label="Cancel" styleClass="p-button-outlined p-button-secondary"
                       (onClick)="onCancel()"></p-button>
             <p-button label="Save" styleClass="p-button-outlined" [disabled]="!isSaveEnabled()"

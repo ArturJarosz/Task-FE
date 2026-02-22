@@ -1,15 +1,23 @@
 import {Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, Signal, SimpleChanges} from '@angular/core';
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {ContractorFormProvider} from "../form/contractor-form-provider";
 import {Contractor} from "../../generated/models/contractor";
 import {ContractorStore} from "../state";
+import {DialogModule} from "primeng/dialog";
+import {SelectModule} from "primeng/select";
+import {InputTextModule} from "primeng/inputtext";
+import {Textarea} from "primeng/inputtextarea";
+import {ButtonModule} from "primeng/button";
+import {NgClass} from "@angular/common";
 
 @Component({
     selector: 'add-contractor',
     templateUrl: './add-contractor.component.html',
-    styleUrl: './add-contractor.component.less'
+    styleUrl: './add-contractor.component.less',
+    standalone: true,
+    imports: [DialogModule, SelectModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule, NgClass]
 })
 export class AddContractorComponent implements OnInit, OnChanges {
     @Input()

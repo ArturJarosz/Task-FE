@@ -1,66 +1,68 @@
-<p-accordion>
-    <p-accordionTab [selected]="true" header="Supplies" class="text-900 font-medium">
-        <div class="grid grid-nogutter surface-border">
-            <div class="col-3 border-bottom-1 surface-border pb-3 max-w-16rem">
-                <div class="p-2 text-xl text-900">
+<p-accordion value="0">
+    <p-accordion-panel value="0">
+        <p-accordion-header>Supplies</p-accordion-header>
+        <p-accordion-content>
+        <div class="grid grid-cols-12 gap-4 border-surface">
+            <div class="col-span-3 border-b border-surface pb-4 max-w-64">
+                <div class="p-2 text-xl text-surface-900 dark:text-surface-0">
                     Summary
                 </div>
                 <form [formGroup]="financeComponentDataForm">
-                    <div class="p-2 grid grid-nogutter">
-                        <div class="col-5 text-500 flex align-items-center">Count:</div>
-                        <div class="col-7 pl-4 pr-3 cell-right" id="count">{{ financeComponentDataForm.value.count }}</div>
+                    <div class="p-2 grid grid-cols-12 gap-4">
+                        <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Count:</div>
+                        <div class="col-span-7 pl-6 pr-4 cell-right" id="count">{{ financeComponentDataForm.value.count }}</div>
                     </div>
-                    <div class="p-2 grid grid-nogutter">
-                        <div class="col-5 text-500 flex align-items-center">Paid:</div>
-                        <div class="col-7 pl-4 pr-3 cell-right" id="paid">{{ financeComponentDataForm.value.paid }}</div>
+                    <div class="p-2 grid grid-cols-12 gap-4">
+                        <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Paid:</div>
+                        <div class="col-span-7 pl-6 pr-4 cell-right" id="paid">{{ financeComponentDataForm.value.paid }}</div>
                     </div>
-                    <div class="p-2 grid grid-nogutter">
-                        <div class="col-5 text-500 flex align-items-center">Gross value:</div>
-                        <div class="col-7 pl-4 pr-3 cell-right" id="gross">{{financeComponentDataForm.value.grossValue  | currency: ' ':'code':'2.2-2'}}</div>
+                    <div class="p-2 grid grid-cols-12 gap-4">
+                        <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Gross value:</div>
+                        <div class="col-span-7 pl-6 pr-4 cell-right" id="gross">{{financeComponentDataForm.value.grossValue  | currency: ' ':'code':'2.2-2'}}</div>
                     </div>
-                    <div class="p-2 grid grid-nogutter">
-                        <div class="col-5 text-500 flex align-items-center">Nett value:</div>
-                        <div class="col-7 pl-4 pr-3 cell-right" id="net">{{financeComponentDataForm.value.netValue  | currency: ' ':'code':'2.2-2'}}</div>
+                    <div class="p-2 grid grid-cols-12 gap-4">
+                        <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Nett value:</div>
+                        <div class="col-span-7 pl-6 pr-4 cell-right" id="net">{{financeComponentDataForm.value.netValue  | currency: ' ':'code':'2.2-2'}}</div>
                     </div>
-                    <div class="p-2 grid grid-nogutter">
-                        <div class="col-5 text-500 flex align-items-center">Tax:</div>
-                        <div class="col-7 pl-4 pr-3 cell-right" id="tax">{{financeComponentDataForm.value.incomeTax  | currency: ' ':'code':'2.2-2'}}</div>
+                    <div class="p-2 grid grid-cols-12 gap-4">
+                        <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Tax:</div>
+                        <div class="col-span-7 pl-6 pr-4 cell-right" id="tax">{{financeComponentDataForm.value.incomeTax  | currency: ' ':'code':'2.2-2'}}</div>
                     </div>
-                    <div class="p-2 grid grid-nogutter">
-                        <div class="col-5 text-500 flex align-items-center">VAT:</div>
-                        <div class="col-7 pl-4 pr-3 cell-right" id="vat">{{financeComponentDataForm.value.vatTax  | currency: ' ':'code':'2.2-2'}}</div>
+                    <div class="p-2 grid grid-cols-12 gap-4">
+                        <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">VAT:</div>
+                        <div class="col-span-7 pl-6 pr-4 cell-right" id="vat">{{financeComponentDataForm.value.vatTax  | currency: ' ':'code':'2.2-2'}}</div>
                     </div>
                 </form>
                 <div *ngIf="hasAveragedData">
-                    <div class="p-2 text-xl text-900">
+                    <div class="p-2 text-xl text-surface-900 dark:text-surface-0">
                         Average
                     </div>
                     <form [formGroup]="averageFinanceComponentDataForm">
-                        <div class="p-2 grid grid-nogutter">
-                            <div class="col-5 text-500 flex align-items-center">Gross value:</div>
-                            <div class="col-7 pl-4 pr-3 cell-right" id="averageGross">{{averageFinanceComponentDataForm.value.grossValue  | currency: ' ':'code':'2.2-2'}}</div>
+                        <div class="p-2 grid grid-cols-12 gap-4">
+                            <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Gross value:</div>
+                            <div class="col-span-7 pl-6 pr-4 cell-right" id="averageGross">{{averageFinanceComponentDataForm.value.grossValue  | currency: ' ':'code':'2.2-2'}}</div>
                         </div>
-                        <div class="p-2 grid grid-nogutter">
-                            <div class="col-5 text-500 flex align-items-center">Nett value:</div>
-                            <div class="col-7 pl-4 pr-3 cell-right" id="averageNet">{{averageFinanceComponentDataForm.value.netValue  | currency: ' ':'code':'2.2-2'}}</div>
+                        <div class="p-2 grid grid-cols-12 gap-4">
+                            <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Nett value:</div>
+                            <div class="col-span-7 pl-6 pr-4 cell-right" id="averageNet">{{averageFinanceComponentDataForm.value.netValue  | currency: ' ':'code':'2.2-2'}}</div>
                         </div>
-                        <div class="p-2 grid grid-nogutter">
-                            <div class="col-5 text-500 flex align-items-center">Tax:</div>
-                            <div class="col-7 pl-4 pr-3 cell-right" id="averageTax">{{averageFinanceComponentDataForm.value.incomeTax  | currency: ' ':'code':'2.2-2'}}</div>
+                        <div class="p-2 grid grid-cols-12 gap-4">
+                            <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Tax:</div>
+                            <div class="col-span-7 pl-6 pr-4 cell-right" id="averageTax">{{averageFinanceComponentDataForm.value.incomeTax  | currency: ' ':'code':'2.2-2'}}</div>
                         </div>
-                        <div class="p-2 grid grid-nogutter">
-                            <div class="col-5 text-500 flex align-items-center">VAT:</div>
-                            <div class="col-7 pl-4 pr-3 cell-right" id="averageVat">{{averageFinanceComponentDataForm.value.vatTax  | currency: ' ':'code':'2.2-2'}}</div>
+                        <div class="p-2 grid grid-cols-12 gap-4">
+                            <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">VAT:</div>
+                            <div class="col-span-7 pl-6 pr-4 cell-right" id="averageVat">{{averageFinanceComponentDataForm.value.vatTax  | currency: ' ':'code':'2.2-2'}}</div>
                         </div>
                     </form>
                 </div>
             </div>
-            <div class="col-9">
+            <div class="col-span-9">
                 <ng-content select="[wrapper-list]"></ng-content>
             </div>
         </div>
-    </p-accordionTab>
+        </p-accordion-content>
+    </p-accordion-panel>
 </p-accordion>
-
 
 

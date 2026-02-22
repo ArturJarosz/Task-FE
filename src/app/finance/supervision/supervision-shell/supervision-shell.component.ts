@@ -2,11 +2,17 @@ import {Component, effect, inject, Input, Signal} from '@angular/core';
 import {SupervisionStore} from "../state/supervision.state";
 import {ProjectStore} from "../../../project/state";
 import {SupervisionVisit} from "../../../generated/models/supervision-visit";
+import {SupervisionComponent} from "../supervision/supervision.component";
+import {AddSupervisionComponent} from "../add-supervision/add-supervision.component";
+import {AddSupervisionVisitComponent} from "../add-supervision-visit/add-supervision-visit.component";
+import {NgIf} from "@angular/common";
 
 @Component({
     selector: 'supervision-shell',
     templateUrl: './supervision-shell.component.html',
-    styleUrl: './supervision-shell.component.less'
+    styleUrl: './supervision-shell.component.less',
+    standalone: true,
+    imports: [SupervisionComponent, AddSupervisionComponent, AddSupervisionVisitComponent, NgIf]
 })
 export class SupervisionShellComponent {
     @Input()

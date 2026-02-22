@@ -1,49 +1,52 @@
 <wrapper [title]="contractor?.name!">
     <div wrapper-body>
-        <p-accordion [multiple]="true">
+        <p-accordion [multiple]="true" [value]="['0']">
             <form [formGroup]="contractorDetailsForm">
-                <p-accordionTab [selected]="true" header="Contractor details" class="text-900 font-medium">
-                    <div class="p-1 ng-star-inserted surface-border">
-                        <div class="flex flex-column lg:flex-row lg:justify-content-end align-items-center justify-content-end">
-                            <p-button icon="pi pi-arrow-down" [disabled]="!isFormChanged()" (onClick)="onSave()" [outlined]="true" [rounded]="true" class="update-button transition-colors transition-duration-300"></p-button>
+                <p-accordion-panel value="0">
+                    <p-accordion-header>Contractor details</p-accordion-header>
+                    <p-accordion-content>
+                    <div class="p-1 ng-star-inserted border-surface">
+                        <div class="flex flex-col lg:flex-row lg:justify-end items-center justify-end">
+                            <p-button icon="pi pi-arrow-down" [disabled]="!isFormChanged()" (onClick)="onSave()" [outlined]="true" [rounded]="true" class="update-button transition-colors duration-300"></p-button>
                             <p-button icon="pi pi-times" [outlined]="true" [rounded]="true" (onClick)="onDelete()" class="remove-button transition-colors px-1"></p-button>
                         </div>
                     </div>
-                    <div class="grid grid-nogutter surface-border p-1">
-                        <div class="col-4 p-1 grid grid-nogutter">
-                            <div class="col-4 text-500 flex align-items-center">Name:</div>
-                            <div class="col-8 pr-3">
+                    <div class="grid grid-cols-12 gap-4 border-surface p-1">
+                        <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
+                            <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">Name:</div>
+                            <div class="col-span-8 pr-4">
                                 <input formControlName="name" pInputText>
                             </div>
                         </div>
-                        <div class="col-4 p-1 grid grid-nogutter">
-                            <div class="col-4 text-500 flex align-items-center">Type:</div>
-                            <p-select class="col-8 pr-3" formControlName="category" [options]="contractorTypes!"
+                        <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
+                            <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">Type:</div>
+                            <p-select class="col-span-8 pr-4" formControlName="category" [options]="contractorTypes!"
                                         optionLabel="label" optionValue="id"></p-select>
                         </div>
                     </div>
-                    <div class="grid grid-nogutter surface-border p-1">
-                        <div class="col-4 p-1 grid grid-nogutter">
-                            <div class="col-4 text-500 flex align-items-center">Email:</div>
-                            <div class="col-8 pr-3">
+                    <div class="grid grid-cols-12 gap-4 border-surface p-1">
+                        <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
+                            <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">Email:</div>
+                            <div class="col-span-8 pr-4">
                                 <input  formControlName="email" pInputText>
                             </div>
                         </div>
-                        <div class="col-4 p-1 grid grid-nogutter">
-                            <div class="col-4 text-500 flex align-items-center">Telephone:</div>
-                            <div class="col-8 pr-3">
+                        <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
+                            <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">Telephone:</div>
+                            <div class="col-span-8 pr-4">
                                 <input  formControlName="telephone" pInputText>
                             </div>
                         </div>
                     </div>
-                    <div class="grid grid-nogutter surface-border p-1">
-                        <div class="col-12 p-1 pr-3">
-                            <div class="text-500 font-medium mb-1">Note: </div>
+                    <div class="grid grid-cols-12 gap-4 border-surface p-1">
+                        <div class="col-span-12 p-1 pr-4">
+                            <div class="text-surface-500 dark:text-surface-300 font-medium mb-1">Note: </div>
                             <textarea formControlName="note" type="text" pInputTextarea rows="2"
                                       [autoResize]="true"></textarea>
                         </div>
                     </div>
-                </p-accordionTab>
+                    </p-accordion-content>
+                </p-accordion-panel>
 
             </form>
         </p-accordion>

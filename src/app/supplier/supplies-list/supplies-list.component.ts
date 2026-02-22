@@ -4,14 +4,20 @@ import {
     FinanceObjectSummaryForm,
     ProjectFinancialSummaryFormProvider
 } from "../../finance/project-financial-summary/form/project-financial-summary-form-provider";
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {isUndefinedOrEmpty} from "../../shared/utils/data-validation-util";
 import {Project} from "../../generated/models/project";
+import {FinanceComponentSummaryComponent} from "../../shared/finance-component-summary/finance-component-summary.component";
+import {TableModule} from "primeng/table";
+import {RouterLink} from "@angular/router";
+import {NgIf, CurrencyPipe} from "@angular/common";
 
 @Component({
     selector: 'supplier-supplies-list',
     templateUrl: './supplies-list.component.html',
-    styleUrl: './supplies-list.component.less'
+    styleUrl: './supplies-list.component.less',
+    standalone: true,
+    imports: [FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, NgIf, CurrencyPipe]
 })
 export class SuppliesListComponent implements OnChanges {
     @Input() supplierSuppliesData!: SupplierSuppliesData;

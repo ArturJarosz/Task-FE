@@ -2,18 +2,28 @@ import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges
 import {Task} from "../../generated/models/task";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {resolveLabel} from "../../shared/utils/label-utils";
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {TaskFormProvider, TaskForm} from "../form/task-form-provider";
 import {TaskStatus} from "../../generated/models/task-status";
 import {cloneDeep} from "lodash";
 import {DeleteTaskDto, UpdateTaskDto} from "../model/task";
 import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
 import {Architect} from "../../generated/models/architect";
+import {WrapperComponent} from "../../shared/wrapper/wrapper.component";
+import {Accordion, AccordionPanel, AccordionHeader, AccordionContent} from "primeng/accordion";
+import {SelectModule} from "primeng/select";
+import {DatePickerModule} from "primeng/datepicker";
+import {ButtonModule} from "primeng/button";
+import {InputTextModule} from "primeng/inputtext";
+import {Textarea} from "primeng/inputtextarea";
+import {NgIf} from "@angular/common";
 
 @Component({
     selector: 'task-detail',
     templateUrl: './task-detail.component.html',
-    styleUrl: './task-detail.component.less'
+    styleUrl: './task-detail.component.less',
+    standalone: true,
+    imports: [WrapperComponent, Accordion, AccordionPanel, AccordionHeader, AccordionContent, SelectModule, DatePickerModule, ButtonModule, InputTextModule, Textarea, ReactiveFormsModule, NgIf]
 })
 export class TaskDetailComponent implements OnInit, OnChanges {
     @Input()
