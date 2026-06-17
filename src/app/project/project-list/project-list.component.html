@@ -1,7 +1,8 @@
-<p-table [value]="projects!" [tableStyle]="{ 'min-width': '50rem' }">
+<p-table [value]="projects!" [rowHover]="true" [tableStyle]="{ 'min-width': '50rem' }">
     <ng-template pTemplate="header">
         <tr>
-            <th style="width: 5rem">Architect</th>
+            <th>Id</th>
+            <th>Architect</th>
             <th>Name</th>
             <th></th>
             <th>Type</th>
@@ -11,8 +12,12 @@
     </ng-template>
     <ng-template pTemplate="body" let-project>
         <tr [routerLink]="['/projects', project.id]" class="cursor-pointer">
+            <td>{{ project.id }}</td>
             <td class="text-center">
-                <p-avatar styleClass="mr-2" [label]="getArchitectInitials(project.architect)" shape="circle" styleClass="bg-primary text-white" [pTooltip]="getArchitectName(project.architect)" tooltipPosition="top"></p-avatar>
+                <div class="flex items-center justify-content-center gap-2">
+                    <p-avatar [label]="getArchitectInitials(project.architect)" shape="circle" styleClass="bg-primary text-white"></p-avatar>
+                    <span>{{ getArchitectName(project.architect) }}</span>
+                </div>
             </td>
             <td>{{ project.name}}</td>
             <td>
@@ -24,4 +29,3 @@
         </tr>
     </ng-template>
 </p-table>
-

@@ -8,6 +8,17 @@ import {provideStoreDevtools} from '@ngrx/store-devtools';
 import {providePrimeNG} from 'primeng/config';
 import {ConfirmationService, MessageService} from 'primeng/api';
 import Lara from '@primeng/themes/lara';
+import {definePreset} from '@primeng/themes';
+
+const LaraVerona = definePreset(Lara, {
+    components: {
+        card: {
+            root: {
+                borderRadius: '{border.radius.xl}'
+            }
+        }
+    }
+});
 import {authHttpInterceptorFn, provideAuth0} from '@auth0/auth0-angular';
 
 import {appRoutes} from './app.routes';
@@ -44,7 +55,7 @@ export const appConfig: ApplicationConfig = {
         provideAuth0(auth_config),
         providePrimeNG({
             theme: {
-                preset: Lara,
+                preset: LaraVerona,
                 options: {
                     darkModeSelector: false
                 }

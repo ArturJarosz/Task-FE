@@ -46,3 +46,10 @@ Thumbs.db
 
 # Docker
 /docker/env/local.env
+
+# Reference dir
+/reference
+
+# Local AI directories
+
+/openspec/*

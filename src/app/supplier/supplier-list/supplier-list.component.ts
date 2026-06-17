@@ -8,13 +8,14 @@ import {AddSupplierComponent} from "../add-supplier/add-supplier.component";
 import {TableModule} from "primeng/table";
 import {ButtonModule} from "primeng/button";
 import {RouterLink} from "@angular/router";
+import {AvatarModule} from "primeng/avatar";
 
 @Component({
     selector: 'supplier-list',
     templateUrl: './supplier-list.component.html',
     styleUrls: ['./supplier-list.component.less'],
     standalone: true,
-    imports: [WrapperComponent, AddSupplierComponent, TableModule, ButtonModule, RouterLink]
+    imports: [WrapperComponent, AddSupplierComponent, TableModule, ButtonModule, RouterLink, AvatarModule]
 })
 export class SupplierListComponent {
     pageTitle = "Suppliers";
@@ -41,6 +42,12 @@ export class SupplierListComponent {
 
     onNotify($event: boolean) {
         this.showAddComponent = false;
+    }
+
+    getSupplierInitials(name: string): string {
+        if (!name) return '?';
+        const words = name.trim().split(/\s+/);
+        return words.slice(0, 2).map(w => w.charAt(0)).join('').toUpperCase();
     }
 
     onDeleteSupplier($event: MouseEvent, supplier: Supplier) {

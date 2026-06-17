@@ -156,3 +156,8 @@ code completion and should not be edited manually. Also they are used in API ser
 - Use **Tailwind utility classes** for layout and spacing; do not use PrimeFlex
 - Match the current visual style of existing components (buttons, inputs, spacing, PrimeNG components)
 - PrimeNG 19 uses a theme preset system — component styling comes from the Lara preset and CSS variables
+
+
+### Docs
+- Always use context7 to fetch up-to-date docs before implementing
+- Always use https://v19.primeng.org/ as a source of documentation for PrimeNG related topics

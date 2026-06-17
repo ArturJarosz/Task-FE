@@ -1,7 +1,7 @@
 <p-table *ngIf="stages" [value]="stages" [tableStyle]="{ 'min-width': '50rem' }">
     <ng-template pTemplate="header">
         <tr>
-            <th style="width: 5rem">Architect</th>
+            <th>Architect</th>
             <th>Name</th>
             <th></th>
             <th>Type</th>
@@ -11,7 +11,10 @@
     <ng-template pTemplate="body" let-stage>
         <tr [routerLink]="['/projects', projectId, 'stages', stage.id]" class="cursor-pointer">
             <td class="text-center">
-                <p-avatar [label]="getArchitectInitials(stage.architectId)" shape="circle" styleClass="bg-primary text-white" size="normal" [pTooltip]="getArchitectName(stage.architectId)" tooltipPosition="top"></p-avatar>
+                <div class="flex items-center justify-content-center gap-2">
+                    <p-avatar [label]="getArchitectInitials(stage.architectId)" shape="circle" styleClass="bg-primary text-white" size="normal"></p-avatar>
+                    <span>{{ getArchitectName(stage.architectId) }}</span>
+                </div>
             </td>
             <td>{{ stage.name }}</td>
             <td>

@@ -1,6 +1,6 @@
 <wrapper [title]="'Clients'">
     <div wrapper-body>
-        <p-table [value]="clients" [tableStyle]="{ 'min-width': '50rem' }">
+        <p-table [value]="clients" [rowHover]="true" [tableStyle]="{ 'min-width': '50rem' }">
             <ng-template pTemplate="header">
                 <tr>
                     <th>Id</th>
@@ -15,9 +15,10 @@
                 <tr [routerLink]="['/clients', client.id]" class="cursor-pointer">
                     <td>{{ client.id }}</td>
                     <td>
-                        <a>
-                            {{ client.clientType == ClientType.PRIVATE ? client.firstName + " " + client.lastName : client.companyName }}
-                        </a>
+                        <div class="flex items-center gap-2">
+                            <p-avatar [label]="getClientInitials(client)" shape="circle" styleClass="bg-primary text-white"></p-avatar>
+                            <span>{{ client.clientType == ClientType.PRIVATE ? client.firstName + " " + client.lastName : client.companyName }}</span>
+                        </div>
                     </td>
                     <td>
                         <button pButton pRipple class="p-button-text p-button-plain p-0" icon="pi pi-times" (click)="deleteClientClick($event, client)" size="small"></button>

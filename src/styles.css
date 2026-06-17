@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
 @import "tailwindcss";
 @plugin "tailwindcss-primeui";
 /* Disable Tailwind dark mode variant - dark mode is not supported */
@@ -13,19 +14,60 @@
     --toast-message-font-size: 0.9rem;
 }
 
+html {
+    font-size: 15px;
+}
+
 body {
-    background: var(--p-surface-ground);
+    background: var(--p-surface-100);
+    font-family: Lato, Helvetica, sans-serif;
 }
 
 client-list p-confirmDialog .p-component-overlay {
     background-color: rgba(0, 0, 0, 0.1) !important;
 }
 
+/* shared table styling for all entity lists */
+client-list .p-datatable-thead > tr > th,
+architect-list .p-datatable-thead > tr > th,
+contractor-list .p-datatable-thead > tr > th,
+supplier-list .p-datatable-thead > tr > th,
+project-list .p-datatable-thead > tr > th {
+    background: var(--p-surface-0) !important;
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: #000;
+}
+
+client-list .p-datatable-tbody > tr > td,
+architect-list .p-datatable-tbody > tr > td,
+contractor-list .p-datatable-tbody > tr > td,
+supplier-list .p-datatable-tbody > tr > td,
+project-list .p-datatable-tbody > tr > td {
+    color: var(--p-text-muted-color);
+}
+
+client-list .p-datatable-tbody > tr > td:nth-child(2),
+client-list .p-datatable-tbody > tr > td:nth-child(2) a,
+architect-list .p-datatable-tbody > tr > td:nth-child(2),
+architect-list .p-datatable-tbody > tr > td:nth-child(2) a,
+contractor-list .p-datatable-tbody > tr > td:nth-child(2),
+contractor-list .p-datatable-tbody > tr > td:nth-child(2) a,
+supplier-list .p-datatable-tbody > tr > td:nth-child(2),
+supplier-list .p-datatable-tbody > tr > td:nth-child(2) a,
+project-list .p-datatable-tbody > tr > td:nth-child(2),
+project-list .p-datatable-tbody > tr > td:nth-child(2) a,
+project-list .p-datatable-tbody > tr > td:nth-child(3),
+project-list .p-datatable-tbody > tr > td:nth-child(3) a {
+    color: var(--p-text-color);
+}
+
 .card {
-    background: var(--p-surface-card);
+    background: var(--p-surface-0);
     padding: 1.5rem;
     border-radius: 12px;
-    box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 24px 36px rgba(0, 0, 0, 0.04);
+    box-shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--p-content-border-color);
 }
 
 .p-accordion .p-accordion-header .p-accordion-header-link {
@@ -75,8 +117,10 @@ textarea {
     color: white;
 }
 
-.add-button:hover button {
-    background: var(--p-green-700);
+.add-button button:hover {
+    background: var(--p-green-700) !important;
+    border: none !important;
+    color: white !important;
 }
 
 .remove-button button {
@@ -84,8 +128,10 @@ textarea {
     color: white;
 }
 
-.remove-button:hover button {
-    background: var(--p-red-700);
+.remove-button button:hover {
+    background: var(--p-red-700) !important;
+    border: none !important;
+    color: white !important;
 }
 
 .update-button button {
@@ -93,25 +139,23 @@ textarea {
     color: white;
 }
 
-.update-button:hover button {
-    background: var(--p-blue-700);
+.update-button button:hover {
+    background: var(--p-blue-700) !important;
+    border: none !important;
+    color: white !important;
 }
 
 .top-menu-button button {
     padding: 0.4rem 0.7rem;
 }
 
-.p-select, .p-inputtext {
-    border-color: #f1f0f0;
-}
 
 .p-datatable .p-datatable-tbody > tr > td {
-    padding: 0.75rem;
+    padding: 0.5rem;
 }
 
 .p-datatable .p-datatable-thead > tr > th {
     padding: 0.5rem 1rem;
-    border-width: 0 0 0 0;
 }
 
 .toggle-button .p-togglebutton {
@@ -162,6 +206,7 @@ textarea {
 
 .p-breadcrumb {
     --p-breadcrumb-padding: 0;
+    --p-breadcrumb-background: transparent;
     border: 0;
 }
 
