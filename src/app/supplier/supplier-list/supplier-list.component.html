@@ -1,19 +1,24 @@
 <wrapper [title]="pageTitle">
     <div wrapper-body>
-        <p-table [value]="suppliers">
+        <p-table [value]="suppliers" [rowHover]="true">
             <ng-template pTemplate="header">
                 <tr>
                     <th>Id</th>
                     <th>Name</th>
                     <th></th>
                     <th>Category</th>
-                    <th class="max-w-16 text-center">Number of supplies</th>
+                    <th class="max-w-16 text-center">Supplies</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-supplier>
                 <tr [routerLink]="['/suppliers', supplier.id]" class="cursor-pointer">
                     <td>{{ supplier.id }}</td>
-                    <td>{{ supplier.name }}</td>
+                    <td>
+                        <div class="flex items-center gap-2">
+                            <p-avatar [label]="getSupplierInitials(supplier.name)" shape="circle" styleClass="bg-primary text-white"></p-avatar>
+                            <span>{{ supplier.name }}</span>
+                        </div>
+                    </td>
                     <td>
                         <button pButton pRipple class="p-button-text p-button-plain p-0" icon="pi pi-times" (click)="onDeleteSupplier($event, supplier)" size="small"></button>
                     </td>

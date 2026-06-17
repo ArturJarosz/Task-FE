@@ -12,7 +12,7 @@ import {AvatarModule} from "primeng/avatar";
 import {BreadcrumbModule} from "primeng/breadcrumb";
 import {RippleModule} from "primeng/ripple";
 import {StyleClassModule} from "primeng/styleclass";
-import {InputTextModule} from "primeng/inputtext";
+import {TooltipModule} from "primeng/tooltip";
 import {NgIf, NgClass, AsyncPipe} from "@angular/common";
 
 @Component({
@@ -20,10 +20,12 @@ import {NgIf, NgClass, AsyncPipe} from "@angular/common";
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.less'],
     standalone: true,
-    imports: [ToastModule, AvatarModule, Menu, BreadcrumbModule, RippleModule, StyleClassModule, InputTextModule, NgIf, NgClass, AsyncPipe, RouterLink, RouterLinkActive, RouterOutlet]
+    imports: [ToastModule, AvatarModule, Menu, BreadcrumbModule, RippleModule, StyleClassModule, TooltipModule, NgIf, NgClass, AsyncPipe, RouterLink, RouterLinkActive, RouterOutlet]
 })
 export class AppComponent implements OnInit {
     title = 'Task-FE';
+
+    sidebarCollapsed = false;
 
     breadcrumbItems: MenuItem[] = [];
     userMenuItems: MenuItem[] = [];
@@ -79,5 +81,20 @@ export class AppComponent implements OnInit {
 
     toggleUserMenu(event: Event): void {
         this.userMenu.toggle(event);
+    }
+
+    alignUserMenuRight(): void {
+        requestAnimationFrame(() => {
+            const container = this.userMenu.container;
+            const target = this.userMenu.target as HTMLElement;
+            if (container && target) {
+                const targetRect = target.getBoundingClientRect();
+                container.style.left = (targetRect.right + window.scrollX - container.offsetWidth) + 'px';
+            }
+        });
+    }
+
+    toggleSidebar(): void {
+        this.sidebarCollapsed = !this.sidebarCollapsed;
     }
 }
