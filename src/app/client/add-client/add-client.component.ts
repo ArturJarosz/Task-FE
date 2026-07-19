@@ -23,7 +23,7 @@ import {SelectModule} from "primeng/select";
 import {InputTextModule} from "primeng/inputtext";
 import {Textarea} from "primeng/inputtextarea";
 import {ButtonModule} from "primeng/button";
-import {NgClass, NgIf, NgSwitch, NgSwitchCase} from "@angular/common";
+import {NgClass} from "@angular/common";
 
 @Injectable({
     providedIn: 'root',
@@ -33,7 +33,7 @@ import {NgClass, NgIf, NgSwitch, NgSwitchCase} from "@angular/common";
     templateUrl: './add-client.component.html',
     styleUrls: ['./add-client.component.less'],
     standalone: true,
-    imports: [DialogModule, SelectModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule, NgIf, NgSwitch, NgSwitchCase, NgClass]
+    imports: [DialogModule, SelectModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule, NgClass]
 })
 export class AddClientComponent implements OnInit {
     @Input()

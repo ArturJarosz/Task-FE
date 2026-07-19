@@ -7,45 +7,48 @@
         </div>
     </ng-template>
     <form [formGroup]="addInstallmentForm">
-        <div class="grid grid-cols-12 gap-4 border-surface p-1">
-            <div class="md:col-span-4 p-1">
-                <label for="stage" class="block text-color text-base">Stage</label>
-                <span>
-                <p-select [options]="stagesWithoutInstallment" optionLabel="name" optionValue="id"
-                            formControlName="stageId" class="w-full" appendTo="body" id="stage">
-                </p-select>
-            </span>
-            </div>
-            <div class="md:col-span-4 p-1">
-                <div class="text-surface-500 dark:text-surface-300 font-medium">Value</div>
-                <p-inputNumber formControlName="value" id="value" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2"></p-inputNumber>
+        <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
+            <div class="flex gap-4">
+                <div class="w-6/12">
+                    <label for="stage" class="block text-color text-base top-label">Stage</label>
+                    <p-select [options]="stagesWithoutInstallment" optionLabel="name" optionValue="id"
+                              formControlName="stageId" class="w-full" appendTo="body" id="stage">
+                    </p-select>
+                </div>
+                <div class="w-6/12">
+                    <label for="value" class="block text-color text-base top-label">Value</label>
+                    <p-inputNumber formControlName="value" id="value" mode="decimal"
+                                   [minFractionDigits]="2" [maxFractionDigits]="2"
+                                   styleClass="w-full" inputStyleClass="w-full"></p-inputNumber>
+                </div>
             </div>
         </div>
-        <div class="grid grid-cols-12 gap-4 border-surface p-1">
-            <div class="md:col-span-4 p-1">
-                <label for="paid" class="block text-color text-base">Paid</label>
-                <span class="p-input-icon-left w-full">
+        <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
+            <div class="flex gap-4">
+                <div class="w-6/12">
+                    <label for="hasInvoice" class="block text-color text-base top-label">Has invoice</label>
+                    <p-toggleSwitch formControlName="hasInvoice" id="hasInvoice"></p-toggleSwitch>
+                </div>
+                <div class="w-6/12">
+                    <label for="paid" class="block text-color text-base top-label">Paid</label>
                     <p-toggleSwitch formControlName="paid" id="paid"></p-toggleSwitch>
-                </span>
+                </div>
             </div>
-            <div class="md:col-span-4 p-1">
-                <div class="text-surface-500 dark:text-surface-300 font-medium">Date</div>
-                <p-datePicker formControlName="paymentDate" id="date" dateFormat="yy-mm-dd">
-                </p-datePicker>
-            </div>
-            <div class="md:col-span-4 p-1">
-                <div class="text-surface-500 dark:text-surface-300 font-medium">Has Invoice</div>
-                <p-toggleSwitch formControlName="hasInvoice" id="hasInvoice"></p-toggleSwitch>
+            <div class="flex gap-4">
+                <div class="w-6/12">
+                    <label for="date" class="block text-color text-base top-label">Payment date</label>
+                    <p-datePicker formControlName="paymentDate" id="date" dateFormat="yy-mm-dd"
+                                  styleClass="w-full" appendTo="body"></p-datePicker>
+                </div>
             </div>
         </div>
-        <div class="grid grid-cols-12 gap-4 border-surface p-1">
-            <div class="md:col-span-8 p-1">
-                <div class="text-surface-500 dark:text-surface-300 font-medium h-8">Note</div>
+        <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
+            <div class="w-full">
+                <label for="note" class="block text-color text-base top-label">Note</label>
                 <textarea formControlName="note" id="note" type="text" pInputTextarea rows="2"
-                          [autoResize]="true" style="height: 4rem;overflow: hidden;"></textarea>
+                          [autoResize]="true"></textarea>
             </div>
         </div>
-
     </form>
     <ng-template pTemplate="footer">
         <div class="flex gap-4 justify-end border-t border-surface pt-8">

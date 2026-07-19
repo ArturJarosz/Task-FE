@@ -1,5 +1,5 @@
 <p-dialog header="Add Supervision Visit" [(visible)]="visible" appendTo="body" [modal]="true"
-          [style]="{ width: '50vw', 'max-width': '600px'}"
+          [style]="{ width: '50vw', 'max-width': '800px'}"
           (onHide)="onClose()">
     <ng-template pTemplate="header">
         <div class="flex flex-col gap-2">
@@ -7,23 +7,29 @@
         </div>
     </ng-template>
     <form [formGroup]="addSupervisionVisitForm">
-        <div class="grid grid-cols-12 gap-4 border-surface p-1">
-            <div class="md:col-span-4 p-1">
-                <div class="text-surface-500 dark:text-surface-300 font-medium">Date of Visit</div>
-                <p-datePicker formControlName="dateOfVisit" id="dateOfVisit"
-                            dateFormat="yy-mm-dd" appendTo="body">
-                </p-datePicker>
+        <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
+            <div class="flex gap-4">
+                <div class="w-6/12">
+                    <label for="dateOfVisit" class="block text-color text-base top-label">Date of visit</label>
+                    <p-datePicker formControlName="dateOfVisit" id="dateOfVisit"
+                                  dateFormat="yy-mm-dd" styleClass="w-full" appendTo="body">
+                    </p-datePicker>
+                </div>
+                <div class="w-6/12">
+                    <label for="hoursCount" class="block text-color text-base top-label">Hours count</label>
+                    <p-inputNumber formControlName="hoursCount" id="hoursCount"
+                                   mode="decimal" [minFractionDigits]="1" [maxFractionDigits]="2"
+                                   [min]="0" styleClass="w-full" inputStyleClass="w-full">
+                    </p-inputNumber>
+                </div>
             </div>
-            <div class="md:col-span-4 p-1">
-                <div class="text-surface-500 dark:text-surface-300 font-medium">Hours Count</div>
-                <p-inputNumber formControlName="hoursCount" id="hoursCount"
-                               mode="decimal" [minFractionDigits]="1" [maxFractionDigits]="2"
-                               [min]="0">
-                </p-inputNumber>
-            </div>
-            <div class="md:col-span-4 p-1">
-                <div class="text-surface-500 dark:text-surface-300 font-medium">Payable</div>
-                <p-toggleSwitch formControlName="payable" id="payable"></p-toggleSwitch>
+        </div>
+        <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
+            <div class="flex gap-4">
+                <div class="w-6/12">
+                    <label for="payable" class="block text-color text-base top-label">Payable</label>
+                    <p-toggleSwitch formControlName="payable" id="payable"></p-toggleSwitch>
+                </div>
             </div>
         </div>
     </form>

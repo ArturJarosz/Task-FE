@@ -21,7 +21,7 @@
                     </div>
                     <div class="w-6/12">
                         <label for="type" class="block text-color text-base top-label">Type</label>
-                        <span style="width: 100%">
+                        <span class="w-full">
                             <p-select [options]="$projectTypes()" optionLabel="label" optionValue="id"
                                         formControlName="type" class="w-full" appendTo="body" id="type">
                             </p-select>
@@ -40,7 +40,7 @@
                     <div class="w-6/12">
                         <label for="architect" class="block text-color text-base w-full top-label">Architect</label>
                         <p-select [options]="$architectsModel()!" optionLabel="resolvedName" optionValue="id"
-                                    formControlName="architectId" appendTo="body" id="architect">
+                                    formControlName="architectId" class="w-full" appendTo="body" id="architect">
                         </p-select>
                     </div>
                 </div>

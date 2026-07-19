@@ -105,6 +105,10 @@ textarea {
     width: 100%;
 }
 
+.is-invalid {
+    border-color: var(--p-red-500) !important;
+}
+
 .p-button.p-button-icon-only.p-button-rounded {
     width: 1.5rem;
     height: 1.5rem;
