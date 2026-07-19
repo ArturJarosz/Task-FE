@@ -1,5 +1,5 @@
-<p-dialog header="Add new client" [(visible)]="visible" appendTo="body" [modal]="true" [style]="{ width: '50vw'}"
-          col-form-label
+<p-dialog header="Add new client" [(visible)]="visible" appendTo="body" [modal]="true"
+          [style]="{ width: '50vw', 'max-width': '800px'}"
           (onHide)="onClose()">
     <ng-template pTemplate="header">
         <div class="flex flex-col gap-2">
@@ -8,55 +8,66 @@
     </ng-template>
     <div>
         <form [formGroup]="clientForm">
-            <p-select [options]="$clientTypes()!" formControlName="clientType" optionLabel="label" optionValue="id">
-            </p-select>
-            <div class="flex flex-col gap-4 mt-4 border-surface pt-2"
-                 [ngSwitch]="clientForm.get('clientType')?.value">
-                <div class="flex gap-4" *ngSwitchCase="ClientType.PRIVATE.toString()">
+            <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
+                <div class="flex gap-4">
                     <div class="w-6/12">
-                        <label for="firstName" class="block text-color text-base top-label">First Name</label>
-                        <span class="p-input-icon-left w-full">
-                            <input type="text" class="w-full" id="firstName" formControlName="firstName"
-                                   pInputText
-                                   placeholder="first name"
-                                   [ngClass]="{'is-invalid': (clientForm.get('firstName')?.touched || clientForm.get('firstName')?.dirty) && !clientForm.get('firstName')?.valid }"
-                            />
-                        </span>
-                        <span *ngIf="(clientForm.get('firstName')?.touched || clientForm.get('firstName')?.dirty) && !clientForm.get('firstName')?.valid">
-                                Please enter first name!
-                        </span>
-                    </div>
-                    <div class="w-6/12">
-                        <label for="lastName" class="block text-color text-base top-label">Last Name</label>
-                        <span class="p-input-icon-left w-full">
-                            <input type="text" formControlName="lastName" class="w-full" id="lastName"
-                                   pInputText
-                                   placeholder="last name"
-                                   [ngClass]="{'is-invalid': (clientForm.get('lastName')?.touched || clientForm.get('lastName')?.dirty) && !clientForm.get('lastName')?.valid }"
-                            />
-                        </span>
-                        <span *ngIf="(clientForm.get('lastName')?.touched || clientForm.get('lastName')?.dirty) && !clientForm.get('lastName')?.valid ">
-                            Please enter last name!
-                        </span>
+                        <label for="clientType" class="block text-color text-base top-label">Client type</label>
+                        <p-select [options]="$clientTypes()!" formControlName="clientType" optionLabel="label"
+                                  optionValue="id" class="w-full" appendTo="body" id="clientType">
+                        </p-select>
                     </div>
                 </div>
-                <div class="flex gap-4" *ngSwitchCase="ClientType.CORPORATE.toString()">
-                    <div class="w-full">
-                        <label for="companyName" class="block text-color text-base top-label">Company Name</label>
-                        <span class="p-input-icon-left w-full">
-                            <input type="text" formControlName="companyName" class="w-full" id="companyName"
-                                   pInputText
-                                   placeholder="company name"
-                                   [ngClass]="{'is-invalid': (clientForm.get('companyName')?.touched || clientForm.get('companyName')?.dirty) && !clientForm.get('companyName')?.valid }"
-                            />
-                        </span>
-                        <span *ngIf="(clientForm.get('companyName')?.touched || clientForm.get('companyName')?.dirty) && !clientForm.get('companyName')?.valid ">
-                            Please enter last name!
-                        </span>
-                    </div>
-                </div>
+                @switch (clientForm.get('clientType')?.value) {
+                    @case (ClientType.PRIVATE.toString()) {
+                        <div class="flex gap-4">
+                            <div class="w-6/12">
+                                <label for="firstName" class="block text-color text-base top-label">First Name</label>
+                                <span class="p-input-icon-left w-full">
+                                    <input type="text" class="w-full" id="firstName" formControlName="firstName"
+                                           pInputText
+                                           placeholder="first name"
+                                           [ngClass]="{'is-invalid': (clientForm.get('firstName')?.touched || clientForm.get('firstName')?.dirty) && !clientForm.get('firstName')?.valid }"
+                                    />
+                                </span>
+                                @if ((clientForm.get('firstName')?.touched || clientForm.get('firstName')?.dirty) && !clientForm.get('firstName')?.valid) {
+                                    <span>Please enter first name!</span>
+                                }
+                            </div>
+                            <div class="w-6/12">
+                                <label for="lastName" class="block text-color text-base top-label">Last Name</label>
+                                <span class="p-input-icon-left w-full">
+                                    <input type="text" formControlName="lastName" class="w-full" id="lastName"
+                                           pInputText
+                                           placeholder="last name"
+                                           [ngClass]="{'is-invalid': (clientForm.get('lastName')?.touched || clientForm.get('lastName')?.dirty) && !clientForm.get('lastName')?.valid }"
+                                    />
+                                </span>
+                                @if ((clientForm.get('lastName')?.touched || clientForm.get('lastName')?.dirty) && !clientForm.get('lastName')?.valid) {
+                                    <span>Please enter last name!</span>
+                                }
+                            </div>
+                        </div>
+                    }
+                    @case (ClientType.CORPORATE.toString()) {
+                        <div class="flex gap-4">
+                            <div class="w-full">
+                                <label for="companyName" class="block text-color text-base top-label">Company Name</label>
+                                <span class="p-input-icon-left w-full">
+                                    <input type="text" formControlName="companyName" class="w-full" id="companyName"
+                                           pInputText
+                                           placeholder="company name"
+                                           [ngClass]="{'is-invalid': (clientForm.get('companyName')?.touched || clientForm.get('companyName')?.dirty) && !clientForm.get('companyName')?.valid }"
+                                    />
+                                </span>
+                                @if ((clientForm.get('companyName')?.touched || clientForm.get('companyName')?.dirty) && !clientForm.get('companyName')?.valid) {
+                                    <span>Please enter company name!</span>
+                                }
+                            </div>
+                        </div>
+                    }
+                }
             </div>
-            <div class="flex flex-col gap-4 mt-4 pt-2" formGroupName="contact">
+            <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2" formGroupName="contact">
                 <div class="flex gap-4">
                     <div class="w-6/12">
                         <label for="email" class="block text-color text-base top-label">Email</label>
@@ -77,51 +88,48 @@
                         </span>
                     </div>
                 </div>
-                <div formGroupName="address">
+                <div formGroupName="address" class="flex flex-col gap-4">
                     <div class="flex gap-4">
                         <div class="w-6/12">
                             <label for="city" class="block text-color text-base top-label">City</label>
                             <span class="p-input-icon-left w-full">
-                            <input type="text" class="w-full" id="city" formControlName="city"
-                                   pInputText
-                                   placeholder="city"
-                            />
-                        </span>
+                                <input type="text" class="w-full" id="city" formControlName="city"
+                                       pInputText
+                                       placeholder="city"
+                                />
+                            </span>
                         </div>
                         <div class="w-6/12">
                             <label for="postCode" class="block text-color text-base top-label">Post code</label>
                             <span class="p-input-icon-left w-full">
-                            <input type="text" formControlName="postCode" class="w-full" id="postCode"
-                                   pInputText
-                                   placeholder="post code"
-                            />
-                        </span>
+                                <input type="text" formControlName="postCode" class="w-full" id="postCode"
+                                       pInputText
+                                       placeholder="post code"
+                                />
+                            </span>
                         </div>
                     </div>
                     <div class="flex gap-4">
                         <div class="w-full">
                             <label for="street" class="block text-color text-base top-label">Street</label>
                             <span class="p-input-icon-left w-full">
-                            <input type="text" formControlName="street" class="w-full" id="street"
-                                   pInputText
-                                   placeholder="street"
-                            />
-                        </span>
+                                <input type="text" formControlName="street" class="w-full" id="street"
+                                       pInputText
+                                       placeholder="street"
+                                />
+                            </span>
+                        </div>
                     </div>
                 </div>
-                </div>
             </div>
-            <div class="flex flex-col gap-4 mt-4 pt-2">
+            <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
                 <div class="flex gap-4">
                     <div class="w-full">
                         <label for="note" class="block text-color text-base top-label">Note</label>
-                        <span class="p-input-icon-left w-full">
-                            <textarea rows="5" cols="30" pInputTextarea type="text" formControlName="note"
-                                      class="w-full" id="note"
-                                      pInputText
-                                      placeholder="note"
-                            ></textarea>
-                        </span>
+                        <textarea rows="5" pInputTextarea type="text" formControlName="note"
+                                  class="w-full" id="note"
+                                  placeholder="note"
+                        ></textarea>
                     </div>
                 </div>
             </div>

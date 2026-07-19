@@ -10,42 +10,44 @@
         </div>
     </ng-template>
     <form [formGroup]="addTaskForm">
-        <div class="grid grid-cols-12 gap-4 border-surface p-1">
-            <div class="md:col-span-6 p-1">
-                <label for="name" class="block text-color text-base">Task name</label>
-                <span class="p-input-icon-left w-full">
-                    <input type="text" class="w-full" id="name" formControlName="name" pInputText placeholder="task name"
-                           [ngClass]="{'is-invalid': (addTaskForm.get('name')?.touched || addTaskForm.get('name')?.dirty) && !addTaskForm.get('name')?.valid }"/>
-                </span>
-            </div>
-            <div class="md:col-span-6 p-1">
-                <label for="type" class="block text-color text-base">Type</label>
-                <span class="p-input-icon-left w-full">
+        <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
+            <div class="flex gap-4">
+                <div class="w-6/12">
+                    <label for="name" class="block text-color text-base top-label">Task name</label>
+                    <span class="p-input-icon-left w-full">
+                        <input type="text" class="w-full" id="name" formControlName="name" pInputText placeholder="task name"
+                               [ngClass]="{'is-invalid': (addTaskForm.get('name')?.touched || addTaskForm.get('name')?.dirty) && !addTaskForm.get('name')?.valid }"/>
+                    </span>
+                </div>
+                <div class="w-6/12">
+                    <label for="type" class="block text-color text-base top-label">Type</label>
                     <p-select [options]="$taskTypes()" optionLabel="label" optionValue="id"
-                                formControlName="type" class="w-full" appendTo="body" id="type">
+                              formControlName="type" class="w-full" appendTo="body" id="type">
                     </p-select>
-                </span>
-            </div>
-            <div class="md:col-span-6 p-1">
-                <label for="architect" class="block text-color text-base">Architect</label>
-                <span class="p-input-icon-left w-full">
-                    <p-select [options]="$architects()" optionLabel="firstName" optionValue="id"
-                                formControlName="architectId" class="w-full" appendTo="body" id="architect">
-                        <ng-template pTemplate="selectedItem" let-architect>
-                            <span>{{architect.firstName}} {{architect.lastName}}</span>
-                        </ng-template>
-                        <ng-template pTemplate="item" let-architect>
-                            <span>{{architect.firstName}} {{architect.lastName}}</span>
-                        </ng-template>
-                    </p-select>
-                </span>
+                </div>
             </div>
         </div>
-        <div class="grid grid-cols-12 gap-4 border-surface p-1">
-            <div class="md: p-1 p-1 w-full">
-                <div class="text-surface-500 dark:text-surface-300 font-medium h-8">Note</div>
+        <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
+            <div class="flex gap-4">
+                <div class="w-6/12">
+                    <label for="architect" class="block text-color text-base top-label">Architect</label>
+                    <p-select [options]="$architects()" optionLabel="firstName" optionValue="id"
+                              formControlName="architectId" class="w-full" appendTo="body" id="architect">
+                        <ng-template pTemplate="selectedItem" let-architect>
+                            <span>{{ architect.firstName }} {{ architect.lastName }}</span>
+                        </ng-template>
+                        <ng-template pTemplate="item" let-architect>
+                            <span>{{ architect.firstName }} {{ architect.lastName }}</span>
+                        </ng-template>
+                    </p-select>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
+            <div class="w-full">
+                <label for="note" class="block text-color text-base top-label">Note</label>
                 <textarea formControlName="note" id="note" type="text" pInputTextarea rows="2"
-                          [autoResize]="true" style="height: 4rem;overflow: hidden;"></textarea>
+                          [autoResize]="true"></textarea>
             </div>
         </div>
     </form>

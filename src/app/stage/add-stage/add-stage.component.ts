@@ -18,14 +18,14 @@ import {Textarea} from "primeng/inputtextarea";
 import {ToggleSwitchModule} from "primeng/toggleswitch";
 import {InputNumberModule} from "primeng/inputnumber";
 import {ButtonModule} from "primeng/button";
-import {NgIf, NgClass} from "@angular/common";
+import {NgClass} from "@angular/common";
 
 @Component({
     selector: 'add-stage',
     templateUrl: './add-stage.component.html',
     styleUrls: ['./add-stage.component.less'],
     standalone: true,
-    imports: [DialogModule, SelectModule, DatePickerModule, InputTextModule, Textarea, ToggleSwitchModule, InputNumberModule, ButtonModule, ReactiveFormsModule, NgIf, NgClass]
+    imports: [DialogModule, SelectModule, DatePickerModule, InputTextModule, Textarea, ToggleSwitchModule, InputNumberModule, ButtonModule, ReactiveFormsModule, NgClass]
 })
 export class AddStageComponent implements OnInit {
     @Input()
