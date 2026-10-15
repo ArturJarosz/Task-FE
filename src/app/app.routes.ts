@@ -22,6 +22,7 @@ import {ClientListShellComponent} from './client/client-list-shell/client-list-s
 import {ClientDetailShellComponent} from './client/client-detail-shell/client-detail-shell.component';
 import {ArchitectListComponent} from './architect/architect-list/architect-list.component';
 import {ArchitectDetailShellComponent} from './architect/architect-detail-shell/architect-detail-shell.component';
+import {CalendarShellComponent} from './calendar/calendar-shell/calendar-shell.component';
 
 export const appRoutes: Routes = [
     {path: '', redirectTo: 'home', pathMatch: 'full'},
@@ -53,6 +54,8 @@ export const appRoutes: Routes = [
     {path: 'suppliers/:supplierId', component: SupplierDetailShellComponent, canActivate: [loggedInGuardGuard]},
     // Financial report
     {path: 'financial-report', component: FinancialReportShellComponent, canActivate: [loggedInGuardGuard]},
+    // Calendar routes
+    {path: 'calendar', component: CalendarShellComponent, canActivate: [loggedInGuardGuard]},
     // Security routes
     {path: 'logout', component: LogoutComponent},
     {path: 'not-logged-in', component: NotLoggedInComponent},

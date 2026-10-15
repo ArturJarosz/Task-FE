@@ -1,0 +1,67 @@
+<p-dialog header="header" [(visible)]="visible" appendTo="body" [modal]="true"
+          [style]="{ width: '50vw', 'max-width': '800px'}"
+          (onHide)="onClose()">
+    <ng-template pTemplate="header">
+        <div class="flex flex-col gap-2">
+            <h1 class="m-0 text-surface-900 dark:text-surface-0 font-semibold leading-normal">{{ header }}</h1>
+        </div>
+    </ng-template>
+    <form [formGroup]="calendarEventForm">
+        <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
+            <div class="w-full">
+                <label for="name" class="block text-color text-base top-label">Event name</label>
+                <span class="p-input-icon-left w-full">
+                    <input type="text" class="w-full" id="name" formControlName="name"
+                           pInputText placeholder="event name"
+                           [ngClass]="{'is-invalid': (calendarEventForm.get('name')?.touched || calendarEventForm.get('name')?.dirty) && !calendarEventForm.get('name')?.valid }"/>
+                </span>
+            </div>
+        </div>
+        <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
+            <div class="flex items-center gap-3">
+                <label for="allDay" class="text-color text-base top-label">All day</label>
+                <p-toggleSwitch formControlName="allDay" id="allDay"></p-toggleSwitch>
+            </div>
+            <div class="flex gap-4">
+                <div class="w-6/12">
+                    <label for="startDateTime" class="block text-color text-base top-label">Start</label>
+                    <p-datePicker formControlName="startDateTime" id="startDateTime" dateFormat="yy-mm-dd"
+                                  [showTime]="!calendarEventForm.get('allDay')?.value" hourFormat="24"
+                                  styleClass="w-full" appendTo="body"></p-datePicker>
+                </div>
+                <div class="w-6/12">
+                    <label for="endDateTime" class="block text-color text-base top-label">End</label>
+                    <p-datePicker formControlName="endDateTime" id="endDateTime" dateFormat="yy-mm-dd"
+                                  [showTime]="!calendarEventForm.get('allDay')?.value" hourFormat="24"
+                                  styleClass="w-full" appendTo="body"></p-datePicker>
+                </div>
+            </div>
+            @if (calendarEventForm.errors?.['endBeforeStart']) {
+                <div class="text-red-500 text-sm">End must not be before start.</div>
+            }
+        </div>
+        <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
+            <div class="w-full">
+                <label for="description" class="block text-color text-base top-label">Description</label>
+                <textarea formControlName="description" id="description" type="text" pInputTextarea rows="3"
+                          [autoResize]="true"></textarea>
+            </div>
+        </div>
+    </form>
+    <ng-template pTemplate="footer">
+        <div class="flex gap-4 justify-between border-t border-surface pt-8">
+            <div>
+                @if (event) {
+                    <p-button label="Delete" styleClass="p-button-outlined p-button-danger"
+                              (onClick)="onDelete()"></p-button>
+                }
+            </div>
+            <div class="flex gap-4">
+                <p-button label="Cancel" styleClass="p-button-outlined p-button-secondary"
+                          (onClick)="onCancel()"></p-button>
+                <p-button label="Save" styleClass="p-button-outlined" [disabled]="!isSaveEnabled()"
+                          (onClick)="onSave()"></p-button>
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>

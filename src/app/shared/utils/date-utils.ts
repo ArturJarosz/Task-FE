@@ -7,6 +7,13 @@ export function toTimeZoneString(date?: Date): string | undefined {
     return format(date, "yyyy-MM-dd", {timeZone: 'Europe/Warsaw'});
 }
 
+export function toLocalDateTimeString(date?: Date): string | undefined {
+    if (date === undefined) {
+        return undefined;
+    }
+    return format(date, "yyyy-MM-dd'T'HH:mm:ss", {timeZone: 'Europe/Warsaw'});
+}
+
 export function toDateIfExists(maybeDate?: string) {
     return maybeDate ? new Date(maybeDate) : undefined;
 }
