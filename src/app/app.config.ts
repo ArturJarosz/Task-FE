@@ -43,6 +43,7 @@ import {UserRestService, UserRestServiceImpl} from './shared/user/rest/user-rest
 import {BreadcrumbService, BreadcrumbServiceImpl} from './shared/breadcrumb/breadcrumb.service';
 import {ClientRestService, ClientRestServiceImpl} from './client/rest/client-rest.service';
 import {ArchitectRestService, ArchitectRestServiceImpl} from './architect/rest/architect-rest.service';
+import {CalendarRestService, CalendarRestServiceImpl} from './calendar/rest/calendar-rest.service';
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -82,5 +83,6 @@ export const appConfig: ApplicationConfig = {
         {provide: BreadcrumbService, useClass: BreadcrumbServiceImpl},
         {provide: ClientRestService, useClass: ClientRestServiceImpl},
         {provide: ArchitectRestService, useClass: ArchitectRestServiceImpl},
+        {provide: CalendarRestService, useClass: CalendarRestServiceImpl},
     ]
 };

@@ -171,6 +171,16 @@ export type { GetSystemParameter$Params as GetSystemParameter$Params } from './f
 export { getSystemParameter as getSystemParameter } from './fn/system-parameter/get-system-parameter';
 export type { UpdateSystemParameter$Params as UpdateSystemParameter$Params } from './fn/system-parameter/update-system-parameter';
 export { updateSystemParameter as updateSystemParameter } from './fn/system-parameter/update-system-parameter';
+export type { GetCalendarEvents$Params as GetCalendarEvents$Params } from './fn/calendar/get-calendar-events';
+export { getCalendarEvents as getCalendarEvents } from './fn/calendar/get-calendar-events';
+export type { CreateCalendarEvent$Params as CreateCalendarEvent$Params } from './fn/calendar/create-calendar-event';
+export { createCalendarEvent as createCalendarEvent } from './fn/calendar/create-calendar-event';
+export type { GetCalendarEvent$Params as GetCalendarEvent$Params } from './fn/calendar/get-calendar-event';
+export { getCalendarEvent as getCalendarEvent } from './fn/calendar/get-calendar-event';
+export type { UpdateCalendarEvent$Params as UpdateCalendarEvent$Params } from './fn/calendar/update-calendar-event';
+export { updateCalendarEvent as updateCalendarEvent } from './fn/calendar/update-calendar-event';
+export type { DeleteCalendarEvent$Params as DeleteCalendarEvent$Params } from './fn/calendar/delete-calendar-event';
+export { deleteCalendarEvent as deleteCalendarEvent } from './fn/calendar/delete-calendar-event';
 export type { CreateUser$Params as CreateUser$Params } from './fn/user/create-user';
 export { createUser as createUser } from './fn/user/create-user';
 export type { GetCurrentUser$Params as GetCurrentUser$Params } from './fn/user/get-current-user';

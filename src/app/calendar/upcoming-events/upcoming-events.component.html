@@ -1,0 +1,33 @@
+<div class="bg-surface-0 dark:bg-surface-900 rounded-xl border border-surface p-4">
+    <h2 class="text-lg font-semibold text-surface-900 dark:text-surface-0 mb-4">Upcoming events</h2>
+    @if (events.length === 0) {
+        <div class="text-surface-500 dark:text-surface-400 text-sm">No upcoming events</div>
+    }
+    <ul class="list-none p-0 m-0 flex flex-col gap-3">
+        @for (event of events; track event.id) {
+            <li class="flex items-start gap-3 border border-surface rounded-lg p-3">
+                <div class="flex flex-col items-center justify-center w-12 shrink-0 text-center">
+                    <span class="text-xl font-semibold text-surface-900 dark:text-surface-0">{{ getDay(event.startDateTime) }}</span>
+                    <span class="text-xs uppercase text-surface-500 dark:text-surface-400">{{ getMonth(event.startDateTime) }}</span>
+                </div>
+                <div class="flex-auto min-w-0">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="font-medium text-surface-900 dark:text-surface-0">{{ event.name }}</span>
+                        <p-tag [value]="event.syncStatus" [severity]="getSyncStatusSeverity(event.syncStatus)"
+                               [icon]="getSyncStatusIcon(event.syncStatus)"></p-tag>
+                    </div>
+                    <div class="text-sm text-surface-500 dark:text-surface-400">{{ getTimeRange(event) }}</div>
+                    @if (event.description) {
+                        <div class="text-sm text-surface-600 dark:text-surface-300 truncate">{{ event.description }}</div>
+                    }
+                </div>
+                <div class="flex gap-1 shrink-0">
+                    <p-button icon="pi pi-pencil" styleClass="p-button-text p-button-rounded"
+                              (onClick)="editEvent.emit(event)"></p-button>
+                    <p-button icon="pi pi-trash" styleClass="p-button-text p-button-rounded p-button-danger"
+                              (onClick)="deleteEvent.emit(event)"></p-button>
+                </div>
+            </li>
+        }
+    </ul>
+</div>
