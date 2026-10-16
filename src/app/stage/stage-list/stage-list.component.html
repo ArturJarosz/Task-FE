@@ -1,28 +1,46 @@
-<p-table *ngIf="stages" [value]="stages" [tableStyle]="{ 'min-width': '50rem' }">
+<p-table *ngIf="stages?.length; else emptyState" [value]="stages!" [tableStyle]="{'min-width': '40rem'}">
     <ng-template pTemplate="header">
         <tr>
-            <th>Architect</th>
             <th>Name</th>
-            <th></th>
             <th>Type</th>
+            <th>Architect</th>
             <th>Status</th>
+            <th class="w-16"><span class="sr-only">Actions</span></th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-stage>
         <tr [routerLink]="['/projects', projectId, 'stages', stage.id]" class="cursor-pointer">
-            <td class="text-center">
-                <div class="flex items-center justify-content-center gap-2">
-                    <p-avatar [label]="getArchitectInitials(stage.architectId)" shape="circle" styleClass="bg-primary text-white" size="normal"></p-avatar>
-                    <span>{{ getArchitectName(stage.architectId) }}</span>
+            <td class="font-medium text-gray-800">{{ stage.name }}</td>
+            <td>{{ getStageLabelType(stage.type) }}</td>
+            <td>
+                <div *ngIf="getArchitectName(stage.architectId) as architectName; else notSet" class="flex items-center gap-3">
+                    <span class="omcd-avatar bg-brand-50 text-brand-500">{{ getArchitectInitials(stage.architectId) }}</span>
+                    <span class="text-gray-800">{{ architectName }}</span>
                 </div>
             </td>
-            <td>{{ stage.name }}</td>
             <td>
-                <button pButton pRipple class="p-button-text p-button-plain p-0" icon="pi pi-times" (click)="deleteTask($event, stage.name, stage.id)" size="small"></button>
+                <p-tag [value]="getStageStatusLabel(stage.status)" [severity]="statusSeverity(stage.status)"/>
             </td>
-            <td>{{ getStageLabelType(stage.type) }}</td>
-            <td>{{ getStageStatusLabel(stage.status) }}</td>
+            <td class="text-right">
+                <p-button icon="pi pi-ellipsis-h" [text]="true" [rounded]="true" severity="secondary"
+                          pTooltip="Stage actions" tooltipPosition="left" ariaLabel="Stage actions"
+                          (onClick)="openRowMenu($event, stage, rowMenu)"/>
+            </td>
         </tr>
     </ng-template>
 </p-table>
+<p-menu #rowMenu [model]="rowMenuItems" [popup]="true" appendTo="body"/>
 
+<ng-template #notSet>
+    <span class="text-gray-400">Not set</span>
+</ng-template>
+
+<ng-template #emptyState>
+    <div class="flex flex-col items-center text-center gap-2 px-6 pt-6 pb-10 border-t border-gray-200">
+        <div class="flex items-center justify-center w-14 h-14 rounded-full bg-gray-100 text-gray-500">
+            <i class="pi pi-list text-xl"></i>
+        </div>
+        <h3 class="m-0 mt-2 text-base font-semibold text-gray-800">No stages yet</h3>
+        <p class="m-0 text-sm text-gray-500">Split the project into stages to plan tasks and installments.</p>
+    </div>
+</ng-template>

@@ -36,6 +36,8 @@ export const ClientStore = signalStore(
         setClientId(clientId: number) {
             if (store.clientId() != clientId) {
                 this.setClientNeedRefresh();
+                // Drop the previous client's projects so they don't show while the new ones load
+                patchState(store, {clientProjectsSummary: null});
             }
             patchState(store, {clientId: clientId});
         },

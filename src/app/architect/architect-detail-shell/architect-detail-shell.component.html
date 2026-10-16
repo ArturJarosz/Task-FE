@@ -1,7 +1,23 @@
-<architect-detail
-        [architect]="$architect()"
-        [$architectProjectsSummary]="$architectProjectsSummary"
-        [projectTypes]="$projectTypes()"
-        [projectStatuses]="$projectStatuses()"
->
+<architect-detail *ngIf="$architect() as architect; else loading"
+                  [architect]="architect"
+                  [projectsSummary]="$architectProjectsSummary()"
+                  [projectTypes]="$projectTypes()"
+                  [projectStatuses]="$projectStatuses()">
 </architect-detail>
+
+<ng-template #loading>
+    <div class="flex flex-col gap-6">
+        <p-skeleton width="10rem" height="1.75rem"/>
+        <div class="omcd-card flex items-center gap-5 p-6">
+            <p-skeleton width="72px" height="72px" borderRadius="16px"/>
+            <div class="flex flex-col gap-2 flex-1">
+                <p-skeleton width="16rem" height="1.5rem"/>
+                <p-skeleton width="12rem" height="1rem"/>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_340px] gap-6">
+            <div class="omcd-card p-6"><p-skeleton height="12rem"/></div>
+            <div class="omcd-card p-6"><p-skeleton height="12rem"/></div>
+        </div>
+    </div>
+</ng-template>

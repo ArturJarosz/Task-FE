@@ -38,6 +38,8 @@ export const ContractorStore = signalStore(
                 if (store.contractorId() !== contractorId) {
                     this.setContractorNeedsRefresh();
                     this.setContractorJobsDataNeedRefresh();
+                    // Drop the previous contractor's jobs so they don't show while the new ones load
+                    patchState(store, {contractorJobsData: {}});
                 }
                 patchState(store, {contractorId: contractorId});
             },

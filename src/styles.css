@@ -1,223 +1,270 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
-@import "tailwindcss";
-@plugin "tailwindcss-primeui";
-/* Disable Tailwind dark mode variant - dark mode is not supported */
-@variant dark (&:where(.dark-mode-disabled, .dark-mode-disabled *));
+/* OMCD design system v2 — global styles ("TailAdmin" style). Rules: DESIGN_GUIDELINES.md
+   Keep the order: layer order, font, Tailwind, tailwindcss-primeui, then everything below. */
 
+/* PrimeNG styles go in the "primeng" layer (see app.config.ts). Declaring the order here, before Tailwind,
+   keeps them above Tailwind's base but below components and utilities, so utility classes win. */
+@layer theme, base, primeng, components, utilities;
 
-  :root {
-    /* toast message */
-    --toast-message-maring: 0 0 0 0.8rem;
-    --toast-message-width: 35rem;
-    --toast-message-main-icon-width: 1.5rem;
-    --toast-message-main-icon-height: 1.5rem;
-    --toast-message-font-size: 0.9rem;
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
+@import 'tailwindcss-primeui';
+
+/* dark: variants apply only under <html class="app-dark">, matching the PrimeNG darkModeSelector */
+@custom-variant dark (&:where(.app-dark, .app-dark *));
+
+/* ---------- Tailwind theme: same palette as the PrimeNG preset ----------
+   After this, bg-brand-50, text-brand-500, text-gray-500, border-gray-200 … match the mockups. */
+@theme {
+  --font-sans: 'Outfit', system-ui, sans-serif;
+
+  /* Text one step larger than Tailwind's defaults (Outfit reads small); spacing is unchanged */
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.125rem;
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.375rem;
+  --text-base: 1.0625rem;
+  --text-base--line-height: 1.5rem;
+
+  --color-brand-50: #ecf3ff;
+  --color-brand-100: #dde9ff;
+  --color-brand-200: #c2d6ff;
+  --color-brand-300: #9cb9ff;
+  --color-brand-400: #7592ff;
+  --color-brand-500: #465fff;
+  --color-brand-600: #3641f5;
+  --color-brand-700: #2a31d8;
+
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f2f4f7;
+  --color-gray-200: #e4e7ec;
+  --color-gray-300: #d0d5dd;
+  --color-gray-400: #98a2b3;
+  --color-gray-500: #667085;
+  --color-gray-600: #475467;
+  --color-gray-700: #344054;
+  --color-gray-800: #1d2939;
+  --color-gray-900: #101828;
+
+  --color-success-50: #ecfdf3;
+  --color-success-700: #027a48;
+  --color-warning-50: #fffaeb;
+  --color-warning-700: #b54708;
+  --color-error-50: #fef3f2;
+  --color-error-600: #d92d20;
+  --color-error-700: #b42318;
+
+  /* Chart series, in fixed order (validated with the dataviz palette validator: CVD and normal-vision pass on light).
+     1 is the brand blue; 2-4 follow the reference categorical order; 5 is reserved for expenses. */
+  --color-chart-1: #465fff;
+  --color-chart-2: #eb6834;
+  --color-chart-3: #1baf7a;
+  --color-chart-4: #eda100;
+  --color-chart-5: #e34948;
+
+  --shadow-theme-xs: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
+  --shadow-focus-ring: 0 0 0 4px rgba(70, 95, 255, 0.12);
 }
 
-html {
-    font-size: 15px;
+/* ---------- App-level sizes ---------- */
+:root {
+  --omcd-sidebar-w: 290px;
+  --omcd-topbar-h: 76px;
+  --omcd-content-max: 1536px;
 }
 
 body {
-    background: var(--p-surface-100);
-    font-family: Lato, Helvetica, sans-serif;
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 22px;
+  color: var(--color-gray-800);
+  background: var(--color-gray-50);
+  -webkit-font-smoothing: antialiased;
 }
 
-client-list p-confirmDialog .p-component-overlay {
-    background-color: rgba(0, 0, 0, 0.1) !important;
+/* PrimeNG: inherit Outfit and use 14px text in controls and tables (TailAdmin density) */
+.p-component,
+.p-inputtext,
+.p-select-label,
+.p-button-label,
+.p-datatable,
+.p-tag {
+  font-family: inherit;
 }
-
-/* shared table styling for all entity lists */
-client-list .p-datatable-thead > tr > th,
-architect-list .p-datatable-thead > tr > th,
-contractor-list .p-datatable-thead > tr > th,
-supplier-list .p-datatable-thead > tr > th,
-project-list .p-datatable-thead > tr > th {
-    background: var(--p-surface-0) !important;
-    font-weight: 700;
-    font-size: 1.125rem;
-    color: #000;
-}
-
-client-list .p-datatable-tbody > tr > td,
-architect-list .p-datatable-tbody > tr > td,
-contractor-list .p-datatable-tbody > tr > td,
-supplier-list .p-datatable-tbody > tr > td,
-project-list .p-datatable-tbody > tr > td {
-    color: var(--p-text-muted-color);
-}
-
-client-list .p-datatable-tbody > tr > td:nth-child(2),
-client-list .p-datatable-tbody > tr > td:nth-child(2) a,
-architect-list .p-datatable-tbody > tr > td:nth-child(2),
-architect-list .p-datatable-tbody > tr > td:nth-child(2) a,
-contractor-list .p-datatable-tbody > tr > td:nth-child(2),
-contractor-list .p-datatable-tbody > tr > td:nth-child(2) a,
-supplier-list .p-datatable-tbody > tr > td:nth-child(2),
-supplier-list .p-datatable-tbody > tr > td:nth-child(2) a,
-project-list .p-datatable-tbody > tr > td:nth-child(2),
-project-list .p-datatable-tbody > tr > td:nth-child(2) a,
-project-list .p-datatable-tbody > tr > td:nth-child(3),
-project-list .p-datatable-tbody > tr > td:nth-child(3) a {
-    color: var(--p-text-color);
-}
-
-.card {
-    background: var(--p-surface-0);
-    padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-    border: 1px solid var(--p-content-border-color);
-}
-
-.p-accordion .p-accordion-header .p-accordion-header-link {
-    padding: 0.75rem !important;
-}
-
-.p-accordion .p-accordion-content {
-    padding: 0.5rem 2rem;
-}
-
-input {
-    max-width: 100% !important;
-    width: 100%;
-}
-
-.p-datePicker {
-    width: 100%;
-}
-
-.p-select {
-    min-width: 75%;
-    max-width: 100%;
-}
-
-.p-select-panel .p-select-items .p-select-item {
-    padding: 0.25rem 0.75rem
-}
-
-.p-inputtext {
-    padding: 0.25rem 0.75rem;
-}
-
-textarea {
-    min-height: 4rem !important;
-    width: 100%;
-}
-
-.is-invalid {
-    border-color: var(--p-red-500) !important;
-}
-
-.p-button.p-button-icon-only.p-button-rounded {
-    width: 1.5rem;
-    height: 1.5rem;
-    font-weight: bold;
-    border: 0px;
-}
-
-.add-button button {
-    background: var(--p-green-700);
-    color: white;
-}
-
-.add-button button:hover {
-    background: var(--p-green-700) !important;
-    border: none !important;
-    color: white !important;
-}
-
-.remove-button button {
-    background: var(--p-red-600);
-    color: white;
-}
-
-.remove-button button:hover {
-    background: var(--p-red-700) !important;
-    border: none !important;
-    color: white !important;
-}
-
-.update-button button {
-    background: var(--p-blue-600);
-    color: white;
-}
-
-.update-button button:hover {
-    background: var(--p-blue-700) !important;
-    border: none !important;
-    color: white !important;
-}
-
-.top-menu-button button {
-    padding: 0.4rem 0.7rem;
-}
-
-
+.p-inputtext,
+.p-select-label,
+.p-button-label,
 .p-datatable .p-datatable-tbody > tr > td {
-    padding: 0.5rem;
+  font-size: 0.9375rem;
 }
-
 .p-datatable .p-datatable-thead > tr > th {
-    padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
 }
 
-.toggle-button .p-togglebutton {
-    padding: 0.4rem 0.7rem;
+/* ---------- Reusable layout classes ---------- */
+@layer components {
+  /* Page header: title left, breadcrumb right */
+  .omcd-page-header {
+    @apply flex flex-wrap items-center justify-between gap-3 mb-6;
+  }
+  .omcd-page-title {
+    @apply m-0 text-xl leading-[30px] font-semibold text-gray-800;
+  }
+
+  /* Card: the only container. Never nest cards in cards. */
+  .omcd-card {
+    @apply bg-white border border-gray-200 rounded-2xl;
+  }
+  .omcd-card-header {
+    @apply flex flex-wrap items-center justify-between gap-4 px-6 py-5;
+  }
+  .omcd-card-title {
+    @apply m-0 text-lg leading-7 font-semibold text-gray-800;
+  }
+  .omcd-card-subtitle {
+    @apply mt-1 text-sm text-gray-500;
+  }
+  .omcd-card-body {
+    @apply p-6;
+  }
+
+  /* Read-only field: small grey label above a medium-weight value */
+  .omcd-field-label {
+    @apply block mb-1.5 text-xs text-gray-500;
+  }
+  .omcd-field-value {
+    @apply text-sm font-medium text-gray-800;
+  }
+  .omcd-field-value--empty {
+    @apply font-normal text-gray-400;
+  }
+
+  /* Form label above an input */
+  .omcd-form-label {
+    @apply block mb-1.5 text-sm font-medium text-gray-700;
+  }
+
+  /* KPI card content */
+  .omcd-kpi-icon {
+    @apply flex items-center justify-center w-12 h-12 rounded-xl bg-gray-100 text-gray-800;
+  }
+  .omcd-kpi-label {
+    @apply text-sm text-gray-500;
+  }
+  .omcd-kpi-value {
+    @apply text-3xl leading-[38px] font-bold text-gray-800 tabular-nums;
+  }
+
+  /* Sidebar navigation */
+  .omcd-nav-group {
+    @apply px-3 mt-6 mb-2 text-xs uppercase tracking-wide text-gray-500;
+  }
+  .omcd-nav-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 no-underline hover:bg-gray-100;
+  }
+  .omcd-nav-item i {
+    @apply text-lg text-gray-500;
+  }
+  .omcd-nav-item.active {
+    @apply bg-brand-50 text-brand-500;
+  }
+  .omcd-nav-item.active i {
+    @apply text-brand-500;
+  }
+
+  /* Segmented control: routed page tabs and small filters */
+  .omcd-seg {
+    @apply inline-flex flex-wrap gap-0.5 p-0.5 rounded-lg bg-gray-100;
+  }
+  /* Works on <a> (routed tabs) and <button> (filters) */
+  .omcd-seg-item {
+    @apply inline-flex items-center h-10 px-4 rounded-md border-0 bg-transparent cursor-pointer font-[inherit] text-sm font-medium text-gray-500 no-underline hover:text-gray-800;
+  }
+  .omcd-seg-item.active {
+    @apply bg-white text-gray-900 shadow-theme-xs;
+  }
+
+  /* Initials avatar; pick a tint with bg-*-50 + text-*-700 */
+  .omcd-avatar {
+    @apply inline-flex items-center justify-center shrink-0 w-10 h-10 rounded-full text-sm font-medium;
+  }
+
+  /* Money and numbers line up */
+  .omcd-num {
+    @apply text-right tabular-nums whitespace-nowrap;
+  }
 }
 
-.p-togglebutton.p-button.p-highlight {
-    padding: 0.4rem 0.7rem;
-    background: #d1d5db;
-    border: 1px solid #d1d5db;
+/* ---------- FullCalendar (calendar page) ----------
+   FullCalendar renders its own DOM and injects its CSS at runtime, so it is themed here through its
+   --fc-* variables and a few rules scoped to .omcd-calendar (the extra class beats its injected rules). */
+.omcd-calendar .fc {
+  --fc-border-color: var(--color-gray-100);
+  --fc-page-bg-color: var(--color-white);
+  --fc-neutral-bg-color: var(--color-gray-50);
+  --fc-today-bg-color: var(--color-brand-50);
+  --fc-highlight-color: rgba(70, 95, 255, 0.08);
+  --fc-now-indicator-color: var(--color-error-600);
+  --fc-event-bg-color: var(--color-brand-500);
+  --fc-event-border-color: var(--color-brand-500);
+  --fc-event-text-color: var(--color-white);
+  font-size: 0.875rem;
+  color: var(--color-gray-700);
 }
-
-.p-tabview .p-tabview-panels {
-    padding: 1rem 0;
+.omcd-calendar .fc .fc-toolbar.fc-header-toolbar {
+  @apply flex-wrap gap-3 mb-5;
 }
-
-/* toast message */
-
-.p-toast {
-    min-height: 1rem !important;
+.omcd-calendar .fc .fc-toolbar-title {
+  @apply text-lg font-semibold text-gray-800;
 }
-
-.p-toast .p-toast-message .p-toast-message-content .p-toast-detail {
-    font-size: var(--toast-message-font-size);
-    white-space: pre-line;
+/* Toolbar buttons look like outline secondary buttons; the view switcher like the segmented control */
+.omcd-calendar .fc .fc-button {
+  @apply h-10 px-4 rounded-lg border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-theme-xs capitalize;
 }
-
-.p-toast .p-toast-message .p-toast-message-content .p-icon:not(.p-toast-icon-close-icon) {
-    width: var(--toast-message-main-icon-width);
-    height: var(--toast-message-main-icon-height);
+.omcd-calendar .fc .fc-button:hover:not(:disabled) {
+  @apply bg-gray-50 text-gray-800;
 }
-
-.p-toast {
-    width: var(--toast-message-width);
+.omcd-calendar .fc .fc-button:focus {
+  @apply shadow-focus-ring;
 }
-
-.p-toast .p-toast-message .p-toast-message-content {
-    padding: 0.9rem;
+.omcd-calendar .fc .fc-button:disabled {
+  @apply opacity-50;
 }
-
-.p-toast .p-toast-message .p-toast-message-content .p-toast-message-text {
-    margin: var(--toast-message-maring);
+.omcd-calendar .fc .fc-button-group {
+  @apply gap-0.5 p-0.5 rounded-lg bg-gray-100;
 }
-
-.cell-right {
-    text-align: right !important;
+.omcd-calendar .fc .fc-button-group > .fc-button {
+  @apply h-9 rounded-md border-0 bg-transparent text-gray-500 shadow-none;
+  margin-left: 0;
 }
-
-.p-breadcrumb {
-    --p-breadcrumb-padding: 0;
-    --p-breadcrumb-background: transparent;
-    border: 0;
+.omcd-calendar .fc .fc-button-group > .fc-button.fc-button-active {
+  @apply bg-white text-gray-900 shadow-theme-xs;
 }
-
-.text-primary {
-    color: var(--p-gray-600)!important;
+.omcd-calendar .fc .fc-prev-button,
+.omcd-calendar .fc .fc-next-button {
+  @apply w-10 px-0;
 }
-
-.top-label {
-    padding: 0.5rem 0;
+.omcd-calendar .fc .fc-col-header-cell {
+  @apply bg-gray-50 py-2.5 text-xs font-medium text-gray-500;
+}
+.omcd-calendar .fc .fc-col-header-cell-cushion,
+.omcd-calendar .fc .fc-daygrid-day-number {
+  @apply no-underline text-inherit;
+}
+.omcd-calendar .fc .fc-daygrid-day-number {
+  @apply p-2 text-sm text-gray-700;
+}
+.omcd-calendar .fc .fc-day-today .fc-daygrid-day-number {
+  @apply font-semibold text-brand-600;
+}
+.omcd-calendar .fc .fc-scrollgrid {
+  @apply rounded-xl overflow-hidden;
+}
+.omcd-calendar .fc .fc-event {
+  @apply rounded-md px-1.5 py-0.5 text-xs font-medium cursor-pointer;
+}
+.omcd-calendar .fc .fc-daygrid-dot-event {
+  @apply text-gray-700;
+}
+.omcd-calendar .fc .fc-daygrid-dot-event:hover {
+  @apply bg-gray-100;
 }

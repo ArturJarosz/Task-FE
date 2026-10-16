@@ -74,6 +74,7 @@ export const StageStore = signalStore(
                         .pipe(
                             tap(stage => {
                                     projectStore.setProjectNeedsRefresh();
+                                projectStore.setProjectsNeedRefresh();
                                     financialDataStore.setProjectFinancialDataNeedsUpdate();
                                     messageService.add({
                                         severity: MessageSeverity.INFO,
@@ -93,6 +94,7 @@ export const StageStore = signalStore(
                         .pipe(
                             tap(() => {
                                 projectStore.setProjectNeedsRefresh();
+                                projectStore.setProjectsNeedRefresh();
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
                                     summary: `Stage removed.`,
@@ -110,6 +112,7 @@ export const StageStore = signalStore(
                         .pipe(
                             tap(updatedStage => {
                                 projectStore.setProjectNeedsRefresh();
+                                projectStore.setProjectsNeedRefresh();
                                 patchState(store, {stage: updatedStage, stageNeedsRefresh: false});
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
@@ -128,6 +131,7 @@ export const StageStore = signalStore(
                         .pipe(
                             tap(updatedStage => {
                                 projectStore.setProjectNeedsRefresh();
+                                projectStore.setProjectsNeedRefresh();
                                 patchState(store, {stage: updatedStage, stageNeedsRefresh: false});
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
@@ -146,6 +150,7 @@ export const StageStore = signalStore(
                         .pipe(
                             tap(updatedStage => {
                                 projectStore.setProjectNeedsRefresh();
+                                projectStore.setProjectsNeedRefresh();
                                 patchState(store, {stage: updatedStage, stageNeedsRefresh: false});
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,

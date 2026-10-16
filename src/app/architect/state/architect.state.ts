@@ -30,6 +30,10 @@ export const ArchitectStore = signalStore(
     withMethods(
         (store, architectRestService = inject(ArchitectRestService), messageService = inject(MessageService)) => ({
             setArchitectId(architectId: number) {
+                if (store.architectId() !== architectId) {
+                    // Drop the previous architect's projects so they don't show while the new ones load
+                    patchState(store, {architectProjectsSummary: {}});
+                }
                 patchState(store, {architectId: architectId})
             },
             loadArchitect: rxMethod<{}>(

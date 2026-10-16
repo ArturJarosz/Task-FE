@@ -1,0 +1,5 @@
+<span class="omcd-field-label">{{ label }}</span>
+<div *ngIf="!isEmpty; else notSet" class="omcd-field-value whitespace-pre-line">{{ value }}</div>
+<ng-template #notSet>
+    <div class="omcd-field-value omcd-field-value--empty">{{ emptyText }}</div>
+</ng-template>

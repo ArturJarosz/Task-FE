@@ -1,0 +1,45 @@
+<p-table [value]="rows" [rowHover]="true" [tableStyle]="{'min-width': '44rem'}">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>{{ entityTitle }}</th>
+            <th>Contact</th>
+            <th class="omcd-num">{{ countLabel }}</th>
+            <th class="w-16"><span class="sr-only">Actions</span></th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+        <tr [routerLink]="[routeBase, row.id]" class="cursor-pointer">
+            <td>
+                <div class="flex items-center gap-3">
+                    <span class="omcd-avatar bg-gray-100 text-gray-700">{{ getInitials(row.name) }}</span>
+                    <div class="min-w-0">
+                        <div class="font-medium text-gray-800 truncate">{{ row.name }}</div>
+                        <div class="text-xs text-gray-500">{{ row.category }}</div>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div *ngIf="row.email || row.telephone; else notSet" class="min-w-0">
+                    <div *ngIf="row.email" class="text-gray-800 truncate">{{ row.email }}</div>
+                    <div *ngIf="row.telephone" class="text-xs text-gray-500">{{ row.telephone }}</div>
+                </div>
+            </td>
+            <td class="omcd-num">{{ row.count }}</td>
+            <td class="text-right">
+                <p-button icon="pi pi-ellipsis-h" [text]="true" [rounded]="true" severity="secondary"
+                          [pTooltip]="entityTitle + ' actions'" tooltipPosition="left" [ariaLabel]="entityTitle + ' actions'"
+                          (onClick)="openRowMenu($event, row, rowMenu)"/>
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+        <tr>
+            <td colspan="4" class="p-0">
+                <omcd-empty-state [icon]="icon" [title]="'No ' + entityLabel + 's yet'" [text]="emptyText"/>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+<p-menu #rowMenu [model]="rowMenuItems" [popup]="true" appendTo="body"/>
+
+<ng-template #notSet><span class="text-gray-400">Not set</span></ng-template>

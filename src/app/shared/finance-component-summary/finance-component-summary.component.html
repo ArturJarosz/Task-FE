@@ -1,68 +1,20 @@
-<p-accordion value="0">
-    <p-accordion-panel value="0">
-        <p-accordion-header>Supplies</p-accordion-header>
-        <p-accordion-content>
-        <div class="grid grid-cols-12 gap-4 border-surface">
-            <div class="col-span-3 border-b border-surface pb-4 max-w-64">
-                <div class="p-2 text-xl text-surface-900 dark:text-surface-0">
-                    Summary
-                </div>
-                <form [formGroup]="financeComponentDataForm">
-                    <div class="p-2 grid grid-cols-12 gap-4">
-                        <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Count:</div>
-                        <div class="col-span-7 pl-6 pr-4 cell-right" id="count">{{ financeComponentDataForm.value.count }}</div>
-                    </div>
-                    <div class="p-2 grid grid-cols-12 gap-4">
-                        <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Paid:</div>
-                        <div class="col-span-7 pl-6 pr-4 cell-right" id="paid">{{ financeComponentDataForm.value.paid }}</div>
-                    </div>
-                    <div class="p-2 grid grid-cols-12 gap-4">
-                        <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Gross value:</div>
-                        <div class="col-span-7 pl-6 pr-4 cell-right" id="gross">{{financeComponentDataForm.value.grossValue  | currency: ' ':'code':'2.2-2'}}</div>
-                    </div>
-                    <div class="p-2 grid grid-cols-12 gap-4">
-                        <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Nett value:</div>
-                        <div class="col-span-7 pl-6 pr-4 cell-right" id="net">{{financeComponentDataForm.value.netValue  | currency: ' ':'code':'2.2-2'}}</div>
-                    </div>
-                    <div class="p-2 grid grid-cols-12 gap-4">
-                        <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Tax:</div>
-                        <div class="col-span-7 pl-6 pr-4 cell-right" id="tax">{{financeComponentDataForm.value.incomeTax  | currency: ' ':'code':'2.2-2'}}</div>
-                    </div>
-                    <div class="p-2 grid grid-cols-12 gap-4">
-                        <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">VAT:</div>
-                        <div class="col-span-7 pl-6 pr-4 cell-right" id="vat">{{financeComponentDataForm.value.vatTax  | currency: ' ':'code':'2.2-2'}}</div>
-                    </div>
-                </form>
-                <div *ngIf="hasAveragedData">
-                    <div class="p-2 text-xl text-surface-900 dark:text-surface-0">
-                        Average
-                    </div>
-                    <form [formGroup]="averageFinanceComponentDataForm">
-                        <div class="p-2 grid grid-cols-12 gap-4">
-                            <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Gross value:</div>
-                            <div class="col-span-7 pl-6 pr-4 cell-right" id="averageGross">{{averageFinanceComponentDataForm.value.grossValue  | currency: ' ':'code':'2.2-2'}}</div>
-                        </div>
-                        <div class="p-2 grid grid-cols-12 gap-4">
-                            <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Nett value:</div>
-                            <div class="col-span-7 pl-6 pr-4 cell-right" id="averageNet">{{averageFinanceComponentDataForm.value.netValue  | currency: ' ':'code':'2.2-2'}}</div>
-                        </div>
-                        <div class="p-2 grid grid-cols-12 gap-4">
-                            <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">Tax:</div>
-                            <div class="col-span-7 pl-6 pr-4 cell-right" id="averageTax">{{averageFinanceComponentDataForm.value.incomeTax  | currency: ' ':'code':'2.2-2'}}</div>
-                        </div>
-                        <div class="p-2 grid grid-cols-12 gap-4">
-                            <div class="col-span-5 text-surface-500 dark:text-surface-300 flex items-center">VAT:</div>
-                            <div class="col-span-7 pl-6 pr-4 cell-right" id="averageVat">{{averageFinanceComponentDataForm.value.vatTax  | currency: ' ':'code':'2.2-2'}}</div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="col-span-9">
-                <ng-content select="[wrapper-list]"></ng-content>
-            </div>
+<div class="flex flex-col gap-3 px-6 pb-6">
+    <dl class="m-0 grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-px overflow-hidden rounded-xl border border-gray-200 bg-gray-200">
+        <div *ngFor="let stat of stats" class="bg-gray-50 px-4 py-3">
+            <dt class="text-xs text-gray-500">{{ stat.label }}</dt>
+            <dd class="m-0 mt-1 text-base font-semibold text-gray-800 tabular-nums whitespace-nowrap">
+                {{ stat.money ? ((stat.value ?? 0) | currency:'PLN':'symbol':'1.2-2') : (stat.value ?? 0) }}
+            </dd>
         </div>
-        </p-accordion-content>
-    </p-accordion-panel>
-</p-accordion>
-
-
+    </dl>
+    <div *ngIf="hasAveragedData">
+        <span class="omcd-field-label">Average per item</span>
+        <dl class="m-0 grid grid-cols-2 xl:grid-cols-4 gap-px overflow-hidden rounded-xl border border-gray-200 bg-gray-200">
+            <div *ngFor="let stat of averageStats" class="bg-gray-50 px-4 py-3">
+                <dt class="text-xs text-gray-500">{{ stat.label }}</dt>
+                <dd class="m-0 mt-1 text-base font-semibold text-gray-800 tabular-nums whitespace-nowrap">{{ (stat.value ?? 0) | currency:'PLN':'symbol':'1.2-2' }}</dd>
+            </div>
+        </dl>
+    </div>
+</div>
+<ng-content select="[wrapper-list]"></ng-content>

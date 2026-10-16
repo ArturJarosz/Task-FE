@@ -1,8 +1,40 @@
-<contractor-list
-        [contractors]="$contractors()"
-        [contractorTypes]="$contractorTypes()"
-        (deleteContractorEvent)="onDeleteContractor($event)"
->
-</contractor-list>
-<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}" class="overlay-dialog"></p-confirmDialog>
+<omcd-page-header title="Contractors" [crumbs]="crumbs"/>
 
+<div class="flex flex-col gap-6">
+    <!-- KPIs -->
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6">
+        <section class="omcd-card flex items-center gap-4 p-5">
+            <div class="omcd-kpi-icon"><i class="pi pi-wrench text-xl"></i></div>
+            <div>
+                <div class="omcd-kpi-label">Contractors</div>
+                <div class="text-2xl leading-8 font-bold text-gray-800 tabular-nums">{{ $kpis().total }}</div>
+            </div>
+        </section>
+        <section class="omcd-card flex items-center gap-4 p-5">
+            <div class="omcd-kpi-icon"><i class="pi pi-briefcase text-xl"></i></div>
+            <div>
+                <div class="omcd-kpi-label">With jobs</div>
+                <div class="text-2xl leading-8 font-bold text-gray-800 tabular-nums">{{ $kpis().withItems }}</div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Table card -->
+    <section class="omcd-card overflow-hidden">
+        <div class="omcd-card-header">
+            <div>
+                <h2 class="omcd-card-title">All contractors</h2>
+                <p class="omcd-card-subtitle m-0">{{ $kpis().total }} {{ $kpis().total === 1 ? 'contractor' : 'contractors' }}</p>
+            </div>
+            <p-button label="New contractor" icon="pi pi-plus" (onClick)="onAdd()"/>
+        </div>
+        <omcd-partner-list [rows]="$pagedRows()" routeBase="/contractors" entityLabel="contractor" countLabel="Jobs"
+                           icon="pi pi-wrench" emptyText="Add the electricians, plumbers and other trades you work with."
+                           (deleteEvent)="onDelete($event)"/>
+        <omcd-table-footer [total]="$rows().length" [page]="$page()" [pageSize]="pageSize"
+                           (pageChange)="$page.set($event)"/>
+    </section>
+</div>
+
+<p-confirmDialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>
+<add-contractor [visible]="showAdd" (notify)="onAddClosed()"></add-contractor>

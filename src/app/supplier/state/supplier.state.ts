@@ -38,6 +38,8 @@ export const SupplierStore = signalStore(
                 if (store.supplierId() !== supplierId) {
                     this.setSupplierNeedsRefresh();
                     this.setSuppliesDataNeedsRefresh();
+                    // Drop the previous supplier's supplies so they don't show while the new ones load
+                    patchState(store, {suppliesData: {}});
                 }
                 patchState(store, {supplierId: supplierId});
             },

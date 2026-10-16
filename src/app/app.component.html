@@ -1,107 +1,80 @@
-<div class="min-h-screen flex flex-col bg-surface-100 dark:bg-surface-950">
-    <p-toast [life]="12000"></p-toast>
-    <div class="p-6 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-            <a pRipple class="cursor-pointer inline-flex items-center justify-center text-surface-700 dark:text-surface-100" (click)="toggleSidebar()">
-                <i class="pi pi-bars text-2xl"></i>
-            </a>
-            <img src="assets/images/logo.svg" alt="Image" class="h-10">
-        </div>
-        <ul class="list-none p-0 m-0 flex items-center select-none">
-            <li *ngIf="(authorizationService.isAuthenticated() | async) === true">
-                <p-avatar [label]="getUserInitial()" shape="circle" styleClass="cursor-pointer bg-primary text-white" (click)="toggleUserMenu($event)"></p-avatar>
-                <p-menu #userMenu [model]="userMenuItems" [popup]="true" appendTo="body" (onShow)="alignUserMenuRight()"></p-menu>
-            </li>
-        </ul>
-    </div>
-    <div class="flex relative lg:static p-6 flex-auto">
-        <div id="app-sidebar" [ngClass]="sidebarCollapsed ? 'w-16' : 'w-[250px]'" class="bg-surface-0 dark:bg-surface-900 shrink-0 absolute lg:static left-0 top-0 z-10 select-none shadow-md rounded-xl border border-surface-200 overflow-hidden transition-all duration-300">
-            <div class="flex flex-col h-full">
-                <div class="overflow-y-auto">
+<p-toast [life]="12000"></p-toast>
 
-                    <ul class="list-none px-4 pb-4 pt-0 m-0" >
-                        <li>
-                            <div class="p-4 flex items-center justify-between text-surface-600 dark:text-surface-200">
-                                <span *ngIf="!sidebarCollapsed" class="font-medium text-sm text-surface-900 dark:text-surface-0">MENU</span>
-                            </div>
-                            <ul class="list-none p-0 m-0 overflow-hidden">
-                                <li [routerLinkActive]="['active', 'bg-primary-50', 'text-primary-700', 'border-primary-500', 'border-right-2']">
-                                    <a pRipple pTooltip="Dashboard" tooltipPosition="right" [tooltipDisabled]="!sidebarCollapsed" class="flex items-center cursor-pointer p-4 text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors border-r-2 border-transparent" [ngClass]="{'justify-center': sidebarCollapsed}" [routerLink]="'/home'">
-                                        <i class="pi pi-home" [ngClass]="{'mr-2': !sidebarCollapsed}"></i>
-                                        <span *ngIf="!sidebarCollapsed" class="font-medium">Dashboard</span>
-                                    </a>
-                                </li>
-                                <li [routerLinkActive]="['active', 'bg-primary-50', 'text-primary-700', 'border-primary-500', 'border-right-2']">
-                                    <a pRipple pTooltip="Projects" tooltipPosition="right" [tooltipDisabled]="!sidebarCollapsed" class="flex items-center cursor-pointer p-4 text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors border-r-2 border-transparent" [ngClass]="{'justify-center': sidebarCollapsed}" [routerLink]="'/projects'">
-                                        <i class="pi pi-file-edit" [ngClass]="{'mr-2': !sidebarCollapsed}"></i>
-                                        <span *ngIf="!sidebarCollapsed" class="font-medium">Projects</span>
-                                    </a>
-                                </li>
-                                <li [routerLinkActive]="['active', 'bg-primary-50', 'text-primary-700', 'border-primary-500', 'border-right-2']">
-                                    <a pRipple pTooltip="Architects" tooltipPosition="right" [tooltipDisabled]="!sidebarCollapsed" class="flex items-center cursor-pointer p-4 text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors border-r-2 border-transparent" [ngClass]="{'justify-center': sidebarCollapsed}" [routerLink]="'/architects'">
-                                        <i class="pi pi-users" [ngClass]="{'mr-2': !sidebarCollapsed}"></i>
-                                        <span *ngIf="!sidebarCollapsed" class="font-medium">Architects</span>
-                                    </a>
-                                </li>
-                                <li [routerLinkActive]="['active', 'bg-primary-50', 'text-primary-700', 'border-primary-500', 'border-right-2']">
-                                    <a pRipple pTooltip="Clients" tooltipPosition="right" [tooltipDisabled]="!sidebarCollapsed" class="flex items-center cursor-pointer p-4 text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors border-r-2 border-transparent" [ngClass]="{'justify-center': sidebarCollapsed}" [routerLink]="'/clients'">
-                                        <i class="pi pi-users" [ngClass]="{'mr-2': !sidebarCollapsed}"></i>
-                                        <span *ngIf="!sidebarCollapsed" class="font-medium">Clients</span>
-                                    </a>
-                                </li>
-                                <li [routerLinkActive]="['active', 'bg-primary-50', 'text-primary-700', 'border-primary-500', 'border-right-2']">
-                                    <a pRipple pTooltip="Contractors" tooltipPosition="right" [tooltipDisabled]="!sidebarCollapsed" class="flex items-center cursor-pointer p-4 text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors border-r-2 border-transparent" [ngClass]="{'justify-center': sidebarCollapsed}" [routerLink]="'/contractors'">
-                                        <i class="pi pi-users" [ngClass]="{'mr-2': !sidebarCollapsed}"></i>
-                                        <span *ngIf="!sidebarCollapsed" class="font-medium">Contractors</span>
-                                    </a>
-                                </li>
-                                <li [routerLinkActive]="['active', 'bg-primary-50', 'text-primary-700', 'border-primary-500', 'border-right-2']">
-                                    <a pRipple pTooltip="Suppliers" tooltipPosition="right" [tooltipDisabled]="!sidebarCollapsed" class="flex items-center cursor-pointer p-4 text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors border-r-2 border-transparent" [ngClass]="{'justify-center': sidebarCollapsed}" [routerLink]="'/suppliers'">
-                                        <i class="pi pi-users" [ngClass]="{'mr-2': !sidebarCollapsed}"></i>
-                                        <span *ngIf="!sidebarCollapsed" class="font-medium">Suppliers</span>
-                                    </a>
-                                </li>
-                                <li [routerLinkActive]="['active', 'bg-primary-50', 'text-primary-700', 'border-primary-500', 'border-right-2']">
-                                    <a pRipple pTooltip="Financial Report" tooltipPosition="right" [tooltipDisabled]="!sidebarCollapsed" class="flex items-center cursor-pointer p-4 text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors border-r-2 border-transparent" [ngClass]="{'justify-center': sidebarCollapsed}" [routerLink]="'/financial-report'">
-                                        <i class="pi pi-chart-bar" [ngClass]="{'mr-2': !sidebarCollapsed}"></i>
-                                        <span *ngIf="!sidebarCollapsed" class="font-medium">Financial Report</span>
-                                    </a>
-                                </li>
-                                <li [routerLinkActive]="['active', 'bg-primary-50', 'text-primary-700', 'border-primary-500', 'border-right-2']">
-                                    <a pRipple pTooltip="Calendar" tooltipPosition="right" [tooltipDisabled]="!sidebarCollapsed" class="flex items-center cursor-pointer p-4 text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors border-r-2 border-transparent" [ngClass]="{'justify-center': sidebarCollapsed}" [routerLink]="'/calendar'">
-                                        <i class="pi pi-calendar" [ngClass]="{'mr-2': !sidebarCollapsed}"></i>
-                                        <span *ngIf="!sidebarCollapsed" class="font-medium">Calendar</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+<div class="min-h-screen flex bg-gray-50 dark:bg-surface-950">
+    <!-- Backdrop for the sidebar on small screens -->
+    <div *ngIf="mobileSidebarOpen" class="fixed inset-0 z-30 bg-gray-900/40 lg:hidden" (click)="closeMobileSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside id="app-sidebar"
+           class="fixed inset-y-0 left-0 z-40 flex flex-col shrink-0 w-(--omcd-sidebar-w) bg-white border-r border-gray-200 transition-all duration-300 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0"
+           [ngClass]="{'lg:w-[90px]': sidebarCollapsed, '-translate-x-full': !mobileSidebarOpen}">
+        <div class="flex items-center shrink-0 h-(--omcd-topbar-h) px-6" [ngClass]="{'lg:justify-center lg:px-0': sidebarCollapsed}">
+            <a routerLink="/home" class="flex items-center" aria-label="OMCD home">
+                <img src="assets/images/logo.svg" alt="OMCD" class="h-10"
+                     [ngClass]="{'lg:w-10 lg:object-cover lg:object-left': sidebarCollapsed}">
+            </a>
         </div>
-        <div class="flex flex-col flex-auto">
-            <div class="flex-auto lg:ml-6">
-                <div class="mb-4">
-                    <p-breadcrumb class="max-w-full" [model]="breadcrumbItems">
-                        <ng-template pTemplate="item" let-item>
-                            <ng-container *ngIf="item.route; else elseBlock">
-                                <a [routerLink]="item.route" class="p-menuitem-link">
-                                    <span [ngClass]="[item.icon ? item.icon : '', 'text-color']"></span>
-                                    <span class="text-primary font-semibold">{{ item.label }}</span>
-                                </a>
-                            </ng-container>
-                            <ng-template #elseBlock>
-                                <a [href]="item.url">
-                                    <span class="text-color">{{ item.label }}</span>
-                                </a>
-                            </ng-template>
+
+        <nav class="flex-1 overflow-y-auto px-4 pb-6" aria-label="Main">
+            <div *ngFor="let group of navGroups">
+                <div class="omcd-nav-group" [ngClass]="{'lg:text-center lg:px-0': sidebarCollapsed}">
+                    <span [ngClass]="{'lg:hidden': sidebarCollapsed}">{{ group.label }}</span>
+                    <i *ngIf="sidebarCollapsed" class="hidden lg:inline pi pi-ellipsis-h text-gray-400" aria-hidden="true"></i>
+                </div>
+                <ul class="list-none m-0 p-0 flex flex-col gap-1">
+                    <li *ngFor="let item of group.items">
+                        <a class="omcd-nav-item" [routerLink]="item.route" routerLinkActive="active"
+                           [ngClass]="{'lg:justify-center lg:px-0': sidebarCollapsed}"
+                           [pTooltip]="item.label" tooltipPosition="right" [tooltipDisabled]="!sidebarCollapsed"
+                           (click)="closeMobileSidebar()">
+                            <i [class]="item.icon"></i>
+                            <span [ngClass]="{'lg:hidden': sidebarCollapsed}">{{ item.label }}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <div class="flex flex-col flex-1 min-w-0">
+        <!-- Top bar -->
+        <header class="sticky top-0 z-20 flex items-center justify-between gap-4 h-(--omcd-topbar-h) px-4 lg:px-6 bg-white border-b border-gray-200">
+            <p-button icon="pi pi-bars" severity="secondary" [outlined]="true" (onClick)="toggleSidebar()"
+                      [ariaLabel]="sidebarCollapsed ? 'Expand menu' : 'Collapse menu'"
+                      [pTooltip]="sidebarCollapsed ? 'Expand menu' : 'Collapse menu'" tooltipPosition="bottom"/>
+
+            <div *ngIf="(authorizationService.isAuthenticated() | async) === true" class="flex items-center">
+                <button type="button"
+                        class="flex items-center gap-3 p-1 pr-2 rounded-full border-0 bg-transparent cursor-pointer text-gray-700 hover:bg-gray-100"
+                        aria-haspopup="menu" aria-label="Account menu" (click)="toggleUserMenu($event)">
+                    <span class="omcd-avatar w-11 h-11 bg-brand-50 text-brand-500">{{ getUserInitial() }}</span>
+                    <span class="hidden sm:block text-sm font-medium text-gray-700">{{ displayName }}</span>
+                    <i class="hidden sm:block pi pi-chevron-down text-xs text-gray-500" aria-hidden="true"></i>
+                </button>
+                <p-menu #userMenu [model]="userMenuItems" [popup]="true" appendTo="body" (onShow)="alignUserMenuRight()"></p-menu>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <main class="flex-1 w-full max-w-(--omcd-content-max) mx-auto p-4 md:p-6">
+            <div *ngIf="!ownPageHeader" class="mb-6">
+                <p-breadcrumb class="max-w-full" [model]="breadcrumbItems">
+                    <ng-template pTemplate="item" let-item>
+                        <ng-container *ngIf="item.route; else elseBlock">
+                            <a [routerLink]="item.route" class="p-menuitem-link">
+                                <span [ngClass]="[item.icon ? item.icon : '', 'text-color']"></span>
+                                <span class="text-primary font-semibold">{{ item.label }}</span>
+                            </a>
+                        </ng-container>
+                        <ng-template #elseBlock>
+                            <a [href]="item.url">
+                                <span class="text-color">{{ item.label }}</span>
+                            </a>
                         </ng-template>
-                    </p-breadcrumb>
-                </div>
-                <div>
-                    <router-outlet></router-outlet>
-                </div>
+                    </ng-template>
+                </p-breadcrumb>
             </div>
-        </div>
+            <router-outlet></router-outlet>
+        </main>
     </div>
 </div>

@@ -1,31 +1,58 @@
-<p-table [value]="projects!" [rowHover]="true" [tableStyle]="{ 'min-width': '50rem' }">
+<p-table [value]="projects ?? []" [rowHover]="true" [tableStyle]="{'min-width': '56rem'}">
     <ng-template pTemplate="header">
         <tr>
-            <th>Id</th>
-            <th>Architect</th>
-            <th>Name</th>
-            <th></th>
-            <th>Type</th>
+            <th>Project</th>
             <th>Client</th>
+            <th>Architect</th>
             <th>Status</th>
+            <th class="omcd-num">Value</th>
+            <th class="w-16"><span class="sr-only">Actions</span></th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-project>
         <tr [routerLink]="['/projects', project.id]" class="cursor-pointer">
-            <td>{{ project.id }}</td>
-            <td class="text-center">
-                <div class="flex items-center justify-content-center gap-2">
-                    <p-avatar [label]="getArchitectInitials(project.architect)" shape="circle" styleClass="bg-primary text-white"></p-avatar>
-                    <span>{{ getArchitectName(project.architect) }}</span>
+            <td>
+                <div class="font-medium text-gray-800">{{ project.name }}</div>
+                <div class="text-xs text-gray-500">{{ getProjectTypeLabel(project.type) }}</div>
+            </td>
+            <td>
+                <div *ngIf="getClientName(project.client) as clientName; else notSet" class="flex items-center gap-3">
+                    <span class="omcd-avatar bg-warning-50 text-warning-700">{{ getInitials(clientName) }}</span>
+                    <div class="min-w-0">
+                        <div class="font-medium text-gray-800 truncate">{{ clientName }}</div>
+                        <div class="text-xs text-gray-500">{{ getClientKind(project.client) }}</div>
+                    </div>
                 </div>
             </td>
-            <td>{{ project.name}}</td>
             <td>
-                <button pButton pRipple class="p-button-text p-button-plain p-0" icon="pi pi-times" (click)="deleteProject($event, project.name, project.id)" size="small"></button>
+                <div *ngIf="getArchitectName(project.architect) as architectName; else notSet" class="flex items-center gap-3">
+                    <span class="omcd-avatar bg-brand-50 text-brand-500">{{ getInitials(architectName) }}</span>
+                    <span class="text-gray-800">{{ architectName }}</span>
+                </div>
             </td>
-            <td>{{ getProjectTypeLabel(project.type) }}</td>
-            <td>{{ getClientName(project.client) }}</td>
-            <td>{{ getProjectStatusLabel(project.status) }}</td>
+            <td>
+                <p-tag [value]="getProjectStatusLabel(project.status)" [severity]="statusSeverity(project.status)"/>
+            </td>
+            <td class="omcd-num font-medium text-gray-800">
+                <span *ngIf="project.contract?.offerValue != null; else notSet">{{ project.contract.offerValue | currency:'PLN':'symbol':'1.2-2' }}</span>
+            </td>
+            <td class="text-right">
+                <p-button icon="pi pi-ellipsis-h" [text]="true" [rounded]="true" severity="secondary"
+                          pTooltip="Project actions" tooltipPosition="left" ariaLabel="Project actions"
+                          (onClick)="openRowMenu($event, project, rowMenu)"/>
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+        <tr>
+            <td colspan="6" class="p-0">
+                <omcd-empty-state icon="pi pi-folder" [title]="emptyTitle" [text]="emptyText"/>
+            </td>
         </tr>
     </ng-template>
 </p-table>
+<p-menu #rowMenu [model]="rowMenuItems" [popup]="true" appendTo="body"/>
+
+<ng-template #notSet>
+    <span class="font-normal text-gray-400">Not set</span>
+</ng-template>

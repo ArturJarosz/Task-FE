@@ -1,30 +1,37 @@
 <finance-component-summary [financeComponentDataForm]="installmentsDetailForm">
     <div wrapper-list>
-        <p-table [value]="installmentProjectData.installments!" [tableStyle]="{ 'min-width': '50rem' }">
+        <p-table [value]="installmentProjectData.installments ?? []" [tableStyle]="{'min-width': '40rem'}">
             <ng-template pTemplate="header">
                 <tr>
-                    <th>Stage Name</th>
-                    <th>Value</th>
-                    <th class="max-w-16 text-center">Invoice</th>
-                    <th class="max-w-16 text-center">Paid</th>
+                    <th>Stage</th>
+                    <th>Payment date</th>
+                    <th class="omcd-num">Value</th>
+                    <th class="w-24 text-center">Invoice</th>
+                    <th class="w-24 text-center">Paid</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-installment>
                 <tr [routerLink]="['/projects', projectId, 'installments', installment.id]" class="cursor-pointer">
-                    <td>{{ installment.stageName }}</td>
-                    <td>{{ installment.value | currency: ' ':'code':'2.2-2' }}</td>
-                    <td class="max-w-16 text-center">
-                        <i *ngIf="installment.hasInvoice" class="pi pi-check"></i>
-                        <i *ngIf="!installment.hasInvoice" class="pi pi-times"></i>
+                    <td class="font-medium text-gray-800">{{ installment.stageName }}</td>
+                    <td>
+                        <span *ngIf="installment.paymentDate; else notSet">{{ installment.paymentDate | date:'dd.MM.yyyy' }}</span>
                     </td>
-                    <td class="max-w-16 text-center">
-                        <i *ngIf="installment.paid" class="pi pi-check"></i>
-                        <i *ngIf="!installment.paid" class="pi pi-times"></i>
+                    <td class="omcd-num">{{ installment.value | currency:'PLN':'symbol':'1.2-2' }}</td>
+                    <td class="w-24 text-center"><i *ngIf="installment.hasInvoice; else no" class="pi pi-check-circle text-success-700" aria-label="Invoice: yes"></i></td>
+                    <td class="w-24 text-center"><i *ngIf="installment.paid; else no" class="pi pi-check-circle text-success-700" aria-label="Paid: yes"></i></td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td [attr.colspan]="5" class="p-0">
+                        <omcd-empty-state icon="pi pi-credit-card" title="No installments yet" text="Add one installment per stage to track client payments."/>
                     </td>
                 </tr>
-
             </ng-template>
         </p-table>
     </div>
 </finance-component-summary>
 
+<ng-template #no><span class="text-gray-400" aria-label="No">—</span></ng-template>
+
+<ng-template #notSet><span class="text-gray-400">Not set</span></ng-template>

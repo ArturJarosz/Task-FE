@@ -4,16 +4,15 @@ import {PeriodType} from "../../generated/models/period-type";
 import {FinancialReportPeriod} from "../../generated/models/financial-report-period";
 import {FinancialReportCategoryGroup} from "../../generated/models/financial-report-category-group";
 import {FinancialPartialData} from "../../generated/models/financial-partial-data";
+import {PageCrumb, PageHeaderComponent} from "../../shared";
+import {DatePickerModule} from "primeng/datepicker";
+import {ChartModule} from "primeng/chart";
+import {TableModule} from "primeng/table";
+import {SkeletonModule} from "primeng/skeleton";
+import {FormsModule} from "@angular/forms";
+import {NgIf, NgFor, NgClass, CurrencyPipe, DatePipe} from "@angular/common";
 
-interface PeriodTypeOption {
-    label: string;
-    value: PeriodType;
-}
-
-interface ValueTypeOption {
-    label: string;
-    value: 'gross' | 'net';
-}
+type ValueType = 'gross' | 'net';
 
 interface SummaryRow {
     label: string;
@@ -21,57 +20,36 @@ interface SummaryRow {
     netValue: number;
     incomeTax: number;
     vatTax: number;
-    isHeader: boolean;
-    isBold: boolean;
+    kind: 'header' | 'item' | 'total' | 'balance';
+    // Tailwind class of the legend dot for item rows
+    dotClass?: string;
 }
 
 interface CategoryDef {
     key: keyof FinancialReportCategoryGroup;
     label: string;
+    // CSS custom property from the @theme block in styles.css, and the matching Tailwind class for legends
+    colorVar: string;
+    dotClass: string;
 }
 
+// Fixed series order: color follows the category, never its rank (see styles.css --color-chart-*)
 const INCOME_CATEGORIES: CategoryDef[] = [
-    {key: 'installment', label: 'Installment'},
-    {key: 'supply', label: 'Supply'},
-    {key: 'contractorJob', label: 'Contractor Job'},
-    {key: 'supervision', label: 'Supervision'}
+    {key: 'installment', label: 'Installments', colorVar: '--color-chart-1', dotClass: 'bg-chart-1'},
+    {key: 'supply', label: 'Supplies', colorVar: '--color-chart-2', dotClass: 'bg-chart-2'},
+    {key: 'contractorJob', label: 'Contractor jobs', colorVar: '--color-chart-3', dotClass: 'bg-chart-3'},
+    {key: 'supervision', label: 'Supervision', colorVar: '--color-chart-4', dotClass: 'bg-chart-4'},
 ];
 
 const EXPENSE_CATEGORIES: CategoryDef[] = [
-    {key: 'cost', label: 'Cost'}
+    {key: 'cost', label: 'Costs', colorVar: '--color-chart-5', dotClass: 'bg-chart-5'},
 ];
 
-const INCOME_PALETTE: string[] = [
-    '#1B3A5C',
-    '#2E6BA4',
-    '#5A9ED6',
-    '#9FC9EB'
-];
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const QUARTERS = ['Q1', 'Q2', 'Q3', 'Q4'];
 
-const INCOME_HOVER_PALETTE: string[] = [
-    '#132942',
-    '#215489',
-    '#4588C0',
-    '#7FB8E3'
-];
-
-const EXPENSE_PALETTE: string[] = [
-    '#B53D2E'
-];
-
-const EXPENSE_HOVER_PALETTE: string[] = [
-    '#942F22'
-];
-
-import {WrapperComponent} from "../../shared";
-import {DatePickerModule} from "primeng/datepicker";
-import {SelectModule} from "primeng/select";
-import {SelectButtonModule} from "primeng/selectbutton";
-import {ChartModule} from "primeng/chart";
-import {TableModule} from "primeng/table";
-import {ButtonModule} from "primeng/button";
-import {FormsModule} from "@angular/forms";
-import {NgIf, NgFor, DecimalPipe} from "@angular/common";
+const PLN = new Intl.NumberFormat('pl-PL', {style: 'currency', currency: 'PLN', minimumFractionDigits: 2});
+const PLN_SHORT = new Intl.NumberFormat('pl-PL', {maximumFractionDigits: 0});
 
 @Component({
     selector: 'financial-report-view',
@@ -79,7 +57,7 @@ import {NgIf, NgFor, DecimalPipe} from "@angular/common";
     styleUrl: './financial-report.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [WrapperComponent, DatePickerModule, SelectModule, SelectButtonModule, ChartModule, TableModule, ButtonModule, FormsModule, NgIf, NgFor, DecimalPipe]
+    imports: [PageHeaderComponent, DatePickerModule, ChartModule, TableModule, SkeletonModule, FormsModule, NgIf, NgFor, NgClass, CurrencyPipe, DatePipe]
 })
 export class FinancialReportComponent implements OnInit, OnChanges {
     @Input()
@@ -97,318 +75,209 @@ export class FinancialReportComponent implements OnInit, OnChanges {
     dateRangeChange = new EventEmitter<{ startDate: Date, endDate: Date }>();
     @Output()
     periodTypeChange = new EventEmitter<PeriodType>();
-    @Output()
-    generate = new EventEmitter<void>();
 
-    title: string = "Financial Report";
-    selectedStartDate!: Date;
-    selectedEndDate!: Date;
-    selectedPeriodType!: PeriodType;
-    periods: FinancialReportPeriod[] = [];
-
-    periodTypeOptions: PeriodTypeOption[] = [
+    readonly crumbs: PageCrumb[] = [{label: 'Home', route: ['/home']}, {label: 'Financial report'}];
+    readonly periodTypeOptions = [
         {label: 'Monthly', value: PeriodType.MONTHLY},
         {label: 'Quarterly', value: PeriodType.QUARTERLY},
-        {label: 'Yearly', value: PeriodType.YEARLY}
+        {label: 'Yearly', value: PeriodType.YEARLY},
     ];
-
-    valueTypeOptions: ValueTypeOption[] = [
+    readonly valueTypeOptions: { label: string, value: ValueType }[] = [
         {label: 'Gross', value: 'gross'},
-        {label: 'Net', value: 'net'}
+        {label: 'Net', value: 'net'},
     ];
-    selectedValueType: 'gross' | 'net' = 'gross';
+    readonly legendItems = [...INCOME_CATEGORIES, ...EXPENSE_CATEGORIES];
+
+    selectedRange: Date[] = [];
+    selectedValueType: ValueType = 'gross';
+    periods: FinancialReportPeriod[] = [];
 
     chartData: any = {};
     chartOptions: any = {};
     summaryRows: SummaryRow[] = [];
-    legendItems: { label: string; color: string }[] = [];
 
     ngOnInit(): void {
-        this.selectedStartDate = this.startDate;
-        this.selectedEndDate = this.endDate;
-        this.selectedPeriodType = this.periodType;
+        this.selectedRange = [this.startDate, this.endDate];
         this.initChartOptions();
     }
 
-    ngOnChanges({financialReport, startDate, endDate, periodType}: SimpleChanges): void {
+    ngOnChanges({financialReport, startDate, endDate}: SimpleChanges): void {
         if (financialReport && this.financialReport) {
             this.periods = this.financialReport.periods || [];
             this.buildChartData();
             this.buildSummaryRows();
         }
-        if (startDate) {
-            this.selectedStartDate = this.startDate;
-        }
-        if (endDate) {
-            this.selectedEndDate = this.endDate;
-        }
-        if (periodType) {
-            this.selectedPeriodType = this.periodType;
+        if (startDate || endDate) {
+            this.selectedRange = [this.startDate, this.endDate];
         }
     }
 
-    onStartDateChange(date: Date): void {
-        this.selectedStartDate = date;
-        this.dateRangeChange.emit({startDate: this.selectedStartDate, endDate: this.selectedEndDate});
+    get hasData(): boolean {
+        return this.periods.length > 0;
     }
 
-    onEndDateChange(date: Date): void {
-        this.selectedEndDate = date;
-        this.dateRangeChange.emit({startDate: this.selectedStartDate, endDate: this.selectedEndDate});
+    kpiValue(data: FinancialPartialData | undefined): number {
+        return (this.selectedValueType === 'gross' ? data?.grossValue : data?.netValue) ?? 0;
+    }
+
+    onRangeChange(range: Date[] | null): void {
+        // The range picker emits once with only a start date; wait for both ends
+        if (range && range[0] && range[1]) {
+            this.dateRangeChange.emit({startDate: range[0], endDate: range[1]});
+        }
     }
 
     onPeriodTypeChange(periodType: PeriodType): void {
-        this.selectedPeriodType = periodType;
-        this.periodTypeChange.emit(periodType);
-    }
-
-    onGenerate(): void {
-        this.generate.emit();
-    }
-
-    onValueTypeChange(): void {
-        this.buildChartData();
-    }
-
-    formatPeriod(period: FinancialReportPeriod): string {
-        if (!period.startDate || !period.endDate) {
-            return '';
+        if (periodType !== this.periodType) {
+            this.periodTypeChange.emit(periodType);
         }
-        return `${period.startDate} - ${period.endDate}`;
+    }
+
+    onValueTypeChange(valueType: ValueType): void {
+        this.selectedValueType = valueType;
+        this.buildChartData();
     }
 
     private formatChartLabel(period: FinancialReportPeriod): string {
         if (!period.startDate) {
-            return this.formatPeriod(period);
+            return '';
         }
         const [year, month] = period.startDate.split('-').map(Number);
-        if (this.selectedPeriodType === PeriodType.MONTHLY) {
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${monthNames[month - 1]} ${year}`;
+        if (this.periodType === PeriodType.MONTHLY) {
+            return `${MONTHS[month - 1]} ${year}`;
         }
-        if (this.selectedPeriodType === PeriodType.QUARTERLY) {
-            const quarter = Math.ceil(month / 3);
-            const romanNumerals = ['I', 'II', 'III', 'IV'];
-            return `${romanNumerals[quarter - 1]} ${year}`;
+        if (this.periodType === PeriodType.QUARTERLY) {
+            return `${QUARTERS[Math.ceil(month / 3) - 1]} ${year}`;
         }
         return `${year}`;
     }
 
-    private initChartOptions(): void {
-        const documentStyle = getComputedStyle(document.documentElement);
-        const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary') || '#6c757d';
-        const surfaceGround = documentStyle.getPropertyValue('--surface-ground') || '#eff3f8';
+    private cssColor(variable: string): string {
+        return getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
+    }
 
+    private initChartOptions(): void {
+        const tick = this.cssColor('--color-gray-500');
+        const grid = this.cssColor('--color-gray-100');
+        const font = {family: 'Outfit, system-ui, sans-serif', size: 13};
         this.chartOptions = {
             maintainAspectRatio: false,
-            aspectRatio: 0.8,
-            interaction: {
-                mode: 'index',
-                intersect: false
-            },
+            interaction: {mode: 'index', intersect: false},
             plugins: {
-                legend: {
-                    display: false
-                },
+                legend: {display: false},
                 tooltip: {
+                    backgroundColor: this.cssColor('--color-gray-800'),
+                    padding: 12,
+                    cornerRadius: 8,
+                    titleFont: {...font, weight: '600'},
+                    bodyFont: font,
+                    boxPadding: 4,
+                    usePointStyle: true,
+                    filter: (item: any) => item.raw !== null,
                     callbacks: {
-                        label: (context: any) => {
-                            const value = context.raw as number;
-                            const absValue = Math.abs(value);
-                            const formatted = absValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                            return `${context.dataset.label}: ${formatted}`;
-                        }
+                        label: (context: any) => `${context.dataset.label}: ${PLN.format(Math.abs(context.raw as number))}`
                     }
                 }
             },
             scales: {
                 x: {
                     stacked: true,
-                    ticks: {
-                        color: textColorSecondary
-                    },
-                    grid: {
-                        display: false
-                    },
-                    border: {
-                        display: false
-                    }
+                    ticks: {color: tick, font},
+                    grid: {display: false},
+                    border: {display: false}
                 },
                 y: {
                     stacked: true,
-                    ticks: {
-                        color: textColorSecondary,
-                        callback: (value: number) => {
-                            return value.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0});
-                        }
-                    },
-                    grid: {
-                        display: true,
-                        color: surfaceGround
-                    },
-                    border: {
-                        display: false
-                    }
+                    ticks: {color: tick, font, callback: (value: number) => PLN_SHORT.format(value)},
+                    grid: {color: grid},
+                    border: {display: false}
                 }
             }
         };
     }
 
     private buildChartData(): void {
-        const labels = this.periods.map(p => this.formatChartLabel(p));
         const valueField = this.selectedValueType === 'gross' ? 'grossValue' : 'netValue';
+        const surface = this.cssColor('--color-white') || 'white';
+        const valueOf = (group: FinancialReportCategoryGroup | undefined, key: keyof FinancialReportCategoryGroup) =>
+            ((group?.[key] as FinancialPartialData | undefined)?.[valueField]) || 0;
 
-        // Pre-compute per-period which category index is the topmost non-zero income
-        // and bottommost non-zero expense, so we can round only those bars
-        const topIncomePerPeriod = this.periods.map((p, pi) => {
-            for (let ci = INCOME_CATEGORIES.length - 1; ci >= 0; ci--) {
-                const group = p.income;
-                const partial = group ? group[INCOME_CATEGORIES[ci].key] as FinancialPartialData | undefined : undefined;
-                if (partial?.[valueField]) return ci;
+        // Round only the outermost non-zero segment of each stack, 4px at the data end
+        const topIncome = this.periods.map(period => {
+            for (let i = INCOME_CATEGORIES.length - 1; i >= 0; i--) {
+                if (valueOf(period.income, INCOME_CATEGORIES[i].key)) return i;
             }
             return -1;
         });
 
-        const bottomExpensePerPeriod = this.periods.map((p, pi) => {
-            for (let ci = EXPENSE_CATEGORIES.length - 1; ci >= 0; ci--) {
-                const group = p.expense;
-                const partial = group ? group[EXPENSE_CATEGORIES[ci].key] as FinancialPartialData | undefined : undefined;
-                if (partial?.[valueField]) return ci;
-            }
-            return -1;
-        });
-
-        const incomeDatasets = INCOME_CATEGORIES.map((cat, i) => ({
-            type: 'bar',
-            label: cat.label,
-            backgroundColor: INCOME_PALETTE[i] || INCOME_PALETTE[INCOME_PALETTE.length - 1],
-            hoverBackgroundColor: INCOME_HOVER_PALETTE[i] || INCOME_HOVER_PALETTE[INCOME_HOVER_PALETTE.length - 1],
-            data: this.periods.map(p => {
-                const group = p.income;
-                const partial = group ? group[cat.key] as FinancialPartialData | undefined : undefined;
-                const val = partial?.[valueField] || 0;
-                return val === 0 ? null : val;
-            }),
-            stack: 'income',
-            barThickness: 32,
-            borderSkipped: false,
-            borderRadius: (ctx: any) => topIncomePerPeriod[ctx.dataIndex] === i
-                ? {topLeft: 8, topRight: 8} : 0
-        }));
-
-        const expenseDatasets = EXPENSE_CATEGORIES.map((cat, i) => ({
-            type: 'bar',
-            label: cat.label,
-            backgroundColor: EXPENSE_PALETTE[i] || EXPENSE_PALETTE[EXPENSE_PALETTE.length - 1],
-            hoverBackgroundColor: EXPENSE_HOVER_PALETTE[i] || EXPENSE_HOVER_PALETTE[EXPENSE_HOVER_PALETTE.length - 1],
-            data: this.periods.map(p => {
-                const group = p.expense;
-                const partial = group ? group[cat.key] as FinancialPartialData | undefined : undefined;
-                const val = partial?.[valueField] || 0;
-                return val === 0 ? null : -Math.abs(val);
-            }),
-            stack: 'expense',
-            barThickness: 32,
-            borderSkipped: false,
-            borderRadius: (ctx: any) => bottomExpensePerPeriod[ctx.dataIndex] === i
-                ? {bottomLeft: 8, bottomRight: 8} : 0
-        }));
-
-        this.chartData = {
-            labels,
-            datasets: [...incomeDatasets, ...expenseDatasets]
+        const dataset = (category: CategoryDef, index: number, stack: 'income' | 'expense') => {
+            const color = this.cssColor(category.colorVar);
+            return {
+                type: 'bar',
+                label: category.label,
+                backgroundColor: color,
+                hoverBackgroundColor: color,
+                // 2px surface gap between stacked segments
+                borderColor: surface,
+                borderWidth: {top: 2, bottom: 0, left: 0, right: 0},
+                data: this.periods.map(period => {
+                    const value = valueOf(stack === 'income' ? period.income : period.expense, category.key);
+                    return value === 0 ? null : (stack === 'income' ? value : -Math.abs(value));
+                }),
+                stack,
+                maxBarThickness: 28,
+                borderSkipped: false,
+                borderRadius: (ctx: any) => stack === 'income'
+                    ? (topIncome[ctx.dataIndex] === index ? {topLeft: 4, topRight: 4} : 0)
+                    : {bottomLeft: 4, bottomRight: 4},
+            };
         };
 
-        const incomeItems = INCOME_CATEGORIES.map((cat, i) => ({
-            label: cat.label,
-            color: INCOME_PALETTE[i] || INCOME_PALETTE[INCOME_PALETTE.length - 1]
-        }));
-        const expenseItems = EXPENSE_CATEGORIES.map((cat, i) => ({
-            label: cat.label,
-            color: EXPENSE_PALETTE[i] || EXPENSE_PALETTE[EXPENSE_PALETTE.length - 1]
-        }));
-        this.legendItems = [...incomeItems, ...expenseItems];
+        this.chartData = {
+            labels: this.periods.map(period => this.formatChartLabel(period)),
+            datasets: [
+                ...INCOME_CATEGORIES.map((category, i) => dataset(category, i, 'income')),
+                ...EXPENSE_CATEGORIES.map((category, i) => dataset(category, i, 'expense')),
+            ]
+        };
     }
 
     private buildSummaryRows(): void {
-        const rows: SummaryRow[] = [];
-
-        // Income header
-        rows.push({label: 'INCOME', grossValue: 0, netValue: 0, incomeTax: 0, vatTax: 0, isHeader: true, isBold: false});
-
-        // Income category rows
-        for (const cat of INCOME_CATEGORIES) {
-            const agg = this.aggregateCategory('income', cat.key);
-            rows.push({label: cat.label, ...agg, isHeader: false, isBold: false});
-        }
-
-        // Income total
-        const totalIncome = this.financialReport?.totalIncome;
-        rows.push({
-            label: 'Total Income',
-            grossValue: totalIncome?.grossValue || 0,
-            netValue: totalIncome?.netValue || 0,
-            incomeTax: totalIncome?.incomeTax || 0,
-            vatTax: totalIncome?.vatTax || 0,
-            isHeader: false,
-            isBold: true
+        const total = (label: string, data: FinancialPartialData | undefined, kind: 'total' | 'balance'): SummaryRow => ({
+            label,
+            grossValue: data?.grossValue || 0,
+            netValue: data?.netValue || 0,
+            incomeTax: data?.incomeTax || 0,
+            vatTax: data?.vatTax || 0,
+            kind,
         });
+        const header = (label: string): SummaryRow =>
+            ({label, grossValue: 0, netValue: 0, incomeTax: 0, vatTax: 0, kind: 'header'});
+        const item = (groupType: 'income' | 'expense') => (category: CategoryDef): SummaryRow =>
+            ({label: category.label, ...this.aggregateCategory(groupType, category.key), kind: 'item', dotClass: category.dotClass});
 
-        // Expense header
-        rows.push({label: 'EXPENSE', grossValue: 0, netValue: 0, incomeTax: 0, vatTax: 0, isHeader: true, isBold: false});
-
-        // Expense category rows
-        for (const cat of EXPENSE_CATEGORIES) {
-            const agg = this.aggregateCategory('expense', cat.key);
-            rows.push({label: cat.label, ...agg, isHeader: false, isBold: false});
-        }
-
-        // Expense total
-        const totalExpense = this.financialReport?.totalExpense;
-        rows.push({
-            label: 'Total Expense',
-            grossValue: totalExpense?.grossValue || 0,
-            netValue: totalExpense?.netValue || 0,
-            incomeTax: totalExpense?.incomeTax || 0,
-            vatTax: totalExpense?.vatTax || 0,
-            isHeader: false,
-            isBold: true
-        });
-
-        // Balance
-        const totalBalance = this.financialReport?.totalBalance;
-        rows.push({
-            label: 'Balance',
-            grossValue: totalBalance?.grossValue || 0,
-            netValue: totalBalance?.netValue || 0,
-            incomeTax: totalBalance?.incomeTax || 0,
-            vatTax: totalBalance?.vatTax || 0,
-            isHeader: false,
-            isBold: true
-        });
-
-        this.summaryRows = rows;
+        this.summaryRows = [
+            header('Income'),
+            ...INCOME_CATEGORIES.map(item('income')),
+            total('Total income', this.financialReport?.totalIncome, 'total'),
+            header('Expenses'),
+            ...EXPENSE_CATEGORIES.map(item('expense')),
+            total('Total expenses', this.financialReport?.totalExpense, 'total'),
+            total('Balance', this.financialReport?.totalBalance, 'balance'),
+        ];
     }
 
-    private aggregateCategory(groupType: 'income' | 'expense', categoryKey: keyof FinancialReportCategoryGroup): { grossValue: number; netValue: number; incomeTax: number; vatTax: number } {
-        let grossValue = 0;
-        let netValue = 0;
-        let incomeTax = 0;
-        let vatTax = 0;
-
+    private aggregateCategory(groupType: 'income' | 'expense', categoryKey: keyof FinancialReportCategoryGroup) {
+        let grossValue = 0, netValue = 0, incomeTax = 0, vatTax = 0;
         for (const period of this.periods) {
-            const group: FinancialReportCategoryGroup | undefined = period[groupType];
-            if (group) {
-                const partial = group[categoryKey] as FinancialPartialData | undefined;
-                if (partial) {
-                    grossValue += partial.grossValue || 0;
-                    netValue += partial.netValue || 0;
-                    incomeTax += partial.incomeTax || 0;
-                    vatTax += partial.vatTax || 0;
-                }
+            const partial = period[groupType]?.[categoryKey] as FinancialPartialData | undefined;
+            if (partial) {
+                grossValue += partial.grossValue || 0;
+                netValue += partial.netValue || 0;
+                incomeTax += partial.incomeTax || 0;
+                vatTax += partial.vatTax || 0;
             }
         }
-
         return {grossValue, netValue, incomeTax, vatTax};
     }
 }

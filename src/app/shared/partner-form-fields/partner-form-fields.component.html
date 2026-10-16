@@ -1,0 +1,25 @@
+<div [formGroup]="form" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+    <div>
+        <label for="partnerName" class="omcd-form-label">Name <span class="text-error-600">*</span></label>
+        <input id="partnerName" type="text" formControlName="name" pInputText class="w-full" [placeholder]="namePlaceholder"
+               (blur)="markAsDirty('name')"/>
+        <small *ngIf="isFieldInvalid('name')" class="block mt-1.5 text-xs text-error-600">Enter a name</small>
+    </div>
+    <div>
+        <label for="partnerCategory" class="omcd-form-label">Category <span class="text-error-600">*</span></label>
+        <p-select inputId="partnerCategory" formControlName="category" [options]="categories ?? []"
+                  optionLabel="label" optionValue="id" appendTo="body" [fluid]="true"/>
+    </div>
+    <div>
+        <label for="partnerEmail" class="omcd-form-label">Email</label>
+        <input id="partnerEmail" type="email" formControlName="email" pInputText class="w-full" placeholder="name@example.com"/>
+    </div>
+    <div>
+        <label for="partnerTelephone" class="omcd-form-label">Phone</label>
+        <input id="partnerTelephone" type="tel" formControlName="telephone" pInputText class="w-full"/>
+    </div>
+    <div class="sm:col-span-2">
+        <label for="partnerNote" class="omcd-form-label">Note</label>
+        <textarea id="partnerNote" formControlName="note" pTextarea rows="3" [autoResize]="true" class="w-full"></textarea>
+    </div>
+</div>

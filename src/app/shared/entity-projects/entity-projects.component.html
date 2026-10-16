@@ -1,0 +1,42 @@
+<section class="omcd-card overflow-hidden">
+    <div class="omcd-card-header">
+        <div>
+            <h3 class="omcd-card-title">Projects</h3>
+            <p class="omcd-card-subtitle m-0">{{ summary?.numberOfProjects ?? 0 }} {{ summary?.numberOfProjects === 1 ? 'project' : 'projects' }}</p>
+        </div>
+    </div>
+    <p-table [value]="summary?.projects ?? []" [rowHover]="true" [tableStyle]="{'min-width': '44rem'}">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Project</th>
+                <th>Status</th>
+                <th>Start date</th>
+                <th>End date</th>
+                <th class="omcd-num">Value</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-project>
+            <tr [routerLink]="['/projects', project.id]" class="cursor-pointer">
+                <td>
+                    <div class="font-medium text-gray-800">{{ project.name }}</div>
+                    <div class="text-xs text-gray-500">{{ getTypeLabel(project.type) }}</div>
+                </td>
+                <td><p-tag [value]="getStatusLabel(project.status)" [severity]="statusSeverity(project.status)"/></td>
+                <td><span *ngIf="project.startDate; else notSet">{{ project.startDate | date:'dd.MM.yyyy' }}</span></td>
+                <td><span *ngIf="project.endDate; else notSet">{{ project.endDate | date:'dd.MM.yyyy' }}</span></td>
+                <td class="omcd-num font-medium text-gray-800">
+                    <span *ngIf="project.value != null; else notSet">{{ project.value | currency:'PLN':'symbol':'1.2-2' }}</span>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="5" class="p-0">
+                    <omcd-empty-state icon="pi pi-folder" title="No projects yet" [text]="emptyText"/>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</section>
+
+<ng-template #notSet><span class="font-normal text-gray-400">Not set</span></ng-template>

@@ -53,9 +53,11 @@ export class TaskListShellComponent {
         let projectId = this.projectId;
         let stageId = this.stageId;
         this.confirmationService.confirm({
-            message: `Do you want to delete task: ${$event}?`,
-            header: `Confirm task delete ${$event}.`,
-            icon: "pi pi-info-circle text-red-300",
+            header: 'Delete task',
+            message: `Delete ${$event.taskName}? This can't be undone.`,
+            icon: 'pi pi-exclamation-triangle',
+            acceptButtonProps: {label: 'Delete', severity: 'danger'},
+            rejectButtonProps: {label: 'Cancel', severity: 'secondary', outlined: true},
             accept: () => {
                 this.taskStore.deleteTask({projectId, stageId, taskId});
                 this.confirmationService.close();

@@ -1,0 +1,62 @@
+<div [formGroup]="form" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+    <div class="sm:col-span-2">
+        <label for="clientType" class="omcd-form-label">Client type <span class="text-error-600">*</span></label>
+        <p-select inputId="clientType" formControlName="clientType" [options]="clientTypes ?? []"
+                  optionLabel="label" optionValue="id" appendTo="body" class="w-full sm:w-1/2"/>
+    </div>
+
+    @switch (form.get('clientType')?.value) {
+        @case (ClientType.PRIVATE.toString()) {
+            <div>
+                <label for="firstName" class="omcd-form-label">First name <span class="text-error-600">*</span></label>
+                <input id="firstName" type="text" formControlName="firstName" pInputText class="w-full"
+                       (blur)="markAsDirty('firstName')"/>
+                <small *ngIf="isFieldInvalid('firstName')" class="block mt-1.5 text-xs text-error-600">Enter a first name</small>
+            </div>
+            <div>
+                <label for="lastName" class="omcd-form-label">Last name <span class="text-error-600">*</span></label>
+                <input id="lastName" type="text" formControlName="lastName" pInputText class="w-full"
+                       (blur)="markAsDirty('lastName')"/>
+                <small *ngIf="isFieldInvalid('lastName')" class="block mt-1.5 text-xs text-error-600">Enter a last name</small>
+            </div>
+        }
+        @case (ClientType.CORPORATE.toString()) {
+            <div class="sm:col-span-2">
+                <label for="companyName" class="omcd-form-label">Company name <span class="text-error-600">*</span></label>
+                <input id="companyName" type="text" formControlName="companyName" pInputText class="w-full"
+                       (blur)="markAsDirty('companyName')"/>
+                <small *ngIf="isFieldInvalid('companyName')" class="block mt-1.5 text-xs text-error-600">Enter a company name</small>
+            </div>
+        }
+    }
+
+    <ng-container formGroupName="contact">
+        <div>
+            <label for="email" class="omcd-form-label">Email</label>
+            <input id="email" type="email" formControlName="email" pInputText class="w-full" placeholder="name@example.com"/>
+        </div>
+        <div>
+            <label for="telephone" class="omcd-form-label">Phone</label>
+            <input id="telephone" type="tel" formControlName="telephone" pInputText class="w-full"/>
+        </div>
+        <ng-container formGroupName="address">
+            <div class="sm:col-span-2">
+                <label for="street" class="omcd-form-label">Street</label>
+                <input id="street" type="text" formControlName="street" pInputText class="w-full"/>
+            </div>
+            <div>
+                <label for="postCode" class="omcd-form-label">Post code</label>
+                <input id="postCode" type="text" formControlName="postCode" pInputText class="w-full" placeholder="00-000"/>
+            </div>
+            <div>
+                <label for="city" class="omcd-form-label">City</label>
+                <input id="city" type="text" formControlName="city" pInputText class="w-full"/>
+            </div>
+        </ng-container>
+    </ng-container>
+
+    <div class="sm:col-span-2">
+        <label for="note" class="omcd-form-label">Note</label>
+        <textarea id="note" formControlName="note" pTextarea rows="3" [autoResize]="true" class="w-full"></textarea>
+    </div>
+</div>

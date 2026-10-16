@@ -1,4 +1,5 @@
-import {Component, effect, inject, OnInit, ViewChild} from '@angular/core';
+import {Component, computed, effect, inject, OnInit, ViewChild} from '@angular/core';
+import {toSignal} from "@angular/core/rxjs-interop";
 import {MenuItem} from "primeng/api";
 import {ConfigurationStore} from "./shared/configuration/state";
 import {UserStore} from "./shared/user/state";
@@ -8,39 +9,84 @@ import {filter} from "rxjs";
 import {BreadcrumbService} from "./shared/breadcrumb/breadcrumb.service";
 import {Menu} from "primeng/menu";
 import {ToastModule} from "primeng/toast";
-import {AvatarModule} from "primeng/avatar";
 import {BreadcrumbModule} from "primeng/breadcrumb";
-import {RippleModule} from "primeng/ripple";
-import {StyleClassModule} from "primeng/styleclass";
+import {ButtonModule} from "primeng/button";
 import {TooltipModule} from "primeng/tooltip";
-import {NgIf, NgClass, AsyncPipe} from "@angular/common";
+import {NgFor, NgIf, NgClass, AsyncPipe} from "@angular/common";
+
+export interface NavItem {
+    label: string;
+    icon: string;
+    route: string;
+}
+
+export interface NavGroup {
+    label: string;
+    items: NavItem[];
+}
+
+// Sidebar groups and icons from DESIGN_GUIDELINES.md, section 3
+const NAV_GROUPS: NavGroup[] = [
+    {
+        label: 'Work', items: [
+            {label: 'Dashboard', icon: 'pi pi-th-large', route: '/home'},
+            {label: 'Projects', icon: 'pi pi-folder', route: '/projects'},
+            {label: 'Calendar', icon: 'pi pi-calendar', route: '/calendar'},
+        ]
+    },
+    {
+        label: 'People', items: [
+            {label: 'Architects', icon: 'pi pi-id-card', route: '/architects'},
+            {label: 'Clients', icon: 'pi pi-users', route: '/clients'},
+            {label: 'Contractors', icon: 'pi pi-wrench', route: '/contractors'},
+            {label: 'Suppliers', icon: 'pi pi-truck', route: '/suppliers'},
+        ]
+    },
+    {
+        label: 'Finance', items: [
+            {label: 'Financial report', icon: 'pi pi-chart-bar', route: '/financial-report'},
+        ]
+    },
+];
+
+// Below this width the sidebar is an overlay opened from the top bar instead of a collapsible column
+const DESKTOP_MEDIA_QUERY = '(min-width: 64rem)';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.less'],
     standalone: true,
-    imports: [ToastModule, AvatarModule, Menu, BreadcrumbModule, RippleModule, StyleClassModule, TooltipModule, NgIf, NgClass, AsyncPipe, RouterLink, RouterLinkActive, RouterOutlet]
+    imports: [ToastModule, ButtonModule, Menu, BreadcrumbModule, TooltipModule, NgFor, NgIf, NgClass, AsyncPipe, RouterLink, RouterLinkActive, RouterOutlet]
 })
 export class AppComponent implements OnInit {
     title = 'Task-FE';
 
     sidebarCollapsed = false;
+    mobileSidebarOpen = false;
+    readonly navGroups = NAV_GROUPS;
 
     breadcrumbItems: MenuItem[] = [];
+    // Pages migrated to DESIGN_GUIDELINES.md render their own title + breadcrumb header
+    ownPageHeader = false;
     userMenuItems: MenuItem[] = [];
 
     @ViewChild('userMenu') userMenu!: Menu;
 
     readonly configurationStore = inject(ConfigurationStore);
     readonly userStore = inject(UserStore);
+    private readonly authorization = inject(AuthorizationService);
+    private readonly authUser = toSignal(this.authorization.getUser());
+    // Backend user first; the Auth0 profile covers the time before (or a failure of) GET /users/current
+    readonly $displayName = computed(() =>
+        this.userStore.currentUser()?.username || this.authUser()?.name || this.authUser()?.email || '');
 
     constructor(protected authorizationService: AuthorizationService, private router: Router,
                 private activatedRoute: ActivatedRoute, private breadcrumbService: BreadcrumbService) {
         effect(() => {
-            const user = this.userStore.currentUser();
+            const email = this.userStore.currentUser()?.email || this.authUser()?.email;
             this.userMenuItems = [
-                {label: user?.username || '', disabled: true, styleClass: 'font-bold'},
+                {label: email || this.$displayName(), disabled: true, styleClass: 'font-medium'},
                 {separator: true},
                 {label: 'Logout', icon: 'pi pi-sign-out', command: () => this.logout()}
             ];
@@ -60,6 +106,11 @@ export class AppComponent implements OnInit {
             .pipe(filter(event => event instanceof NavigationEnd))
             .subscribe(() => {
                 this.breadcrumbItems = this.breadcrumbService.createBreadcrumbs(this.activatedRoute.root);
+                let route = this.activatedRoute.snapshot;
+                while (route.firstChild) {
+                    route = route.firstChild;
+                }
+                this.ownPageHeader = route.data['ownPageHeader'] === true;
             });
     }
 
@@ -71,12 +122,13 @@ export class AppComponent implements OnInit {
         this.authorizationService.logout();
     }
 
+    get displayName(): string {
+        return this.$displayName();
+    }
+
     getUserInitial(): string {
-        const user = this.userStore.currentUser();
-        if (user?.username) {
-            return user.username.charAt(0).toUpperCase();
-        }
-        return '?';
+        const name = this.$displayName();
+        return name ? name.charAt(0).toUpperCase() : '?';
     }
 
     toggleUserMenu(event: Event): void {
@@ -95,6 +147,14 @@ export class AppComponent implements OnInit {
     }
 
     toggleSidebar(): void {
-        this.sidebarCollapsed = !this.sidebarCollapsed;
+        if (window.matchMedia(DESKTOP_MEDIA_QUERY).matches) {
+            this.sidebarCollapsed = !this.sidebarCollapsed;
+        } else {
+            this.mobileSidebarOpen = !this.mobileSidebarOpen;
+        }
+    }
+
+    closeMobileSidebar(): void {
+        this.mobileSidebarOpen = false;
     }
 }

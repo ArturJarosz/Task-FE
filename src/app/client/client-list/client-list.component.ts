@@ -1,62 +1,76 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Client, ClientType, ConfigurationEntry} from "../../generated/models";
 import {ClientDto} from "../model/client";
-import {WrapperComponent} from "../../shared";
-import {AddClientComponent} from "../add-client";
+import {EmptyStateComponent} from "../../shared";
 import {TableModule} from "primeng/table";
 import {ButtonModule} from "primeng/button";
-import {RouterLink} from "@angular/router";
-import {AvatarModule} from "primeng/avatar";
+import {Menu, MenuModule} from "primeng/menu";
+import {MenuItem} from "primeng/api";
+import {TooltipModule} from "primeng/tooltip";
+import {Router, RouterLink} from "@angular/router";
+import {NgIf} from "@angular/common";
+
+export interface ClientRow {
+    client: Client;
+    projects: number;
+    activeProjects: number;
+}
 
 @Component({
     selector: 'client-list',
     templateUrl: './client-list.component.html',
-    styleUrls: ['./client-list.component.less',],
+    styleUrls: ['./client-list.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [WrapperComponent, AddClientComponent, TableModule, ButtonModule, RouterLink, AvatarModule]
+    imports: [TableModule, ButtonModule, MenuModule, TooltipModule, RouterLink, NgIf, EmptyStateComponent]
 })
 export class ClientListComponent {
-    showComponent: boolean = false;
     @Input()
-    clients!: Client[];
+    rows: ClientRow[] = [];
     @Input()
-    clientTypes!: ConfigurationEntry[];
+    clientTypes: ConfigurationEntry[] | null = [];
+    @Input()
+    emptyTitle: string = 'No clients yet';
+    @Input()
+    emptyText: string = 'Add a client to start a project for them.';
     @Output()
     removeClientEvent: EventEmitter<ClientDto> = new EventEmitter<ClientDto>();
 
-    protected readonly ClientType = ClientType;
+    rowMenuItems: MenuItem[] = [];
 
-    constructor() {
+    constructor(private router: Router) {
     }
 
-    onClick() {
-        this.showComponent = !this.showComponent;
+    getName(client: Client): string {
+        return client.clientType === ClientType.CORPORATE
+            ? client.companyName ?? ''
+            : `${client.firstName ?? ''} ${client.lastName ?? ''}`.trim();
     }
 
-    deleteClientClick(event: MouseEvent, client: Client) {
-        // stop propagating row event
-        event.stopPropagation();
-        let name = client.clientType === ClientType.PRIVATE ? `${client.firstName} ${client.lastName}` : `${client.companyName}`;
-        this.removeClientEvent.emit({name: name, id: client.id!});
-    }
-
-    onNotify(event: boolean) {
-        this.showComponent = !this.showComponent;
-    }
-
-    getLabelFromType(type: string): string {
+    getTypeLabel(type: string): string {
         return resolveLabel(type, this.clientTypes);
     }
 
-    getClientInitials(client: Client): string {
-        if (client.clientType === ClientType.PRIVATE && client.firstName && client.lastName) {
-            return `${client.firstName.charAt(0)}${client.lastName.charAt(0)}`.toUpperCase();
-        }
+    getInitials(client: Client): string {
         if (client.clientType === ClientType.CORPORATE && client.companyName) {
             return client.companyName.charAt(0).toUpperCase();
+        }
+        if (client.firstName && client.lastName) {
+            return `${client.firstName.charAt(0)}${client.lastName.charAt(0)}`.toUpperCase();
         }
         return '?';
     }
 
+    openRowMenu($event: MouseEvent, client: Client, menu: Menu) {
+        $event.stopPropagation();
+        this.rowMenuItems = [
+            {label: 'Open', icon: 'pi pi-arrow-right', command: () => this.router.navigate(['/clients', client.id])},
+            {
+                label: 'Delete client', icon: 'pi pi-trash',
+                command: () => this.removeClientEvent.emit({name: this.getName(client), id: client.id!})
+            }
+        ];
+        menu.toggle($event);
+    }
 }

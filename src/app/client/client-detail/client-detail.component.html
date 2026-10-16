@@ -1,95 +1,119 @@
-<wrapper [title]="clientName!">
-    <div wrapper-body>
-        <p-accordion [multiple]="true" [value]="['0']">
-            <form [formGroup]="clientDetailsForm">
-                <p-accordion-panel value="0">
-                    <p-accordion-header>Client details</p-accordion-header>
-                    <p-accordion-content>
-                    <div class="p-2" [ngSwitch]="clientDetailsForm.value.clientType">
-                        <div class="flex flex-col lg:flex-row lg:justify-end items-center justify-end">
-                            <p-button icon="pi pi-arrow-down" [disabled]="!isFormChanged()" (onClick)="onSave()" [outlined]="true" [rounded]="true" class="update-button transition-colors duration-300"></p-button>
-                            <p-button icon="pi pi-times" [outlined]="true" [rounded]="true" (onClick)="onDelete()" class="remove-button transition-colors px-1"></p-button>
-                        </div>
-                        <div class="grid grid-cols-12 gap-4 border-surface p-1">
-                            <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
-                                <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">Client type:</div>
-                                <p-select class="col-span-8 pr-4" formControlName="clientType" [options]="clientTypes!"
-                                            optionLabel="label" optionValue="id"></p-select>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-12 gap-4 border-surface p-1" *ngSwitchCase="ClientType.PRIVATE">
-                            <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
-                                <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">First name:</div>
-                                <div class="col-span-8 pr-4">
-                                    <input formControlName="firstName" pInputText>
-                                </div>
-                            </div>
-                            <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
-                                <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">Last name:</div>
-                                <div class="col-span-8 pr-4">
-                                    <input formControlName="lastName" pInputText>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-12 gap-4 border-surface p-1" *ngSwitchCase="ClientType.CORPORATE">
-                            <div class="col-span-6 p-1 grid grid-cols-12 gap-4">
-                                <div class="col-3-custom text-surface-500 dark:text-surface-300 flex items-center">Name:</div>
-                                <div class="col-span-9 pr-4">
-                                    <input formControlName="companyName" pInputText>
-                                </div>
-                            </div>
-                        </div>
-                        <div formGroupName="contact">
-                            <div class="grid grid-cols-12 gap-4 border-surface p-1">
-                                <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
-                                    <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">Email:</div>
-                                    <div class="col-span-8 pr-4">
-                                        <input  formControlName="email" pInputText>
-                                    </div>
-                                </div>
-                                <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
-                                    <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">Telephone:</div>
-                                    <div class="col-span-8 pr-4">
-                                        <input  formControlName="telephone" pInputText>
-                                    </div>
-                                </div>
-                            </div>
-                            <div formGroupName="address">
-                                <div class="grid grid-cols-12 gap-4 border-surface p-1">
-                                    <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
-                                        <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">City:</div>
-                                        <div class="col-span-8 pr-4">
-                                            <input  formControlName="city" pInputText>
-                                        </div>
-                                    </div>
-                                    <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
-                                        <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">Street:</div>
-                                        <div class="col-span-8 pr-4">
-                                            <input  formControlName="street" pInputText>
-                                        </div>
-                                    </div>
-                                    <div class="col-span-4 p-1 grid grid-cols-12 gap-4">
-                                        <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">Post code:</div>
-                                        <div class="col-span-8 pr-4">
-                                            <input  formControlName="postCode" pInputText>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-12 gap-4 border-surface p-1">
-                            <div class="col-span-12 p-1 pr-4">
-                                <div class="text-surface-500 dark:text-surface-300 font-medium mb-1">Note: </div>
-                                <textarea formControlName="note" type="text" pInputTextarea rows="2"
-                                          [autoResize]="true"></textarea>
-                            </div>
-                        </div>
+<omcd-page-header title="Client" [crumbs]="crumbs"/>
+
+<div class="flex flex-col gap-6">
+    <!-- Header card -->
+    <section class="omcd-card flex flex-wrap items-center gap-5 p-6">
+        <div class="flex items-center justify-center shrink-0 w-[72px] h-[72px] rounded-2xl bg-warning-50 text-warning-700 text-2xl font-semibold">
+            {{ initials }}
+        </div>
+        <div class="flex-1 min-w-0">
+            <h2 class="m-0 text-xl leading-[30px] font-semibold text-gray-800">{{ clientName }}</h2>
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-sm text-gray-500">
+                <span>{{ typeLabel }}</span>
+                <ng-container *ngIf="client.contact?.address?.city">
+                    <span class="w-px h-4 bg-gray-200"></span>
+                    <span>{{ client.contact?.address?.city }}</span>
+                </ng-container>
+                <span class="w-px h-4 bg-gray-200"></span>
+                <span>{{ projectsSummary?.numberOfProjects ?? 0 }} {{ projectsSummary?.numberOfProjects === 1 ? 'project' : 'projects' }}</span>
+                <span class="w-px h-4 bg-gray-200"></span>
+                <span>{{ activeProjects }} active</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <p-button icon="pi pi-ellipsis-h" severity="secondary" [outlined]="true"
+                      pTooltip="More actions" tooltipPosition="bottom" ariaLabel="More actions"
+                      (onClick)="actionsMenu.toggle($event)"/>
+            <p-menu #actionsMenu [model]="actions" [popup]="true" appendTo="body"/>
+        </div>
+    </section>
+
+    <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_340px] gap-6 items-start">
+        <!-- Main column -->
+        <div class="flex flex-col gap-6 min-w-0">
+            <section class="omcd-card">
+                <div class="omcd-card-header">
+                    <h3 class="omcd-card-title">Client details</h3>
+                    <p-button label="Edit" icon="pi pi-pencil" severity="secondary" [outlined]="true" [rounded]="true"
+                              (onClick)="onEdit()"/>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 px-6 pb-6">
+                    <omcd-field label="Client type" [value]="typeLabel"/>
+                    <ng-container *ngIf="client.clientType === ClientType.CORPORATE; else privateName">
+                        <omcd-field class="lg:col-span-2" label="Company name" [value]="client.companyName"/>
+                    </ng-container>
+                    <ng-template #privateName>
+                        <omcd-field label="First name" [value]="client.firstName"/>
+                        <omcd-field label="Last name" [value]="client.lastName"/>
+                    </ng-template>
+                    <omcd-field label="Email" [value]="client.contact?.email"/>
+                    <omcd-field label="Phone" [value]="client.contact?.telephone"/>
+                    <omcd-field label="Address" [value]="address"/>
+                    <omcd-field class="sm:col-span-2 lg:col-span-3" label="Note" [value]="client.note" emptyText="No note yet"/>
+                </div>
+            </section>
+
+            <omcd-entity-projects [summary]="projectsSummary"
+                                  [projectTypes]="projectTypes"
+                                  [projectStatuses]="projectStatuses"
+                                  emptyText="Projects show up here once one is created for this client."/>
+        </div>
+
+        <!-- Side column -->
+        <div class="flex flex-col gap-6">
+            <section class="omcd-card">
+                <div class="omcd-card-header">
+                    <h3 class="omcd-card-title">Projects value</h3>
+                </div>
+                <div class="px-6 pb-6">
+                    <span class="omcd-field-label">Total contract value</span>
+                    <div class="text-2xl leading-8 font-bold text-gray-800 tabular-nums">
+                        {{ (projectsSummary?.totalValue ?? 0) | currency:'PLN':'symbol':'1.2-2' }}
                     </div>
-                    </p-accordion-content>
-                </p-accordion-panel>
-            </form>
-        </p-accordion>
-        <client-projects-summary-shell>
-        </client-projects-summary-shell>
+                </div>
+            </section>
+
+            <section class="omcd-card">
+                <div class="omcd-card-header">
+                    <h3 class="omcd-card-title">Contact</h3>
+                </div>
+                <ul class="list-none m-0 px-6 pb-6 flex flex-col gap-3 text-sm">
+                    <li class="flex items-center gap-3">
+                        <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-gray-100 text-gray-500"><i class="pi pi-envelope"></i></span>
+                        <a *ngIf="client.contact?.email; else notSet" [href]="'mailto:' + client.contact?.email"
+                           class="text-gray-800 no-underline hover:text-brand-500 truncate">{{ client.contact?.email }}</a>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-gray-100 text-gray-500"><i class="pi pi-phone"></i></span>
+                        <a *ngIf="client.contact?.telephone; else notSet" [href]="'tel:' + client.contact?.telephone"
+                           class="text-gray-800 no-underline hover:text-brand-500">{{ client.contact?.telephone }}</a>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-gray-100 text-gray-500"><i class="pi pi-map-marker"></i></span>
+                        <span *ngIf="address; else notSet" class="text-gray-800">{{ address }}</span>
+                    </li>
+                </ul>
+            </section>
+        </div>
     </div>
-</wrapper>
+</div>
+
+<ng-template #notSet><span class="text-gray-400">Not set</span></ng-template>
+
+<!-- Edit client -->
+<p-dialog [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
+          [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onCancelEdit()">
+    <ng-template pTemplate="header">
+        <div class="flex flex-col gap-1">
+            <span class="p-dialog-title">Edit client</span>
+            <span class="text-sm text-gray-500">Update the client's name, contact details and note.</span>
+        </div>
+    </ng-template>
+    <form [formGroup]="clientDetailsForm">
+        <client-form-fields [form]="clientDetailsForm" [clientTypes]="clientTypes"/>
+    </form>
+    <ng-template pTemplate="footer">
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancelEdit()"/>
+        <p-button label="Save changes" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
+    </ng-template>
+</p-dialog>

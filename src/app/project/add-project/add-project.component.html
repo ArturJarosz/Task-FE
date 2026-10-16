@@ -1,72 +1,45 @@
-<p-dialog header='header' [(visible)]="visible" appendTo="body" [modal]="true"
-          [style]="{ width: '50vw', 'max-width': '800px'}"
-          (onHide)="onClose()">
+<p-dialog [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
+          [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onClose()">
     <ng-template pTemplate="header">
-        <div class="flex flex-col gap-2">
-            <h1 class="m-0 text-surface-900 dark:text-surface-0 font-semibold leading-normal">{{header}}</h1>
+        <div class="flex flex-col gap-1">
+            <span class="p-dialog-title">{{ header }}</span>
+            <span class="text-sm text-gray-500">Add the project, its client, architect and contract value.</span>
         </div>
     </ng-template>
-    <div>
-        <form [formGroup]="addProjectForm">
-            <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
-                <div class="flex gap-4">
-                    <div class="w-6/12">
-                        <label for="name" class="block text-color text-base top-label">Project name</label>
-                        <span class="p-input-icon-left w-full">
-                            <input type="text" class="w-full" id="name" formControlName="name"
-                                   pInputText placeholder="project name"
-                                   [ngClass]="{'is-invalid': (addProjectForm.get('name')?.touched || addProjectForm.get('name')?.dirty) && !addProjectForm.get('name')?.valid }"
-                            />
-                        </span>
-                    </div>
-                    <div class="w-6/12">
-                        <label for="type" class="block text-color text-base top-label">Type</label>
-                        <span class="w-full">
-                            <p-select [options]="$projectTypes()" optionLabel="label" optionValue="id"
-                                        formControlName="type" class="w-full" appendTo="body" id="type">
-                            </p-select>
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
-                <div class="flex gap-4">
-                    <div class="w-6/12">
-                        <label for="client" class="block text-color text-base w-full top-label">Client</label>
-                        <p-select [options]="$clientsForm()" optionLabel="resolvedName" optionValue="id"
-                                    formControlName="clientId" class="w-full" appendTo="body" id="client">
-                        </p-select>
-                    </div>
-                    <div class="w-6/12">
-                        <label for="architect" class="block text-color text-base w-full top-label">Architect</label>
-                        <p-select [options]="$architectsModel()!" optionLabel="resolvedName" optionValue="id"
-                                    formControlName="architectId" class="w-full" appendTo="body" id="architect">
-                        </p-select>
-                    </div>
-                </div>
-            </div>
-            <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
-                <div class="flex gap-4">
-                    <div class="w-full">
-                        <label for="offerValue" class="block text-color text-base top-label">Value</label>
-                        <span class="p-input-icon-left w-full">
-                                <input type=number step=0.01 class="w-full" id="offerValue" formControlName="offerValue"
-                                       pInputText
-                                       placeholder="0.0"
-                                       [ngClass]="{'is-invalid': (addProjectForm.get('offerValue')?.touched || addProjectForm.get('offerValue')?.dirty) && !addProjectForm.get('offerValue')?.valid }"
-                                />
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-    <ng-template pTemplate="footer">
-        <div class="flex gap-4 justify-end border-t border-surface pt-8">
-            <p-button label="Cancel" styleClass="p-button-outlined p-button-secondary"
-                      (onClick)="onCancel()"></p-button>
-            <p-button label="Save" styleClass="p-button-outlined" [disabled]="!isSaveEnabled()"
-                      (onClick)="onSave()"></p-button>
+    <form [formGroup]="addProjectForm" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div>
+            <label for="name" class="omcd-form-label">Project name <span class="text-error-600">*</span></label>
+            <input id="name" type="text" formControlName="name" pInputText class="w-full" placeholder="e.g. Lublin 02"
+                   (blur)="markAsDirty('name')"/>
+            <small *ngIf="isFieldInvalid('name')" class="block mt-1.5 text-xs text-error-600">Enter a project name</small>
         </div>
+        <div>
+            <label for="type" class="omcd-form-label">Type <span class="text-error-600">*</span></label>
+            <p-select inputId="type" formControlName="type" [options]="$projectTypes()"
+                      optionLabel="label" optionValue="id" appendTo="body" [fluid]="true"/>
+        </div>
+        <div>
+            <label for="client" class="omcd-form-label">Client <span class="text-error-600">*</span></label>
+            <p-select inputId="client" formControlName="clientId" [options]="$clientsForm()"
+                      optionLabel="resolvedName" optionValue="id" [filter]="true" filterBy="resolvedName"
+                      appendTo="body" [fluid]="true"/>
+        </div>
+        <div>
+            <label for="architect" class="omcd-form-label">Architect <span class="text-error-600">*</span></label>
+            <p-select inputId="architect" formControlName="architectId" [options]="$architectsModel()"
+                      optionLabel="resolvedName" optionValue="id" [filter]="true" filterBy="resolvedName"
+                      appendTo="body" [fluid]="true"/>
+        </div>
+        <div>
+            <label for="offerValue" class="omcd-form-label">Contract value <span class="text-error-600">*</span></label>
+            <p-inputnumber inputId="offerValue" formControlName="offerValue" mode="decimal" locale="pl-PL"
+                           [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0" suffix=" zł" [fluid]="true"
+                           (onBlur)="markAsDirty('offerValue')"/>
+            <small *ngIf="isFieldInvalid('offerValue')" class="block mt-1.5 text-xs text-error-600">Enter the contract value</small>
+        </div>
+    </form>
+    <ng-template pTemplate="footer">
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
+        <p-button label="Create project" icon="pi pi-plus" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
     </ng-template>
 </p-dialog>

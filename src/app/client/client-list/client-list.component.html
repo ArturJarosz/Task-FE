@@ -1,40 +1,51 @@
-<wrapper [title]="'Clients'">
-    <div wrapper-body>
-        <p-table [value]="clients" [rowHover]="true" [tableStyle]="{ 'min-width': '50rem' }">
-            <ng-template pTemplate="header">
-                <tr>
-                    <th>Id</th>
-                    <th>Name</th>
-                    <th></th>
-                    <th>Type</th>
-                    <th>Telephone</th>
-                    <th>Email</th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-client>
-                <tr [routerLink]="['/clients', client.id]" class="cursor-pointer">
-                    <td>{{ client.id }}</td>
-                    <td>
-                        <div class="flex items-center gap-2">
-                            <p-avatar [label]="getClientInitials(client)" shape="circle" styleClass="bg-primary text-white"></p-avatar>
-                            <span>{{ client.clientType == ClientType.PRIVATE ? client.firstName + " " + client.lastName : client.companyName }}</span>
-                        </div>
-                    </td>
-                    <td>
-                        <button pButton pRipple class="p-button-text p-button-plain p-0" icon="pi pi-times" (click)="deleteClientClick($event, client)" size="small"></button>
-                    </td>
-                    <td>{{ getLabelFromType(client.clientType) }}</td>
-                    <td>{{ client?.contact ? client?.contact?.telephone : null }}</td>
-                    <td>{{ client?.contact ? client?.contact?.email : null }}</td>
-                </tr>
-            </ng-template>
-        </p-table>
-    </div>
-    <div wrapper-buttons>
-        <p-button icon="pi pi-plus" (click)="onClick()" [rounded]="true" class="add-button transition-colors duration-300"></p-button>
-    </div>
-    <add-client [visible]="showComponent" (notify)="onNotify($event)"></add-client>
-</wrapper>
+<p-table [value]="rows" [rowHover]="true" [tableStyle]="{'min-width': '52rem'}">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Client</th>
+            <th>Contact</th>
+            <th>City</th>
+            <th class="omcd-num">Projects</th>
+            <th class="omcd-num">Active projects</th>
+            <th class="w-16"><span class="sr-only">Actions</span></th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+        <tr [routerLink]="['/clients', row.client.id]" class="cursor-pointer">
+            <td>
+                <div class="flex items-center gap-3">
+                    <span class="omcd-avatar bg-warning-50 text-warning-700">{{ getInitials(row.client) }}</span>
+                    <div class="min-w-0">
+                        <div class="font-medium text-gray-800 truncate">{{ getName(row.client) }}</div>
+                        <div class="text-xs text-gray-500">{{ getTypeLabel(row.client.clientType) }}</div>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div *ngIf="row.client.contact?.email || row.client.contact?.telephone; else notSet" class="min-w-0">
+                    <div *ngIf="row.client.contact?.email" class="text-gray-800 truncate">{{ row.client.contact.email }}</div>
+                    <div *ngIf="row.client.contact?.telephone" class="text-xs text-gray-500">{{ row.client.contact.telephone }}</div>
+                </div>
+            </td>
+            <td>
+                <span *ngIf="row.client.contact?.address?.city; else notSet">{{ row.client.contact.address.city }}</span>
+            </td>
+            <td class="omcd-num">{{ row.projects }}</td>
+            <td class="omcd-num">{{ row.activeProjects }}</td>
+            <td class="text-right">
+                <p-button icon="pi pi-ellipsis-h" [text]="true" [rounded]="true" severity="secondary"
+                          pTooltip="Client actions" tooltipPosition="left" ariaLabel="Client actions"
+                          (onClick)="openRowMenu($event, row.client, rowMenu)"/>
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+        <tr>
+            <td colspan="6" class="p-0">
+                <omcd-empty-state icon="pi pi-users" [title]="emptyTitle" [text]="emptyText"/>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+<p-menu #rowMenu [model]="rowMenuItems" [popup]="true" appendTo="body"/>
 
-
-
+<ng-template #notSet><span class="text-gray-400">Not set</span></ng-template>
