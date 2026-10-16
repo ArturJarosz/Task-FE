@@ -8,17 +8,19 @@ import {ConfirmationService} from "primeng/api";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ButtonModule} from "primeng/button";
 import {DateRange, EventSelection} from "../model/calendar.model";
+import {PageCrumb, PageHeaderComponent} from "../../shared";
 
 @Component({
     selector: 'calendar-shell',
     templateUrl: './calendar-shell.component.html',
     styleUrl: './calendar-shell.component.less',
     standalone: true,
-    imports: [CalendarViewComponent, UpcomingEventsComponent, AddCalendarEventComponent, ConfirmDialogModule, ButtonModule]
+    imports: [CalendarViewComponent, UpcomingEventsComponent, AddCalendarEventComponent, ConfirmDialogModule, ButtonModule, PageHeaderComponent]
 })
 export class CalendarShellComponent implements OnInit {
 
     readonly calendarStore = inject(CalendarStore);
+    readonly crumbs: PageCrumb[] = [{label: 'Home', route: ['/home']}, {label: 'Calendar'}];
 
     $events: Signal<CalendarEvent[]> = this.calendarStore.events;
     $upcomingEvents: Signal<CalendarEvent[]> = this.calendarStore.upcomingEvents;
@@ -83,9 +85,11 @@ export class CalendarShellComponent implements OnInit {
 
     onDeleteEvent(event: CalendarEvent): void {
         this.confirmationService.confirm({
-            message: `Do you want to delete event ${event.name}?`,
-            header: `Confirm event delete ${event.name}`,
-            icon: "pi pi-info-circle text-red-300",
+            header: 'Delete event',
+            message: `Delete ${event.name}? This can't be undone.`,
+            icon: 'pi pi-exclamation-triangle',
+            acceptButtonProps: {label: 'Delete', severity: 'danger'},
+            rejectButtonProps: {label: 'Cancel', severity: 'secondary', outlined: true},
             accept: () => {
                 this.calendarStore.deleteCalendarEvent({eventId: event.id!});
                 this.confirmationService.close();

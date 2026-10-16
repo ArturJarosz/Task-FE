@@ -17,12 +17,12 @@ export class TaskFormProvider {
         return this.formBuilder.nonNullable.group<TaskForm>({
             id: this.formBuilder.nonNullable.control<number>(0, [Validators.required]),
             name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
-            startDate: this.formBuilder.nonNullable.control<Date>(new Date(), [Validators.required]),
-            endDate: this.formBuilder.nonNullable.control<Date>(new Date(), [Validators.required]),
+            startDate: this.formBuilder.control<Date | null>(null),
+            endDate: this.formBuilder.control<Date | null>(null),
             status: this.formBuilder.nonNullable.control<TaskStatus>(DEFAULT_STATUS),
-            type: this.formBuilder.nonNullable.control<TaskType>(DEFAULT_TYPE),
-            note: this.formBuilder.nonNullable.control(''),
-            architectId: this.formBuilder.control<number | null>(null)
+            type: this.formBuilder.nonNullable.control<TaskType>(DEFAULT_TYPE, [Validators.required]),
+            note: this.formBuilder.control<string | null>(''),
+            architectId: this.formBuilder.control<number | null>(null, [Validators.required])
         });
     };
 
@@ -30,9 +30,9 @@ export class TaskFormProvider {
         return this.formBuilder.nonNullable.group<AddTaskForm>({
             name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
             startDate: this.formBuilder.control<Date>(new Date()),
-            type: this.formBuilder.nonNullable.control<TaskType>(DEFAULT_TYPE),
+            type: this.formBuilder.nonNullable.control<TaskType>(DEFAULT_TYPE, [Validators.required]),
             note: this.formBuilder.control(''),
-            architectId: this.formBuilder.control<number | null>(null)
+            architectId: this.formBuilder.control<number | null>(null, [Validators.required])
         })
     }
 }
@@ -40,11 +40,11 @@ export class TaskFormProvider {
 export interface TaskForm {
     id: FormControl<number>;
     name: FormControl<string>;
-    startDate: FormControl<Date>,
-    endDate: FormControl<Date>;
+    startDate: FormControl<Date | null>,
+    endDate: FormControl<Date | null>;
     status: FormControl<TaskStatus>,
     type: FormControl<TaskType>,
-    note: FormControl<string>,
+    note: FormControl<string | null>,
     architectId: FormControl<number | null>
 }
 

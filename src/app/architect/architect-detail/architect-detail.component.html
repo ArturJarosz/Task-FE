@@ -1,35 +1,57 @@
-<wrapper [title]="this.pageTitle">
-    <div wrapper-body>
-        <p-accordion [multiple]="true" [value]="['0']">
-            <form [formGroup]="architectDetailForm">
-                <p-accordion-panel value="0">
-                    <p-accordion-header>Parsonal details</p-accordion-header>
-                    <p-accordion-content>
-                    <div class="p-2">
-                        <div class="grid grid-cols-12 gap-4 border-surface p-1" >
-                            <div class="col-span-6 p-1 grid grid-cols-12 gap-4">
-                                <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">First name:</div>
-                                <div class="col-span-8 pr-4">
-                                    <input formControlName="firstName" pInputText>
-                                </div>
-                            </div>
-                            <div class="col-span-6 p-1 grid grid-cols-12 gap-4">
-                                <div class="col-span-4 text-surface-500 dark:text-surface-300 flex items-center">Last name:</div>
-                                <div class="col-span-8 pr-4">
-                                    <input formControlName="lastName" pInputText>
-                                </div>
-                            </div>
-                        </div>
+<app-page-header title="Architect" [crumbs]="crumbs"/>
+
+<div class="flex flex-col gap-6">
+    <!-- Header card -->
+    <section class="app-card flex flex-wrap items-center gap-5 p-6">
+        <div class="flex items-center justify-center shrink-0 w-[72px] h-[72px] rounded-2xl bg-brand-50 text-brand-500 text-2xl font-semibold">
+            {{ initials }}
+        </div>
+        <div class="flex-1 min-w-0">
+            <h2 class="m-0 text-xl leading-[30px] font-semibold text-gray-800">{{ name }}</h2>
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-sm text-gray-500">
+                <span>Architect</span>
+                <span class="w-px h-4 bg-gray-200"></span>
+                <span>{{ projectsSummary?.numberOfProjects ?? 0 }} {{ projectsSummary?.numberOfProjects === 1 ? 'project' : 'projects' }}</span>
+                <span class="w-px h-4 bg-gray-200"></span>
+                <span>{{ activeProjects }} active</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_6px)_minmax(0,1fr)] gap-6 items-start">
+        <!-- Main column -->
+        <div class="min-w-0">
+            <app-entity-projects [summary]="projectsSummary"
+                                  [projectTypes]="projectTypes"
+                                  [projectStatuses]="projectStatuses"
+                                  emptyText="Projects show up here once this architect is assigned to one."/>
+        </div>
+
+        <!-- Side column -->
+        <div class="flex flex-col gap-6">
+            <section class="app-card">
+                <div class="app-card-header">
+                    <h3 class="app-card-title">Projects value</h3>
+                </div>
+                <div class="px-6 pb-6">
+                    <span class="app-field-label">Total contract value</span>
+                    <div class="text-2xl leading-8 font-bold text-gray-800 tabular-nums">
+                        {{ (projectsSummary?.totalValue ?? 0) | currency:'PLN':'symbol':'1.2-2' }}
                     </div>
-                    </p-accordion-content>
-                </p-accordion-panel>
-            </form>
-        </p-accordion>
-        <architect-projects-summary
-                [architectProjectsSummary]="$architectProjectsSummary()"
-                [projectStatuses]="this.projectStatuses"
-                [projectTypes]="this.projectTypes"
-        >
-        </architect-projects-summary>
+                </div>
+            </section>
+
+            <section class="app-card">
+                <div class="app-card-header">
+                    <h3 class="app-card-title">Details</h3>
+                </div>
+                <div class="grid grid-cols-2 gap-x-6 gap-y-5 px-6 pb-6">
+                    <app-field label="First name" [value]="architect.firstName"/>
+                    <app-field label="Last name" [value]="architect.lastName"/>
+                    <app-field label="Added" [value]="architect.createdDateTime | date:'dd.MM.yyyy'"/>
+                    <app-field label="Last updated" [value]="architect.lastModifiedDateTime | date:'dd.MM.yyyy'"/>
+                </div>
+            </section>
+        </div>
     </div>
-</wrapper>
+</div>

@@ -1,0 +1,12 @@
+<dashboard [report]="$report()"
+           [periodType]="$periodType()"
+           [reportLoading]="$reportLoading()"
+           [reportLoadFailed]="$reportLoadFailed()"
+           [projects]="projects"
+           [projectsLoadFailed]="$projectsLoadFailed()"
+           [projectTypes]="$projectTypes()"
+           [projectStatuses]="$projectStatuses()"
+           [upcomingEvents]="$upcomingEvents()"
+           (periodTypeChange)="onPeriodTypeChange($event)"
+           (reloadReport)="onReloadReport()"
+           (reloadProjects)="onReloadProjects()"/>

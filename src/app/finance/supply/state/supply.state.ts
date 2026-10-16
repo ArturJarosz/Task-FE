@@ -4,7 +4,7 @@ import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {SupplyRestService} from "../rest/supply-rest.service";
 import {inject} from "@angular/core";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {of, pipe, switchMap, tap} from "rxjs";
+import {catchError, EMPTY, of, pipe, switchMap, tap} from "rxjs";
 import {MessageService} from "primeng/api";
 import {MessageSeverity} from "../../../shared";
 import {FinancialDataStore} from "../../project-financial-summary/state/financial-data.state";
@@ -18,6 +18,7 @@ export interface SupplyState {
     supplyNeedsRefresh: boolean;
     supplyId: number | undefined;
     projectId: number | undefined;
+    supplyLoadFailed: boolean;
 }
 
 export const initialState: SupplyState = {
@@ -27,7 +28,8 @@ export const initialState: SupplyState = {
     suppliesNeedRefresh: true,
     supplyNeedsRefresh: true,
     supplyId: undefined,
-    projectId: undefined
+    projectId: undefined,
+    supplyLoadFailed: false,
 }
 
 export const SupplyStore = signalStore(
@@ -63,7 +65,8 @@ export const SupplyStore = signalStore(
                                     supplyProjectData: suppliesData,
                                     supplies: suppliesData.supplies,
                                     suppliesNeedRefresh: false
-                                }))
+                                })),
+                                catchError(() => EMPTY)
                             )
                     }
                     return of({});
@@ -86,20 +89,27 @@ export const SupplyStore = signalStore(
                                 supplierStore.setSuppliersNeedRefresh();
                                 supplierStore.setSupplierNeedsRefresh();
                                 supplierStore.setSuppliesDataNeedsRefresh();
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         )
                 })
             )
         ),
         loadSupply: rxMethod<{}>(
             pipe(
+                tap(() => patchState(store, {supplyLoadFailed: false})),
                 switchMap(() => {
                     if (store.supplyNeedsRefresh() && store.projectId() && store.supplyId()) {
                         return supplyRestService.getSupply(store.projectId()!, store.supplyId()!)
                             .pipe(tap(supply => patchState(store, {
                                 supply: supply,
                                 supplyNeedsRefresh: false
-                            })));
+                            })),
+                                // The REST service already shows the error toast; keep the stream alive for the next load
+                                catchError(() => {
+                                    patchState(store, {supplyLoadFailed: true});
+                                    return EMPTY;
+                                }));
                     }
                     return of(null);
                 })
@@ -124,7 +134,8 @@ export const SupplyStore = signalStore(
                                 supplierStore.setSuppliersNeedRefresh();
                                 supplierStore.setSupplierNeedsRefresh();
                                 supplierStore.setSuppliesDataNeedsRefresh();
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         );
                 })
             )
@@ -148,7 +159,8 @@ export const SupplyStore = signalStore(
                                 supplierStore.setSuppliersNeedRefresh();
                                 supplierStore.setSupplierNeedsRefresh();
                                 supplierStore.setSuppliesDataNeedsRefresh();
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         );
                 })
             )

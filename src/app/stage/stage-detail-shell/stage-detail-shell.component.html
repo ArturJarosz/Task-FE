@@ -1,12 +1,14 @@
 <stage-detail
         [stage]="$stage()"
+        [loadFailed]="$stageLoadFailed()"
         [stageStatuses]="$stageStatuses()"
         [stageTypes]="$stageTypes()"
         [architects]="$architects()"
         [projectId]="projectId"
+        [projectName]="$projectName()"
         (deleteStageEvent)="deleteStage($event)"
         (rejectEvent)="rejectStage($event)"
         (reopenEvent)="reopenStage($event)"
         (updateEvent)="updateStage($event)"
->
-</stage-detail>
+        (reloadEvent)="reloadStage()"/>
+<p-confirmDialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>

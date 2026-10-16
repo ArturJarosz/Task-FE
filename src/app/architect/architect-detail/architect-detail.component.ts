@@ -1,69 +1,46 @@
-import {Component, Input, OnChanges, Signal, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnChanges} from '@angular/core';
 import {Architect} from "../../generated/models/architect";
-import {FormGroup, ReactiveFormsModule} from "@angular/forms";
-import {
-    ArchitectDetailsForm,
-    ArchitectFormProvider,
-    ArchitectProjectsSummaryForm
-} from "../form/architect-form-provider";
-import {isUndefinedOrEmpty} from "../../shared/utils/data-validation-util";
 import {EntityProjectsSummary} from "../../generated/models/entity-projects-summary";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
-import {WrapperComponent} from "../../shared/wrapper/wrapper.component";
-import {ArchitectProjectsSummaryComponent} from "../architect-projects-summary/architect-projects-summary.component";
-import {Accordion, AccordionPanel, AccordionHeader, AccordionContent} from "primeng/accordion";
-import {InputTextModule} from "primeng/inputtext";
+import {ProjectStatus} from "../../generated/models/project-status";
+import {CurrencyPipe, DatePipe} from "@angular/common";
+import {EntityProjectsComponent, FieldComponent, PageCrumb, PageHeaderComponent} from "../../shared";
 
+const ACTIVE_STATUSES: ProjectStatus[] = [ProjectStatus.TO_DO, ProjectStatus.IN_PROGRESS];
+
+// Read-only: the backend has no endpoint to edit an architect, so there is no Edit button
 @Component({
     selector: 'architect-detail',
     templateUrl: './architect-detail.component.html',
     styleUrls: ['./architect-detail.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [WrapperComponent, ArchitectProjectsSummaryComponent, Accordion, AccordionPanel, AccordionHeader, AccordionContent, InputTextModule, ReactiveFormsModule]
+    imports: [PageHeaderComponent, FieldComponent, EntityProjectsComponent, CurrencyPipe, DatePipe]
 })
 export class ArchitectDetailComponent implements OnChanges {
-    pageTitle: string = "";
-    // main info labels
-    architectIdLabel: string = "ID:"
-    firstNameLabel: string = "First name:";
-    lastNameLabel: string = "Last name:";
-
     @Input()
-    architect!: Architect | null;
+    architect!: Architect;
     @Input()
-    $architectProjectsSummary!: Signal<EntityProjectsSummary>;
+    projectsSummary: EntityProjectsSummary | null = null;
     @Input()
-    projectTypes!: ConfigurationEntry[];
+    projectTypes: ConfigurationEntry[] | null = [];
     @Input()
-    projectStatuses!: ConfigurationEntry[];
+    projectStatuses: ConfigurationEntry[] | null = [];
 
-    architectId!: number;
-    architectDetailForm!: FormGroup<ArchitectDetailsForm>;
-    architectProjectsSummaryForm!: FormGroup<ArchitectProjectsSummaryForm>;
-    formInitialized: boolean = false;
+    name: string = '';
+    initials: string = '';
+    activeProjects: number = 0;
+    crumbs: PageCrumb[] = [];
 
-    constructor(private formProvider: ArchitectFormProvider) {
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        if (!this.formInitialized) {
-            this.architectDetailForm = this.formProvider.getArchitectDetailsForm();
-            this.architectProjectsSummaryForm = this.formProvider.getArchitectProjectsSummaryForm();
-            this.formInitialized = true;
-        }
-        if (this.architect && changes['architect']) {
-            this.fillFormData();
-        }
-    }
-
-    fillFormData(): void {
-        if (isUndefinedOrEmpty(this.architect) || !this.architectDetailForm) {
-            return;
-        }
-        this.pageTitle = `${this.architect?.firstName} ${this.architect?.lastName}`;
-        this.architectDetailForm.patchValue({
-            firstName: this.architect?.firstName,
-            lastName: this.architect?.lastName
-        })
+    ngOnChanges(): void {
+        this.name = `${this.architect.firstName ?? ''} ${this.architect.lastName ?? ''}`.trim();
+        this.initials = `${this.architect.firstName?.charAt(0) ?? ''}${this.architect.lastName?.charAt(0) ?? ''}`.toUpperCase() || '?';
+        this.activeProjects = (this.projectsSummary?.projects ?? [])
+            .filter(project => !!project.status && ACTIVE_STATUSES.includes(project.status)).length;
+        this.crumbs = [
+            {label: 'Home', route: ['/home']},
+            {label: 'Architects', route: ['/architects']},
+            {label: this.name},
+        ];
     }
 }

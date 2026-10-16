@@ -1,28 +1,33 @@
 <finance-component-summary [financeComponentDataForm]="projectCostsSummaryForm">
     <div wrapper-list>
-        <p-table [value]="projectCostsData.costs!" [tableStyle]="{ 'min-width': '50rem' }">
+        <p-table [value]="projectCostsData.costs ?? []" [tableStyle]="{'min-width': '44rem'}">
             <ng-template pTemplate="header">
                 <tr>
                     <th>Name</th>
                     <th>Category</th>
                     <th>Date</th>
-                    <th>Value</th>
-                    <th class="max-w-16 text-center">Invoice</th>
+                    <th class="app-num">Value</th>
+                    <th class="w-24 text-center">Invoice</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-cost>
                 <tr [routerLink]="['/projects', projectId, 'costs', cost.id]" class="cursor-pointer">
-                    <td>{{ cost.name }}</td>
+                    <td class="font-medium text-gray-800">{{ cost.name }}</td>
                     <td>{{ getCostCategoryLabel(cost.category) }}</td>
-                    <td>{{ cost.date }}</td>
-                    <td>{{ cost.value | currency: ' ':'code':'2.2-2' }}</td>
-                    <td class="max-w-16 text-center">
-                        <i *ngIf="cost.hasInvoice" class="pi pi-check"></i>
-                        <i *ngIf="!cost.hasInvoice" class="pi pi-times"></i>
+                    <td>{{ cost.date | date:'dd.MM.yyyy' }}</td>
+                    <td class="app-num">{{ cost.value | currency:'PLN':'symbol':'1.2-2' }}</td>
+                    <td class="w-24 text-center"><i *ngIf="cost.hasInvoice; else no" class="pi pi-check-circle text-success-700" aria-label="Invoice: yes"></i></td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td [attr.colspan]="5" class="p-0">
+                        <app-empty-state icon="pi pi-shopping-cart" title="No costs yet" text="Add fuel, mistakes and other costs of this project."/>
                     </td>
                 </tr>
             </ng-template>
         </p-table>
     </div>
-
 </finance-component-summary>
+
+<ng-template #no><span class="text-gray-400" aria-label="No">—</span></ng-template>

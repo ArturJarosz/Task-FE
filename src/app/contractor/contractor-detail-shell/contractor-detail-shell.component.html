@@ -1,8 +1,37 @@
-<contractor-detail
-    [contractor]="$contractor()"
-    [contractorTypes]="$contractorTypes()"
-    (updateContractorEvent)="onUpdateContractor($event)"
-    (deleteContractorEvent)="onDeleteContractor($event)"
->
-</contractor-detail>
-<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}" class="overlay-dialog"></p-confirmDialog>
+<app-partner-detail *ngIf="$contractor() as contractor; else loading"
+                     [partner]="contractor"
+                     [categories]="$contractorTypes()"
+                     [itemsData]="$itemsData()"
+                     [projectNames]="$projectNames()"
+                     entityLabel="contractor"
+                     itemsLabel="Jobs"
+                     itemRouteSegment="contractorJob"
+                     itemsIcon="pi pi-wrench"
+                     itemsEmptyText="Jobs show up here once they are added to a project."
+                     (updateEvent)="onUpdate($event)"
+                     (deleteEvent)="onDelete($event)">
+</app-partner-detail>
+
+<ng-template #loading>
+    @if ($contractorLoadFailed()) {
+        <app-load-error title="Couldn't load this contractor" backLabel="Back to contractors" [backRoute]="['/contractors']"
+                        (retry)="onRetry()"/>
+    } @else {
+        <div class="flex flex-col gap-6">
+            <p-skeleton width="10rem" height="1.75rem"/>
+            <div class="app-card flex items-center gap-5 p-6">
+                <p-skeleton width="72px" height="72px" borderRadius="16px"/>
+                <div class="flex flex-col gap-2 flex-1">
+                    <p-skeleton width="16rem" height="1.5rem"/>
+                    <p-skeleton width="12rem" height="1rem"/>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_6px)_minmax(0,1fr)] gap-6">
+                <div class="app-card p-6"><p-skeleton height="12rem"/></div>
+                <div class="app-card p-6"><p-skeleton height="12rem"/></div>
+            </div>
+        </div>
+    }
+</ng-template>
+
+<p-confirmDialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>
