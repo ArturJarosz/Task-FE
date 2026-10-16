@@ -1,146 +1,184 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {Task} from "../../generated/models/task";
-import {ConfigurationEntry} from "../../generated/models/configuration-entry";
-import {resolveLabel} from "../../shared/utils/label-utils";
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
-import {TaskFormProvider, TaskForm} from "../form/task-form-provider";
-import {TaskStatus} from "../../generated/models/task-status";
-import {cloneDeep} from "lodash";
-import {DeleteTaskDto, UpdateTaskDto} from "../model/task";
-import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
-import {Architect} from "../../generated/models/architect";
-import {WrapperComponent} from "../../shared/wrapper/wrapper.component";
-import {Accordion, AccordionPanel, AccordionHeader, AccordionContent} from "primeng/accordion";
-import {SelectModule} from "primeng/select";
-import {DatePickerModule} from "primeng/datepicker";
+import {DatePipe} from "@angular/common";
+import {RouterLink} from "@angular/router";
+import {MenuItem} from "primeng/api";
 import {ButtonModule} from "primeng/button";
+import {DatePickerModule} from "primeng/datepicker";
+import {DialogModule} from "primeng/dialog";
 import {InputTextModule} from "primeng/inputtext";
-import {Textarea} from "primeng/inputtextarea";
-import {NgIf} from "@angular/common";
+import {MenuModule} from "primeng/menu";
+import {SelectModule} from "primeng/select";
+import {SkeletonModule} from "primeng/skeleton";
+import {TagModule} from "primeng/tag";
+import {Textarea} from "primeng/textarea";
+import {TooltipModule} from "primeng/tooltip";
+import {Architect, ConfigurationEntry, Task, TaskStatus} from "../../generated/models";
+import {TaskForm, TaskFormProvider} from "../form/task-form-provider";
+import {DeleteTaskDto, UpdateTaskDto} from "../model/task";
+import {EmptyStateComponent, FieldComponent, LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../shared";
+import {resolveLabel} from "../../shared/utils/label-utils";
+import {statusSeverity} from "../../shared/status-severity";
+import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
+import {changedFields} from "../../shared/utils/form-utils";
+
+type TaskFormValue = ReturnType<FormGroup<TaskForm>['getRawValue']>;
+
+// Status goes through its own endpoint, so it is compared separately from the other fields
+const DATA_FIELDS: (keyof TaskFormValue)[] = ['name', 'type', 'startDate', 'endDate', 'note', 'architectId'];
 
 @Component({
     selector: 'task-detail',
     templateUrl: './task-detail.component.html',
     styleUrl: './task-detail.component.less',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [WrapperComponent, Accordion, AccordionPanel, AccordionHeader, AccordionContent, SelectModule, DatePickerModule, ButtonModule, InputTextModule, Textarea, ReactiveFormsModule, NgIf]
+    imports: [LoadErrorComponent, PageHeaderComponent, FieldComponent, EmptyStateComponent, ButtonModule, DatePickerModule, DialogModule,
+        InputTextModule, MenuModule, SelectModule, SkeletonModule, TagModule, Textarea, TooltipModule,
+        ReactiveFormsModule, RouterLink, DatePipe]
 })
-export class TaskDetailComponent implements OnInit, OnChanges {
+export class TaskDetailComponent implements OnChanges {
     @Input()
     task!: Task | null;
+    @Input()
+    loadFailed: boolean = false;
     @Input()
     taskTypes!: ConfigurationEntry[] | null;
     @Input()
     taskStatuses!: ConfigurationEntry[] | null;
     @Input()
     architects!: Architect[] | null;
+    @Input()
+    projectId: number = 0;
+    @Input()
+    projectName: string = '';
+    @Input()
+    stageId: number = 0;
+    @Input()
+    stageName: string = '';
+    @Output()
+    reloadEvent: EventEmitter<void> = new EventEmitter<void>();
     @Output()
     updateStatusEvent: EventEmitter<UpdateTaskDto> = new EventEmitter<UpdateTaskDto>();
     @Output()
     deleteTaskEVent: EventEmitter<DeleteTaskDto> = new EventEmitter<DeleteTaskDto>();
 
-    availableTaskStatuses!: ConfigurationEntry[];
-    resolvedTypeLabel: string = "";
+    protected readonly statusSeverity = statusSeverity;
 
-    taskDetailForm!: FormGroup<TaskForm>;
-    initialTaskDetailForm!: FormGroup<TaskForm>;
-    fieldsToUpdate: string[] = ["name", "type", "startDate", "endDate", "note", "architectId"];
+    taskDetailForm: FormGroup<TaskForm>;
+    private initialValue!: TaskFormValue;
+    showEditDialog = false;
+
+    crumbs: PageCrumb[] = [];
+    actions: MenuItem[] = [];
+    availableTaskStatuses: ConfigurationEntry[] = [];
+    architectOptions: { id: number, name: string }[] = [];
+    resolvedTypeLabel = '';
+    resolvedStatusLabel = '';
+    architectName = '';
 
     constructor(private formProvider: TaskFormProvider) {
-    }
-
-    ngOnInit(): void {
         this.taskDetailForm = this.formProvider.getTaskDetailForm();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
+        if (changes['architects']) {
+            this.architectOptions = (this.architects ?? []).map(architect =>
+                ({id: architect.id!, name: `${architect.firstName} ${architect.lastName}`}));
+        }
         if (changes['task'] && this.task) {
-            this.taskDetailForm = this.formProvider.getTaskDetailForm();
-            this.fillFormData();
-            this.initialTaskDetailForm = cloneDeep(this.taskDetailForm);
+            this.resetForm();
+            this.actions = [
+                {label: 'Delete task', icon: 'pi pi-trash',
+                    command: () => this.deleteTaskEVent.emit({taskName: this.task!.name!, taskId: this.task!.id!})}
+            ];
+        }
+        if (this.task) {
             this.resolvedTypeLabel = resolveLabel(this.task.type, this.taskTypes);
+            this.resolvedStatusLabel = resolveLabel(this.task.status, this.taskStatuses);
+            this.architectName = this.architectOptions.find(option => option.id === this.task?.architectId)?.name ?? '';
             this.resolveAvailableStatuses();
         }
+        this.crumbs = [
+            {label: 'Home', route: ['/home']},
+            {label: 'Projects', route: ['/projects']},
+            {label: this.projectName || 'Project', route: ['/projects', this.projectId]},
+            {label: this.stageName || 'Stage', route: ['/projects', this.projectId, 'stages', this.stageId]},
+            {label: this.task?.name ?? 'Task'},
+        ];
     }
 
-    statusNeedsUpdate(): boolean {
-        return this.initialTaskDetailForm.value.status as TaskStatus != this.taskDetailForm.value.status;
+    get architectInitials(): string {
+        return this.architectName.split(' ')
+            .filter(part => part.length > 0)
+            .slice(0, 2)
+            .map(part => part.charAt(0).toUpperCase())
+            .join('');
     }
 
-    dataNeedUpdate(): boolean {
-        return this.fieldsToUpdate.filter(fieldName => {
-                return this.initialTaskDetailForm.get(fieldName)?.value !== this.taskDetailForm.get(fieldName)?.value
-            }
-        ).length > 0;
+    get statusNeedsUpdate(): boolean {
+        return changedFields(this.initialValue, this.taskDetailForm.getRawValue(), ['status']).length > 0;
     }
 
-    isUpdated(): boolean {
-        return this.dataNeedUpdate() || this.statusNeedsUpdate();
+    get dataNeedsUpdate(): boolean {
+        return changedFields(this.initialValue, this.taskDetailForm.getRawValue(), DATA_FIELDS).length > 0;
     }
 
-    private fillFormData() {
-        if (!this.task || this.taskDetailForm === undefined) {
-            return;
-        }
-        this.taskDetailForm.patchValue({
-            id: this.task.id,
-            name: this.task.name,
-            startDate: toDateIfExists(this.task.startDate!),
-            endDate: toDateIfExists(this.task.endDate!),
-            status: this.task.status,
-            type: this.task.type,
-            note: this.task.note,
-            architectId: this.task.architectId || null
-        })
+    isFieldInvalid(path: string): boolean {
+        const control = this.taskDetailForm.get(path);
+        return !!control && control.invalid && (control.touched || control.dirty);
     }
 
-    private resolveAvailableStatuses() {
-        this.availableTaskStatuses = [];
-        let currentStatus = this.taskStatuses!.find(status => status.id === this.task!.status);
-        if (currentStatus) {
-            this.availableTaskStatuses?.push(currentStatus);
-        }
-        if (this.taskStatuses && this.task) {
-            this.taskStatuses.filter(
-                status => {
-                    let index = this.task?.nextStatuses?.indexOf(
-                        TaskStatus[status.id as keyof typeof TaskStatus])
-                    return index !== -1;
-                })
-                .forEach(status => this.availableTaskStatuses.push(status));
-        }
+    onEdit(): void {
+        this.resetForm();
+        this.showEditDialog = true;
+    }
+
+    onCancelEdit(): void {
+        this.showEditDialog = false;
+        this.resetForm();
     }
 
     onSave(): void {
-        let task = this.createTask();
-        let updateStatusDto: UpdateTaskDto = {
-            task: task,
-            updateData: false,
-            updateStatus: false
-        };
-        if (this.statusNeedsUpdate()) {
-            updateStatusDto.updateStatus = true;
+        const value = this.taskDetailForm.getRawValue();
+        this.updateStatusEvent.emit({
+            task: {
+                status: value.status,
+                name: value.name,
+                startDate: toTimeZoneString(value.startDate ?? undefined),
+                endDate: toTimeZoneString(value.endDate ?? undefined),
+                type: value.type,
+                note: value.note ?? undefined,
+                architectId: value.architectId ?? undefined,
+            },
+            updateStatus: this.statusNeedsUpdate,
+            updateData: this.dataNeedsUpdate,
+        });
+        this.showEditDialog = false;
+    }
+
+    private resetForm(): void {
+        if (!this.task) {
+            return;
         }
-        if (this.dataNeedUpdate()) {
-            updateStatusDto.updateData = true;
-        }
-        this.updateStatusEvent.emit(updateStatusDto);
+        this.taskDetailForm.reset({
+            id: this.task.id,
+            name: this.task.name,
+            startDate: toDateIfExists(this.task.startDate) ?? null,
+            endDate: toDateIfExists(this.task.endDate) ?? null,
+            status: this.task.status,
+            type: this.task.type,
+            note: this.task.note ?? null,
+            architectId: this.task.architectId ?? null
+        });
+        this.initialValue = this.taskDetailForm.getRawValue();
     }
 
-    onDelete(): void {
-        this.deleteTaskEVent.emit({taskName: this.task!.name!, taskId: this.task!.id!});
+    // The current status plus the ones the backend allows next
+    private resolveAvailableStatuses(): void {
+        const statuses = this.taskStatuses ?? [];
+        const next = this.task?.nextStatuses ?? [];
+        this.availableTaskStatuses = statuses.filter(status =>
+            status.id === this.task?.status || next.includes(status.id as TaskStatus));
     }
-
-    createTask(): Task {
-        let task: Task = {};
-        task.status = this.taskDetailForm.value.status;
-        task.name = this.taskDetailForm.value.name;
-        task.startDate = toTimeZoneString(this.taskDetailForm.value.startDate);
-        task.endDate = toTimeZoneString(this.taskDetailForm.value.endDate);
-        task.type = this.taskDetailForm.value.type;
-        task.note = this.taskDetailForm.value.note;
-        task.architectId = this.taskDetailForm.value.architectId ?? undefined;
-        return task;
-    }
-
 }

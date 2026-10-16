@@ -1,7 +1,10 @@
-<supply-detail
-    [supply]="$supply()"
-    [suppliers]="$suppliers()"
-    (updateSupplyEvent)="updateSupply($event)"
-    (deleteSupplyEvent)="deleteSupply($event)">
-</supply-detail>
-<p-confirmDialog></p-confirmDialog>
+<financial-item-detail
+    [item]="$item()" [loadFailed]="$supplyLoadFailed()"
+    [labels]="labels"
+    [partners]="$suppliers()"
+    [projectId]="projectId"
+    [projectName]="$projectName()"
+    (updateEvent)="updateSupply($event)"
+    (deleteEvent)="deleteSupply($event)" (reloadEvent)="onReload()">
+</financial-item-detail>
+<p-confirmDialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>

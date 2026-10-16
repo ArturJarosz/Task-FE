@@ -2,7 +2,7 @@ import {AppState} from "../../state/app.store";
 import {Project} from "../../generated/models/project";
 import {patchState, signalStore, withComputed, withMethods, withState} from "@ngrx/signals";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {of, pipe, switchMap, tap} from "rxjs";
+import {catchError, EMPTY, of, pipe, switchMap, tap} from "rxjs";
 import {ProjectRestService} from "../rest/project-rest.service";
 import {computed, inject} from "@angular/core";
 import {MessageService} from "primeng/api";
@@ -18,6 +18,8 @@ export interface ProjectState extends AppState {
     projectsNeedRefresh: boolean,
     projectNeedsRefresh: boolean,
     projectHasSupervision: boolean,
+    projectLoadFailed: boolean,
+    projectsLoadFailed: boolean,
 }
 
 export const initialState: ProjectState = {
@@ -28,6 +30,8 @@ export const initialState: ProjectState = {
     projectsNeedRefresh: true,
     projectNeedsRefresh: true,
     projectHasSupervision: false,
+    projectLoadFailed: false,
+    projectsLoadFailed: false,
 }
 
 export const ProjectStore = signalStore(
@@ -64,11 +68,17 @@ export const ProjectStore = signalStore(
         },
         loadProject: rxMethod<{}>(
             pipe(
+                tap(() => patchState(store, {projectLoadFailed: false})),
                 switchMap(() => {
                     if (store.projectNeedsRefresh()) {
                         return projectRestService.getProject(store.projectId()!)
                             .pipe(
-                                tap(project => patchState(store, {project: project, projectNeedsRefresh: false}))
+                                tap(project => patchState(store, {project: project, projectNeedsRefresh: false})),
+                                // The REST service already shows the error toast; keep the stream alive for the next load
+                                catchError(() => {
+                                    patchState(store, {projectLoadFailed: true});
+                                    return EMPTY;
+                                })
                             )
                     }
                     return of({});
@@ -77,11 +87,17 @@ export const ProjectStore = signalStore(
         ),
         loadProjects: rxMethod<{}>(
             pipe(
+                tap(() => patchState(store, {projectsLoadFailed: false})),
                 switchMap(() => {
                     if (store.projectsNeedRefresh()) {
                         return projectRestService.getProjects()
                             .pipe(
-                                tap(projects => patchState(store, {projects: projects, projectsNeedRefresh: false}))
+                                tap(projects => patchState(store, {projects: projects, projectsNeedRefresh: false})),
+                                // The REST service already shows the error toast; keep the stream alive for the next load
+                                catchError(() => {
+                                    patchState(store, {projectsLoadFailed: true});
+                                    return EMPTY;
+                                })
                             )
                     }
                     return of({});
@@ -100,7 +116,8 @@ export const ProjectStore = signalStore(
                                     summary: `Project created.`,
                                     detail: `New project: '${project.name}' of type: ${project.type} was created.`
                                 });
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         )
                 })
             )
@@ -118,7 +135,8 @@ export const ProjectStore = signalStore(
                                     summary: `Project updated.`,
                                     detail: `Project ${project.name} was updated.`
                                 });
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         )
                 })
             )
@@ -135,7 +153,8 @@ export const ProjectStore = signalStore(
                                     summary: `Project removed.`,
                                     detail: `A project with id: ${store.projectId()} was removed.`
                                 });
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         )
                 })
             )

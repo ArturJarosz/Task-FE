@@ -20,18 +20,6 @@ export class SupplyFormProvider {
             supplierId: this.formBuilder.nonNullable.control<number>(0)
         })
     }
-
-    public getSupplyDetailForm(): FormGroup<SupplyDetailForm> {
-        return this.formBuilder.nonNullable.group<SupplyDetailForm>({
-            name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
-            value: this.formBuilder.nonNullable.control<number>(0.0, [Validators.required]),
-            hasInvoice: this.formBuilder.nonNullable.control<boolean>(false, [Validators.required]),
-            paid: this.formBuilder.nonNullable.control<boolean>(false, [Validators.required]),
-            paymentDate: this.formBuilder.control<Date | null>({value: null, disabled: true}),
-            note: this.formBuilder.nonNullable.control<string>(''),
-            supplierId: this.formBuilder.nonNullable.control<number>(0)
-        })
-    }
 }
 
 export interface AddSupplyForm {
@@ -41,15 +29,5 @@ export interface AddSupplyForm {
     hasInvoice: FormControl<boolean>,
     paid: FormControl<boolean>,
     paymentDate: FormControl<Date | null>,
-    supplierId: FormControl<number>
-}
-
-export interface SupplyDetailForm {
-    name: FormControl<string>,
-    value: FormControl<number>,
-    hasInvoice: FormControl<boolean>,
-    paid: FormControl<boolean>,
-    paymentDate: FormControl<Date | null>,
-    note: FormControl<string>,
     supplierId: FormControl<number>
 }

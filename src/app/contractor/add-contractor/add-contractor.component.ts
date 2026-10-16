@@ -6,18 +6,15 @@ import {ContractorFormProvider} from "../form/contractor-form-provider";
 import {Contractor} from "../../generated/models/contractor";
 import {ContractorStore} from "../state";
 import {DialogModule} from "primeng/dialog";
-import {SelectModule} from "primeng/select";
-import {InputTextModule} from "primeng/inputtext";
-import {Textarea} from "primeng/inputtextarea";
 import {ButtonModule} from "primeng/button";
-import {NgClass} from "@angular/common";
+import {PartnerFormFieldsComponent} from "../../shared";
 
 @Component({
     selector: 'add-contractor',
     templateUrl: './add-contractor.component.html',
     styleUrl: './add-contractor.component.less',
     standalone: true,
-    imports: [DialogModule, SelectModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule, NgClass]
+    imports: [DialogModule, ButtonModule, ReactiveFormsModule, PartnerFormFieldsComponent]
 })
 export class AddContractorComponent implements OnInit, OnChanges {
     @Input()
@@ -25,7 +22,7 @@ export class AddContractorComponent implements OnInit, OnChanges {
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    header: string = "Add new contractor";
+    header: string = "New contractor";
 
     readonly contractorStore = inject(ContractorStore);
     readonly configurationStore = inject(ConfigurationStore);

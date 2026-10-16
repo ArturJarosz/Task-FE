@@ -6,18 +6,15 @@ import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {Supplier} from "../../generated/models/supplier";
 import {SupplierStore} from "../state";
 import {DialogModule} from "primeng/dialog";
-import {SelectModule} from "primeng/select";
-import {InputTextModule} from "primeng/inputtext";
-import {Textarea} from "primeng/inputtextarea";
 import {ButtonModule} from "primeng/button";
-import {NgClass} from "@angular/common";
+import {PartnerFormFieldsComponent} from "../../shared";
 
 @Component({
     selector: 'add-supplier',
     templateUrl: './add-supplier.component.html',
     styleUrl: './add-supplier.component.less',
     standalone: true,
-    imports: [DialogModule, SelectModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule, NgClass]
+    imports: [DialogModule, ButtonModule, ReactiveFormsModule, PartnerFormFieldsComponent]
 })
 export class AddSupplierComponent implements OnInit {
     @Input()
@@ -25,7 +22,7 @@ export class AddSupplierComponent implements OnInit {
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    header: string = "Add new supplier";
+    header: string = "New supplier";
 
     readonly supplierStore = inject(SupplierStore);
     readonly configurationStore = inject(ConfigurationStore);

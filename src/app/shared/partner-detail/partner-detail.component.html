@@ -1,0 +1,145 @@
+<app-page-header [title]="entityTitle" [crumbs]="crumbs"/>
+
+<div class="flex flex-col gap-6">
+    <!-- Header card -->
+    <section class="app-card flex flex-wrap items-center gap-5 p-6">
+        <div class="flex items-center justify-center shrink-0 w-[72px] h-[72px] rounded-2xl bg-gray-100 text-gray-700 text-2xl font-semibold">
+            {{ initials }}
+        </div>
+        <div class="flex-1 min-w-0">
+            <h2 class="m-0 text-xl leading-[30px] font-semibold text-gray-800">{{ partner.name }}</h2>
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-sm text-gray-500">
+                <span>{{ categoryLabel }}</span>
+                <span class="w-px h-4 bg-gray-200"></span>
+                <span>{{ itemsData.items.length }} {{ itemsLabel.toLowerCase() }}</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <p-button icon="pi pi-ellipsis-h" severity="secondary" [outlined]="true"
+                      pTooltip="More actions" tooltipPosition="bottom" ariaLabel="More actions"
+                      (onClick)="actionsMenu.toggle($event)"/>
+            <p-menu #actionsMenu [model]="actions" [popup]="true" appendTo="body"/>
+        </div>
+    </section>
+
+    <div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_6px)_minmax(0,1fr)] gap-6 items-start">
+        <!-- Main column -->
+        <div class="flex flex-col gap-6 min-w-0">
+            <section class="app-card">
+                <div class="app-card-header">
+                    <h3 class="app-card-title">{{ entityTitle }} details</h3>
+                    <p-button label="Edit" icon="pi pi-pencil" severity="secondary" [outlined]="true" [rounded]="true"
+                              (onClick)="onEdit()"/>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 px-6 pb-6">
+                    <app-field label="Name" [value]="partner.name"/>
+                    <app-field label="Category" [value]="categoryLabel"/>
+                    <app-field label="Added" [value]="partner.createdDateTime | date:'dd.MM.yyyy'"/>
+                    <app-field label="Email" [value]="partner.email"/>
+                    <app-field label="Phone" [value]="partner.telephone"/>
+                    <app-field class="sm:col-span-2 lg:col-span-3" label="Note" [value]="partner.note" emptyText="No note yet"/>
+                </div>
+            </section>
+
+            <section class="app-card overflow-hidden">
+                <div class="app-card-header">
+                    <div>
+                        <h3 class="app-card-title">{{ itemsLabel }}</h3>
+                        <p class="app-card-subtitle m-0">Across all projects</p>
+                    </div>
+                </div>
+                <finance-component-summary [financeComponentDataForm]="summaryForm"
+                                           [hasAveragedData]="itemsData.items.length > 0"
+                                           [averageFinanceComponentDataForm]="averageSummaryForm">
+                    <div wrapper-list>
+                        <p-table [value]="itemsData.items" [rowHover]="true" [tableStyle]="{'min-width': '40rem'}">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Project</th>
+                                    <th class="app-num">Value</th>
+                                    <th class="w-24 text-center">Invoice</th>
+                                    <th class="w-24 text-center">Paid</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr [routerLink]="['/projects', item.projectId, itemRouteSegment, item.id]" class="cursor-pointer">
+                                    <td class="font-medium text-gray-800">{{ item.name }}</td>
+                                    <td>{{ projectNames.get(item.projectId) ?? '—' }}</td>
+                                    <td class="app-num">{{ item.value | currency:'PLN':'symbol':'1.2-2' }}</td>
+                                    <td class="w-24 text-center">
+                                        <i *ngIf="item.hasInvoice; else no" class="pi pi-check-circle text-success-700" aria-label="Invoice: yes"></i>
+                                    </td>
+                                    <td class="w-24 text-center">
+                                        <i *ngIf="item.paid; else no" class="pi pi-check-circle text-success-700" aria-label="Paid: yes"></i>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="5" class="p-0">
+                                        <app-empty-state [icon]="itemsIcon" [title]="'No ' + itemsLabel.toLowerCase() + ' yet'" [text]="itemsEmptyText"/>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </finance-component-summary>
+            </section>
+        </div>
+
+        <!-- Side column -->
+        <div class="flex flex-col gap-6">
+            <section class="app-card">
+                <div class="app-card-header">
+                    <h3 class="app-card-title">Total billed</h3>
+                </div>
+                <div class="px-6 pb-6">
+                    <span class="app-field-label">Gross value of all {{ itemsLabel.toLowerCase() }}</span>
+                    <div class="text-2xl leading-8 font-bold text-gray-800 tabular-nums">
+                        {{ (itemsData.financialData?.grossValue ?? 0) | currency:'PLN':'symbol':'1.2-2' }}
+                    </div>
+                </div>
+            </section>
+
+            <section class="app-card">
+                <div class="app-card-header">
+                    <h3 class="app-card-title">Contact</h3>
+                </div>
+                <ul class="list-none m-0 px-6 pb-6 flex flex-col gap-3 text-sm">
+                    <li class="flex items-center gap-3">
+                        <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-gray-100 text-gray-500"><i class="pi pi-envelope"></i></span>
+                        <a *ngIf="partner.email; else notSet" [href]="'mailto:' + partner.email"
+                           class="text-gray-800 no-underline hover:text-brand-500 truncate">{{ partner.email }}</a>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-gray-100 text-gray-500"><i class="pi pi-phone"></i></span>
+                        <a *ngIf="partner.telephone; else notSet" [href]="'tel:' + partner.telephone"
+                           class="text-gray-800 no-underline hover:text-brand-500">{{ partner.telephone }}</a>
+                    </li>
+                </ul>
+            </section>
+        </div>
+    </div>
+</div>
+
+<ng-template #notSet><span class="text-gray-400">Not set</span></ng-template>
+<ng-template #no><span class="text-gray-400" aria-label="No">—</span></ng-template>
+
+<!-- Edit -->
+<p-dialog [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
+          [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onCancelEdit()">
+    <ng-template pTemplate="header">
+        <div class="flex flex-col gap-1">
+            <span class="p-dialog-title">Edit {{ entityLabel }}</span>
+            <span class="text-sm text-gray-500">Update the name, category and contact details.</span>
+        </div>
+    </ng-template>
+    <form [formGroup]="form">
+        <app-partner-form-fields [form]="form" [categories]="categories"/>
+    </form>
+    <ng-template pTemplate="footer">
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancelEdit()"/>
+        <p-button label="Save changes" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
+    </ng-template>
+</p-dialog>

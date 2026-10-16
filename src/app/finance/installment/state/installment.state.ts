@@ -1,7 +1,7 @@
 import {Installment} from "../../../generated/models/installment";
 import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {of, pipe, switchMap, tap} from "rxjs";
+import {catchError, EMPTY, of, pipe, switchMap, tap} from "rxjs";
 import {inject} from "@angular/core";
 import {InstallmentRestService} from "../rest/installment-rest.service";
 import {InstallmentProjectData} from "../../../generated/models/installment-project-data";
@@ -62,7 +62,8 @@ export const InstallmentStore = signalStore(
                                     installments: installmentsData.installments,
                                     installmentProjectData: installmentsData,
                                     installmentsNeedRefresh: false
-                                }))
+                                })),
+                                catchError(() => EMPTY)
                             )
                     }
                     return of({})
@@ -85,7 +86,8 @@ export const InstallmentStore = signalStore(
                                     summary: `New installment created`,
                                     detail: `New installment was successfully created.`,
                                 })
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         )
                 })
             )
@@ -101,7 +103,8 @@ export const InstallmentStore = signalStore(
                                         installment: installment,
                                         installmentNeedsRefresh: false
                                     });
-                                }))
+                                }),
+                                catchError(() => EMPTY))
                     }
                     return of({})
                 })
@@ -126,7 +129,8 @@ export const InstallmentStore = signalStore(
                                     });
                                     financialDataStore.setProjectFinancialDataNeedsUpdate();
                                 }
-                            )
+                            ),
+                            catchError(() => EMPTY)
                         )
                 })
             )

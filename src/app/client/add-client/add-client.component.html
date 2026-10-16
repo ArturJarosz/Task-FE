@@ -1,146 +1,16 @@
-<p-dialog header="Add new client" [(visible)]="visible" appendTo="body" [modal]="true"
-          [style]="{ width: '50vw', 'max-width': '800px'}"
-          (onHide)="onClose()">
+<p-dialog [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
+          [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onClose()">
     <ng-template pTemplate="header">
-        <div class="flex flex-col gap-2">
-            <h1 class="m-0 text-surface-900 dark:text-surface-0 font-semibold leading-normal">Add new client</h1>
+        <div class="flex flex-col gap-1">
+            <span class="p-dialog-title">New client</span>
+            <span class="text-sm text-gray-500">Add a private person or a company with their contact details.</span>
         </div>
     </ng-template>
-    <div>
-        <form [formGroup]="clientForm">
-            <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
-                <div class="flex gap-4">
-                    <div class="w-6/12">
-                        <label for="clientType" class="block text-color text-base top-label">Client type</label>
-                        <p-select [options]="$clientTypes()!" formControlName="clientType" optionLabel="label"
-                                  optionValue="id" class="w-full" appendTo="body" id="clientType">
-                        </p-select>
-                    </div>
-                </div>
-                @switch (clientForm.get('clientType')?.value) {
-                    @case (ClientType.PRIVATE.toString()) {
-                        <div class="flex gap-4">
-                            <div class="w-6/12">
-                                <label for="firstName" class="block text-color text-base top-label">First Name</label>
-                                <span class="p-input-icon-left w-full">
-                                    <input type="text" class="w-full" id="firstName" formControlName="firstName"
-                                           pInputText
-                                           placeholder="first name"
-                                           [ngClass]="{'is-invalid': (clientForm.get('firstName')?.touched || clientForm.get('firstName')?.dirty) && !clientForm.get('firstName')?.valid }"
-                                    />
-                                </span>
-                                @if ((clientForm.get('firstName')?.touched || clientForm.get('firstName')?.dirty) && !clientForm.get('firstName')?.valid) {
-                                    <span>Please enter first name!</span>
-                                }
-                            </div>
-                            <div class="w-6/12">
-                                <label for="lastName" class="block text-color text-base top-label">Last Name</label>
-                                <span class="p-input-icon-left w-full">
-                                    <input type="text" formControlName="lastName" class="w-full" id="lastName"
-                                           pInputText
-                                           placeholder="last name"
-                                           [ngClass]="{'is-invalid': (clientForm.get('lastName')?.touched || clientForm.get('lastName')?.dirty) && !clientForm.get('lastName')?.valid }"
-                                    />
-                                </span>
-                                @if ((clientForm.get('lastName')?.touched || clientForm.get('lastName')?.dirty) && !clientForm.get('lastName')?.valid) {
-                                    <span>Please enter last name!</span>
-                                }
-                            </div>
-                        </div>
-                    }
-                    @case (ClientType.CORPORATE.toString()) {
-                        <div class="flex gap-4">
-                            <div class="w-full">
-                                <label for="companyName" class="block text-color text-base top-label">Company Name</label>
-                                <span class="p-input-icon-left w-full">
-                                    <input type="text" formControlName="companyName" class="w-full" id="companyName"
-                                           pInputText
-                                           placeholder="company name"
-                                           [ngClass]="{'is-invalid': (clientForm.get('companyName')?.touched || clientForm.get('companyName')?.dirty) && !clientForm.get('companyName')?.valid }"
-                                    />
-                                </span>
-                                @if ((clientForm.get('companyName')?.touched || clientForm.get('companyName')?.dirty) && !clientForm.get('companyName')?.valid) {
-                                    <span>Please enter company name!</span>
-                                }
-                            </div>
-                        </div>
-                    }
-                }
-            </div>
-            <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2" formGroupName="contact">
-                <div class="flex gap-4">
-                    <div class="w-6/12">
-                        <label for="email" class="block text-color text-base top-label">Email</label>
-                        <span class="p-input-icon-left w-full">
-                            <input type="text" class="w-full" id="email" formControlName="email"
-                                   pInputText
-                                   placeholder="email"
-                            />
-                        </span>
-                    </div>
-                    <div class="w-6/12">
-                        <label for="telephone" class="block text-color text-base top-label">Phone</label>
-                        <span class="p-input-icon-left w-full">
-                            <input type="text" formControlName="telephone" class="w-full" id="telephone"
-                                   pInputText
-                                   placeholder="telephone"
-                            />
-                        </span>
-                    </div>
-                </div>
-                <div formGroupName="address" class="flex flex-col gap-4">
-                    <div class="flex gap-4">
-                        <div class="w-6/12">
-                            <label for="city" class="block text-color text-base top-label">City</label>
-                            <span class="p-input-icon-left w-full">
-                                <input type="text" class="w-full" id="city" formControlName="city"
-                                       pInputText
-                                       placeholder="city"
-                                />
-                            </span>
-                        </div>
-                        <div class="w-6/12">
-                            <label for="postCode" class="block text-color text-base top-label">Post code</label>
-                            <span class="p-input-icon-left w-full">
-                                <input type="text" formControlName="postCode" class="w-full" id="postCode"
-                                       pInputText
-                                       placeholder="post code"
-                                />
-                            </span>
-                        </div>
-                    </div>
-                    <div class="flex gap-4">
-                        <div class="w-full">
-                            <label for="street" class="block text-color text-base top-label">Street</label>
-                            <span class="p-input-icon-left w-full">
-                                <input type="text" formControlName="street" class="w-full" id="street"
-                                       pInputText
-                                       placeholder="street"
-                                />
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
-                <div class="flex gap-4">
-                    <div class="w-full">
-                        <label for="note" class="block text-color text-base top-label">Note</label>
-                        <textarea rows="5" pInputTextarea type="text" formControlName="note"
-                                  class="w-full" id="note"
-                                  placeholder="note"
-                        ></textarea>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
+    <form [formGroup]="clientForm">
+        <client-form-fields [form]="clientForm" [clientTypes]="$clientTypes()"/>
+    </form>
     <ng-template pTemplate="footer">
-        <div class="flex gap-4 justify-end border-t border-surface pt-8">
-            <p-button label="Cancel" styleClass="p-button-outlined p-button-secondary"
-                      (onClick)="onCancel()"></p-button>
-            <p-button label="Save" styleClass="p-button-outlined" [disabled]="!isSaveEnabled()"
-                      (onClick)="onSave()"></p-button>
-        </div>
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
+        <p-button label="Create client" icon="pi pi-plus" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
     </ng-template>
 </p-dialog>

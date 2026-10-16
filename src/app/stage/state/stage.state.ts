@@ -2,7 +2,7 @@ import {AppState} from "../../state/app.store";
 import {Stage} from "../../generated/models/stage";
 import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {pipe, switchMap, tap} from "rxjs";
+import {catchError, EMPTY, pipe, switchMap, tap} from "rxjs";
 import {inject} from "@angular/core";
 import {StageRestService} from "../rest/stage-rest.service";
 import {MessageService} from "primeng/api";
@@ -17,7 +17,8 @@ export interface StageState extends AppState {
     stages: Stage[],
     stage: Stage | null,
     stageNeedsRefresh: boolean,
-    stagesNeedRefresh: boolean
+    stagesNeedRefresh: boolean,
+    stageLoadFailed: boolean
 }
 
 export const initialState: StageState = {
@@ -28,6 +29,7 @@ export const initialState: StageState = {
     stage: null,
     stageNeedsRefresh: true,
     stagesNeedRefresh: true,
+    stageLoadFailed: false,
 }
 
 export const StageStore = signalStore(
@@ -49,10 +51,16 @@ export const StageStore = signalStore(
         },
         loadStage: rxMethod<{}>(
             pipe(
+                tap(() => patchState(store, {stageLoadFailed: false})),
                 switchMap(() => {
                     return stageRestService.getStage(store.projectId()!, store.stageId()!)
                         .pipe(
-                            tap(stage => patchState(store, {stage: stage, stageNeedsRefresh: false}))
+                            tap(stage => patchState(store, {stage: stage, stageNeedsRefresh: false})),
+                            // The REST service already shows the error toast; keep the stream alive for the next load
+                            catchError(() => {
+                                patchState(store, {stageNeedsRefresh: false, stageLoadFailed: true});
+                                return EMPTY;
+                            })
                         )
                 })
             )
@@ -62,7 +70,11 @@ export const StageStore = signalStore(
                 switchMap(() => {
                     return stageRestService.getStagesForProject(store.projectId()!)
                         .pipe(
-                            tap(stages => patchState(store, {stages: stages, stagesNeedRefresh: false}))
+                            tap(stages => patchState(store, {stages: stages, stagesNeedRefresh: false})),
+                            catchError(() => {
+                                patchState(store, {stagesNeedRefresh: false});
+                                return EMPTY;
+                            })
                         )
                 })
             )
@@ -74,14 +86,16 @@ export const StageStore = signalStore(
                         .pipe(
                             tap(stage => {
                                     projectStore.setProjectNeedsRefresh();
+                                projectStore.setProjectsNeedRefresh();
                                     financialDataStore.setProjectFinancialDataNeedsUpdate();
                                     messageService.add({
-                                        severity: MessageSeverity.INFO,
-                                        summary: `New stage created`,
-                                        detail: `New stage '${stage.name}' for project with id ${store.projectId()} was created.`,
+                                        severity: MessageSeverity.SUCCESS,
+                                        summary: `Stage created`,
+                                        detail: `${stage.name} was added to the project.`,
                                     });
                                 }
-                            )
+                            ),
+                            catchError(() => EMPTY)
                         )
                 })
             )
@@ -93,12 +107,13 @@ export const StageStore = signalStore(
                         .pipe(
                             tap(() => {
                                 projectStore.setProjectNeedsRefresh();
+                                projectStore.setProjectsNeedRefresh();
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
-                                    summary: `Stage removed.`,
-                                    detail: `Stage with id: ${store.stageId()!} was removed.`
+                                    summary: `Stage deleted`
                                 });
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         )
                 })
             )
@@ -110,13 +125,15 @@ export const StageStore = signalStore(
                         .pipe(
                             tap(updatedStage => {
                                 projectStore.setProjectNeedsRefresh();
+                                projectStore.setProjectsNeedRefresh();
                                 patchState(store, {stage: updatedStage, stageNeedsRefresh: false});
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
-                                    summary: `Stage rejected.`,
-                                    detail: `Stage with id: ${store.stageId()!} was rejected.`
+                                    summary: `Stage rejected`,
+                                    detail: `${updatedStage.name} was rejected.`
                                 });
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         )
                 })
             )
@@ -128,13 +145,15 @@ export const StageStore = signalStore(
                         .pipe(
                             tap(updatedStage => {
                                 projectStore.setProjectNeedsRefresh();
+                                projectStore.setProjectsNeedRefresh();
                                 patchState(store, {stage: updatedStage, stageNeedsRefresh: false});
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
-                                    summary: `Stage reopened.`,
-                                    detail: `Stage with id: ${store.stageId()!} was reopened.`
+                                    summary: `Stage reopened`,
+                                    detail: `${updatedStage.name} was reopened.`
                                 });
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         )
                 })
             )
@@ -146,13 +165,15 @@ export const StageStore = signalStore(
                         .pipe(
                             tap(updatedStage => {
                                 projectStore.setProjectNeedsRefresh();
+                                projectStore.setProjectsNeedRefresh();
                                 patchState(store, {stage: updatedStage, stageNeedsRefresh: false});
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
-                                    summary: `Stage updated.`,
-                                    detail: `Stage ${stage.name} was updated.`
+                                    summary: `Stage saved`,
+                                    detail: `${updatedStage.name} was updated.`
                                 });
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         )
                 })
             )

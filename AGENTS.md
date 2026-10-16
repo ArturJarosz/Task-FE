@@ -25,8 +25,8 @@ Requires the backend repo at `../../Task/core/` with OpenAPI spec available.
 
 - Angular 19 with TypeScript 5.8
 - NgRx Signals 19 for state management
-- PrimeNG 19 (Lara theme preset) for UI components
-- Tailwind CSS v4 + `tailwindcss-primeui` plugin for styling
+- PrimeNG 19 (styled mode, `AppThemePreset` based on Aura) for UI components
+- Tailwind CSS v4 + `tailwindcss-primeui` for styling, Outfit font, PrimeIcons only
 - Auth0 for authentication
 - Jasmine/Karma for testing
 
@@ -69,7 +69,8 @@ Import PrimeNG modules individually per component (e.g. `TableModule` from `prim
 - **`src/app/app.config.ts`** — all application-level providers:
   - `provideRouter(appRoutes)` — routing
   - `provideHttpClient(withInterceptors([authHttpInterceptorFn]))` — HTTP + Auth0
-  - `providePrimeNG({ theme: { preset: Lara, options: { darkModeSelector: false } } })` — PrimeNG theme
+  - `providePrimeNG({ theme: { preset: AppThemePreset, options: { darkModeSelector: '.app-dark', cssLayer: {...} } } })` — PrimeNG theme
+  - `LOCALE_ID` `'pl'` with `registerLocaleData(localePl)` — Polish money and date formats
   - `ConfirmationService`, `MessageService` and all REST services
 - **`src/app/app.routes.ts`** — all routes; route guards use `canActivate: [loggedInGuardGuard]`
 
@@ -87,8 +88,16 @@ export const FeatureStore = signalStore(
     withMethods((store, restService = inject(RestService)) => ({
         loadData: rxMethod<{}>(
             pipe(
+                tap(() => patchState(store, {dataLoadFailed: false})),
                 switchMap(() => restService.getData()
-                    .pipe(tap(data => patchState(store, {data}))))
+                    .pipe(
+                        tap(data => patchState(store, {data, dataNeedsRefresh: false})),
+                        // The REST service already shows the error toast; keep the stream alive for the next load
+                        catchError(() => {
+                            patchState(store, {dataNeedsRefresh: false, dataLoadFailed: true});
+                            return EMPTY;
+                        })
+                    ))
             )
         ),
     }))
@@ -100,6 +109,14 @@ Key patterns:
 - `xxxNeedsRefresh` flags control when data is fetched
 - `patchState()` for state updates
 - `rxMethod()` for async operations with RxJS
+- **All data shown in the app is loaded through a store**: components and shells never call REST services or
+  `HttpClient` directly. Loading and error states also come from the store (`xxxNeedsRefresh`, `loading`,
+  `xxxLoadFailed`), so templates never treat "data is still `null`" as "loading". A failed load must show an error state
+  (`<app-load-error>` from `src/app/shared/load-error` on a page, `<app-empty-state>` with "Try again" inside a card),
+  never skeletons that run forever. Detail shells only pass an entity whose id matches the route, so a different item
+  left in the store is never shown while the new one loads
+- Every `rxMethod` that calls the backend ends its inner pipe with `catchError(() => EMPTY)` (setting the failure flag
+  for loads). Without it, one failed request completes the `rxMethod` and every later call does nothing until reload
 
 ### Component Pattern
 
@@ -118,16 +135,24 @@ Extend `AbstractRestService` from `src/app/shared/rest/abstract-rest.service.ts`
 
 ### Styling
 
-- **Global styles**: `src/styles.css` — imports Tailwind and the PrimeUI plugin:
-  ```css
-  @import "tailwindcss";
-  @plugin "tailwindcss-primeui";
-  ```
+**Read `DESIGN_GUIDELINES.md` before building or changing any UI.** It defines the tokens, app shell, page templates
+(dashboard, list, detail, edit dialog), components, copy rules and the pre-merge checklist. If a screen needs something
+it doesn't cover, add the rule there first, then build it.
+
+- **PrimeNG preset**: `src/app/theme/app-theme-preset.ts` — all component colors, radii and sizes. Change the look here.
+- **Global styles**: `src/styles.css` — layer order, Outfit font, Tailwind, `tailwindcss-primeui`, the `@theme` palette
+  (`brand-*`, `gray-*`, `success-*`, `warning-*`, `error-*`) and the reusable `.app-*` classes (`.app-card`,
+  `.app-page-header`, `.app-field-label`, `.app-form-label`, `.app-seg`, `.app-num`...)
+- **CSS layers**: PrimeNG renders into the `primeng` layer, ordered `theme, base, primeng, components, utilities`, so
+  Tailwind utilities override PrimeNG without `!important`
 - **PostCSS**: `.postcssrc.json` configures `@tailwindcss/postcss`
-- Use **Tailwind utility classes** for layout and spacing in templates (`flex`, `gap-4`, `w-full`, `text-surface-900`, etc.)
-- PrimeNG theme tokens are available as CSS custom properties (`--p-surface-ground`, `--p-primary-color`, etc.)
-- Do **not** use PrimeFlex — it has been removed
-- Component-specific overrides can use `.less` or `.css` files alongside the component
+- Use **Tailwind utility classes** that match the tokens (`text-gray-500`, `bg-brand-50`, `border-gray-200`, `gap-6`, `p-6`)
+- **No** `::ng-deep`, hex values, inline color styles or `!important` overrides in components
+- **Status tags**: always `<p-tag>` with `statusSeverity()` from `src/app/shared/status-severity.ts`; it is keyed by the
+  backend status enums, so a new enum value must get a severity there
+- **Money**: `{{ v | currency:'PLN':'symbol':'1.2-2' }}` with `.app-num`. **Dates**: `dd.mm.yyyy`
+- **Icons**: PrimeIcons (`pi pi-*`) only. Do **not** use PrimeFlex or Font Awesome — both have been removed
+- **Dark mode**: off; `dark:` variants and PrimeNG dark tokens apply only under `<html class="app-dark">`
 
 ### Generated Models
 
@@ -139,8 +164,9 @@ code completion and should not be edited manually. Also they are used in API ser
 
 ### Key Shared Utilities
 
-- `src/app/shared/utils/date.utils.ts` - Date handling with `toDateIfExists()`, `toTimeZoneString()`
-- `src/app/shared/utils/label.utils.ts` - `resolveLabel()` for enum/config label mapping
+- `src/app/shared/utils/date-utils.ts` - Date handling with `toDateIfExists()`, `toTimeZoneString()`
+- `src/app/shared/utils/label-utils.ts` - `resolveLabel()` for enum/config label mapping
+- `src/app/shared/status-severity.ts` - `statusSeverity()` for `p-tag` colors of backend statuses
 - `src/app/shared/configuration/` - Application configuration service and provider
 
 ### Environment
@@ -153,9 +179,13 @@ code completion and should not be edited manually. Also they are used in API ser
 
 - Always make all components **standalone** (`standalone: true`) — never create NgModule files
 - Declare all dependencies explicitly in each component's `imports: [...]` array
-- Use **Tailwind utility classes** for layout and spacing; do not use PrimeFlex
-- Match the current visual style of existing components (buttons, inputs, spacing, PrimeNG components)
-- PrimeNG 19 uses a theme preset system — component styling comes from the Lara preset and CSS variables
+- Load every piece of displayed data through a signal store, with loading/failure flags in the store and
+  `catchError(() => EMPTY)` in each `rxMethod` (see State Management Pattern)
+- Follow `DESIGN_GUIDELINES.md` for every UI change and run through its checklist (section 7) before finishing
+- Use **Tailwind utility classes** and the `.app-*` classes for layout and spacing; do not use PrimeFlex
+- Style PrimeNG through `app-theme-preset.ts` tokens, never with `::ng-deep` or hex values in components
+- Buttons have text labels; at most one primary button per card or dialog; icon-only buttons need `aria-label` and `pTooltip`
+- Copy is sentence case ("Edit contract", "New project"); use "Net", never "Nett"
 
 
 ### Docs

@@ -3,7 +3,7 @@ import {CalendarEvent} from "../../generated/models/calendar-event";
 import {DateRange} from "../model/calendar.model";
 import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {of, pipe, switchMap, tap} from "rxjs";
+import {catchError, EMPTY, of, pipe, switchMap, tap} from "rxjs";
 import {CalendarRestService} from "../rest/calendar-rest.service";
 import {inject} from "@angular/core";
 import {MessageSeverity} from "../../shared";
@@ -60,7 +60,8 @@ export const CalendarStore = signalStore(
                                     tap(events => patchState(store, {
                                         events: events,
                                         eventsNeedRefresh: false
-                                    }))
+                                    })),
+                                    catchError(() => EMPTY)
                                 )
                         }
                         return of({});
@@ -80,7 +81,8 @@ export const CalendarStore = signalStore(
                                         upcomingEvents: [...events].sort((a, b) =>
                                             (a.startDateTime ?? '').localeCompare(b.startDateTime ?? '')),
                                         upcomingEventsNeedRefresh: false
-                                    }))
+                                    })),
+                                    catchError(() => EMPTY)
                                 )
                         }
                         return of({});
@@ -99,7 +101,8 @@ export const CalendarStore = signalStore(
                                         summary: `New event created`,
                                         detail: `New event '${event.name}' was created.`,
                                     });
-                                })
+                                }),
+                                catchError(() => EMPTY)
                             )
                     })
                 )
@@ -120,7 +123,8 @@ export const CalendarStore = signalStore(
                                         summary: `Event updated.`,
                                         detail: `Event '${event.name}' was updated.`,
                                     });
-                                })
+                                }),
+                                catchError(() => EMPTY)
                             )
                     })
                 )
@@ -141,7 +145,8 @@ export const CalendarStore = signalStore(
                                         upcomingEventsNeedRefresh: true,
                                         selectedEvent: null,
                                     });
-                                })
+                                }),
+                                catchError(() => EMPTY)
                             )
                     })
                 )

@@ -1,0 +1,9 @@
+<div class="flex flex-wrap items-center justify-between gap-3 px-6 py-4 border-t border-gray-100">
+    <span class="text-sm text-gray-500">{{ rangeLabel }}</span>
+    <div class="flex items-center gap-3">
+        <p-button label="Previous" icon="pi pi-arrow-left" severity="secondary" [outlined]="true" size="small"
+                  [disabled]="page === 0" (onClick)="onPrevious()"/>
+        <p-button label="Next" icon="pi pi-arrow-right" iconPos="right" severity="secondary" [outlined]="true" size="small"
+                  [disabled]="page >= pageCount - 1" (onClick)="onNext()"/>
+    </div>
+</div>

@@ -1,18 +1,70 @@
-<wrapper [title]="'Projects'">
-    <div wrapper-body>
-        <project-list [projects]="$projects()"
+<app-page-header title="Projects" [crumbs]="crumbs"/>
+
+<div class="flex flex-col gap-6">
+    <!-- KPIs -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+        <section class="app-card flex items-center gap-4 p-5">
+            <div class="app-kpi-icon"><i class="pi pi-folder text-xl"></i></div>
+            <div>
+                <div class="app-kpi-label">Projects</div>
+                <div class="text-2xl leading-8 font-bold text-gray-800 tabular-nums">{{ $kpis().total }}</div>
+            </div>
+        </section>
+        <section class="app-card flex items-center gap-4 p-5">
+            <div class="app-kpi-icon"><i class="pi pi-play-circle text-xl"></i></div>
+            <div>
+                <div class="app-kpi-label">Active</div>
+                <div class="text-2xl leading-8 font-bold text-gray-800 tabular-nums">{{ $kpis().active }}</div>
+            </div>
+        </section>
+        <section class="app-card flex items-center gap-4 p-5">
+            <div class="app-kpi-icon"><i class="pi pi-check-circle text-xl"></i></div>
+            <div>
+                <div class="app-kpi-label">Finished</div>
+                <div class="text-2xl leading-8 font-bold text-gray-800 tabular-nums">{{ $kpis().finished }}</div>
+            </div>
+        </section>
+        <section class="app-card flex items-center gap-4 p-5">
+            <div class="app-kpi-icon"><i class="pi pi-wallet text-xl"></i></div>
+            <div>
+                <div class="app-kpi-label">Contract value</div>
+                <div class="text-2xl leading-8 font-bold text-gray-800 tabular-nums">{{ $kpis().value | currency:'PLN':'symbol':'1.0-0' }}</div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Table card -->
+    <section class="app-card overflow-hidden">
+        <div class="app-card-header">
+            <div>
+                <h2 class="app-card-title">All projects</h2>
+                <p class="app-card-subtitle m-0">{{ $kpis().total }} {{ $kpis().total === 1 ? 'project' : 'projects' }}</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+                <div class="app-seg" role="group" aria-label="Filter by status">
+                    <button *ngFor="let segment of segments" type="button" class="app-seg-item gap-2"
+                            [class.active]="segment.key === $segmentKey()" [attr.aria-pressed]="segment.key === $segmentKey()"
+                            (click)="onSelectSegment(segment.key)">
+                        {{ segment.label }}
+                        <span class="text-xs text-gray-400 tabular-nums">{{ $segmentCounts()[segment.key] }}</span>
+                    </button>
+                </div>
+                <p-button label="New project" icon="pi pi-plus" (onClick)="onClick()"/>
+            </div>
+        </div>
+
+        <project-list [projects]="$pagedProjects()"
                       [projectTypes]="$projectTypes()"
                       [projectStatuses]="$projectStatuses()"
+                      [emptyTitle]="$emptyTitle()"
+                      [emptyText]="$emptyText()"
                       (deleteProjectEvent)="onDeleteProject($event)">
         </project-list>
-        <p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}" class="overlay-dialog"></p-confirmDialog>
-    </div>
-    <div wrapper-buttons>
-        <p-button icon="pi pi-plus" (click)="onClick()" [rounded]="true" class="add-button transition-colors duration-300"></p-button>
-    </div>
-    <add-project [visible]="showComponent" (notify)="onNotify($event)"></add-project>
-</wrapper>
 
+        <app-table-footer [total]="$filteredProjects().length" [page]="$page()" [pageSize]="pageSize"
+                           (pageChange)="$page.set($event)"/>
+    </section>
+</div>
 
-
-
+<p-confirmDialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>
+<add-project [visible]="showComponent" (notify)="onNotify($event)"></add-project>

@@ -1,9 +1,10 @@
-import {Component, inject, OnInit, Signal} from '@angular/core';
+import {Component, computed, inject, OnInit, Signal} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {CostStore} from "../state";
 import {ConfigurationStore} from "../../../shared/configuration/state";
 import {Cost} from "../../../generated/models/cost";
 import {ConfigurationEntry} from "../../../generated/models/configuration-entry";
+import {ProjectStore} from "../../../project/state";
 
 import {CostDetailComponent} from "../cost-detail/cost-detail.component";
 
@@ -20,8 +21,14 @@ export class CostDetailShellComponent implements OnInit {
 
     readonly costStore = inject(CostStore);
     readonly configurationStore = inject(ConfigurationStore);
+    readonly projectStore = inject(ProjectStore);
     $costCategories: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.costCategories;
-    $cost: Signal<Cost | null> = this.costStore.cost!;
+    // While the store still holds a cost from another page, show skeletons instead of the wrong one
+    $cost: Signal<Cost | null> = computed(() => this.costStore.cost()?.id === this.costId ? this.costStore.cost() : null);
+    $costLoadFailed: Signal<boolean> = this.costStore.costLoadFailed;
+    // Breadcrumb only
+    $projectName: Signal<string> = computed(() =>
+        this.projectStore.project()?.id === this.projectId ? this.projectStore.projectName() : '');
 
     constructor(private route: ActivatedRoute) {
     }
@@ -36,9 +43,15 @@ export class CostDetailShellComponent implements OnInit {
 
         this.configurationStore.loadConfiguration({});
         this.costStore.loadCost({});
+        this.projectStore.setProjectId(this.projectId);
+        this.projectStore.loadProject({});
     }
 
     updateCost($event: Cost) {
         this.costStore.updateCost({cost: $event});
+    }
+
+    onReload(): void {
+        this.costStore.loadCost({});
     }
 }

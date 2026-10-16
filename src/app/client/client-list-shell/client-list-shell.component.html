@@ -1,8 +1,53 @@
-<client-list
-    [clients]="$clients()!"
-    [clientTypes]="$clientTypes()"
-    (removeClientEvent)="onDeleteClient($event)"
->
-</client-list>
-<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}" class="overlay-dialog"></p-confirmDialog>
+<app-page-header title="Clients" [crumbs]="crumbs"/>
 
+<div class="flex flex-col gap-6">
+    <!-- KPIs -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <section class="app-card flex items-center gap-4 p-5">
+            <div class="app-kpi-icon"><i class="pi pi-users text-xl"></i></div>
+            <div>
+                <div class="app-kpi-label">Clients</div>
+                <div class="text-2xl leading-8 font-bold text-gray-800 tabular-nums">{{ $kpis().clients }}</div>
+            </div>
+        </section>
+        <section class="app-card flex items-center gap-4 p-5">
+            <div class="app-kpi-icon"><i class="pi pi-briefcase text-xl"></i></div>
+            <div>
+                <div class="app-kpi-label">With active projects</div>
+                <div class="text-2xl leading-8 font-bold text-gray-800 tabular-nums">{{ $kpis().withActiveProjects }}</div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Table card -->
+    <section class="app-card overflow-hidden">
+        <div class="app-card-header">
+            <div>
+                <h2 class="app-card-title">All clients</h2>
+                <p class="app-card-subtitle m-0">{{ $kpis().clients }} {{ $kpis().clients === 1 ? 'client' : 'clients' }}</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+                <div class="app-seg" role="group" aria-label="Filter by client type">
+                    <button *ngFor="let segment of segments" type="button" class="app-seg-item gap-2"
+                            [class.active]="segment.key === $segmentKey()" [attr.aria-pressed]="segment.key === $segmentKey()"
+                            (click)="onSelectSegment(segment.key)">
+                        {{ segment.label }}
+                        <span class="text-xs text-gray-400 tabular-nums">{{ $segmentCounts()[segment.key] }}</span>
+                    </button>
+                </div>
+                <p-button label="New client" icon="pi pi-plus" (onClick)="onAddClient()"/>
+            </div>
+        </div>
+        <client-list [rows]="$pagedRows()"
+                     [clientTypes]="$clientTypes()"
+                     [emptyTitle]="$emptyTitle()"
+                     [emptyText]="$emptyText()"
+                     (removeClientEvent)="onDeleteClient($event)">
+        </client-list>
+        <app-table-footer [total]="$filteredRows().length" [page]="$page()" [pageSize]="pageSize"
+                           (pageChange)="$page.set($event)"/>
+    </section>
+</div>
+
+<p-confirmDialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>
+<add-client [visible]="showAddClient" (notify)="onAddClientClosed()"></add-client>

@@ -7,18 +7,17 @@ import {EventSelection} from "../model/calendar.model";
 import {toDateIfExists, toLocalDateTimeString} from "../../shared/utils/date-utils";
 import {DialogModule} from "primeng/dialog";
 import {InputTextModule} from "primeng/inputtext";
-import {Textarea} from "primeng/inputtextarea";
+import {Textarea} from "primeng/textarea";
 import {DatePickerModule} from "primeng/datepicker";
 import {ToggleSwitchModule} from "primeng/toggleswitch";
 import {ButtonModule} from "primeng/button";
-import {NgClass} from "@angular/common";
 
 @Component({
     selector: 'add-calendar-event',
     templateUrl: './add-calendar-event.component.html',
     styleUrl: './add-calendar-event.component.less',
     standalone: true,
-    imports: [DialogModule, InputTextModule, Textarea, DatePickerModule, ToggleSwitchModule, ButtonModule, ReactiveFormsModule, NgClass]
+    imports: [DialogModule, InputTextModule, Textarea, DatePickerModule, ToggleSwitchModule, ButtonModule, ReactiveFormsModule]
 })
 export class AddCalendarEventComponent implements OnChanges {
     @Input()
@@ -42,7 +41,7 @@ export class AddCalendarEventComponent implements OnChanges {
     }
 
     get header(): string {
-        return this.event ? 'Edit event' : 'Add new event';
+        return this.event ? 'Edit event' : 'New event';
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -78,6 +77,11 @@ export class AddCalendarEventComponent implements OnChanges {
         if (this.event) {
             this.deleteRequested.emit(this.event);
         }
+    }
+
+    isFieldInvalid(name: string): boolean {
+        let control = this.calendarEventForm.get(name);
+        return !!control && control.invalid && (control.touched || control.dirty);
     }
 
     isSaveEnabled(): boolean {

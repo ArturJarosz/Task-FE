@@ -2,7 +2,7 @@ import {AppState} from "../../state/app.store";
 import {Client} from "../../generated/models/client";
 import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {of, pipe, switchMap, tap} from "rxjs";
+import {catchError, EMPTY, of, pipe, switchMap, tap} from "rxjs";
 import {ClientRestService} from "../rest/client-rest.service";
 import {inject} from "@angular/core";
 import {MessageService} from "primeng/api";
@@ -17,6 +17,7 @@ export interface ClientState extends AppState {
     clientsNeedRefresh: boolean;
     clientNeedsRefresh: boolean;
     clientProjectsSummary: EntityProjectsSummary | null;
+    clientLoadFailed: boolean;
 }
 
 export const initialState: ClientState = {
@@ -27,6 +28,7 @@ export const initialState: ClientState = {
     clientsNeedRefresh: true,
     clientNeedsRefresh: true,
     clientProjectsSummary: null,
+    clientLoadFailed: false,
 }
 
 export const ClientStore = signalStore(
@@ -36,6 +38,8 @@ export const ClientStore = signalStore(
         setClientId(clientId: number) {
             if (store.clientId() != clientId) {
                 this.setClientNeedRefresh();
+                // Drop the previous client's projects so they don't show while the new ones load
+                patchState(store, {clientProjectsSummary: null});
             }
             patchState(store, {clientId: clientId});
         },
@@ -44,11 +48,17 @@ export const ClientStore = signalStore(
         },
         loadClient: rxMethod<{}>(
             pipe(
+                tap(() => patchState(store, {clientLoadFailed: false})),
                 switchMap(() => {
                     if (store.clientNeedsRefresh()) {
                         return clientRestService.getClient(store.clientId()!)
                             .pipe(
-                                tap(client => patchState(store, {client: client, clientNeedsRefresh: false}))
+                                tap(client => patchState(store, {client: client, clientNeedsRefresh: false})),
+                                // The REST service already shows the error toast; keep the stream alive for the next load
+                                catchError(() => {
+                                    patchState(store, {clientLoadFailed: true});
+                                    return EMPTY;
+                                })
                             )
                     }
                     return of({});
@@ -61,7 +71,8 @@ export const ClientStore = signalStore(
                     if (store.clientsNeedRefresh()) {
                         return clientRestService.getClients()
                             .pipe(
-                                tap(clients => patchState(store, {clients: clients, clientsNeedRefresh: false}))
+                                tap(clients => patchState(store, {clients: clients, clientsNeedRefresh: false})),
+                                catchError(() => EMPTY)
                             )
                     }
                     return of({});
@@ -80,7 +91,8 @@ export const ClientStore = signalStore(
                                     summary: `Client removed.`,
                                     detail: `A client with id: ${store.clientId()} was removed.`
                                 });
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         )
                 })
             )
@@ -97,7 +109,8 @@ export const ClientStore = signalStore(
                                     summary: `Client created.`,
                                     detail: `A new client was created.`
                                 });
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         )
                 })
             )
@@ -115,7 +128,8 @@ export const ClientStore = signalStore(
                                     summary: `Client updated.`,
                                     detail: `A client ${clientName} was updated.`
                                 });
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         )
                 })
             )
@@ -126,7 +140,8 @@ export const ClientStore = signalStore(
                     return clientRestService.getClientProjectsSummary(store.clientId()!)
                         .pipe(
                             tap(clientProjectsSummary => patchState(store,
-                                {clientProjectsSummary: clientProjectsSummary}))
+                                {clientProjectsSummary: clientProjectsSummary})),
+                            catchError(() => EMPTY)
                         )
                 })
             )

@@ -1,7 +1,6 @@
-import {ChangeDetectionStrategy, Component, effect, inject, OnInit, Signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, Signal} from '@angular/core';
 import {ProjectState, ProjectStore} from "../state";
 import {Store} from "@ngrx/store";
-import {Observable} from "rxjs";
 import {ArchitectStore} from "../../architect/state";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -9,9 +8,10 @@ import {Architect} from "../../generated/models/architect";
 import {Project} from "../../generated/models/project";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {ConfirmationService} from "primeng/api";
-import {ProjectDetailComponent} from "../project-detail/project-detail.component";
-import {AsyncPipe} from "@angular/common";
+import {ProjectDetailComponent, ProjectDetailView} from "../project-detail/project-detail.component";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {InstallmentStore} from "../../finance/installment/state/installment.state";
+import {Installment} from "../../generated/models/installment";
 
 @Component({
     selector: 'project-detail-shell',
@@ -19,20 +19,25 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
     styleUrls: ['./project-detail-shell.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [ProjectDetailComponent, AsyncPipe, ConfirmDialogModule]
+    imports: [ProjectDetailComponent, ConfirmDialogModule]
 })
 export class ProjectDetailShellComponent implements OnInit {
-    architects$!: Observable<Architect[]>;
     projectId: number = 0;
+    view: ProjectDetailView = 'overview';
 
     readonly architectStore = inject(ArchitectStore);
     readonly projectStore = inject(ProjectStore);
     readonly configurationStore = inject(ConfigurationStore);
-    $project: Signal<Project | null> = this.projectStore.project!;
+    readonly installmentStore = inject(InstallmentStore);
+    // While the store still holds a project from another page, show skeletons instead of the wrong one
+    $project: Signal<Project | null> = computed(() => this.projectStore.project()?.id === this.projectId ? this.projectStore.project() : null);
+    $projectLoadFailed: Signal<boolean> = this.projectStore.projectLoadFailed;
+    $architects: Signal<Architect[]> = this.architectStore.architects;
     $projectNeedsRefresh: Signal<boolean> = this.projectStore.projectNeedsRefresh!;
     $projectTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.projectTypes;
     $projectStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.projectStatuses;
     $contractStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.contractStatuses;
+    $installments: Signal<Installment[]> = computed(() => this.installmentStore.installmentProjectData().installments ?? []);
 
     constructor(private route: ActivatedRoute, private projectStoreOld: Store<ProjectState>,
                 private router: Router,
@@ -47,8 +52,11 @@ export class ProjectDetailShellComponent implements OnInit {
     ngOnInit(): void {
         let maybeProjectId = this.route.snapshot.paramMap.get('projectId');
         this.projectId = Number(maybeProjectId);
+        this.view = this.route.snapshot.data['view'] ?? 'overview';
         this.projectStore.setProjectId(this.projectId);
         this.projectStore.loadProject({});
+        this.installmentStore.setProjectId(this.projectId);
+        this.installmentStore.loadProjectInstallments({});
 
         this.configurationStore.loadConfiguration({});
         this.architectStore.loadArchitects({});
@@ -61,9 +69,11 @@ export class ProjectDetailShellComponent implements OnInit {
     onRemoveProject($event: void) {
         let projectName = this.projectStore.project()!.name;
         this.confirmationService.confirm({
-            message: `Do you want to remove project: ${projectName}?`,
-            header: `Confirm project delete ${projectName}.`,
-            icon: "pi pi-info-circle text-red-300",
+            header: 'Delete project',
+            message: `Delete ${projectName}? This can't be undone.`,
+            icon: 'pi pi-exclamation-triangle',
+            acceptButtonProps: {label: 'Delete', severity: 'danger'},
+            rejectButtonProps: {label: 'Cancel', severity: 'secondary', outlined: true},
             accept: () => {
                 this.projectStore.removeProject({});
                 this.router.navigate([`/projects`]);
@@ -73,5 +83,9 @@ export class ProjectDetailShellComponent implements OnInit {
                 this.confirmationService.close();
             }
         });
+    }
+
+    onReload(): void {
+        this.projectStore.loadProject({});
     }
 }

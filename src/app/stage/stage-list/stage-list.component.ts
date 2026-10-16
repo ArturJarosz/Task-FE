@@ -1,16 +1,19 @@
-import {Component, EventEmitter, Input, Output} from "@angular/core";
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Stage} from "../../generated/models/stage";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {StageDto} from "../model/stage";
 import {Architect} from "../../generated/models/architect";
 import {TableModule} from "primeng/table";
-import {AvatarModule} from "primeng/avatar";
+import {TagModule} from "primeng/tag";
+import {MenuModule, Menu} from "primeng/menu";
+import {MenuItem} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {RouterLink} from "@angular/router";
-import {NgIf} from "@angular/common";
+import {DatePipe, NgIf} from "@angular/common";
+import {EmptyStateComponent} from "../../shared";
+import {statusSeverity} from "../../shared/status-severity";
 import {TooltipModule} from "primeng/tooltip";
-import {RippleModule} from "primeng/ripple";
 
 const ARCHITECT_NOT_FOUND_INITIAL = '?';
 
@@ -18,8 +21,9 @@ const ARCHITECT_NOT_FOUND_INITIAL = '?';
     selector: 'stage-list',
     templateUrl: 'stage-list.component.html',
     styleUrls: ['stage-list.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [TableModule, AvatarModule, ButtonModule, RouterLink, NgIf, TooltipModule, RippleModule]
+    imports: [TableModule, TagModule, MenuModule, ButtonModule, RouterLink, NgIf, DatePipe, TooltipModule, EmptyStateComponent]
 })
 export class StageListComponent {
     @Input()
@@ -34,6 +38,9 @@ export class StageListComponent {
     projectId: number = 0;
     @Output()
     deleteStageEvent: EventEmitter<StageDto> = new EventEmitter<StageDto>();
+
+    protected readonly statusSeverity = statusSeverity;
+    rowMenuItems: MenuItem[] = [];
 
     getStageLabelType(type: string): string {
         return resolveLabel(type, this.stageTypes);
@@ -61,8 +68,16 @@ export class StageListComponent {
         return '';
     }
 
-    deleteTask($event: MouseEvent, stageName: string, stageId: number) {
+    openRowMenu($event: MouseEvent, stage: Stage, menu: Menu) {
         $event.stopPropagation();
+        this.rowMenuItems = [
+            {label: 'Open', icon: 'pi pi-arrow-right', routerLink: ['/projects', this.projectId, 'stages', stage.id]},
+            {label: 'Delete stage', icon: 'pi pi-trash', command: () => this.deleteStage(stage.name!, stage.id!)}
+        ];
+        menu.toggle($event);
+    }
+
+    deleteStage(stageName: string, stageId: number) {
         this.deleteStageEvent.emit({stageName: stageName, stageId: stageId});
     }
 }

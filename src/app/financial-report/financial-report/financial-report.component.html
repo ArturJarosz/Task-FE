@@ -1,82 +1,136 @@
-<wrapper [title]="title">
-    <div wrapper-body>
-        <div class="report-controls mb-4">
-            <div class="flex items-center gap-2">
-                <label class="text-surface-500 dark:text-surface-300 font-medium">Start date:</label>
-                <p-datePicker [ngModel]="selectedStartDate"
-                            (ngModelChange)="onStartDateChange($event)"
-                            dateFormat="yy-mm-dd">
-                </p-datePicker>
+<app-page-header title="Financial report" [crumbs]="crumbs"/>
+
+<div class="flex flex-col gap-6">
+    <!-- Filters: one row above the charts -->
+    <section class="app-card flex flex-wrap items-end gap-x-6 gap-y-4 p-5">
+        <div class="w-full sm:w-auto">
+            <label for="reportRange" class="app-form-label">Date range</label>
+            <p-datePicker inputId="reportRange" selectionMode="range" [ngModel]="selectedRange"
+                          (ngModelChange)="onRangeChange($event)" dateFormat="dd.mm.yy" [showIcon]="true"
+                          [readonlyInput]="true" appendTo="body" styleClass="w-full sm:w-72"/>
+        </div>
+        <div>
+            <span class="app-form-label">Period</span>
+            <div class="app-seg" role="group" aria-label="Period">
+                <button *ngFor="let option of periodTypeOptions" type="button" class="app-seg-item"
+                        [class.active]="option.value === periodType" [attr.aria-pressed]="option.value === periodType"
+                        (click)="onPeriodTypeChange(option.value)">{{ option.label }}</button>
             </div>
-            <div class="flex items-center gap-2">
-                <label class="text-surface-500 dark:text-surface-300 font-medium">End date:</label>
-                <p-datePicker [ngModel]="selectedEndDate"
-                            (ngModelChange)="onEndDateChange($event)"
-                            dateFormat="yy-mm-dd">
-                </p-datePicker>
+        </div>
+        <div>
+            <span class="app-form-label">Values</span>
+            <div class="app-seg" role="group" aria-label="Values">
+                <button *ngFor="let option of valueTypeOptions" type="button" class="app-seg-item"
+                        [class.active]="option.value === selectedValueType" [attr.aria-pressed]="option.value === selectedValueType"
+                        (click)="onValueTypeChange(option.value)">{{ option.label }}</button>
             </div>
-            <div class="flex items-center gap-2">
-                <label class="text-surface-500 dark:text-surface-300 font-medium">Period:</label>
-                <p-select [options]="periodTypeOptions"
-                            [ngModel]="selectedPeriodType"
-                            (ngModelChange)="onPeriodTypeChange($event)"
-                            optionLabel="label"
-                            optionValue="value">
-                </p-select>
-            </div>
-            <p-button label="Generate" (onClick)="onGenerate()" [loading]="loading" size="small" severity="secondary" class="top-menu-button"></p-button>
+        </div>
+        <span *ngIf="loading" class="flex items-center gap-2 pb-3 text-sm text-gray-500">
+            <i class="pi pi-spin pi-spinner" aria-hidden="true"></i> Updating report…
+        </span>
+    </section>
+
+    <ng-container *ngIf="financialReport; else loadingState">
+        <!-- KPIs -->
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+            <section class="app-card p-6">
+                <div class="app-kpi-icon"><i class="pi pi-arrow-down-left text-xl"></i></div>
+                <div class="mt-5 app-kpi-label">Income ({{ selectedValueType }})</div>
+                <div class="mt-2 app-kpi-value">{{ kpiValue(financialReport.totalIncome) | currency:'PLN':'symbol':'1.2-2' }}</div>
+            </section>
+            <section class="app-card p-6">
+                <div class="app-kpi-icon"><i class="pi pi-arrow-up-right text-xl"></i></div>
+                <div class="mt-5 app-kpi-label">Expenses ({{ selectedValueType }})</div>
+                <div class="mt-2 app-kpi-value">{{ kpiValue(financialReport.totalExpense) | currency:'PLN':'symbol':'1.2-2' }}</div>
+            </section>
+            <section class="app-card p-6 xl:col-span-2">
+                <div class="app-kpi-icon"><i class="pi pi-wallet text-xl"></i></div>
+                <div class="mt-5 app-kpi-label">Balance ({{ selectedValueType }})</div>
+                <div class="mt-2 app-kpi-value">{{ kpiValue(financialReport.totalBalance) | currency:'PLN':'symbol':'1.2-2' }}</div>
+            </section>
         </div>
 
-        <div *ngIf="financialReport">
-            <div class="flex items-center gap-2 mb-4">
-                <label class="text-surface-500 dark:text-surface-300 font-medium">Values:</label>
-                <p-selectButton [options]="valueTypeOptions"
-                                [(ngModel)]="selectedValueType"
-                                (ngModelChange)="onValueTypeChange()"
-                                optionLabel="label"
-                                optionValue="value"
-                                styleClass="secondary-toggle">
-                </p-selectButton>
-            </div>
-
-            <div class="chart-container mb-6 border border-surface rounded-2xl py-6 px-8">
-                <div class="flex items-center gap-6 mb-6">
-                    <div class="flex-1 text-surface-900 dark:text-surface-0 font-semibold">Financial Analytics</div>
-                    <div class="flex items-center gap-6">
-                        <div *ngFor="let item of legendItems" class="flex items-center gap-2">
-                            <div class="legend-dot" [style.backgroundColor]="item.color"></div>
-                            <span class="font-medium text-surface-900 dark:text-surface-0">{{ item.label }}</span>
-                        </div>
-                    </div>
+        <!-- Chart -->
+        <section class="app-card">
+            <div class="app-card-header">
+                <div>
+                    <h2 class="app-card-title">Income and expenses</h2>
+                    <p class="app-card-subtitle m-0">
+                        {{ startDate | date:'dd.MM.yyyy' }} – {{ endDate | date:'dd.MM.yyyy' }} · income above the line, expenses below
+                    </p>
                 </div>
-                <p-chart type="bar" [data]="chartData" [options]="chartOptions" height="20rem"></p-chart>
+                <ul class="list-none m-0 p-0 flex flex-wrap items-center gap-x-5 gap-y-2" aria-label="Legend">
+                    <li *ngFor="let item of legendItems" class="flex items-center gap-2 text-sm text-gray-700">
+                        <span class="w-2.5 h-2.5 rounded-full" [ngClass]="item.dotClass" aria-hidden="true"></span>
+                        {{ item.label }}
+                    </li>
+                </ul>
             </div>
+            <div class="px-6 pb-6">
+                <p-chart *ngIf="hasData; else noPeriods" type="bar" [data]="chartData" [options]="chartOptions" height="20rem"
+                         ariaLabel="Income and expenses per period, as a stacked bar chart. The same figures are in the summary table."/>
+                <ng-template #noPeriods>
+                    <div class="flex flex-col items-center text-center gap-2 py-10">
+                        <div class="flex items-center justify-center w-14 h-14 rounded-full bg-gray-100 text-gray-500"><i class="pi pi-chart-bar text-xl"></i></div>
+                        <h3 class="m-0 mt-2 text-base font-semibold text-gray-800">No data for this range</h3>
+                        <p class="m-0 text-sm text-gray-500">Pick a wider date range to see income and expenses.</p>
+                    </div>
+                </ng-template>
+            </div>
+        </section>
 
-            <div class="summary-table">
-                <p-table [value]="summaryRows">
-                    <ng-template pTemplate="header">
-                        <tr>
-                            <th>Category</th>
-                            <th>Gross</th>
-                            <th>Net</th>
-                            <th>Income Tax</th>
-                            <th>VAT</th>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-row>
-                        <tr *ngIf="row.isHeader" class="group-header">
-                            <td colspan="5">{{ row.label }}</td>
-                        </tr>
-                        <tr *ngIf="!row.isHeader" [class.total-row]="row.isBold">
-                            <td [class.pl-5]="!row.isBold">{{ row.label }}</td>
-                            <td>{{ row.grossValue | number:'1.2-2' }}</td>
-                            <td>{{ row.netValue | number:'1.2-2' }}</td>
-                            <td>{{ row.incomeTax | number:'1.2-2' }}</td>
-                            <td>{{ row.vatTax | number:'1.2-2' }}</td>
-                        </tr>
-                    </ng-template>
-                </p-table>
+        <!-- Summary table (also the accessible table view of the chart) -->
+        <section class="app-card overflow-hidden">
+            <div class="app-card-header">
+                <div>
+                    <h2 class="app-card-title">Summary</h2>
+                    <p class="app-card-subtitle m-0">Totals for the selected range, by category</p>
+                </div>
             </div>
-        </div>
-    </div>
-</wrapper>
+            <p-table [value]="summaryRows" [tableStyle]="{'min-width': '44rem'}">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Category</th>
+                        <th class="app-num">Gross</th>
+                        <th class="app-num">Net</th>
+                        <th class="app-num">Income tax</th>
+                        <th class="app-num">VAT</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row>
+                    <tr *ngIf="row.kind === 'header'; else valueRow" class="bg-gray-50">
+                        <td colspan="5" class="text-xs font-semibold uppercase tracking-wide text-gray-500">{{ row.label }}</td>
+                    </tr>
+                    <ng-template #valueRow>
+                        <tr [ngClass]="{'font-semibold text-gray-800': row.kind !== 'item', 'bg-brand-50': row.kind === 'balance'}">
+                            <td>
+                                <span class="flex items-center gap-2">
+                                    <span *ngIf="row.dotClass" class="w-2.5 h-2.5 rounded-full" [ngClass]="row.dotClass" aria-hidden="true"></span>
+                                    {{ row.label }}
+                                </span>
+                            </td>
+                            <td class="app-num">{{ row.grossValue | currency:'PLN':'symbol':'1.2-2' }}</td>
+                            <td class="app-num">{{ row.netValue | currency:'PLN':'symbol':'1.2-2' }}</td>
+                            <td class="app-num">{{ row.incomeTax | currency:'PLN':'symbol':'1.2-2' }}</td>
+                            <td class="app-num">{{ row.vatTax | currency:'PLN':'symbol':'1.2-2' }}</td>
+                        </tr>
+                    </ng-template>
+                </ng-template>
+            </p-table>
+        </section>
+    </ng-container>
+
+    <ng-template #loadingState>
+        @if (loadFailed) {
+            <app-load-error title="Couldn't load the financial report" text="Check your connection and try again."
+                            (retry)="reloadReport.emit()"/>
+        } @else {
+            <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+                <div class="app-card p-6"><p-skeleton height="6rem"/></div>
+                <div class="app-card p-6"><p-skeleton height="6rem"/></div>
+                <div class="app-card p-6 xl:col-span-2"><p-skeleton height="6rem"/></div>
+            </div>
+            <div class="app-card p-6"><p-skeleton height="20rem"/></div>
+        }
+    </ng-template>
+</div>

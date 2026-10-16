@@ -1,0 +1,138 @@
+<app-page-header [title]="itemTitle" [crumbs]="crumbs"/>
+
+@if (item) {
+    <div class="flex flex-col gap-6">
+        <!-- Header card -->
+        <section class="app-card flex flex-wrap items-center gap-5 p-6">
+            <div class="flex items-center justify-center shrink-0 w-[72px] h-[72px] rounded-2xl bg-brand-50 text-brand-500">
+                <i [class]="labels.icon + ' text-3xl'" aria-hidden="true"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <h2 class="m-0 text-xl leading-[30px] font-semibold text-gray-800">{{ item.name }}</h2>
+                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-sm text-gray-500">
+                    <span>{{ itemTitle }}</span>
+                    <span class="w-px h-4 bg-gray-200"></span>
+                    <span>{{ partnerName || 'Not set' }}</span>
+                    <span class="w-px h-4 bg-gray-200"></span>
+                    <span>{{ item.paid ? 'Paid' : 'Not paid' }}</span>
+                </div>
+            </div>
+            <p-button icon="pi pi-ellipsis-h" severity="secondary" [outlined]="true"
+                      pTooltip="More actions" tooltipPosition="bottom" ariaLabel="More actions"
+                      (onClick)="actionsMenu.toggle($event)"/>
+            <p-menu #actionsMenu [model]="actions" [popup]="true" appendTo="body"/>
+        </section>
+
+        <div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_6px)_minmax(0,1fr)] gap-6 items-start">
+            <!-- Main column -->
+            <section class="app-card min-w-0">
+                <div class="app-card-header">
+                    <h3 class="app-card-title">{{ itemTitle }} details</h3>
+                    <p-button label="Edit" icon="pi pi-pencil" severity="secondary" [outlined]="true" [rounded]="true"
+                              (onClick)="onEdit()"/>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 px-6 pb-6">
+                    <app-field label="Name" [value]="item.name"/>
+                    <app-field [label]="partnerTitle" [value]="partnerName"/>
+                    <div>
+                        <span class="app-field-label">Value</span>
+                        <div class="app-field-value app-num">{{ (item.value ?? 0) | currency:'PLN':'symbol':'1.2-2' }}</div>
+                    </div>
+                    <app-field label="Has invoice" [value]="item.hasInvoice ? 'Yes' : 'No'"/>
+                    <app-field label="Paid" [value]="item.paid ? 'Yes' : 'No'"/>
+                    <app-field label="Payment date" [value]="item.paymentDate | date:'dd.MM.yyyy'"/>
+                    <app-field class="sm:col-span-2 lg:col-span-3" label="Note" [value]="item.note" emptyText="No note yet"/>
+                </div>
+            </section>
+
+            <!-- Side column -->
+            <section class="app-card">
+                <div class="app-card-header">
+                    <h3 class="app-card-title">{{ partnerTitle }}</h3>
+                </div>
+                @if (partnerName && item.partnerId) {
+                    <a [routerLink]="['/' + labels.partnerRoute, item.partnerId]" class="flex items-center gap-3 px-6 pb-6 no-underline group">
+                        <span class="app-avatar bg-brand-50 text-brand-500">{{ partnerName.charAt(0) }}</span>
+                        <span class="flex flex-col min-w-0">
+                            <span class="text-sm font-medium text-gray-800 truncate group-hover:text-brand-500">{{ partnerName }}</span>
+                            <span class="text-xs text-gray-500">{{ partnerTitle }}</span>
+                        </span>
+                    </a>
+                } @else {
+                    <app-empty-state [icon]="labels.icon" [title]="'No ' + labels.partner"
+                                     [text]="'Edit the ' + labels.item + ' to choose a ' + labels.partner + '.'"/>
+                }
+            </section>
+        </div>
+    </div>
+} @else if (loadFailed) {
+    <app-load-error [title]="loadErrorTitle" backLabel="Back to finance"
+                    [backRoute]="['/projects', projectId, 'finance']" (retry)="reloadEvent.emit()"/>
+} @else {
+    <div class="flex flex-col gap-6">
+        <div class="app-card flex items-center gap-5 p-6">
+            <p-skeleton width="72px" height="72px" borderRadius="16px"/>
+            <div class="flex flex-col gap-2 flex-1">
+                <p-skeleton width="16rem" height="1.5rem"/>
+                <p-skeleton width="24rem" height="1rem"/>
+            </div>
+        </div>
+        <div class="app-card p-6"><p-skeleton height="12rem"/></div>
+    </div>
+}
+
+<!-- Edit dialog -->
+<p-dialog [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
+          [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onCancelEdit()">
+    <ng-template pTemplate="header">
+        <div class="flex flex-col gap-1">
+            <span class="p-dialog-title">Edit {{ labels.item }}</span>
+            <span class="text-sm text-gray-500">Change the {{ labels.item }} details, {{ labels.partner }} and payment.</span>
+        </div>
+    </ng-template>
+    <form [formGroup]="detailForm" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div>
+            <label for="itemName" class="app-form-label">Name <span class="text-error-600">*</span></label>
+            <input id="itemName" formControlName="name" pInputText class="w-full" [placeholder]="itemTitle + ' name'"
+                   (blur)="detailForm.get('name')?.markAsDirty()"/>
+            @if (isFieldInvalid('name')) {
+                <small class="block mt-1.5 text-xs text-error-600">Enter a {{ labels.item }} name</small>
+            }
+        </div>
+        <div>
+            <label for="itemPartner" class="app-form-label">{{ partnerTitle }}</label>
+            <p-select inputId="itemPartner" formControlName="partnerId" [options]="partners"
+                      optionLabel="name" optionValue="id" [filter]="true" filterBy="name"
+                      appendTo="body" [fluid]="true"/>
+        </div>
+        <!-- One toggle per column, each above the field it relates to -->
+        <div class="flex items-center gap-3">
+            <p-toggleSwitch inputId="itemHasInvoice" formControlName="hasInvoice"/>
+            <label for="itemHasInvoice" class="text-sm font-medium text-gray-700">Has invoice</label>
+        </div>
+        <div class="flex items-center gap-3">
+            <p-toggleSwitch inputId="itemPaid" formControlName="paid"/>
+            <label for="itemPaid" class="text-sm font-medium text-gray-700">Paid</label>
+        </div>
+        <div>
+            <label for="itemValue" class="app-form-label">Value</label>
+            <p-inputNumber inputId="itemValue" formControlName="value" mode="currency" currency="PLN"
+                           locale="pl-PL" [minFractionDigits]="2" [maxFractionDigits]="2" [fluid]="true"/>
+        </div>
+        <div>
+            <label for="itemPaymentDate" class="app-form-label">Payment date</label>
+            <p-datePicker inputId="itemPaymentDate" formControlName="paymentDate" dateFormat="dd.mm.yy"
+                          [showIcon]="true" appendTo="body" [fluid]="true"/>
+            <small class="block mt-1.5 text-xs text-gray-500">Available when the {{ labels.item }} is paid</small>
+        </div>
+        <div class="sm:col-span-2">
+            <label for="itemNote" class="app-form-label">Note</label>
+            <textarea id="itemNote" formControlName="note" pTextarea rows="4" [autoResize]="true" class="w-full"></textarea>
+        </div>
+    </form>
+    <ng-template pTemplate="footer">
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancelEdit()"/>
+        <p-button label="Save changes" [disabled]="!dataNeedsUpdate || detailForm.invalid"
+                  (onClick)="onSave()"/>
+    </ng-template>
+</p-dialog>

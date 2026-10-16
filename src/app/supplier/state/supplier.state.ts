@@ -4,7 +4,7 @@ import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {inject} from "@angular/core";
 import {MessageService} from "primeng/api";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {of, pipe, switchMap, tap} from "rxjs";
+import {catchError, EMPTY, of, pipe, switchMap, tap} from "rxjs";
 import {MessageSeverity} from "../../shared";
 import {SupplierRestService} from "../rest/suppplier-rest.service";
 import {SupplierSuppliesData} from "../../generated/models/supplier-supplies-data";
@@ -17,6 +17,7 @@ export interface SupplierState extends AppState {
     supplierNeedsRefresh: boolean;
     suppliesData: SupplierSuppliesData;
     suppliesDataNeedRefresh: boolean;
+    supplierLoadFailed: boolean;
 }
 
 export const initialState: SupplierState = {
@@ -26,7 +27,8 @@ export const initialState: SupplierState = {
     suppliersNeedRefresh: true,
     supplierNeedsRefresh: true,
     suppliesData: {},
-    suppliesDataNeedRefresh: true
+    suppliesDataNeedRefresh: true,
+    supplierLoadFailed: false,
 }
 
 export const SupplierStore = signalStore(
@@ -38,6 +40,8 @@ export const SupplierStore = signalStore(
                 if (store.supplierId() !== supplierId) {
                     this.setSupplierNeedsRefresh();
                     this.setSuppliesDataNeedsRefresh();
+                    // Drop the previous supplier's supplies so they don't show while the new ones load
+                    patchState(store, {suppliesData: {}});
                 }
                 patchState(store, {supplierId: supplierId});
             },
@@ -59,7 +63,8 @@ export const SupplierStore = signalStore(
                                     tap(suppliers => patchState(store, {
                                         suppliers: suppliers,
                                         suppliersNeedRefresh: false
-                                    }))
+                                    })),
+                                    catchError(() => EMPTY)
                                 )
                         }
                         return of({});
@@ -68,6 +73,7 @@ export const SupplierStore = signalStore(
             ),
             loadSupplier: rxMethod<{}>(
                 pipe(
+                    tap(() => patchState(store, {supplierLoadFailed: false})),
                     switchMap(() => {
                         if (store.supplierNeedsRefresh()) {
                             return supplierRestService.getSupplier(store.supplierId()!)
@@ -75,7 +81,12 @@ export const SupplierStore = signalStore(
                                     tap(supplier => patchState(store, {
                                         supplier: supplier,
                                         supplierNeedsRefresh: false
-                                    }))
+                                    })),
+                                    // The REST service already shows the error toast; keep the stream alive for the next load
+                                    catchError(() => {
+                                        patchState(store, {supplierLoadFailed: true});
+                                        return EMPTY;
+                                    })
                                 )
                         }
                         return of({});
@@ -96,7 +107,8 @@ export const SupplierStore = signalStore(
                                         summary: `New supplier created`,
                                         detail: `New supplier '${supplier.name}' was created.`,
                                     });
-                                })
+                                }),
+                                catchError(() => EMPTY)
                             )
                     })
                 )
@@ -117,7 +129,8 @@ export const SupplierStore = signalStore(
                                         summary: `Supplier updated.`,
                                         detail: `Supplier '${supplier.name}' was updated.`,
                                     });
-                                })
+                                }),
+                                catchError(() => EMPTY)
                             )
                     })
                 )
@@ -139,7 +152,8 @@ export const SupplierStore = signalStore(
                                         supplierId: undefined,
                                         supplierNeedsRefresh: true,
                                     })
-                                })
+                                }),
+                                catchError(() => EMPTY)
                             )
                     })
                 )
@@ -154,7 +168,8 @@ export const SupplierStore = signalStore(
                                         suppliesData: suppliesData,
                                         suppliesDataNeedRefresh: false,
                                     })
-                                })
+                                }),
+                                catchError(() => EMPTY)
                             )
                     })
                 )

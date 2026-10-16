@@ -1,6 +1,7 @@
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {Injectable} from "@angular/core";
 import {Client} from "../../generated/models/client";
+import {ClientType} from "../../generated/models/client-type";
 
 const DEFAULT_CLIENT_TYPE = "PRIVATE";
 
@@ -12,15 +13,19 @@ export class ClientFormProvider {
     constructor(private formBuilder: FormBuilder) {
     }
 
+    // A private client needs first and last name, a company needs a company name.
+    // The validators follow the client type for the lifetime of the returned form.
     public getClientFormGroup(): FormGroup<ClientForm> {
-        return this.formBuilder.nonNullable.group<ClientForm>({
+        let form = this.formBuilder.nonNullable.group<ClientForm>({
             firstName: this.formBuilder.control<string>('', [Validators.required]),
             lastName: this.formBuilder.control<string>('', [Validators.required]),
             companyName: this.formBuilder.control<string>(''),
             note: this.formBuilder.control<string>(''),
             clientType: this.formBuilder.nonNullable.control<string>(DEFAULT_CLIENT_TYPE, [Validators.required]),
             contact: this.getContactFormGroup()
-        })
+        });
+        form.controls.clientType.valueChanges.subscribe(clientType => updateNameValidators(form, clientType));
+        return form;
     }
 
     private getContactFormGroup(): FormGroup<ContactForm> {
@@ -39,12 +44,6 @@ export class ClientFormProvider {
         });
     }
 
-    public getClientProjectsSummary(): FormGroup<ClientProjectsSummaryForm> {
-        return this.formBuilder.group<ClientProjectsSummaryForm>({
-            count: this.formBuilder.nonNullable.control<number>(0),
-            totalValue: this.formBuilder.nonNullable.control<number>(0)
-        })
-    }
 }
 
 export interface AddressForm {
@@ -73,7 +72,13 @@ export interface ClientForm {
     contact: FormGroup<ContactForm>
 }
 
-export interface ClientProjectsSummaryForm {
-    count: FormControl<number>,
-    totalValue: FormControl<number>
+function updateNameValidators(form: FormGroup<ClientForm>, clientType: string): void {
+    let {firstName, lastName, companyName} = form.controls;
+    let isCompany = clientType === ClientType.CORPORATE;
+    firstName.setValidators(isCompany ? [] : [Validators.required]);
+    lastName.setValidators(isCompany ? [] : [Validators.required]);
+    companyName.setValidators(isCompany ? [Validators.required] : []);
+    firstName.updateValueAndValidity({emitEvent: false});
+    lastName.updateValueAndValidity({emitEvent: false});
+    companyName.updateValueAndValidity({emitEvent: false});
 }

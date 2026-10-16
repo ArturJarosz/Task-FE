@@ -1,27 +1,18 @@
-import {isDevMode, ApplicationConfig} from '@angular/core';
+import {isDevMode, ApplicationConfig, LOCALE_ID} from '@angular/core';
+import {registerLocaleData} from '@angular/common';
+import localePl from '@angular/common/locales/pl';
 import {provideRouter} from '@angular/router';
-import {provideAnimations} from '@angular/platform-browser/animations';
+import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 import {provideHttpClient, withInterceptors} from '@angular/common/http';
 import {provideStore} from '@ngrx/store';
 import {provideEffects} from '@ngrx/effects';
 import {provideStoreDevtools} from '@ngrx/store-devtools';
 import {providePrimeNG} from 'primeng/config';
 import {ConfirmationService, MessageService} from 'primeng/api';
-import Lara from '@primeng/themes/lara';
-import {definePreset} from '@primeng/themes';
-
-const LaraVerona = definePreset(Lara, {
-    components: {
-        card: {
-            root: {
-                borderRadius: '{border.radius.xl}'
-            }
-        }
-    }
-});
 import {authHttpInterceptorFn, provideAuth0} from '@auth0/auth0-angular';
 
 import {appRoutes} from './app.routes';
+import {AppThemePreset} from './theme/app-theme-preset';
 import {auth_config} from './auth.config';
 
 import {AuthorizationService, AuthorizationServiceImpl} from './security/authorization.service';
@@ -45,10 +36,13 @@ import {ClientRestService, ClientRestServiceImpl} from './client/rest/client-res
 import {ArchitectRestService, ArchitectRestServiceImpl} from './architect/rest/architect-rest.service';
 import {CalendarRestService, CalendarRestServiceImpl} from './calendar/rest/calendar-rest.service';
 
+registerLocaleData(localePl); // money as "50 000,00 zł", dates as "15.10.2026"
+
 export const appConfig: ApplicationConfig = {
     providers: [
         provideRouter(appRoutes),
-        provideAnimations(),
+        provideAnimationsAsync(),
+        {provide: LOCALE_ID, useValue: 'pl'},
         provideStore({}),
         provideEffects([]),
         provideStoreDevtools({name: 'TASK app', maxAge: 25, logOnly: !isDevMode()}),
@@ -56,9 +50,15 @@ export const appConfig: ApplicationConfig = {
         provideAuth0(auth_config),
         providePrimeNG({
             theme: {
-                preset: LaraVerona,
+                preset: AppThemePreset,
                 options: {
-                    darkModeSelector: false
+                    // Dark mode only when <html class="app-dark"> is set, never by OS setting alone
+                    darkModeSelector: '.app-dark',
+                    // Layer order is declared at the top of styles.css so Tailwind utilities still win
+                    cssLayer: {
+                        name: 'primeng',
+                        order: 'theme, base, primeng, components, utilities'
+                    }
                 }
             }
         }),

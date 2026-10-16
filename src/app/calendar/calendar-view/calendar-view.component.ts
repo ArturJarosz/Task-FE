@@ -34,7 +34,11 @@ export class CalendarViewComponent implements OnChanges {
             center: 'title',
             right: 'dayGridMonth,timeGridWeek'
         },
+        buttonText: {today: 'Today', month: 'Month', week: 'Week'},
         firstDay: 1,
+        dayMaxEvents: 3,
+        eventTimeFormat: {hour: '2-digit', minute: '2-digit', hour12: false},
+        slotLabelFormat: {hour: '2-digit', minute: '2-digit', hour12: false},
         height: 'auto',
         nowIndicator: true,
         selectable: true,

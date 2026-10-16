@@ -1,3 +1,4 @@
-<cost-detail [cost]="$cost()" [costCategories]="$costCategories()" (updateCostEvent)="updateCost($event)">
+<cost-detail [cost]="$cost()" [loadFailed]="$costLoadFailed()" [costCategories]="$costCategories()" [projectId]="projectId"
+             [projectName]="$projectName()" (updateCostEvent)="updateCost($event)" (reloadEvent)="onReload()">
 
 </cost-detail>

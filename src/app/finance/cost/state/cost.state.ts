@@ -5,7 +5,7 @@ import {inject} from "@angular/core";
 import {CostRestService} from "../rest/cost-rest.service";
 import {MessageService} from "primeng/api";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {of, pipe, switchMap, tap} from "rxjs";
+import {catchError, EMPTY, of, pipe, switchMap, tap} from "rxjs";
 import {MessageSeverity} from "../../../shared";
 import {FinancialDataStore} from "../../project-financial-summary/state/financial-data.state";
 import {CostProjectData} from "../../../generated/models/cost-project-data";
@@ -17,7 +17,8 @@ export interface CostState extends AppState {
     costsNeedRefresh: boolean,
     costNeedsRefresh: boolean,
     costId: number | undefined,
-    projectId: number | undefined
+    projectId: number | undefined,
+    costLoadFailed: boolean,
 }
 
 export const initialState: CostState = {
@@ -27,7 +28,8 @@ export const initialState: CostState = {
     costsNeedRefresh: true,
     costNeedsRefresh: true,
     costId: undefined,
-    projectId: undefined
+    projectId: undefined,
+    costLoadFailed: false,
 }
 
 export const CostStore = signalStore(
@@ -55,6 +57,7 @@ export const CostStore = signalStore(
         },
         loadCost: rxMethod<{}>(
             pipe(
+                tap(() => patchState(store, {costLoadFailed: false})),
                 switchMap(() => {
                     if (store.costNeedsRefresh()) {
                         return costRestService.getCost(store.projectId()!, store.costId()!)
@@ -63,7 +66,12 @@ export const CostStore = signalStore(
                                     {
                                         cost: cost,
                                         costNeedsRefresh: false
-                                    }))
+                                    })),
+                                // The REST service already shows the error toast; keep the stream alive for the next load
+                                catchError(() => {
+                                    patchState(store, {costLoadFailed: true});
+                                    return EMPTY;
+                                })
                             )
                     }
                     return of({});
@@ -79,7 +87,8 @@ export const CostStore = signalStore(
                                 tap(costs => patchState(store, {
                                     costs: costs,
                                     costsNeedRefresh: false
-                                }))
+                                })),
+                                catchError(() => EMPTY)
                             )
                     }
                     return of({});
@@ -99,7 +108,8 @@ export const CostStore = signalStore(
                                     detail: `New cost ${cost.name} was created successfully.`,
                                 });
                                 financialDataStore.setProjectFinancialDataNeedsUpdate();
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         )
                 })
             )
@@ -114,7 +124,8 @@ export const CostStore = signalStore(
                                     projectCostsData: projectCostsData,
                                     costsNeedRefresh: false,
                                     costs: projectCostsData.costs
-                                }))
+                                })),
+                                catchError(() => EMPTY)
                             )
                     }
                     return of({});
@@ -134,7 +145,8 @@ export const CostStore = signalStore(
                                     detail: `Cost ${cost.name} was updated successfully.`,
                                 });
                                 financialDataStore.setProjectFinancialDataNeedsUpdate();
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         )
                 })
             )

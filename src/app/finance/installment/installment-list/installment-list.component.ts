@@ -9,14 +9,15 @@ import {isUndefinedOrEmpty} from "../../../shared/utils/data-validation-util";
 import {FinanceComponentSummaryComponent} from "../../../shared/finance-component-summary/finance-component-summary.component";
 import {TableModule} from "primeng/table";
 import {RouterLink} from "@angular/router";
-import {NgIf, CurrencyPipe} from "@angular/common";
+import {NgIf, CurrencyPipe, DatePipe} from "@angular/common";
+import {EmptyStateComponent} from "../../../shared";
 
 @Component({
     selector: 'installment-list',
     templateUrl: './installment-list.component.html',
     styleUrl: './installment-list.component.less',
     standalone: true,
-    imports: [FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, NgIf, CurrencyPipe]
+    imports: [FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, NgIf, CurrencyPipe, DatePipe, EmptyStateComponent]
 })
 export class InstallmentListComponent implements OnChanges {
     @Input()

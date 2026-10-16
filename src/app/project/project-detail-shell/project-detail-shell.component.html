@@ -1,9 +1,11 @@
-<project-detail [project]="$project()"
-                [architects]="architects$ | async"
+<project-detail [project]="$project()" [loadFailed]="$projectLoadFailed()"
+                [architects]="$architects()"
                 [projectStatuses]="$projectStatuses()"
                 [contractStatuses]="$contractStatuses()"
                 [projectTypes]="$projectTypes()"
+                [installments]="$installments()"
+                [view]="view"
                 (updateProjectEvent)="onUpdateProject($event)"
-                (removeProjectEvent)="onRemoveProject($event)">
-
+                (removeProjectEvent)="onRemoveProject($event)" (reloadEvent)="onReload()">
 </project-detail>
+<p-confirmDialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>

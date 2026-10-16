@@ -1,27 +1,51 @@
-<p-table *ngIf="tasks" [value]="tasks" [tableStyle]="{ 'min-width': '50rem' }">
+<p-table [value]="tasks ?? []" [rowHover]="true" [tableStyle]="{'min-width': '44rem'}">
     <ng-template pTemplate="header">
         <tr>
+            <th>Task</th>
             <th>Architect</th>
-            <th>Name</th>
-            <th>Type</th>
+            <th>Dates</th>
             <th>Status</th>
-            <th style="width: 5rem">Actions</th>
+            <th class="w-16"><span class="sr-only">Actions</span></th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-task>
         <tr [routerLink]="['/projects', projectId, 'stages', stageId, 'tasks', task.id]" class="cursor-pointer">
-            <td class="text-center">
-                <div class="flex items-center justify-content-center gap-2">
-                    <p-avatar [label]="getArchitectInitials(task.architectId)" shape="circle" styleClass="bg-primary text-white" size="normal"></p-avatar>
-                    <span>{{ getArchitectName(task.architectId) }}</span>
+            <td>
+                <div class="font-medium text-gray-800">{{ task.name }}</div>
+                <div class="text-xs text-gray-500">{{ getTypeLabel(task.type) }}</div>
+            </td>
+            <td>
+                <div *ngIf="getArchitectName(task.architectId) as architectName; else notSet" class="flex items-center gap-3">
+                    <span class="app-avatar bg-brand-50 text-brand-500">{{ getArchitectInitials(task.architectId) }}</span>
+                    <span class="text-gray-800">{{ architectName }}</span>
                 </div>
             </td>
-            <td>{{ task.name }}</td>
-            <td>{{ getTypeLabel(task.type) }}</td>
-            <td>{{ getStatusLabel(task.status) }}</td>
             <td>
-                <button pButton pRipple class="p-button-text p-button-plain p-0" icon="pi pi-times" (click)="deleteTask($event, task.name, task.id)" size="small"></button>
+                <span *ngIf="task.startDate || task.endDate; else notSet" class="tabular-nums whitespace-nowrap">
+                    {{ (task.startDate | date:'dd.MM.yyyy') || '…' }} – {{ (task.endDate | date:'dd.MM.yyyy') || '…' }}
+                </span>
+            </td>
+            <td>
+                <p-tag [value]="getStatusLabel(task.status)" [severity]="statusSeverity(task.status)"/>
+            </td>
+            <td class="text-right">
+                <p-button icon="pi pi-ellipsis-h" [text]="true" [rounded]="true" severity="secondary"
+                          pTooltip="Task actions" tooltipPosition="left" ariaLabel="Task actions"
+                          (onClick)="openRowMenu($event, task, rowMenu)"/>
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+        <tr>
+            <td colspan="5" class="p-0">
+                <app-empty-state icon="pi pi-check-square" title="No tasks yet"
+                                 text="Break the stage into tasks to track who does what."/>
             </td>
         </tr>
     </ng-template>
 </p-table>
+<p-menu #rowMenu [model]="rowMenuItems" [popup]="true" appendTo="body"/>
+
+<ng-template #notSet>
+    <span class="text-gray-400">Not set</span>
+</ng-template>

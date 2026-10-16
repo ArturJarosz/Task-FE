@@ -1,0 +1,10 @@
+<section class="app-card">
+    <app-empty-state icon="pi pi-exclamation-triangle" [title]="title" [text]="text">
+        <div class="flex flex-wrap justify-center gap-3">
+            @if (backRoute) {
+                <p-button [label]="backLabel" severity="secondary" [outlined]="true" [routerLink]="backRoute"/>
+            }
+            <p-button label="Try again" severity="secondary" [outlined]="true" (onClick)="retry.emit()"/>
+        </div>
+    </app-empty-state>
+</section>
