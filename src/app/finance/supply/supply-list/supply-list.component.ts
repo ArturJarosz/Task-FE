@@ -11,13 +11,14 @@ import {FinanceComponentSummaryComponent} from "../../../shared/finance-componen
 import {TableModule} from "primeng/table";
 import {RouterLink} from "@angular/router";
 import {NgIf, CurrencyPipe} from "@angular/common";
+import {EmptyStateComponent} from "../../../shared";
 
 @Component({
     selector: 'supply-list',
     templateUrl: './supply-list.component.html',
     styleUrl: './supply-list.component.less',
     standalone: true,
-    imports: [FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, NgIf, CurrencyPipe]
+    imports: [FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, NgIf, CurrencyPipe, EmptyStateComponent]
 })
 export class SupplyListComponent implements OnChanges{
     @Input()

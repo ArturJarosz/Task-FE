@@ -1,4 +1,4 @@
-import {Component, inject, Input, Signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, Input, Signal} from '@angular/core';
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {Task} from "../../generated/models/task";
 import {ConfigurationStore} from "../../shared/configuration/state";
@@ -10,14 +10,15 @@ import {Architect} from "../../generated/models/architect";
 import {TaskListComponent} from "../task-list/task-list.component";
 import {AddTaskComponent} from "../add-task/add-task.component";
 import {ButtonModule} from "primeng/button";
-import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @Component({
     selector: 'task-list-shell',
     templateUrl: './task-list-shell.component.html',
     styleUrl: './task-list-shell.component.less',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [TaskListComponent, AddTaskComponent, ButtonModule, ConfirmDialogModule]
+    // The page around it (stage detail) renders the p-confirmDialog for the delete confirmation
+    imports: [TaskListComponent, AddTaskComponent, ButtonModule]
 })
 export class TaskListShellComponent {
     @Input()
@@ -40,6 +41,11 @@ export class TaskListShellComponent {
         this.architectStore.loadArchitects({});
     }
 
+    get taskCountLabel(): string {
+        const count = this.tasks?.length ?? 0;
+        return count === 1 ? '1 task' : `${count} tasks`;
+    }
+
     onAddTask() {
         this.showAddTaskComponent = true;
     }
@@ -53,16 +59,16 @@ export class TaskListShellComponent {
         let projectId = this.projectId;
         let stageId = this.stageId;
         this.confirmationService.confirm({
-            message: `Do you want to delete task: ${$event}?`,
-            header: `Confirm task delete ${$event}.`,
-            icon: "pi pi-info-circle text-red-300",
+            header: 'Delete task',
+            message: `Delete ${$event.taskName}? This can't be undone.`,
+            icon: 'pi pi-exclamation-triangle',
+            acceptButtonProps: {label: 'Delete', severity: 'danger'},
+            rejectButtonProps: {label: 'Cancel', severity: 'secondary', outlined: true},
             accept: () => {
                 this.taskStore.deleteTask({projectId, stageId, taskId});
                 this.confirmationService.close();
             },
-            reject: () => {
-                this.confirmationService.close();
-            }
+            reject: () => this.confirmationService.close()
         });
     }
 }

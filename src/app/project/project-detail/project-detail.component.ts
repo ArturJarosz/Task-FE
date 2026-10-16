@@ -14,20 +14,40 @@ import {cloneDeep} from 'lodash';
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Architect} from "../../generated/models/architect";
 import {Project} from "../../generated/models/project";
+import {Installment} from "../../generated/models/installment";
 import {ConfigurationEntry, Contract, ContractStatus, ProjectStatus} from "../../generated/models";
 import {ContractStore} from "../contract-status/state/contract.store";
 import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
-import {WrapperComponent} from "../../shared";
+import {FieldComponent, LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../shared";
+import {statusSeverity} from "../../shared/status-severity";
 import {StageListShellComponent} from "../../stage/stage-list-shell/stage-list-shell.component";
-import {Accordion, AccordionPanel, AccordionHeader, AccordionContent} from "primeng/accordion";
+import {ProjectFinancialDetailShellComponent} from "../../finance/project-financial-summary/project-financial-detail-shell/project-financial-detail-shell.component";
 import {SelectModule} from "primeng/select";
 import {DatePickerModule} from "primeng/datepicker";
 import {ButtonModule} from "primeng/button";
 import {InputTextModule} from "primeng/inputtext";
-import {Textarea} from "primeng/inputtextarea";
-import {NgIf, CurrencyPipe} from "@angular/common";
-import {RouterLink} from "@angular/router";
+import {Textarea} from "primeng/textarea";
+import {TagModule} from "primeng/tag";
+import {DialogModule} from "primeng/dialog";
+import {MenuModule} from "primeng/menu";
+import {SkeletonModule} from "primeng/skeleton";
+import {NgFor, NgIf, NgSwitch, NgSwitchCase, NgTemplateOutlet, CurrencyPipe, DatePipe} from "@angular/common";
+import {RouterLink, RouterLinkActive} from "@angular/router";
 import {TooltipModule} from "primeng/tooltip";
+import {MenuItem} from "primeng/api";
+
+export type ProjectDetailView = 'overview' | 'stages' | 'finance';
+
+export interface ProjectPerson {
+    initials: string;
+    name: string;
+    role: string;
+    route: (string | number)[];
+    avatarClass: string;
+}
+
+// Semicircle gauge in the Payments card: arc of radius 80, so its length is PI * 80
+const GAUGE_ARC_LENGTH = Math.PI * 80;
 
 @Component({
     selector: 'project-detail',
@@ -35,11 +55,13 @@ import {TooltipModule} from "primeng/tooltip";
     styleUrls: ['./project-detail.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [WrapperComponent, StageListShellComponent, Accordion, AccordionPanel, AccordionHeader, AccordionContent, SelectModule, DatePickerModule, ButtonModule, InputTextModule, Textarea, ReactiveFormsModule, NgIf, RouterLink, CurrencyPipe, TooltipModule]
+    imports: [LoadErrorComponent, FieldComponent, PageHeaderComponent, StageListShellComponent, ProjectFinancialDetailShellComponent, SelectModule, DatePickerModule, ButtonModule, InputTextModule, Textarea, TagModule, DialogModule, MenuModule, SkeletonModule, ReactiveFormsModule, NgIf, NgFor, NgSwitch, NgSwitchCase, NgTemplateOutlet, RouterLink, RouterLinkActive, CurrencyPipe, DatePipe, TooltipModule]
 })
 export class ProjectDetailComponent implements OnChanges {
     @Input()
     project!: Project | null;
+    @Input()
+    loadFailed: boolean = false;
     @Input()
     architects!: Architect[] | null;
     @Input()
@@ -48,12 +70,19 @@ export class ProjectDetailComponent implements OnChanges {
     contractStatuses!: ConfigurationEntry[] | null;
     @Input()
     projectTypes!: ConfigurationEntry[] | null;
+    @Input()
+    installments: Installment[] | null = [];
+    @Input()
+    view: ProjectDetailView = 'overview';
+    @Output()
+    reloadEvent: EventEmitter<void> = new EventEmitter<void>();
     @Output()
     updateProjectEvent: EventEmitter<Project> = new EventEmitter<Project>();
     @Output()
     removeProjectEvent: EventEmitter<void> = new EventEmitter<void>();
 
     readonly contractStore = inject(ContractStore)
+    protected readonly statusSeverity = statusSeverity;
 
     projectDetailsForm!: FormGroup<ProjectCreateForm>;
     resolvedProjectStatusLabel: string = '';
@@ -61,6 +90,14 @@ export class ProjectDetailComponent implements OnChanges {
     resolvedProjectTypeLabel: string = '';
     architectName: string = '';
     clientName: string = '';
+    people: ProjectPerson[] = [];
+
+    paidValue: number = 0;
+    outstandingValue: number = 0;
+    paidPercent: number = 0;
+    installmentsSummary: string = '';
+    readonly gaugeArcLength = GAUGE_ARC_LENGTH;
+    crumbs: PageCrumb[] = [];
 
     availableProjectStatuses: ConfigurationEntry[] = [];
     availableContractStatuses: ConfigurationEntry[] = [];
@@ -69,6 +106,13 @@ export class ProjectDetailComponent implements OnChanges {
     initialProjectForm!: FormGroup<ProjectCreateForm>;
 
     formInitialized: boolean = false;
+
+    showContractDialog: boolean = false;
+    showProjectDialog: boolean = false;
+
+    readonly actions: MenuItem[] = [
+        {label: 'Delete project', icon: 'pi pi-trash', command: () => this.onDelete()}
+    ];
 
     constructor(private formProvider: ProjectFormProvider) {
     }
@@ -83,13 +127,29 @@ export class ProjectDetailComponent implements OnChanges {
         }
         if (this.project && changes['project']) {
             this.contractStore.setContractId(this.project?.contract!.id!);
-            this.fillFormData();
-            this.initialProjectForm = cloneDeep(this.projectDetailsForm);
-            this.initialContractForm = cloneDeep(
-                this.projectDetailsForm.get('contract') as FormGroup<ProjectContractForm>);
+            this.resetForm();
+            this.resolvePeople();
+            this.crumbs = [
+                {label: 'Home', route: ['/home']},
+                {label: 'Projects', route: ['/projects']},
+                {label: this.project.name ?? ''}
+            ];
+        }
+        if (this.project && (changes['project'] || changes['installments'])) {
+            this.resolvePayments();
+        }
+        if (this.project) {
             this.resolveLabels();
             this.resolveAvailableStatuses();
         }
+    }
+
+    resetForm(): void {
+        this.fillFormData();
+        this.initialProjectForm = cloneDeep(this.projectDetailsForm);
+        this.initialContractForm = cloneDeep(
+            this.projectDetailsForm.get('contract') as FormGroup<ProjectContractForm>);
+        this.projectDetailsForm.markAsPristine();
     }
 
     fillFormData(): void {
@@ -139,7 +199,43 @@ export class ProjectDetailComponent implements OnChanges {
         this.clientName = client?.firstName ? `${client?.firstName} ${client?.lastName}` : `${client?.companyName}`;
     }
 
+    resolvePeople() {
+        let client = this.project?.client;
+        let architect = this.project?.architect;
+        this.people = [];
+        if (architect) {
+            let name = `${architect.firstName} ${architect.lastName}`;
+            this.people.push({
+                initials: toInitials(name), name: name, role: 'Architect', route: ['/architects', architect.id!],
+                avatarClass: 'bg-brand-50 text-brand-500'
+            });
+        }
+        if (client) {
+            let name = client.firstName ? `${client.firstName} ${client.lastName}` : `${client.companyName}`;
+            this.people.push({
+                initials: toInitials(name), name: name, role: 'Client', route: ['/clients', client.id!],
+                avatarClass: 'bg-warning-50 text-warning-700'
+            });
+        }
+    }
+
+    resolvePayments() {
+        let installments = this.installments ?? [];
+        this.paidValue = installments.filter(installment => installment.paid)
+            .reduce((sum, installment) => sum + (installment.value ?? 0), 0);
+        let contractValue = this.project?.contract?.offerValue ?? 0;
+        this.outstandingValue = Math.max(contractValue - this.paidValue, 0);
+        this.paidPercent = contractValue > 0 ? Math.min(Math.round(this.paidValue / contractValue * 100), 100) : 0;
+        let paidCount = installments.filter(installment => installment.paid).length;
+        this.installmentsSummary = installments.length === 0
+            ? 'No installments yet'
+            : `${paidCount} of ${installments.length} installments paid`;
+    }
+
     resolveAvailableStatuses() {
+        if (!this.projectStatuses?.length || !this.contractStatuses?.length) {
+            return;
+        }
         this.availableProjectStatuses = [];
         let currentProjectStatus = this.projectStatuses!.find(
             (status) => status.id === this.project?.status!.toString())
@@ -196,14 +292,37 @@ export class ProjectDetailComponent implements OnChanges {
         return changedValues.length > 0;
     }
 
+    isFieldInvalid(path: string): boolean {
+        let control = this.projectDetailsForm.get(path);
+        return !!control && control.invalid && (control.touched || control.dirty);
+    }
+
+    onEditContract(): void {
+        this.resetForm();
+        this.showContractDialog = true;
+    }
+
+    onEditProject(): void {
+        this.resetForm();
+        this.showProjectDialog = true;
+    }
+
+    onCancelEdit(): void {
+        this.showContractDialog = false;
+        this.showProjectDialog = false;
+        this.resetForm();
+    }
+
     onContractUpdate(): void {
         let contract = this.createContract();
         this.contractStore.changeStatus({contract: contract});
+        this.showContractDialog = false;
     }
 
     onProjectUpdate(): void {
         let project = this.createProject();
         this.updateProjectEvent.emit(project);
+        this.showProjectDialog = false;
     }
 
     createContract(): Contract {
@@ -231,7 +350,23 @@ export class ProjectDetailComponent implements OnChanges {
         return project;
     }
 
+    get projectIcon(): string {
+        return this.project?.type?.toString().endsWith('HOUSE') ? 'pi pi-home' : 'pi pi-building';
+    }
+
+    get gaugeOffset(): number {
+        return this.gaugeArcLength * (1 - this.paidPercent / 100);
+    }
+
     onDelete() {
         this.removeProjectEvent.emit();
     }
+}
+
+function toInitials(name: string): string {
+    return name.split(' ')
+        .filter(part => part.length > 0)
+        .slice(0, 2)
+        .map(part => part.charAt(0).toUpperCase())
+        .join('');
 }

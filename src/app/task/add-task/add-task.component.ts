@@ -1,26 +1,25 @@
-import {Component, EventEmitter, effect, inject, Input, OnInit, Output, Signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, effect, EventEmitter, inject, Input, OnInit, Output, Signal} from '@angular/core';
 import {TaskStore} from "../state/task.state";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
-import {TaskFormProvider} from "../form/task-form-provider";
+import {AddTaskForm, TaskFormProvider} from "../form/task-form-provider";
 import {Task} from "../../generated/models/task";
 import {ArchitectStore} from "../../architect/state/architect.state";
 import {ProjectStore} from "../../project/state/project.state";
-import {Architect} from "../../generated/models/architect";
 import {DialogModule} from "primeng/dialog";
 import {SelectModule} from "primeng/select";
 import {InputTextModule} from "primeng/inputtext";
-import {Textarea} from "primeng/inputtextarea";
+import {Textarea} from "primeng/textarea";
 import {ButtonModule} from "primeng/button";
-import {NgClass} from "@angular/common";
 
 @Component({
     selector: 'add-task',
     templateUrl: './add-task.component.html',
     styleUrl: './add-task.component.less',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [DialogModule, SelectModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule, NgClass]
+    imports: [DialogModule, SelectModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule]
 })
 export class AddTaskComponent implements OnInit {
     @Input()
@@ -33,32 +32,29 @@ export class AddTaskComponent implements OnInit {
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    header: string = "Add new task";
+    header: string = "New task";
 
     readonly taskStore = inject(TaskStore);
     readonly configurationStore = inject(ConfigurationStore);
     readonly architectStore = inject(ArchitectStore);
     readonly projectStore = inject(ProjectStore);
     $taskTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.taskTypes;
-    $architects: Signal<Architect[]> = this.architectStore.architects;
+    $architectOptions = computed(() => this.architectStore.architects()
+        .map(architect => ({id: architect.id!, name: `${architect.firstName} ${architect.lastName}`})));
 
-    addTaskForm!: FormGroup;
+    addTaskForm!: FormGroup<AddTaskForm>;
 
     constructor(private formProvider: TaskFormProvider) {
         effect(() => {
-            const project = this.projectStore.project();
-            if (project?.architect?.id && this.addTaskForm) {
-                this.addTaskForm.patchValue({
-                    architectId: project.architect.id
-                });
-            }
+            this.projectStore.project();
+            this.prefillArchitect();
         });
     }
 
     ngOnInit(): void {
         this.configurationStore.loadConfiguration({});
         this.architectStore.loadArchitects({});
-        this.addTaskForm = this.formProvider.getAddTaskForm();
+        this.resetFields();
     }
 
     onClose(): void {
@@ -74,28 +70,41 @@ export class AddTaskComponent implements OnInit {
 
     onSave(): void {
         this.visible = false;
-        let task: Task = this.createTask();
-        this.taskStore.createTask({projectId: this.projectId, stageId: this.stageId, task: task});
+        this.taskStore.createTask({projectId: this.projectId, stageId: this.stageId, task: this.createTask()});
     }
 
-    private createTask(): Task {
-        let task: Task;
-        task = {
-            name: this.addTaskForm.get('name')?.value,
-            type: this.addTaskForm.get('type')?.value,
-            note: this.addTaskForm.get('note')?.value,
-            architectId: this.addTaskForm.get('architectId')?.value,
-        };
+    markAsDirty(path: string): void {
+        this.addTaskForm.get(path)?.markAsDirty();
+    }
 
-        return task;
+    isFieldInvalid(path: string): boolean {
+        const control = this.addTaskForm.get(path);
+        return !!control && control.invalid && (control.touched || control.dirty);
     }
 
     isSaveEnabled(): boolean {
         return this.addTaskForm.valid;
     }
 
-    private resetFields(): void {
-        this.addTaskForm = this.formProvider.getAddTaskForm();
+    private createTask(): Task {
+        const value = this.addTaskForm.getRawValue();
+        return {
+            name: value.name,
+            type: value.type,
+            note: value.note ?? undefined,
+            architectId: value.architectId ?? undefined,
+        };
     }
 
+    private resetFields(): void {
+        this.addTaskForm = this.formProvider.getAddTaskForm();
+        this.prefillArchitect();
+    }
+
+    private prefillArchitect(): void {
+        const architectId = this.projectStore.project()?.architect?.id;
+        if (architectId && this.addTaskForm) {
+            this.addTaskForm.patchValue({architectId});
+        }
+    }
 }

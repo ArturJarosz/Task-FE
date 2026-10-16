@@ -1,37 +1,33 @@
-import {Component, effect, inject, OnInit, Signal} from '@angular/core';
-import {ArchitectStore} from "../state";
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {Architect} from "../../generated/models/architect";
-import {WrapperComponent} from "../../shared/wrapper/wrapper.component";
 import {TableModule} from "primeng/table";
 import {RouterLink} from "@angular/router";
-import {AvatarModule} from "primeng/avatar";
+import {DatePipe, NgIf} from "@angular/common";
+import {EmptyStateComponent} from "../../shared";
+
+export interface ArchitectRow {
+    architect: Architect;
+    projects: number;
+    activeProjects: number;
+}
 
 @Component({
     selector: 'architect-list',
     templateUrl: './architect-list.component.html',
     styleUrls: ['./architect-list.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [WrapperComponent, TableModule, RouterLink, AvatarModule]
+    imports: [TableModule, RouterLink, NgIf, DatePipe, EmptyStateComponent]
 })
-export class ArchitectListComponent implements OnInit {
-    architectStore = inject(ArchitectStore);
+export class ArchitectListComponent {
+    @Input()
+    rows: ArchitectRow[] = [];
 
-    $architects: Signal<Architect[]> = this.architectStore.architects!;
-    $architectsNeedRefresh: Signal<boolean> = this.architectStore.architectsNeedRefresh!;
-
-    constructor() {
-        effect(() => {
-            if (this.$architectsNeedRefresh()) {
-                this.architectStore.loadArchitects({});
-            }
-        });
+    getName(architect: Architect): string {
+        return `${architect.firstName ?? ''} ${architect.lastName ?? ''}`.trim();
     }
 
-    ngOnInit(): void {
-        this.architectStore.loadArchitects({});
-    }
-
-    getArchitectInitials(architect: Architect): string {
+    getInitials(architect: Architect): string {
         if (architect.firstName && architect.lastName) {
             return `${architect.firstName.charAt(0)}${architect.lastName.charAt(0)}`.toUpperCase();
         }

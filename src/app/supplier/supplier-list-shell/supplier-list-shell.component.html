@@ -1,8 +1,40 @@
-<supplier-list
-        [suppliers]="$suppliers()"
-        [supplierTypes]="$supplierTypes()"
-        (deleteSupplierEvent)="onDeleteSupplier($event)"
->
-</supplier-list>
-<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}" class="overlay-dialog"></p-confirmDialog>
+<app-page-header title="Suppliers" [crumbs]="crumbs"/>
 
+<div class="flex flex-col gap-6">
+    <!-- KPIs -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <section class="app-card flex items-center gap-4 p-5">
+            <div class="app-kpi-icon"><i class="pi pi-truck text-xl"></i></div>
+            <div>
+                <div class="app-kpi-label">Suppliers</div>
+                <div class="text-2xl leading-8 font-bold text-gray-800 tabular-nums">{{ $kpis().total }}</div>
+            </div>
+        </section>
+        <section class="app-card flex items-center gap-4 p-5">
+            <div class="app-kpi-icon"><i class="pi pi-box text-xl"></i></div>
+            <div>
+                <div class="app-kpi-label">With supplies</div>
+                <div class="text-2xl leading-8 font-bold text-gray-800 tabular-nums">{{ $kpis().withItems }}</div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Table card -->
+    <section class="app-card overflow-hidden">
+        <div class="app-card-header">
+            <div>
+                <h2 class="app-card-title">All suppliers</h2>
+                <p class="app-card-subtitle m-0">{{ $kpis().total }} {{ $kpis().total === 1 ? 'supplier' : 'suppliers' }}</p>
+            </div>
+            <p-button label="New supplier" icon="pi pi-plus" (onClick)="onAdd()"/>
+        </div>
+        <app-partner-list [rows]="$pagedRows()" routeBase="/suppliers" entityLabel="supplier" countLabel="Supplies"
+                           icon="pi pi-truck" emptyText="Add the shops you buy materials and furniture from."
+                           (deleteEvent)="onDelete($event)"/>
+        <app-table-footer [total]="$rows().length" [page]="$page()" [pageSize]="pageSize"
+                           (pageChange)="$page.set($event)"/>
+    </section>
+</div>
+
+<p-confirmDialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>
+<add-supplier [visible]="showAdd" (notify)="onAddClosed()"></add-supplier>

@@ -19,11 +19,11 @@ export class StageFormProvider {
             name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
             type: this.formBuilder.nonNullable.control<StageType>(DEFAULT_TYPE, [Validators.required]),
             status: this.formBuilder.nonNullable.control<StageStatus>(DEFAULT_STATUS, [Validators.required]),
-            startDate: this.formBuilder.nonNullable.control(new Date()),
-            deadline: this.formBuilder.nonNullable.control(new Date()),
-            endDate: this.formBuilder.nonNullable.control(new Date()),
+            startDate: this.formBuilder.control<Date | null>(null),
+            deadline: this.formBuilder.control<Date | null>(null),
+            endDate: this.formBuilder.control<Date | null>(null),
             note: this.formBuilder.control<string>(''),
-            architectId: this.formBuilder.control<number | null>(null)
+            architectId: this.formBuilder.control<number | null>(null, [Validators.required])
         })
     };
 
@@ -31,9 +31,9 @@ export class StageFormProvider {
         return this.formBuilder.nonNullable.group<AddStageForm>({
             name: this.formBuilder.nonNullable.control<string>('',[Validators.required]),
             deadline: this.formBuilder.nonNullable.control<Date>(new Date()),
-            type: this.formBuilder.nonNullable.control<StageType>(DEFAULT_TYPE),
+            type: this.formBuilder.nonNullable.control<StageType>(DEFAULT_TYPE, [Validators.required]),
             note: this.formBuilder.control<string>(''),
-            architectId: this.formBuilder.control<number | null>(null),
+            architectId: this.formBuilder.control<number | null>(null, [Validators.required]),
             hasInstallment: this.formBuilder.nonNullable.control<boolean>(false, [Validators.required]),
             installmentValue: this.formBuilder.control<number>(0),
             hasInvoice: this.formBuilder.control<boolean>(true, [Validators.required]),
@@ -48,9 +48,9 @@ export interface StageForm {
     name: FormControl<string>,
     type: FormControl<StageType>,
     status: FormControl<StageStatus>,
-    startDate: FormControl<Date>,
-    deadline: FormControl<Date>,
-    endDate: FormControl<Date>,
+    startDate: FormControl<Date | null>,
+    deadline: FormControl<Date | null>,
+    endDate: FormControl<Date | null>,
     note: FormControl<string | null>,
     architectId: FormControl<number | null>
 }

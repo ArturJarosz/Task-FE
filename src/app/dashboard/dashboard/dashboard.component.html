@@ -1,0 +1,229 @@
+<app-page-header title="Dashboard" [crumbs]="crumbs"/>
+
+<div class="flex flex-col gap-6">
+    <!-- KPIs -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+        <section class="app-card p-6">
+            <div class="app-kpi-icon"><i class="pi pi-folder text-xl" aria-hidden="true"></i></div>
+            <div class="mt-5 app-kpi-label">Active projects</div>
+            @if (projects) {
+                <div class="mt-2 flex flex-wrap items-end justify-between gap-2">
+                    <span class="app-kpi-value">{{ activeProjects.length }}</span>
+                    <span class="rounded-full px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-700">{{ totalProjects }} in total</span>
+                </div>
+            } @else if (projectsLoadFailed) {
+                <div class="mt-2 text-sm text-gray-500">Couldn't load</div>
+            } @else {
+                <p-skeleton styleClass="mt-2" height="2.375rem" width="6rem"/>
+            }
+        </section>
+        <section class="app-card p-6">
+            <div class="app-kpi-icon"><i class="pi pi-arrow-down-left text-xl" aria-hidden="true"></i></div>
+            <div class="mt-5 app-kpi-label">Income in {{ currentYear }} (gross)</div>
+            @if (report) {
+                <div class="mt-2 app-kpi-value">{{ yearTotals.income | currency:'PLN':'symbol':'1.2-2' }}</div>
+            } @else if (reportLoadFailed) {
+                <div class="mt-2 text-sm text-gray-500">Couldn't load</div>
+            } @else {
+                <p-skeleton styleClass="mt-2" height="2.375rem" width="10rem"/>
+            }
+        </section>
+        <section class="app-card p-6">
+            <div class="app-kpi-icon"><i class="pi pi-arrow-up-right text-xl" aria-hidden="true"></i></div>
+            <div class="mt-5 app-kpi-label">Expenses in {{ currentYear }} (gross)</div>
+            @if (report) {
+                <div class="mt-2 app-kpi-value">{{ yearTotals.expenses | currency:'PLN':'symbol':'1.2-2' }}</div>
+            } @else if (reportLoadFailed) {
+                <div class="mt-2 text-sm text-gray-500">Couldn't load</div>
+            } @else {
+                <p-skeleton styleClass="mt-2" height="2.375rem" width="10rem"/>
+            }
+        </section>
+        <section class="app-card p-6">
+            <div class="app-kpi-icon"><i class="pi pi-wallet text-xl" aria-hidden="true"></i></div>
+            <div class="mt-5 app-kpi-label">Balance in {{ currentYear }} (gross)</div>
+            @if (report) {
+                <div class="mt-2 app-kpi-value">{{ yearTotals.balance | currency:'PLN':'symbol':'1.2-2' }}</div>
+            } @else if (reportLoadFailed) {
+                <div class="mt-2 text-sm text-gray-500">Couldn't load</div>
+            } @else {
+                <p-skeleton styleClass="mt-2" height="2.375rem" width="10rem"/>
+            }
+        </section>
+    </div>
+
+    <!-- Chart next to the year summary -->
+    <div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_6px)_minmax(0,1fr)] gap-6">
+        <section class="app-card min-w-0">
+            <div class="app-card-header">
+                <div>
+                    <h2 class="app-card-title">Income and expenses</h2>
+                    <p class="app-card-subtitle m-0">{{ chartSubtitle }}</p>
+                </div>
+                <div class="app-seg" role="group" aria-label="Chart period">
+                    @for (option of periodTypeOptions; track option.value) {
+                        <button type="button" class="app-seg-item" [class.active]="option.value === periodType"
+                                [attr.aria-pressed]="option.value === periodType"
+                                (click)="onPeriodTypeChange(option.value)">{{ option.label }}</button>
+                    }
+                </div>
+            </div>
+            <div class="px-6 pb-6">
+                <ul class="list-none m-0 p-0 mb-4 flex flex-wrap items-center gap-x-5 gap-y-2" aria-label="Legend">
+                    <li class="flex items-center gap-2 text-sm text-gray-700">
+                        <span class="w-2.5 h-2.5 rounded-full bg-chart-1" aria-hidden="true"></span>Income
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-gray-700">
+                        <span class="w-2.5 h-2.5 rounded-full bg-chart-5" aria-hidden="true"></span>Expenses
+                    </li>
+                    @if (reportLoading && report) {
+                        <li class="flex items-center gap-2 text-sm text-gray-500">
+                            <i class="pi pi-spin pi-spinner" aria-hidden="true"></i> Updating…
+                        </li>
+                    }
+                </ul>
+                @if (!report && reportLoadFailed) {
+                    <app-empty-state icon="pi pi-exclamation-triangle" title="Couldn't load the financial report"
+                                     text="Check your connection and try again.">
+                        <p-button label="Try again" severity="secondary" [outlined]="true" (onClick)="reloadReport.emit()"/>
+                    </app-empty-state>
+                } @else if (!report) {
+                    <p-skeleton height="18rem"/>
+                } @else if (hasPeriods) {
+                    <p-chart type="bar" [data]="chartData" [options]="chartOptions" height="18rem"
+                             ariaLabel="Gross income and expenses per period, as a bar chart. Yearly totals are in the summary next to it."/>
+                } @else {
+                    <app-empty-state icon="pi pi-chart-bar" title="No financial data yet"
+                                     text="Installments, supplies and costs you add to projects show up here."/>
+                }
+            </div>
+        </section>
+
+        <section class="app-card flex flex-col">
+            <div class="app-card-header">
+                <div>
+                    <h2 class="app-card-title">{{ currentYear }} summary</h2>
+                    <p class="app-card-subtitle m-0">Gross, year to date</p>
+                </div>
+            </div>
+            <div class="flex flex-col flex-1 px-6 pb-6">
+                @if (report) {
+                    <dl class="m-0 flex flex-col">
+                        <div class="flex items-center justify-between gap-4 py-3 border-b border-gray-100">
+                            <dt class="flex items-center gap-2 text-sm text-gray-500">
+                                <span class="w-2.5 h-2.5 rounded-full bg-chart-1" aria-hidden="true"></span>Income
+                            </dt>
+                            <dd class="m-0 app-num font-medium text-gray-800">{{ yearTotals.income | currency:'PLN':'symbol':'1.2-2' }}</dd>
+                        </div>
+                        <div class="flex items-center justify-between gap-4 py-3 border-b border-gray-100">
+                            <dt class="flex items-center gap-2 text-sm text-gray-500">
+                                <span class="w-2.5 h-2.5 rounded-full bg-chart-5" aria-hidden="true"></span>Expenses
+                            </dt>
+                            <dd class="m-0 app-num font-medium text-gray-800">{{ yearTotals.expenses | currency:'PLN':'symbol':'1.2-2' }}</dd>
+                        </div>
+                        <div class="flex items-center justify-between gap-4 mt-3 px-3 py-3 rounded-lg bg-brand-50">
+                            <dt class="text-sm font-semibold text-gray-800">Balance</dt>
+                            <dd class="m-0 app-num font-semibold text-gray-800">{{ yearTotals.balance | currency:'PLN':'symbol':'1.2-2' }}</dd>
+                        </div>
+                    </dl>
+                } @else if (reportLoadFailed) {
+                    <p class="m-0 py-3 text-sm text-gray-500">Couldn't load the summary.</p>
+                } @else {
+                    <p-skeleton height="9rem"/>
+                }
+                <div class="mt-auto pt-6">
+                    <p-button label="Open financial report" severity="secondary" [outlined]="true" styleClass="w-full"
+                              routerLink="/financial-report"/>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Upcoming events next to active projects -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <section class="app-card min-w-0">
+            <div class="app-card-header">
+                <div>
+                    <h2 class="app-card-title">Upcoming events</h2>
+                    <p class="app-card-subtitle m-0">Next 90 days</p>
+                </div>
+                <p-button label="See all" severity="secondary" [outlined]="true" routerLink="/calendar"/>
+            </div>
+            @if (nextEvents.length === 0) {
+                <app-empty-state icon="pi pi-calendar" title="No upcoming events" text="Events you add to the calendar show up here."/>
+            } @else {
+                <ul class="list-none m-0 px-6 pb-4">
+                    @for (event of nextEvents; track event.id) {
+                        <li class="flex items-center gap-3 py-3 border-b border-gray-100 last:border-b-0">
+                            <div class="flex flex-col items-center justify-center shrink-0 w-12 h-12 rounded-xl bg-brand-50 text-brand-600">
+                                <span class="text-base leading-5 font-semibold">{{ eventDay(event.startDateTime) }}</span>
+                                <span class="text-[12px] leading-4 uppercase">{{ eventMonth(event.startDateTime) }}</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="font-medium text-gray-800 truncate">{{ event.name }}</div>
+                                <div class="text-xs text-gray-500">{{ eventWhen(event) }}</div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            }
+        </section>
+
+        <section class="app-card min-w-0 overflow-hidden">
+            <div class="app-card-header">
+                <div>
+                    <h2 class="app-card-title">Active projects</h2>
+                    <p class="app-card-subtitle m-0">To do and in progress, most recently changed first</p>
+                </div>
+                <p-button label="See all" severity="secondary" [outlined]="true" routerLink="/projects"/>
+            </div>
+            <p-table [value]="recentActiveProjects" [rowHover]="true" [tableStyle]="{'min-width': '36rem'}">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Project</th>
+                        <th>Client</th>
+                        <th>Status</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-project>
+                    <tr [routerLink]="['/projects', project.id]" class="cursor-pointer">
+                        <td>
+                            <div class="font-medium text-gray-800">{{ project.name }}</div>
+                            <div class="text-xs text-gray-500">{{ getProjectTypeLabel(project.type) }}</div>
+                        </td>
+                        <td>
+                            @if (getClientName(project.client); as clientName) {
+                                <div class="flex items-center gap-3">
+                                    <span class="app-avatar bg-warning-50 text-warning-700">{{ getInitials(clientName) }}</span>
+                                    <span class="font-medium text-gray-800 truncate">{{ clientName }}</span>
+                                </div>
+                            } @else {
+                                <span class="text-gray-400">Not set</span>
+                            }
+                        </td>
+                        <td>
+                            <p-tag [value]="getProjectStatusLabel(project.status)" [severity]="statusSeverity(project.status)"/>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="3" class="p-0">
+                            @if (projects) {
+                                <app-empty-state icon="pi pi-folder" title="No active projects"
+                                                 text="Projects that are to do or in progress show up here."/>
+                            } @else if (projectsLoadFailed) {
+                                <app-empty-state icon="pi pi-exclamation-triangle" title="Couldn't load projects"
+                                                 text="Check your connection and try again.">
+                                    <p-button label="Try again" severity="secondary" [outlined]="true" (onClick)="reloadProjects.emit()"/>
+                                </app-empty-state>
+                            } @else {
+                                <div class="p-6"><p-skeleton height="8rem"/></div>
+                            }
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </section>
+    </div>
+</div>

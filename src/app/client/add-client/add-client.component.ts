@@ -13,17 +13,14 @@ import {
     STREET,
     TELEPHONE
 } from "../model/client";
-import {FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {ClientFormProvider} from "../form/client-form-provider";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
+import {ClientForm, ClientFormProvider} from "../form/client-form-provider";
+import {ClientFormFieldsComponent} from "../client-form-fields/client-form-fields.component";
 import {ClientStore} from "../state";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {Client, ClientType, ConfigurationEntry} from "../../generated/models";
 import {DialogModule} from "primeng/dialog";
-import {SelectModule} from "primeng/select";
-import {InputTextModule} from "primeng/inputtext";
-import {Textarea} from "primeng/inputtextarea";
 import {ButtonModule} from "primeng/button";
-import {NgClass} from "@angular/common";
 
 @Injectable({
     providedIn: 'root',
@@ -33,7 +30,7 @@ import {NgClass} from "@angular/common";
     templateUrl: './add-client.component.html',
     styleUrls: ['./add-client.component.less'],
     standalone: true,
-    imports: [DialogModule, SelectModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule, NgClass]
+    imports: [DialogModule, ButtonModule, ReactiveFormsModule, ClientFormFieldsComponent]
 })
 export class AddClientComponent implements OnInit {
     @Input()
@@ -44,9 +41,8 @@ export class AddClientComponent implements OnInit {
     readonly clientStore = inject(ClientStore);
     readonly configurationStore = inject(ConfigurationStore);
     $clientTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.clientTypes;
-    clientForm!: FormGroup;
+    clientForm!: FormGroup<ClientForm>;
 
-    protected readonly ClientType = ClientType;
 
     constructor(private clientFormProvider: ClientFormProvider) {
     }
@@ -54,34 +50,10 @@ export class AddClientComponent implements OnInit {
     ngOnInit(): void {
         this.configurationStore.loadConfiguration({});
         this.initClientGroup();
-        this.clientForm.get(CLIENT_TYPE)
-            ?.valueChanges!
-            .subscribe(clientType => {
-                this.updateClientValidators(clientType.id);
-            })
     }
 
     initClientGroup(): void {
         this.clientForm = this.clientFormProvider.getClientFormGroup();
-    }
-
-    updateClientValidators(clientType: string): void {
-        const firstNameControl = this.clientForm.get(FIRST_NAME);
-        const lastNameControl = this.clientForm.get(LAST_NAME);
-        const companyNameControl = this.clientForm.get(COMPANY_NAME);
-        if (clientType === ClientType.CORPORATE.toString()) {
-            firstNameControl?.clearValidators();
-            lastNameControl?.clearValidators();
-            companyNameControl?.setValidators(Validators.required);
-        }
-        if (clientType === ClientType.PRIVATE.toString()) {
-            firstNameControl?.setValidators(Validators.required);
-            lastNameControl?.setValidators(Validators.required);
-            companyNameControl?.clearValidators();
-        }
-        firstNameControl?.updateValueAndValidity();
-        lastNameControl?.updateValueAndValidity();
-        companyNameControl?.updateValueAndValidity();
     }
 
     onClose(): void {
@@ -132,7 +104,7 @@ export class AddClientComponent implements OnInit {
     }
 
     resetFields() {
-        this.clientForm = this.clientFormProvider.getClientFormGroup();
+        this.initClientGroup();
     }
 
 }

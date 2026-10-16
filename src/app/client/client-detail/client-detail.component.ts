@@ -1,62 +1,96 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {Client, ClientType, ConfigurationEntry, Contact} from "../../generated/models";
+import {EntityProjectsSummary} from "../../generated/models/entity-projects-summary";
+import {ProjectStatus} from "../../generated/models/project-status";
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {ClientForm, ClientFormProvider} from "../form/client-form-provider";
-import {cloneDeep} from "lodash";
 import {ClientDto} from "../model/client";
-import {WrapperComponent} from "../../shared";
-import {ClientProjectsSummaryShellComponent} from "../client-projects-summary-shell/client-projects-summary-shell.component";
-import {Accordion, AccordionPanel, AccordionHeader, AccordionContent} from "primeng/accordion";
-import {SelectModule} from "primeng/select";
-import {InputTextModule} from "primeng/inputtext";
-import {Textarea} from "primeng/inputtextarea";
+import {ClientFormFieldsComponent} from "../client-form-fields/client-form-fields.component";
+import {EntityProjectsComponent, FieldComponent, PageCrumb, PageHeaderComponent} from "../../shared";
+import {resolveLabel} from "../../shared/utils/label-utils";
 import {ButtonModule} from "primeng/button";
-import {NgSwitch, NgSwitchCase} from "@angular/common";
+import {DialogModule} from "primeng/dialog";
+import {MenuModule} from "primeng/menu";
+import {TooltipModule} from "primeng/tooltip";
+import {MenuItem} from "primeng/api";
+import {CurrencyPipe, NgIf} from "@angular/common";
+
+const ACTIVE_STATUSES: ProjectStatus[] = [ProjectStatus.TO_DO, ProjectStatus.IN_PROGRESS];
 
 @Component({
     selector: 'client-detail',
     templateUrl: './client-detail.component.html',
     styleUrls: ['./client-detail.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [WrapperComponent, ClientProjectsSummaryShellComponent, Accordion, AccordionPanel, AccordionHeader, AccordionContent, SelectModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule, NgSwitch, NgSwitchCase]
+    imports: [PageHeaderComponent, FieldComponent, EntityProjectsComponent, ClientFormFieldsComponent, ButtonModule, DialogModule,
+        MenuModule, TooltipModule, ReactiveFormsModule, NgIf, CurrencyPipe]
 })
-export class ClientDetailComponent implements OnInit, OnChanges {
+export class ClientDetailComponent implements OnChanges {
     @Input()
-    client!: Client | null;
+    client!: Client;
     @Input()
-    clientTypes!: ConfigurationEntry[] | null;
+    clientTypes: ConfigurationEntry[] | null = [];
+    @Input()
+    projectsSummary: EntityProjectsSummary | null = null;
+    @Input()
+    projectTypes: ConfigurationEntry[] | null = [];
+    @Input()
+    projectStatuses: ConfigurationEntry[] | null = [];
     @Output()
     updateClientEvent: EventEmitter<Client> = new EventEmitter<Client>();
     @Output()
     deleteClientEvent: EventEmitter<ClientDto> = new EventEmitter<ClientDto>();
 
-    clientDetailsForm!: FormGroup<ClientForm>;
-    clientName: string | undefined;
+    clientDetailsForm: FormGroup<ClientForm>;
+    initialFormValue: string = '';
+    showEditDialog: boolean = false;
 
-    initialClientForm!: FormGroup<ClientForm>;
+    clientName: string = '';
+    initials: string = '';
+    typeLabel: string = '';
+    activeProjects: number = 0;
+    crumbs: PageCrumb[] = [];
+
+    readonly actions: MenuItem[] = [
+        {label: 'Delete client', icon: 'pi pi-trash', command: () => this.onDelete()}
+    ];
 
     protected readonly ClientType = ClientType;
 
     constructor(private formProvider: ClientFormProvider) {
-    }
-
-    ngOnInit(): void {
         this.clientDetailsForm = this.formProvider.getClientFormGroup();
-        this.fillClientFormData();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (this.client) {
-            this.clientName = this.client?.firstName ? `${this.client?.firstName} ${this.client?.lastName}` : `${this.client?.companyName}`;
-            this.fillClientFormData();
-            this.initialClientForm = cloneDeep(this.clientDetailsForm);
+        let client = this.client;
+        this.clientName = client.clientType === ClientType.CORPORATE
+            ? client.companyName ?? ''
+            : `${client.firstName ?? ''} ${client.lastName ?? ''}`.trim();
+        this.initials = client.clientType === ClientType.CORPORATE
+            ? (client.companyName?.charAt(0) ?? '?').toUpperCase()
+            : `${client.firstName?.charAt(0) ?? ''}${client.lastName?.charAt(0) ?? ''}`.toUpperCase() || '?';
+        this.typeLabel = resolveLabel(client.clientType, this.clientTypes);
+        this.activeProjects = (this.projectsSummary?.projects ?? [])
+            .filter(project => !!project.status && ACTIVE_STATUSES.includes(project.status)).length;
+        this.crumbs = [
+            {label: 'Home', route: ['/home']},
+            {label: 'Clients', route: ['/clients']},
+            {label: this.clientName},
+        ];
+        if (changes['client']) {
+            this.resetForm();
         }
     }
 
-    private fillClientFormData(): void {
-        if (!this.client || !this.clientDetailsForm) {
-            return;
-        }
+    get address(): string {
+        let address = this.client.contact?.address;
+        let cityLine = [address?.postCode, address?.city].filter(part => !!part).join(' ');
+        return [address?.street, cityLine].filter(part => !!part).join(', ');
+    }
+
+    resetForm(): void {
+        this.clientDetailsForm = this.formProvider.getClientFormGroup();
         this.clientDetailsForm.patchValue({
             clientType: this.client.clientType,
             firstName: this.client.firstName,
@@ -73,43 +107,46 @@ export class ClientDetailComponent implements OnInit, OnChanges {
                 telephone: this.client.contact?.telephone
             }
         });
+        this.initialFormValue = JSON.stringify(this.clientDetailsForm.getRawValue());
     }
 
+    isSaveEnabled(): boolean {
+        return this.clientDetailsForm.valid && JSON.stringify(this.clientDetailsForm.getRawValue()) !== this.initialFormValue;
+    }
 
-    isFormChanged(): boolean {
-        if (this.clientDetailsForm.pristine) {
-            return false;
-        }
-        return JSON.stringify(this.initialClientForm.value) !== JSON.stringify(this.clientDetailsForm.value);
+    onEdit(): void {
+        this.resetForm();
+        this.showEditDialog = true;
+    }
+
+    onCancelEdit(): void {
+        this.showEditDialog = false;
+        this.resetForm();
     }
 
     onSave(): void {
-        let client: Client;
-        client = {
-            clientType: this.clientDetailsForm.value.clientType as ClientType,
-            companyName: this.clientDetailsForm.value.companyName!,
-            firstName: this.clientDetailsForm.value.firstName!,
-            lastName: this.clientDetailsForm.value.lastName!,
-            note: this.clientDetailsForm.value.note!,
+        let value = this.clientDetailsForm.getRawValue();
+        let client: Client = {
+            clientType: value.clientType as ClientType,
+            companyName: value.companyName!,
+            firstName: value.firstName!,
+            lastName: value.lastName!,
+            note: value.note!,
             contact: {
-                telephone: this.clientDetailsForm.value.contact!.telephone,
-                email: this.clientDetailsForm.value.contact!.email,
+                telephone: value.contact.telephone,
+                email: value.contact.email,
                 address: {
-                    city: this.clientDetailsForm.value.contact!.address!.city,
-                    street: this.clientDetailsForm.value.contact!.address?.street,
-                    postCode: this.clientDetailsForm.value.contact!.address?.postCode
+                    city: value.contact.address.city,
+                    street: value.contact.address.street,
+                    postCode: value.contact.address.postCode
                 }
             } as Contact
-        }
+        };
+        this.showEditDialog = false;
         this.updateClientEvent.emit(client);
     }
 
-    onDelete() {
-        let client: ClientDto;
-        client = {
-            id: this.client!.id!,
-            name: this.clientName!
-        }
-        this.deleteClientEvent.emit(client);
+    onDelete(): void {
+        this.deleteClientEvent.emit({id: this.client.id!, name: this.clientName});
     }
 }

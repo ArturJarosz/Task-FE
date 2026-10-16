@@ -1,30 +1,33 @@
 <finance-component-summary [financeComponentDataForm]="contractorsJobsSummaryForm">
     <div wrapper-list>
-        <p-table [value]="contractorsJobsProjectData.contractorJobs!" [tableStyle]="{ 'min-width': '50rem' }">
+        <p-table [value]="contractorsJobsProjectData.contractorJobs ?? []" [tableStyle]="{'min-width': '44rem'}">
             <ng-template pTemplate="header">
                 <tr>
                     <th>Name</th>
                     <th>Contractor</th>
-                    <th>Value</th>
-                    <th class="max-w-16 text-center">Invoice</th>
-                    <th class="max-w-16 text-center">Paid</th>
+                    <th class="app-num">Value</th>
+                    <th class="w-24 text-center">Invoice</th>
+                    <th class="w-24 text-center">Paid</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-contractorjob>
                 <tr [routerLink]="['/projects', projectId, 'contractorJob', contractorjob.id]" class="cursor-pointer">
-                    <td>{{ contractorjob.name }}</td>
-                    <td>{{ this.contractorIdToContractorName.get(contractorjob.contractorId) }}</td>
-                    <td>{{ contractorjob.value | currency: ' ':'code':'2.2-2' }}</td>
-                    <td class="max-w-16 text-center">
-                        <i *ngIf="contractorjob.hasInvoice" class="pi pi-check"></i>
-                        <i *ngIf="!contractorjob.hasInvoice" class="pi pi-times"></i>
-                    </td>
-                    <td class="max-w-16 text-center">
-                        <i *ngIf="contractorjob.paid" class="pi pi-check"></i>
-                        <i *ngIf="!contractorjob.paid" class="pi pi-times"></i>
+                    <td class="font-medium text-gray-800">{{ contractorjob.name }}</td>
+                    <td>{{ contractorIdToContractorName.get(contractorjob.contractorId) }}</td>
+                    <td class="app-num">{{ contractorjob.value | currency:'PLN':'symbol':'1.2-2' }}</td>
+                    <td class="w-24 text-center"><i *ngIf="contractorjob.hasInvoice; else no" class="pi pi-check-circle text-success-700" aria-label="Invoice: yes"></i></td>
+                    <td class="w-24 text-center"><i *ngIf="contractorjob.paid; else no" class="pi pi-check-circle text-success-700" aria-label="Paid: yes"></i></td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td [attr.colspan]="5" class="p-0">
+                        <app-empty-state icon="pi pi-wrench" title="No contractor jobs yet" text="Add work done by contractors on this project."/>
                     </td>
                 </tr>
             </ng-template>
         </p-table>
     </div>
 </finance-component-summary>
+
+<ng-template #no><span class="text-gray-400" aria-label="No">—</span></ng-template>

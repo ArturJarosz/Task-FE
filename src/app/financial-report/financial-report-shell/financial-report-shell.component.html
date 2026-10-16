@@ -4,7 +4,8 @@
         [endDate]="$endDate()"
         [periodType]="$periodType()"
         [loading]="$loading()"
+        [loadFailed]="$loadFailed()"
         (dateRangeChange)="onDateRangeChange($event)"
         (periodTypeChange)="onPeriodTypeChange($event)"
-        (generate)="onGenerate()">
+        (reloadReport)="onReload()">
 </financial-report-view>

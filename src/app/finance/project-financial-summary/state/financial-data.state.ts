@@ -3,7 +3,7 @@ import {TotalProjectFinancialSummary} from "../../../generated/models/total-proj
 import {FinancialRestService} from "../rest/financial-rest.service";
 import {inject} from "@angular/core";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {of, pipe, switchMap, tap} from "rxjs";
+import {catchError, EMPTY, of, pipe, switchMap, tap} from "rxjs";
 
 export interface FinancialDataState {
     projectId: number | undefined,
@@ -41,7 +41,8 @@ export const FinancialDataStore = signalStore(
                                         projectFinancialSummary: projectFinancialSummary,
                                         projectFinancialSummaryNeedsRefresh: false
                                     });
-                                })
+                                }),
+                                catchError(() => EMPTY)
                             )
                     }
                     return of(store.projectFinancialSummary());

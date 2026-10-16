@@ -26,17 +26,17 @@ import {ArchitectFormModel} from "../../architect/model/architect";
 import {cloneDeep} from "lodash";
 import {DialogModule} from "primeng/dialog";
 import {SelectModule} from "primeng/select";
-import {DatePickerModule} from "primeng/datepicker";
 import {InputTextModule} from "primeng/inputtext";
 import {ButtonModule} from "primeng/button";
-import {NgClass} from "@angular/common";
+import {NgIf} from "@angular/common";
+import {InputNumberModule} from "primeng/inputnumber";
 
 @Component({
     selector: 'add-project',
     templateUrl: './add-project.component.html',
     styleUrls: ['./add-project.component.less'],
     standalone: true,
-    imports: [DialogModule, SelectModule, DatePickerModule, InputTextModule, ButtonModule, ReactiveFormsModule, NgClass]
+    imports: [DialogModule, SelectModule, InputNumberModule, InputTextModule, ButtonModule, ReactiveFormsModule, NgIf]
 })
 export class AddProjectComponent implements OnInit, OnChanges {
     @Input()
@@ -44,7 +44,7 @@ export class AddProjectComponent implements OnInit, OnChanges {
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    header: string = "Add new project";
+    header: string = "New project";
 
     readonly clientStore = inject(ClientStore);
     readonly configurationStore = inject(ConfigurationStore);
@@ -121,6 +121,16 @@ export class AddProjectComponent implements OnInit, OnChanges {
     onClose(): void {
         this.notify.emit(false);
         this.setEmptyForm();
+    }
+
+    // PrimeNG shows the red border only on dirty controls, so a field left empty is marked dirty on blur
+    markAsDirty(name: string): void {
+        this.addProjectForm.get(name)?.markAsDirty();
+    }
+
+    isFieldInvalid(name: string): boolean {
+        let control = this.addProjectForm.get(name);
+        return !!control && control.invalid && (control.touched || control.dirty);
     }
 
     isSaveEnabled(): boolean {

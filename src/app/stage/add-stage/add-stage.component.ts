@@ -1,4 +1,4 @@
-import {Component, EventEmitter, effect, inject, Input, OnInit, Output, Signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, effect, EventEmitter, inject, Input, OnInit, Output, Signal} from '@angular/core';
 import {StageStore} from "../state";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
@@ -9,23 +9,22 @@ import {toTimeZoneString} from "../../shared/utils/date-utils";
 import {Installment} from "../../generated/models/installment";
 import {ArchitectStore} from "../../architect/state/architect.state";
 import {ProjectStore} from "../../project/state/project.state";
-import {Architect} from "../../generated/models/architect";
 import {DialogModule} from "primeng/dialog";
 import {SelectModule} from "primeng/select";
 import {DatePickerModule} from "primeng/datepicker";
 import {InputTextModule} from "primeng/inputtext";
-import {Textarea} from "primeng/inputtextarea";
+import {Textarea} from "primeng/textarea";
 import {ToggleSwitchModule} from "primeng/toggleswitch";
 import {InputNumberModule} from "primeng/inputnumber";
 import {ButtonModule} from "primeng/button";
-import {NgClass} from "@angular/common";
 
 @Component({
     selector: 'add-stage',
     templateUrl: './add-stage.component.html',
     styleUrls: ['./add-stage.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [DialogModule, SelectModule, DatePickerModule, InputTextModule, Textarea, ToggleSwitchModule, InputNumberModule, ButtonModule, ReactiveFormsModule, NgClass]
+    imports: [DialogModule, SelectModule, DatePickerModule, InputTextModule, Textarea, ToggleSwitchModule, InputNumberModule, ButtonModule, ReactiveFormsModule]
 })
 export class AddStageComponent implements OnInit {
     @Input()
@@ -36,32 +35,29 @@ export class AddStageComponent implements OnInit {
     @Output()
     addStageNotify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    header: string = "Add new stage";
+    header: string = "New stage";
 
     readonly stageStore = inject(StageStore);
     readonly configurationStore = inject(ConfigurationStore);
     readonly architectStore = inject(ArchitectStore);
     readonly projectStore = inject(ProjectStore);
     $stageTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.stageTypes;
-    $architects: Signal<Architect[]> = this.architectStore.architects;
+    $architectOptions = computed(() => this.architectStore.architects()
+        .map(architect => ({id: architect.id!, name: `${architect.firstName} ${architect.lastName}`})));
 
     addStageForm!: FormGroup<AddStageForm>;
 
     constructor(private formProvider: StageFormProvider) {
         effect(() => {
-            const project = this.projectStore.project();
-            if (project?.architect?.id && this.addStageForm) {
-                this.addStageForm.patchValue({
-                    architectId: project.architect.id
-                });
-            }
+            this.projectStore.project();
+            this.prefillArchitect();
         });
     }
 
     ngOnInit(): void {
         this.configurationStore.loadConfiguration({});
         this.architectStore.loadArchitects({});
-        this.addStageForm = this.formProvider.getAddStageForm();
+        this.resetFields();
     }
 
     onClose(): void {
@@ -77,38 +73,59 @@ export class AddStageComponent implements OnInit {
 
     onSave(): void {
         this.visible = false;
-        let stage = this.createStage();
-        this.stageStore.createStage({projectId: this.projectId, stage: stage})
+        this.stageStore.createStage({projectId: this.projectId, stage: this.createStage()});
+    }
+
+    markAsDirty(path: string): void {
+        this.addStageForm.get(path)?.markAsDirty();
+    }
+
+    isFieldInvalid(path: string): boolean {
+        const control = this.addStageForm.get(path);
+        return !!control && control.invalid && (control.touched || control.dirty);
+    }
+
+    isInstallmentValueInvalid(): boolean {
+        const control = this.addStageForm.get('installmentValue');
+        return !!control && (control.touched || control.dirty) && !((control.value ?? 0) > 0);
+    }
+
+    isSaveEnabled(): boolean {
+        const value = this.addStageForm.getRawValue();
+        return this.addStageForm.valid && (!value.hasInstallment || (value.installmentValue ?? 0) > 0);
     }
 
     private createStage(): Stage {
-        let stage: Stage;
-        stage = {
-            name: this.addStageForm.get('name')!.value,
-            type: this.addStageForm.get('type')!.value,
-            note: this.addStageForm.get('note')?.value!,
-            deadline: toTimeZoneString(this.addStageForm.get('deadline')!.value),
-            architectId: this.addStageForm.get('architectId')?.value!
+        const value = this.addStageForm.getRawValue();
+        const stage: Stage = {
+            name: value.name,
+            type: value.type,
+            note: value.note ?? undefined,
+            deadline: toTimeZoneString(value.deadline ?? undefined),
+            architectId: value.architectId ?? undefined
         };
-        if (this.addStageForm.value.hasInstallment) {
-            let installment: Installment;
-            installment = {
-                hasInvoice: this.addStageForm.value.hasInvoice!,
-                value: this.addStageForm.value.installmentValue!,
-                paid: this.addStageForm.value.paid!,
-                paymentDate: this.addStageForm.value.paymentDate ? toTimeZoneString(this.addStageForm.value.paymentDate) : undefined
+        if (value.hasInstallment) {
+            const installment: Installment = {
+                hasInvoice: value.hasInvoice ?? false,
+                value: value.installmentValue ?? 0,
+                paid: value.paid ?? false,
+                // A payment date only makes sense once the installment is paid
+                paymentDate: value.paid && value.paymentDate ? toTimeZoneString(value.paymentDate) : undefined
             };
             stage.installment = installment;
         }
         return stage;
     }
 
-    isSaveEnabled(): boolean {
-        return this.addStageForm.valid;
-    }
-
     private resetFields(): void {
         this.addStageForm = this.formProvider.getAddStageForm();
+        this.prefillArchitect();
     }
 
+    private prefillArchitect(): void {
+        const architectId = this.projectStore.project()?.architect?.id;
+        if (architectId && this.addStageForm) {
+            this.addStageForm.patchValue({architectId});
+        }
+    }
 }

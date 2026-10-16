@@ -7,7 +7,7 @@ import {FinancialDataStore} from "../../project-financial-summary/state/financia
 import {MessageService} from "primeng/api";
 import {SupervisionRestService} from "../rest/supervision-rest.service";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {of, pipe, switchMap, tap} from "rxjs";
+import {catchError, EMPTY, of, pipe, switchMap, tap} from "rxjs";
 import { MessageSeverity } from "src/app/shared/message";
 import {ProjectStore} from "../../../project/state";
 
@@ -82,7 +82,8 @@ export const SupervisionStore = signalStore(
                                 supervisionId: supervision.id,
                                 supervision: supervision,
                                 supervisionNeedsRefresh: false
-                            })}))
+                            })}),
+                                catchError(() => EMPTY))
                     }
                     return of({});
                 })
@@ -102,7 +103,8 @@ export const SupervisionStore = signalStore(
                                     detail: `New supervision for project ${supervision.projectId} was created successfully.`
                                 });
                                 projectStore.refreshProjectById(supervision.projectId!);
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         )
                 })
             )
@@ -115,7 +117,8 @@ export const SupervisionStore = signalStore(
                             .pipe(tap(visits => patchState(store, {
                                 supervisionVisits: visits,
                                 supervisionVisitsNeedRefresh: false
-                            })));
+                            })),
+                                catchError(() => EMPTY));
                     }
                     return of([]);
                 })
@@ -135,7 +138,8 @@ export const SupervisionStore = signalStore(
                                     detail: `New supervision visit created successfully.`
                                 });
                                 financialDataStore.setProjectFinancialDataNeedsUpdate();
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         );
                 })
             )
@@ -148,7 +152,8 @@ export const SupervisionStore = signalStore(
                             .pipe(tap(visit => patchState(store, {
                                 supervisionVisit: visit,
                                 supervisionVisitNeedsRefresh: false
-                            })));
+                            })),
+                                catchError(() => EMPTY));
                     }
                     return of(null);
                 })
@@ -171,7 +176,8 @@ export const SupervisionStore = signalStore(
                                     detail: `Supervision visit updated successfully.`
                                 });
                                 financialDataStore.setProjectFinancialDataNeedsUpdate();
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         );
                 })
             )
@@ -193,7 +199,8 @@ export const SupervisionStore = signalStore(
                                     detail: `Supervision visit deleted successfully.`
                                 });
                                 financialDataStore.setProjectFinancialDataNeedsUpdate();
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         );
                 })
             )

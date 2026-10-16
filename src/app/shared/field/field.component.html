@@ -1,0 +1,5 @@
+<span class="app-field-label">{{ label }}</span>
+<div *ngIf="!isEmpty; else notSet" class="app-field-value whitespace-pre-line">{{ value }}</div>
+<ng-template #notSet>
+    <div class="app-field-value app-field-value--empty">{{ emptyText }}</div>
+</ng-template>

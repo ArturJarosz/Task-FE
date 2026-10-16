@@ -1,7 +1,10 @@
-<contractor-job-detail
-    [contractorJob]="$contractorJob()"
-    [contractors]="$contractors()"
-    (updateContractorJobEvent)="updateContractorJob($event)"
-    (deleteContractorJobEvent)="deleteContractorJob($event)">
-</contractor-job-detail>
-<p-confirmDialog></p-confirmDialog>
+<financial-item-detail
+    [item]="$item()" [loadFailed]="$contractorJobLoadFailed()"
+    [labels]="labels"
+    [partners]="$contractors()"
+    [projectId]="projectId"
+    [projectName]="$projectName()"
+    (updateEvent)="updateContractorJob($event)"
+    (deleteEvent)="deleteContractorJob($event)" (reloadEvent)="onReload()">
+</financial-item-detail>
+<p-confirmDialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>

@@ -1,98 +1,78 @@
-<p-dialog header="header" [(visible)]="visible" appendTo="body" [modal]="true"
-          [style]="{ width: '50vw', 'max-width': '800px'}"
-          (onHide)="onClose()">
+<p-dialog [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
+          [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onClose()">
     <ng-template pTemplate="header">
-        <div class="flex flex-col gap-2">
-            <h1 class="m-0 text-surface-900 dark:text-surface-0 font-semibold leading-normal">{{ header }}</h1>
+        <div class="flex flex-col gap-1">
+            <span class="p-dialog-title">{{ header }}</span>
+            <span class="text-sm text-gray-500">Add a phase of the work, its architect, deadline and optional client payment.</span>
         </div>
     </ng-template>
-    <form [formGroup]="addStageForm">
-        <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
-            <div class="flex gap-4">
-                <div class="w-6/12">
-                    <label for="name" class="block text-color text-base top-label">Stage name</label>
-                    <span class="p-input-icon-left w-full">
-                        <input type="text" class="w-full" id="name" formControlName="name"
-                               pInputText placeholder="stage name"
-                               [ngClass]="{'is-invalid': (addStageForm.get('name')?.touched || addStageForm.get('name')?.dirty) && !addStageForm.get('name')?.valid }"/>
-                    </span>
-                </div>
-                <div class="w-6/12">
-                    <label for="type" class="block text-color text-base top-label">Type</label>
-                    <p-select [options]="$stageTypes()" optionLabel="label" optionValue="id"
-                              formControlName="type" class="w-full" appendTo="body" id="type">
-                    </p-select>
-                </div>
-            </div>
-        </div>
-        <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
-            <div class="flex gap-4">
-                <div class="w-6/12">
-                    <label for="architect" class="block text-color text-base top-label">Architect</label>
-                    <p-select [options]="$architects()" optionLabel="firstName" optionValue="id"
-                              formControlName="architectId" class="w-full" appendTo="body" id="architect">
-                        <ng-template pTemplate="selectedItem" let-architect>
-                            <span>{{ architect.firstName }} {{ architect.lastName }}</span>
-                        </ng-template>
-                        <ng-template pTemplate="item" let-architect>
-                            <span>{{ architect.firstName }} {{ architect.lastName }}</span>
-                        </ng-template>
-                    </p-select>
-                </div>
-                <div class="w-6/12">
-                    <label for="deadline" class="block text-color text-base top-label">Deadline</label>
-                    <p-datePicker formControlName="deadline" id="deadline" dateFormat="yy-mm-dd"
-                                  styleClass="w-full" appendTo="body"></p-datePicker>
-                </div>
-            </div>
-        </div>
-        <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
-            <div class="w-full">
-                <label for="note" class="block text-color text-base top-label">Note</label>
-                <textarea formControlName="note" id="note" type="text" pInputTextarea rows="2"
-                          [autoResize]="true"></textarea>
-            </div>
-        </div>
-        <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
-            <div class="flex items-center gap-3">
-                <label for="hasInstallment" class="text-color text-base top-label">Installment</label>
-                <p-toggleSwitch formControlName="hasInstallment" id="hasInstallment"></p-toggleSwitch>
-            </div>
-            @if (addStageForm.get('hasInstallment')?.value) {
-                <div class="flex gap-4">
-                    <div class="w-6/12">
-                        <label for="installmentValue" class="block text-color text-base top-label">Value</label>
-                        <p-inputNumber formControlName="installmentValue" id="installmentValue" mode="decimal"
-                                       [minFractionDigits]="2" [maxFractionDigits]="2"
-                                       styleClass="w-full" inputStyleClass="w-full"></p-inputNumber>
-                    </div>
-                    <div class="w-6/12">
-                        <label for="hasInvoice" class="block text-color text-base top-label">Has invoice</label>
-                        <p-toggleSwitch formControlName="hasInvoice" id="hasInvoice"></p-toggleSwitch>
-                    </div>
-                </div>
-                <div class="flex gap-4">
-                    <div class="w-6/12">
-                        <label for="paid" class="block text-color text-base top-label">Paid</label>
-                        <p-toggleSwitch formControlName="paid" id="paid"></p-toggleSwitch>
-                    </div>
-                    @if (addStageForm.get('paid')?.value) {
-                        <div class="w-6/12">
-                            <label for="paymentDate" class="block text-color text-base top-label">Payment date</label>
-                            <p-datePicker formControlName="paymentDate" id="paymentDate" dateFormat="yy-mm-dd"
-                                          styleClass="w-full" appendTo="body"></p-datePicker>
-                        </div>
-                    }
-                </div>
+    <form [formGroup]="addStageForm" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div>
+            <label for="addStageName" class="app-form-label">Stage name <span class="text-error-600">*</span></label>
+            <input id="addStageName" type="text" formControlName="name" pInputText class="w-full" placeholder="e.g. Concept design"
+                   (blur)="markAsDirty('name')"/>
+            @if (isFieldInvalid('name')) {
+                <small class="block mt-1.5 text-xs text-error-600">Enter a stage name</small>
             }
         </div>
+        <div>
+            <label for="addStageType" class="app-form-label">Type <span class="text-error-600">*</span></label>
+            <p-select inputId="addStageType" formControlName="type" [options]="$stageTypes()"
+                      optionLabel="label" optionValue="id" appendTo="body" [fluid]="true"/>
+        </div>
+        <div>
+            <label for="addStageArchitect" class="app-form-label">Architect <span class="text-error-600">*</span></label>
+            <p-select inputId="addStageArchitect" formControlName="architectId" [options]="$architectOptions()"
+                      optionLabel="name" optionValue="id" [filter]="true" filterBy="name" placeholder="Select an architect"
+                      appendTo="body" [fluid]="true"/>
+            <small class="block mt-1.5 text-xs text-gray-500">Defaults to the project's architect</small>
+        </div>
+        <div>
+            <label for="addStageDeadline" class="app-form-label">Deadline</label>
+            <p-datePicker inputId="addStageDeadline" formControlName="deadline" dateFormat="dd.mm.yy"
+                          [showIcon]="true" appendTo="body" [fluid]="true"/>
+        </div>
+        <div class="sm:col-span-2">
+            <label for="addStageNote" class="app-form-label">Note</label>
+            <textarea id="addStageNote" formControlName="note" pTextarea rows="3" [autoResize]="true" class="w-full"></textarea>
+        </div>
+
+        <div class="sm:col-span-2 flex items-start gap-3">
+            <p-toggleswitch inputId="addStageHasInstallment" formControlName="hasInstallment"/>
+            <div>
+                <label for="addStageHasInstallment" class="block text-sm font-medium text-gray-700 cursor-pointer">Add an installment</label>
+                <span class="block text-xs text-gray-500">The client payment for this stage</span>
+            </div>
+        </div>
+        @if (addStageForm.get('hasInstallment')?.value) {
+            <div>
+                <label for="addStageInstallmentValue" class="app-form-label">Installment value <span class="text-error-600">*</span></label>
+                <p-inputnumber inputId="addStageInstallmentValue" formControlName="installmentValue" mode="decimal" locale="pl-PL"
+                               [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0" suffix=" zł" [fluid]="true"
+                               (onBlur)="markAsDirty('installmentValue')"/>
+                @if (isInstallmentValueInvalid()) {
+                    <small class="block mt-1.5 text-xs text-error-600">Enter a value greater than 0 zł</small>
+                }
+            </div>
+            <div>
+                @if (addStageForm.get('paid')?.value) {
+                    <label for="addStagePaymentDate" class="app-form-label">Payment date</label>
+                    <p-datePicker inputId="addStagePaymentDate" formControlName="paymentDate" dateFormat="dd.mm.yy"
+                                  [showIcon]="true" appendTo="body" [fluid]="true"/>
+                }
+            </div>
+            <div class="flex items-center gap-3">
+                <p-toggleswitch inputId="addStageHasInvoice" formControlName="hasInvoice"/>
+                <label for="addStageHasInvoice" class="text-sm font-medium text-gray-700 cursor-pointer">Invoice issued</label>
+            </div>
+            <div class="flex items-center gap-3">
+                <p-toggleswitch inputId="addStagePaid" formControlName="paid"/>
+                <label for="addStagePaid" class="text-sm font-medium text-gray-700 cursor-pointer">Paid</label>
+            </div>
+        }
     </form>
     <ng-template pTemplate="footer">
-        <div class="flex gap-4 justify-end border-t border-surface pt-8">
-            <p-button label="Cancel" styleClass="p-button-outlined p-button-secondary"
-                      (onClick)="onCancel()"></p-button>
-            <p-button label="Save" styleClass="p-button-outlined" [disabled]="!isSaveEnabled()"
-                      (onClick)="onSave()"></p-button>
-        </div>
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
+        <p-button label="Create stage" icon="pi pi-plus" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
     </ng-template>
 </p-dialog>

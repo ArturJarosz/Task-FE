@@ -3,7 +3,7 @@ import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {inject} from "@angular/core";
 import {ContractorJobRestService} from "../rest/contractor-job-rest.service";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {of, pipe, switchMap, tap} from "rxjs";
+import {catchError, EMPTY, of, pipe, switchMap, tap} from "rxjs";
 import {ContractorJob} from "../../../generated/models/contractor-job";
 import {MessageService} from "primeng/api";
 import {FinancialDataStore} from "../../project-financial-summary/state/financial-data.state";
@@ -17,6 +17,7 @@ export interface ContractorJobState {
     contractorJobNeedsRefresh: boolean;
     contractorJobId: number | undefined;
     projectId: number | undefined;
+    contractorJobLoadFailed: boolean;
 }
 
 export const initialState: ContractorJobState = {
@@ -26,6 +27,7 @@ export const initialState: ContractorJobState = {
     contractorJobNeedsRefresh: true,
     contractorJobId: undefined,
     projectId: undefined,
+    contractorJobLoadFailed: false,
 }
 
 export const ContractorJobStore = signalStore(
@@ -61,7 +63,8 @@ export const ContractorJobStore = signalStore(
                                     tap(contractorJobsProjectData => patchState(store, {
                                         contractorsJobsProjectData: contractorJobsProjectData,
                                         contractorJobsNeedRefresh: false,
-                                    }))
+                                    })),
+                                    catchError(() => EMPTY)
                                 )
                         }
                         return of({});
@@ -85,20 +88,27 @@ export const ContractorJobStore = signalStore(
                                     financialDataStore.setProjectFinancialDataNeedsUpdate();
                                     contractorStore.setContractorsNeedRefresh();
                                     contractorStore.setContractorNeedsRefresh();
-                                })
+                                }),
+                                catchError(() => EMPTY)
                             )
                     })
                 )
             ),
             loadContractorJob: rxMethod<{}>(
                 pipe(
+                    tap(() => patchState(store, {contractorJobLoadFailed: false})),
                     switchMap(() => {
                         if (store.contractorJobNeedsRefresh() && store.projectId() && store.contractorJobId()) {
                             return contractorJobRestService.getContractorJob(store.projectId()!, store.contractorJobId()!)
                                 .pipe(tap(contractorJob => patchState(store, {
                                     contractorJob: contractorJob,
                                     contractorJobNeedsRefresh: false
-                                })));
+                                })),
+                                    // The REST service already shows the error toast; keep the stream alive for the next load
+                                    catchError(() => {
+                                        patchState(store, {contractorJobLoadFailed: true});
+                                        return EMPTY;
+                                    }));
                         }
                         return of(null);
                     })
@@ -123,7 +133,8 @@ export const ContractorJobStore = signalStore(
                                     contractorStore.setContractorsNeedRefresh();
                                     contractorStore.setContractorNeedsRefresh();
                                     contractorStore.setContractorJobsDataNeedRefresh();
-                                })
+                                }),
+                                catchError(() => EMPTY)
                             );
                     })
                 )
@@ -147,7 +158,8 @@ export const ContractorJobStore = signalStore(
                                     contractorStore.setContractorsNeedRefresh();
                                     contractorStore.setContractorNeedsRefresh();
                                     contractorStore.setContractorJobsDataNeedRefresh();
-                                })
+                                }),
+                                catchError(() => EMPTY)
                             );
                     })
                 )

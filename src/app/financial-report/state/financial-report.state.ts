@@ -4,7 +4,7 @@ import {PeriodType} from "../../generated/models/period-type";
 import {FinancialReportRestService} from "../rest/financial-report-rest.service";
 import {inject} from "@angular/core";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {pipe, switchMap, tap} from "rxjs";
+import {catchError, EMPTY, pipe, switchMap, tap} from "rxjs";
 import {toTimeZoneString} from "../../shared/utils/date-utils";
 
 export interface FinancialReportState {
@@ -13,6 +13,7 @@ export interface FinancialReportState {
     endDate: Date;
     periodType: PeriodType;
     loading: boolean;
+    loadFailed: boolean;
 }
 
 const currentYear = new Date().getFullYear();
@@ -22,7 +23,8 @@ export const initialState: FinancialReportState = {
     startDate: new Date(currentYear, 0, 1),
     endDate: new Date(),
     periodType: PeriodType.MONTHLY,
-    loading: false
+    loading: false,
+    loadFailed: false,
 }
 
 export const FinancialReportStore = signalStore(
@@ -37,7 +39,7 @@ export const FinancialReportStore = signalStore(
         },
         loadReport: rxMethod<{}>(
             pipe(
-                tap(() => patchState(store, {loading: true})),
+                tap(() => patchState(store, {loading: true, loadFailed: false})),
                 switchMap(() => {
                     const startDate = toTimeZoneString(store.startDate())!;
                     const endDate = toTimeZoneString(store.endDate())!;
@@ -48,6 +50,11 @@ export const FinancialReportStore = signalStore(
                                     financialReport,
                                     loading: false
                                 });
+                            }),
+                            // The REST service already shows the error toast; keep the stream alive for the next load
+                            catchError(() => {
+                                patchState(store, {loading: false, loadFailed: true});
+                                return EMPTY;
                             })
                         );
                 })

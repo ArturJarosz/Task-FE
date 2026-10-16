@@ -2,12 +2,13 @@ import {AppState} from "../../state/app.store";
 import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {inject} from "@angular/core";
 import {TaskRestService} from "../rest/task-rest.service";
-import {pipe, switchMap, tap} from "rxjs";
+import {catchError, EMPTY, pipe, switchMap, tap} from "rxjs";
 import {Task} from "../../generated/models/task";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
 import {MessageService} from "primeng/api";
 import {MessageSeverity} from "../../shared";
 import {StageStore} from "../../stage/state";
+import {ProjectStore} from "../../project/state";
 import {UpdateTaskStatus} from "../model/task";
 
 
@@ -16,7 +17,8 @@ export interface TaskState extends AppState {
     stageId: number | undefined,
     taskId: number | undefined,
     error: string,
-    task: Task | null
+    task: Task | null,
+    taskLoadFailed: boolean,
 }
 
 export const initialState: TaskState = {
@@ -24,14 +26,23 @@ export const initialState: TaskState = {
     stageId: undefined,
     taskId: undefined,
     error: '',
-    task: null
+    task: null,
+    taskLoadFailed: false,
 }
 
 export const TaskStore = signalStore(
     {providedIn: 'root'},
     withState(initialState),
     withMethods((store, taskRestService = inject(TaskRestService), stageStore = inject(StageStore),
-                 messageService = inject(MessageService)) => ({
+                 projectStore = inject(ProjectStore), messageService = inject(MessageService)) => {
+        // Task changes can change the stage and project status the backend derives from them
+        const refreshParents = () => {
+            stageStore.refreshStage();
+            stageStore.refreshStages();
+            projectStore.setProjectNeedsRefresh();
+            projectStore.setProjectsNeedRefresh();
+        };
+        return {
         setProjectId(projectId: number) {
             patchState(store, {projectId: projectId});
         },
@@ -44,10 +55,16 @@ export const TaskStore = signalStore(
 
         loadTask: rxMethod<{}>(
             pipe(
+                tap(() => patchState(store, {taskLoadFailed: false})),
                 switchMap(() => {
                     return taskRestService.loadTask(store.projectId()!, store.stageId()!, store.taskId()!)
                         .pipe(
-                            tap(task => patchState(store, {task: task}))
+                            tap(task => patchState(store, {task: task})),
+                            // The REST service already shows the error toast; keep the stream alive for the next load
+                            catchError(() => {
+                                patchState(store, {taskLoadFailed: true});
+                                return EMPTY;
+                            })
                         )
                 })
             )
@@ -59,13 +76,14 @@ export const TaskStore = signalStore(
                         .pipe(
                             tap(task => {
 
-                                stageStore.refreshStage();
+                                refreshParents();
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
-                                    summary: `Task created.`,
-                                    detail: `Task with id: ${task.id} was created.`
+                                    summary: `Task created`,
+                                    detail: `${task.name} was added to the stage.`
                                 });
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         )
                 })
             )
@@ -81,13 +99,14 @@ export const TaskStore = signalStore(
                         .pipe(
                             tap(task => {
                                 patchState(store, {task: task});
-                                stageStore.refreshStage();
+                                refreshParents();
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
-                                    summary: `Task status changed.`,
-                                    detail: `Status of task with id: ${task.id} was changed to ${task.status}.`
+                                    summary: `Task status changed`,
+                                    detail: `${task.name} has a new status.`
                                 });
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         )
                 })
             )
@@ -102,13 +121,14 @@ export const TaskStore = signalStore(
                         .pipe(
                             tap(task => {
                                 patchState(store, {task: task});
-                                stageStore.refreshStage();
+                                refreshParents();
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
-                                    summary: `Task updated.`,
-                                    detail: `Task ${task.name} was updated.`
+                                    summary: `Task saved`,
+                                    detail: `${task.name} was updated.`
                                 });
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         )
                 })
             )
@@ -127,16 +147,17 @@ export const TaskStore = signalStore(
                     return taskRestService.removeTask(store.projectId()!, store.stageId()!, store.taskId()!)
                         .pipe(
                             tap(() => {
-                                stageStore.refreshStage();
+                                refreshParents();
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
-                                    summary: `Task removed.`,
-                                    detail: `Task with id: ${store.taskId()!} was removed.`
+                                    summary: `Task deleted`
                                 });
-                            })
+                            }),
+                            catchError(() => EMPTY)
                         )
                 })
             )
         ),
-    }))
+        };
+    })
 )
