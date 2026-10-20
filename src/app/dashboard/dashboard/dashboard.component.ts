@@ -13,10 +13,10 @@ import {resolveLabel} from "../../shared/utils/label-utils";
 import {statusSeverity} from "../../shared/status-severity";
 import {barChartOptions, cssColor, periodLabel} from "../../shared/utils/chart-utils";
 import {eventDay, eventMonth, eventWhen} from "../../shared/utils/event-date-utils";
+import {isActiveProject} from "../../shared/utils/project-status-utils";
 
 // Rows shown in the "Upcoming events" and "Active projects" cards; "See all" opens the full page
 const LIST_SIZE = 5;
-const ACTIVE_STATUSES: ProjectStatus[] = [ProjectStatus.TO_DO, ProjectStatus.IN_PROGRESS];
 
 export interface YearTotals {
     income: number;
@@ -49,6 +49,8 @@ export class DashboardComponent implements OnInit, OnChanges {
     projectTypes: ConfigurationEntry[] | null = [];
     @Input()
     projectStatuses: ConfigurationEntry[] | null = [];
+    @Input()
+    activeProjectStatuses: ProjectStatus[] | null = [];
     @Input()
     upcomingEvents: CalendarEvent[] = [];
 
@@ -83,16 +85,16 @@ export class DashboardComponent implements OnInit, OnChanges {
         this.chartOptions = barChartOptions(false);
     }
 
-    ngOnChanges({report, projects, upcomingEvents}: SimpleChanges): void {
+    ngOnChanges({report, projects, activeProjectStatuses, upcomingEvents}: SimpleChanges): void {
         if (report) {
             this.yearTotals = this.computeYearTotals();
             this.buildChartData();
         }
-        if (projects) {
+        if (projects || activeProjectStatuses) {
             const all = this.projects ?? [];
             this.totalProjects = all.length;
             this.activeProjects = all
-                .filter(project => !!project.status && ACTIVE_STATUSES.includes(project.status))
+                .filter(project => isActiveProject(project, this.activeProjectStatuses))
                 .sort((a, b) => (b.lastModifiedDateTime ?? '').localeCompare(a.lastModifiedDateTime ?? ''));
         }
         if (upcomingEvents) {

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AddProjectComponent } from './add-project.component';
+import {provideTestDependencies} from '../../../testing/test-providers';
 
 describe('AddProjectComponent', () => {
   let component: AddProjectComponent;
@@ -8,7 +9,8 @@ describe('AddProjectComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [AddProjectComponent]
+      imports: [AddProjectComponent],
+      providers: provideTestDependencies()
     });
     fixture = TestBed.createComponent(AddProjectComponent);
     component = fixture.componentInstance;

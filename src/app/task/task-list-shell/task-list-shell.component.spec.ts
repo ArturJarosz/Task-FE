@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TaskListShellComponent } from './task-list-shell.component';
+import {provideTestDependencies} from '../../../testing/test-providers';
 
 describe('TaskListShellComponent', () => {
   let component: TaskListShellComponent;
@@ -8,7 +9,8 @@ describe('TaskListShellComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [TaskListShellComponent]
+      imports: [TaskListShellComponent],
+      providers: provideTestDependencies()
     })
     .compileComponents();
     

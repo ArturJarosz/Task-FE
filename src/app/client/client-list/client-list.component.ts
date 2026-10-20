@@ -9,12 +9,13 @@ import {Menu, MenuModule} from "primeng/menu";
 import {MenuItem} from "primeng/api";
 import {TooltipModule} from "primeng/tooltip";
 import {Router, RouterLink} from "@angular/router";
-import {NgIf} from "@angular/common";
+import {CurrencyPipe, NgIf} from "@angular/common";
 
 export interface ClientRow {
     client: Client;
     projects: number;
     activeProjects: number;
+    value: number;
 }
 
 @Component({
@@ -23,7 +24,7 @@ export interface ClientRow {
     styleUrls: ['./client-list.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [TableModule, ButtonModule, MenuModule, TooltipModule, RouterLink, NgIf, EmptyStateComponent]
+    imports: [TableModule, ButtonModule, MenuModule, TooltipModule, RouterLink, NgIf, CurrencyPipe, EmptyStateComponent]
 })
 export class ClientListComponent {
     @Input()

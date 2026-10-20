@@ -18,6 +18,7 @@ export interface ClientState extends AppState {
     clientNeedsRefresh: boolean;
     clientProjectsSummary: EntityProjectsSummary | null;
     clientLoadFailed: boolean;
+    clientsLoadFailed: boolean;
 }
 
 export const initialState: ClientState = {
@@ -29,6 +30,7 @@ export const initialState: ClientState = {
     clientNeedsRefresh: true,
     clientProjectsSummary: null,
     clientLoadFailed: false,
+    clientsLoadFailed: false,
 }
 
 export const ClientStore = signalStore(
@@ -45,6 +47,10 @@ export const ClientStore = signalStore(
         },
         setClientNeedRefresh() {
             patchState(store, {clientNeedsRefresh: true});
+        },
+        // Project counts on clients change with every project, so the list reloads each time it is opened
+        setClientsNeedRefresh() {
+            patchState(store, {clientsNeedRefresh: true});
         },
         loadClient: rxMethod<{}>(
             pipe(
@@ -67,12 +73,17 @@ export const ClientStore = signalStore(
         ),
         loadClients: rxMethod<{}>(
             pipe(
+                tap(() => patchState(store, {clientsLoadFailed: false})),
                 switchMap(() => {
                     if (store.clientsNeedRefresh()) {
                         return clientRestService.getClients()
                             .pipe(
                                 tap(clients => patchState(store, {clients: clients, clientsNeedRefresh: false})),
-                                catchError(() => EMPTY)
+                                // The REST service already shows the error toast; keep the stream alive for the next load
+                                catchError(() => {
+                                    patchState(store, {clientsLoadFailed: true});
+                                    return EMPTY;
+                                })
                             )
                     }
                     return of({});

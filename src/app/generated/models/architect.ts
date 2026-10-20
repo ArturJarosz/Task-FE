@@ -7,4 +7,7 @@ export interface Architect {
   id?: number;
   lastModifiedDateTime?: string;
   lastName?: string;
+  numberOfActiveProjects?: number;
+  numberOfProjects?: number;
+  projectsValue?: number;
 }

@@ -21,12 +21,15 @@ export interface StatusSegment {
     statuses: ProjectStatus[] | null;
 }
 
-const STATUS_SEGMENTS: StatusSegment[] = [
-    {key: 'all', label: 'All', statuses: null},
-    {key: 'active', label: 'Active', statuses: [ProjectStatus.TO_DO, ProjectStatus.IN_PROGRESS]},
-    {key: 'finished', label: 'Finished', statuses: [ProjectStatus.DONE, ProjectStatus.COMPLETED]},
-    {key: 'rejected', label: 'Rejected', statuses: [ProjectStatus.REJECTED]},
-];
+// The "Active" statuses come from the configuration endpoint, so the segments follow the configuration
+function statusSegments(activeStatuses: ProjectStatus[]): StatusSegment[] {
+    return [
+        {key: 'all', label: 'All', statuses: null},
+        {key: 'active', label: 'Active', statuses: activeStatuses},
+        {key: 'finished', label: 'Finished', statuses: [ProjectStatus.DONE, ProjectStatus.COMPLETED]},
+        {key: 'rejected', label: 'Rejected', statuses: [ProjectStatus.REJECTED]},
+    ];
+}
 
 function inSegment(project: Project, segment: StatusSegment): boolean {
     return !segment.statuses || (!!project.status && segment.statuses.includes(project.status));
@@ -48,18 +51,19 @@ export class ProjectListShellComponent {
     readonly configurationStore = inject(ConfigurationStore);
 
     readonly crumbs: PageCrumb[] = [{label: 'Home', route: ['/home']}, {label: 'Projects'}];
-    readonly segments = STATUS_SEGMENTS;
     readonly pageSize = PAGE_SIZE;
 
     $projects: Signal<Project[] | null> = this.projectStore.projects;
     $projectsNeedRefresh: Signal<boolean | null> = this.projectStore.projectsNeedRefresh;
     $projectTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.projectTypes;
     $projectStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.projectStatuses;
+    $activeProjectStatuses: Signal<ProjectStatus[]> = this.configurationStore.configuration!.activeProjectStatuses;
+    readonly $segments = computed(() => statusSegments(this.$activeProjectStatuses()));
 
     readonly $segmentKey = signal<string>('all');
     readonly $page = signal<number>(0);
 
-    readonly $segment = computed(() => this.segments.find(segment => segment.key === this.$segmentKey()) ?? this.segments[0]);
+    readonly $segment = computed(() => this.$segments().find(segment => segment.key === this.$segmentKey()) ?? this.$segments()[0]);
     readonly $filteredProjects = computed(() => (this.$projects() ?? []).filter(project => inSegment(project, this.$segment())));
     readonly $pageCount = computed(() => Math.max(Math.ceil(this.$filteredProjects().length / PAGE_SIZE), 1));
     readonly $pagedProjects = computed(() => {
@@ -68,7 +72,7 @@ export class ProjectListShellComponent {
     });
     readonly $segmentCounts = computed(() => {
         let projects = this.$projects() ?? [];
-        return Object.fromEntries(this.segments.map(segment =>
+        return Object.fromEntries(this.$segments().map(segment =>
             [segment.key, projects.filter(project => inSegment(project, segment)).length]));
     });
     readonly $kpis = computed(() => {
@@ -88,6 +92,7 @@ export class ProjectListShellComponent {
         : 'Pick another status to see the rest of your projects.');
 
     constructor(private confirmationService: ConfirmationService) {
+        this.configurationStore.loadConfiguration({});
         effect(() => {
             if (this.$projectsNeedRefresh()) {
                 this.projectStore.loadProjects({})

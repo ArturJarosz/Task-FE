@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AddCalendarEventComponent } from './add-calendar-event.component';
+import {provideTestDependencies} from '../../../testing/test-providers';
 
 describe('AddCalendarEventComponent', () => {
   let component: AddCalendarEventComponent;
@@ -8,7 +9,8 @@ describe('AddCalendarEventComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AddCalendarEventComponent]
+      imports: [AddCalendarEventComponent],
+      providers: provideTestDependencies()
     })
     .compileComponents();
 

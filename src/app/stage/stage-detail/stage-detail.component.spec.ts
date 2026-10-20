@@ -8,7 +8,7 @@ describe('StageDetailComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [StageDetailComponent]
+      imports: [StageDetailComponent]
     });
     fixture = TestBed.createComponent(StageDetailComponent);
     component = fixture.componentInstance;

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CostListShellComponent } from './cost-list-shell.component';
+import {provideTestDependencies} from '../../../../testing/test-providers';
 
 describe('CostListShellComponent', () => {
   let component: CostListShellComponent;
@@ -8,7 +9,8 @@ describe('CostListShellComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CostListShellComponent]
+      imports: [CostListShellComponent],
+      providers: provideTestDependencies()
     })
     .compileComponents();
     

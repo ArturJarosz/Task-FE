@@ -15,6 +15,7 @@ export interface ArchitectState extends AppState {
     architectsNeedRefresh: boolean;
     architectProjectsSummary: EntityProjectsSummary;
     architectLoadFailed: boolean;
+    architectsLoadFailed: boolean;
 }
 
 export const initialState: ArchitectState = {
@@ -24,6 +25,7 @@ export const initialState: ArchitectState = {
     architectsNeedRefresh: true,
     architectProjectsSummary: {},
     architectLoadFailed: false,
+    architectsLoadFailed: false,
 }
 
 export const ArchitectStore = signalStore(
@@ -31,6 +33,10 @@ export const ArchitectStore = signalStore(
     withState(initialState),
     withMethods(
         (store, architectRestService = inject(ArchitectRestService), messageService = inject(MessageService)) => ({
+            // Project counts on architects change with every project, so the list reloads each time it is opened
+            setArchitectsNeedRefresh() {
+                patchState(store, {architectsNeedRefresh: true});
+            },
             setArchitectId(architectId: number) {
                 if (store.architectId() !== architectId) {
                     // Drop the previous architect's projects so they don't show while the new ones load
@@ -57,13 +63,18 @@ export const ArchitectStore = signalStore(
             ),
             loadArchitects: rxMethod<{}>(
                 pipe(
+                    tap(() => patchState(store, {architectsLoadFailed: false})),
                     switchMap(() => {
                         if (store.architectsNeedRefresh()) {
                             return architectRestService.getArchitects()
                                 .pipe(
                                     tap(architects => patchState(store,
                                         {architects: architects, architectsNeedRefresh: false})),
-                                    catchError(() => EMPTY)
+                                    // The REST service already shows the error toast; keep the stream alive for the next load
+                                    catchError(() => {
+                                        patchState(store, {architectsLoadFailed: true});
+                                        return EMPTY;
+                                    })
                                 )
                         }
                         return of({});

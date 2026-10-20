@@ -51,6 +51,8 @@ export class ClientDetailShellComponent implements OnInit {
         let maybeClientId = this.route.snapshot.paramMap.get("id");
         let clientId = Number(maybeClientId);
         this.clientStore.setClientId(clientId);
+        // Reload even when reopening the same client: its project counts may have changed since
+        this.clientStore.setClientNeedRefresh();
         this.clientStore.loadClient({});
         this.clientStore.loadClientProjectsSummary({});
         this.configurationStore.loadConfiguration({});

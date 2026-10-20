@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { StageDetailShellComponent } from './stage-detail-shell.component';
+import {provideTestDependencies} from '../../../testing/test-providers';
 
 describe('StageDetailShellComponent', () => {
   let component: StageDetailShellComponent;
@@ -8,7 +9,8 @@ describe('StageDetailShellComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [StageDetailShellComponent]
+      imports: [StageDetailShellComponent],
+      providers: provideTestDependencies()
     });
     fixture = TestBed.createComponent(StageDetailShellComponent);
     component = fixture.componentInstance;

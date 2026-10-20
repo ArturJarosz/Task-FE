@@ -1,6 +1,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {AddSupervisionComponent} from './add-supervision.component';
+import {provideTestDependencies} from '../../../../testing/test-providers';
 
 describe('AddSupervisionComponent', () => {
     let component: AddSupervisionComponent;
@@ -8,7 +9,8 @@ describe('AddSupervisionComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [AddSupervisionComponent]
+            imports: [AddSupervisionComponent],
+            providers: provideTestDependencies()
         })
             .compileComponents();
 

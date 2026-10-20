@@ -11,7 +11,7 @@
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-sm text-gray-500">
                 <span>Architect</span>
                 <span class="w-px h-4 bg-gray-200"></span>
-                <span>{{ projectsSummary?.numberOfProjects ?? 0 }} {{ projectsSummary?.numberOfProjects === 1 ? 'project' : 'projects' }}</span>
+                <span>{{ projects }} {{ projects === 1 ? 'project' : 'projects' }}</span>
                 <span class="w-px h-4 bg-gray-200"></span>
                 <span>{{ activeProjects }} active</span>
             </div>
@@ -36,7 +36,7 @@
                 <div class="px-6 pb-6">
                     <span class="app-field-label">Total contract value</span>
                     <div class="text-2xl leading-8 font-bold text-gray-800 tabular-nums">
-                        {{ (projectsSummary?.totalValue ?? 0) | currency:'PLN':'symbol':'1.2-2' }}
+                        {{ projectsValue | currency:'PLN':'symbol':'1.2-2' }}
                     </div>
                 </div>
             </section>

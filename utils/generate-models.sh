@@ -2,7 +2,7 @@
 OPEN_API_LOCATION=../../Task/core/src/main/resources/openapi/openapi-spec.yml
 
 # ng-openapi-gen
-ng-openapi-gen
+npx ng-openapi-gen
 
 # remove services and functions
 #rm -r ../src/app/generated/fn
