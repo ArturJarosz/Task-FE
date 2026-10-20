@@ -13,4 +13,7 @@ export interface Client {
   lastModifiedDateTime?: string;
   lastName?: string;
   note?: string;
+  numberOfActiveProjects?: number;
+  numberOfProjects?: number;
+  projectsValue?: number;
 }

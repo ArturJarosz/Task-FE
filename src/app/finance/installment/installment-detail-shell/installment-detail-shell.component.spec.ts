@@ -1,6 +1,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {InstallmentDetailShellComponent} from './installment-detail-shell.component';
+import {provideTestDependencies} from '../../../../testing/test-providers';
 
 describe('InstallmentDetailShellComponent', () => {
     let component: InstallmentDetailShellComponent;
@@ -8,7 +9,8 @@ describe('InstallmentDetailShellComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [InstallmentDetailShellComponent]
+            imports: [InstallmentDetailShellComponent],
+            providers: provideTestDependencies()
         })
             .compileComponents();
 

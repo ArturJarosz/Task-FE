@@ -3,6 +3,7 @@ import {CostDetailComponent} from './cost-detail.component';
 import {Cost} from '../../../generated/models/cost';
 import {CostCategory} from '../../../generated/models/cost-category';
 import {ConfigurationEntry} from '../../../generated/models/configuration-entry';
+import {provideTestDependencies} from '../../../../testing/test-providers';
 
 const MOCK_COST: Cost = {
     id: 1,
@@ -27,7 +28,8 @@ describe('CostDetailComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [CostDetailComponent]
+            imports: [CostDetailComponent],
+            providers: provideTestDependencies()
         }).compileComponents();
 
         fixture = TestBed.createComponent(CostDetailComponent);
@@ -41,8 +43,9 @@ describe('CostDetailComponent', () => {
     });
 
     it('should fill the form and the category label from the cost', () => {
-        component.cost = MOCK_COST;
-        component.costCategories = MOCK_COST_CATEGORIES;
+        // setInput runs ngOnChanges, which resolves the category label
+        fixture.componentRef.setInput('cost', MOCK_COST);
+        fixture.componentRef.setInput('costCategories', MOCK_COST_CATEGORIES);
         fixture.detectChanges();
 
         expect(component.costDetailsForm.value.name).toBe('Test Cost');

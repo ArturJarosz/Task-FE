@@ -4,14 +4,14 @@ import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
 import {ConfigurationRestService} from "../rest/configuration.rest";
 import {inject} from "@angular/core";
-import {catchError, of, pipe, switchMap, tap} from "rxjs";
+import {catchError, EMPTY, of, pipe, switchMap, tap} from "rxjs";
 import {MessageService} from "primeng/api";
-import {MessageSeverity} from "../../message";
 
 export interface ConfigurationState extends AppState {
     error: string;
     configuration: ApplicationConfiguration;
-    needRefresh: boolean
+    needRefresh: boolean;
+    configurationLoadFailed: boolean;
 }
 
 export const initialState: ConfigurationState = {
@@ -22,6 +22,7 @@ export const initialState: ConfigurationState = {
         contractStatuses: [],
         projectTypes: [],
         projectStatuses: [],
+        activeProjectStatuses: [],
         stageStatuses: [],
         stageTypes: [],
         taskStatuses: [],
@@ -29,7 +30,8 @@ export const initialState: ConfigurationState = {
         clientTypes: [],
         costCategories: []
     },
-    needRefresh: true
+    needRefresh: true,
+    configurationLoadFailed: false,
 }
 
 export const ConfigurationStore = signalStore(
@@ -39,12 +41,18 @@ export const ConfigurationStore = signalStore(
                  messageService = inject(MessageService)) => ({
         loadConfiguration: rxMethod<{}>(
             pipe(
+                tap(() => patchState(store, {configurationLoadFailed: false})),
                 switchMap(() => {
                     if (store.needRefresh()!) {
                         return configurationRestService.getConfiguration()
                             .pipe(
                                 tap(configuration => patchState(store,
-                                    {configuration: configuration, needRefresh: false}))
+                                    {configuration: configuration, needRefresh: false})),
+                                // The REST service already shows the error toast; keep the stream alive for the next load
+                                catchError(() => {
+                                    patchState(store, {configurationLoadFailed: true});
+                                    return EMPTY;
+                                })
                             )
                     }
                     return of({})

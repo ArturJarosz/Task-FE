@@ -8,7 +8,7 @@ describe('FinanceComponentSummaryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [FinanceComponentSummaryComponent]
+      imports: [FinanceComponentSummaryComponent]
     })
     .compileComponents();
     

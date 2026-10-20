@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AddSupervisionVisitComponent } from './add-supervision-visit.component';
+import {provideTestDependencies} from '../../../../testing/test-providers';
 
 describe('AddSupervisionVisitComponent', () => {
   let component: AddSupervisionVisitComponent;
@@ -7,7 +8,8 @@ describe('AddSupervisionVisitComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AddSupervisionVisitComponent]
+      imports: [AddSupervisionVisitComponent],
+      providers: provideTestDependencies()
     })
     .compileComponents();
 

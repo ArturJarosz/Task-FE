@@ -1,48 +1,37 @@
 import {ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal, Signal} from '@angular/core';
 import {ArchitectStore} from "../state";
-import {ProjectStore} from "../../project/state";
 import {Architect} from "../../generated/models/architect";
-import {Project} from "../../generated/models/project";
-import {ProjectStatus} from "../../generated/models/project-status";
 import {ArchitectListComponent, ArchitectRow} from "../architect-list/architect-list.component";
-import {PageCrumb, PageHeaderComponent, TableFooterComponent} from "../../shared";
+import {LoadErrorComponent, PageCrumb, PageHeaderComponent, TableFooterComponent} from "../../shared";
 
 const PAGE_SIZE = 10;
-const ACTIVE_STATUSES: ProjectStatus[] = [ProjectStatus.TO_DO, ProjectStatus.IN_PROGRESS];
 
 @Component({
     selector: 'architect-list-shell',
     templateUrl: './architect-list-shell.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [ArchitectListComponent, PageHeaderComponent, TableFooterComponent]
+    imports: [ArchitectListComponent, LoadErrorComponent, PageHeaderComponent, TableFooterComponent]
 })
 export class ArchitectListShellComponent implements OnInit {
     readonly architectStore = inject(ArchitectStore);
-    readonly projectStore = inject(ProjectStore);
 
     readonly crumbs: PageCrumb[] = [{label: 'Home', route: ['/home']}, {label: 'Architects'}];
     readonly pageSize = PAGE_SIZE;
 
     $architects: Signal<Architect[]> = this.architectStore.architects!;
     $architectsNeedRefresh: Signal<boolean> = this.architectStore.architectsNeedRefresh!;
-    $projects: Signal<Project[] | null> = this.projectStore.projects;
-    $projectsNeedRefresh: Signal<boolean> = this.projectStore.projectsNeedRefresh;
+    $architectsLoadFailed: Signal<boolean> = this.architectStore.architectsLoadFailed;
 
     readonly $page = signal<number>(0);
 
-    // Project counts come from the projects list already kept in ProjectStore
-    readonly $rows = computed<ArchitectRow[]>(() => {
-        let projects = this.$projects() ?? [];
-        return (this.$architects() ?? []).map(architect => {
-            let own = projects.filter(project => project.architect?.id === architect.id);
-            return {
-                architect: architect,
-                projects: own.length,
-                activeProjects: own.filter(project => !!project.status && ACTIVE_STATUSES.includes(project.status)).length,
-            };
-        });
-    });
+    // Project counts and value come with each architect; the backend decides which project statuses are active
+    readonly $rows = computed<ArchitectRow[]>(() => (this.$architects() ?? []).map(architect => ({
+        architect: architect,
+        projects: architect.numberOfProjects ?? 0,
+        activeProjects: architect.numberOfActiveProjects ?? 0,
+        value: architect.projectsValue ?? 0,
+    })));
     readonly $pageCount = computed(() => Math.max(Math.ceil(this.$rows().length / PAGE_SIZE), 1));
     readonly $pagedRows = computed(() => this.$rows().slice(this.$page() * PAGE_SIZE, (this.$page() + 1) * PAGE_SIZE));
     readonly $kpis = computed(() => {
@@ -60,11 +49,6 @@ export class ArchitectListShellComponent implements OnInit {
             }
         });
         effect(() => {
-            if (this.$projectsNeedRefresh()) {
-                this.projectStore.loadProjects({});
-            }
-        });
-        effect(() => {
             if (this.$page() >= this.$pageCount()) {
                 this.$page.set(this.$pageCount() - 1);
             }
@@ -72,7 +56,11 @@ export class ArchitectListShellComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.architectStore.setArchitectsNeedRefresh();
         this.architectStore.loadArchitects({});
-        this.projectStore.loadProjects({});
+    }
+
+    onRetry(): void {
+        this.architectStore.loadArchitects({});
     }
 }

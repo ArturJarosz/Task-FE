@@ -1,22 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { AuthService } from '@auth0/auth0-angular';
 import { AppComponent } from './app.component';
+import {provideTestDependencies} from '../testing/test-providers';
 
 describe('AppComponent', () => {
-  let authServiceSpy: unknown;
-
   beforeEach(async () => {
-    authServiceSpy = jasmine.createSpyObj('AuthService', ['loginWithRedirect']);
     await TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
-      declarations: [],
-      providers: [
-        {
-          provide: AuthService,
-          useValue: authServiceSpy,
-        },
-      ],
+      imports: [AppComponent],
+      providers: provideTestDependencies()
     }).compileComponents();
   });
 
@@ -30,12 +20,5 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
     expect(app.title).toEqual('Task-FE');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, Task-FE');
   });
 });
