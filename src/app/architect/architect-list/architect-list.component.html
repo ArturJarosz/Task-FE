@@ -4,7 +4,7 @@
             <th>Architect</th>
             <th class="app-num">Projects</th>
             <th class="app-num">Active projects</th>
-            <th>Added</th>
+            <th class="app-num">Contract value</th>
             <th class="w-12"><span class="sr-only">Open</span></th>
         </tr>
     </ng-template>
@@ -21,9 +21,7 @@
             </td>
             <td class="app-num">{{ row.projects }}</td>
             <td class="app-num">{{ row.activeProjects }}</td>
-            <td>
-                <span *ngIf="row.architect.createdDateTime; else notSet">{{ row.architect.createdDateTime | date:'dd.MM.yyyy' }}</span>
-            </td>
+            <td class="app-num">{{ row.value | currency:'PLN':'symbol':'1.2-2' }}</td>
             <td class="text-right text-gray-400"><i class="pi pi-angle-right" aria-hidden="true"></i></td>
         </tr>
     </ng-template>
@@ -36,5 +34,3 @@
         </tr>
     </ng-template>
 </p-table>
-
-<ng-template #notSet><span class="text-gray-400">Not set</span></ng-template>

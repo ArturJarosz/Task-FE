@@ -1,4 +1,4 @@
-<p-table [value]="rows" [rowHover]="true" [tableStyle]="{'min-width': '52rem'}">
+<p-table [value]="rows" [rowHover]="true" [tableStyle]="{'min-width': '60rem'}">
     <ng-template pTemplate="header">
         <tr>
             <th>Client</th>
@@ -6,6 +6,7 @@
             <th>City</th>
             <th class="app-num">Projects</th>
             <th class="app-num">Active projects</th>
+            <th class="app-num">Contract value</th>
             <th class="w-16"><span class="sr-only">Actions</span></th>
         </tr>
     </ng-template>
@@ -31,6 +32,7 @@
             </td>
             <td class="app-num">{{ row.projects }}</td>
             <td class="app-num">{{ row.activeProjects }}</td>
+            <td class="app-num">{{ row.value | currency:'PLN':'symbol':'1.2-2' }}</td>
             <td class="text-right">
                 <p-button icon="pi pi-ellipsis-h" [text]="true" [rounded]="true" severity="secondary"
                           pTooltip="Client actions" tooltipPosition="left" ariaLabel="Client actions"
@@ -40,7 +42,7 @@
     </ng-template>
     <ng-template pTemplate="emptymessage">
         <tr>
-            <td colspan="6" class="p-0">
+            <td colspan="7" class="p-0">
                 <app-empty-state icon="pi pi-users" [title]="emptyTitle" [text]="emptyText"/>
             </td>
         </tr>

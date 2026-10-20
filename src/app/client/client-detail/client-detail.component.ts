@@ -1,7 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {Client, ClientType, ConfigurationEntry, Contact} from "../../generated/models";
 import {EntityProjectsSummary} from "../../generated/models/entity-projects-summary";
-import {ProjectStatus} from "../../generated/models/project-status";
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {ClientForm, ClientFormProvider} from "../form/client-form-provider";
 import {ClientDto} from "../model/client";
@@ -14,8 +13,6 @@ import {MenuModule} from "primeng/menu";
 import {TooltipModule} from "primeng/tooltip";
 import {MenuItem} from "primeng/api";
 import {CurrencyPipe, NgIf} from "@angular/common";
-
-const ACTIVE_STATUSES: ProjectStatus[] = [ProjectStatus.TO_DO, ProjectStatus.IN_PROGRESS];
 
 @Component({
     selector: 'client-detail',
@@ -49,7 +46,9 @@ export class ClientDetailComponent implements OnChanges {
     clientName: string = '';
     initials: string = '';
     typeLabel: string = '';
+    projects: number = 0;
     activeProjects: number = 0;
+    projectsValue: number = 0;
     crumbs: PageCrumb[] = [];
 
     readonly actions: MenuItem[] = [
@@ -71,8 +70,10 @@ export class ClientDetailComponent implements OnChanges {
             ? (client.companyName?.charAt(0) ?? '?').toUpperCase()
             : `${client.firstName?.charAt(0) ?? ''}${client.lastName?.charAt(0) ?? ''}`.toUpperCase() || '?';
         this.typeLabel = resolveLabel(client.clientType, this.clientTypes);
-        this.activeProjects = (this.projectsSummary?.projects ?? [])
-            .filter(project => !!project.status && ACTIVE_STATUSES.includes(project.status)).length;
+        // The counts and the value come from the backend, which decides which project statuses are active
+        this.projects = client.numberOfProjects ?? 0;
+        this.activeProjects = client.numberOfActiveProjects ?? 0;
+        this.projectsValue = client.projectsValue ?? 0;
         this.crumbs = [
             {label: 'Home', route: ['/home']},
             {label: 'Clients', route: ['/clients']},

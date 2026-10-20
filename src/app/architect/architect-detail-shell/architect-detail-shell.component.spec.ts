@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ArchitectDetailShellComponent } from './architect-detail-shell.component';
+import {provideTestDependencies} from '../../../testing/test-providers';
 
 describe('ArchitectDetailShellComponent', () => {
   let component: ArchitectDetailShellComponent;
@@ -8,7 +9,8 @@ describe('ArchitectDetailShellComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ArchitectDetailShellComponent]
+      imports: [ArchitectDetailShellComponent],
+      providers: provideTestDependencies()
     })
     .compileComponents();
     

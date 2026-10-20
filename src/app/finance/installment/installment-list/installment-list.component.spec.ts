@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { InstallmentListComponent } from './installment-list.component';
+import {provideTestDependencies} from '../../../../testing/test-providers';
 
 describe('InstallmentListComponent', () => {
   let component: InstallmentListComponent;
@@ -8,12 +9,14 @@ describe('InstallmentListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [InstallmentListComponent]
+      imports: [InstallmentListComponent],
+      providers: provideTestDependencies()
     })
     .compileComponents();
     
     fixture = TestBed.createComponent(InstallmentListComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('installmentProjectData', {installments: []});
     fixture.detectChanges();
   });
 

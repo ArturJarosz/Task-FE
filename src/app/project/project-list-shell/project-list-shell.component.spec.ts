@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProjectListShellComponent } from './project-list-shell.component';
+import {provideTestDependencies} from '../../../testing/test-providers';
 
 describe('ProjectShellComponent', () => {
   let component: ProjectListShellComponent;
@@ -8,7 +9,8 @@ describe('ProjectShellComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ProjectListShellComponent]
+      imports: [ProjectListShellComponent],
+      providers: provideTestDependencies()
     });
     fixture = TestBed.createComponent(ProjectListShellComponent);
     component = fixture.componentInstance;

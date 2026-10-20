@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SupplyListShellComponent } from './supply-list-shell.component';
+import {provideTestDependencies} from '../../../../testing/test-providers';
 
 describe('SupplyListShellComponent', () => {
   let component: SupplyListShellComponent;
@@ -8,7 +9,8 @@ describe('SupplyListShellComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SupplyListShellComponent]
+      imports: [SupplyListShellComponent],
+      providers: provideTestDependencies()
     })
     .compileComponents();
     

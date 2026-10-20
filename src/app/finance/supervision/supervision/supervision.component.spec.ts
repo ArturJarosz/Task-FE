@@ -8,7 +8,7 @@ describe('SupervisionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SupervisionComponent]
+      imports: [SupervisionComponent]
     })
     .compileComponents();
 

@@ -1,10 +1,7 @@
 import {ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal, Signal} from '@angular/core';
 import {ClientStore} from "../state";
-import {ProjectStore} from "../../project/state";
 import {Client} from "../../generated/models/client";
 import {ClientType} from "../../generated/models/client-type";
-import {Project} from "../../generated/models/project";
-import {ProjectStatus} from "../../generated/models/project-status";
 import {ClientDto} from "../model/client";
 import {ConfirmationService} from "primeng/api";
 import {ConfigurationStore} from "../../shared/configuration/state";
@@ -14,10 +11,9 @@ import {AddClientComponent} from "../add-client";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ButtonModule} from "primeng/button";
 import {NgFor} from "@angular/common";
-import {PageCrumb, PageHeaderComponent, TableFooterComponent} from "../../shared";
+import {LoadErrorComponent, PageCrumb, PageHeaderComponent, TableFooterComponent} from "../../shared";
 
 const PAGE_SIZE = 10;
-const ACTIVE_STATUSES: ProjectStatus[] = [ProjectStatus.TO_DO, ProjectStatus.IN_PROGRESS];
 
 export interface ClientSegment {
     key: string;
@@ -41,11 +37,10 @@ function inSegment(client: Client, segment: ClientSegment): boolean {
     styleUrl: './client-list-shell.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [ClientListComponent, AddClientComponent, ConfirmDialogModule, ButtonModule, NgFor, PageHeaderComponent, TableFooterComponent]
+    imports: [ClientListComponent, AddClientComponent, ConfirmDialogModule, ButtonModule, NgFor, LoadErrorComponent, PageHeaderComponent, TableFooterComponent]
 })
 export class ClientListShellComponent implements OnInit {
     readonly clientStore = inject(ClientStore);
-    readonly projectStore = inject(ProjectStore);
     readonly configurationStore = inject(ConfigurationStore);
 
     readonly crumbs: PageCrumb[] = [{label: 'Home', route: ['/home']}, {label: 'Clients'}];
@@ -54,26 +49,20 @@ export class ClientListShellComponent implements OnInit {
 
     $clients: Signal<Client[] | null> = this.clientStore.clients!;
     $clientsNeedRefresh: Signal<boolean> = this.clientStore.clientsNeedRefresh!;
+    $clientsLoadFailed: Signal<boolean> = this.clientStore.clientsLoadFailed;
     $clientTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.clientTypes;
-    $projects: Signal<Project[] | null> = this.projectStore.projects;
-    $projectsNeedRefresh: Signal<boolean> = this.projectStore.projectsNeedRefresh;
 
     readonly $segmentKey = signal<string>('all');
     readonly $page = signal<number>(0);
     showAddClient: boolean = false;
 
-    // Project counts come from the projects list already kept in ProjectStore
-    readonly $rows = computed<ClientRow[]>(() => {
-        let projects = this.$projects() ?? [];
-        return (this.$clients() ?? []).map(client => {
-            let own = projects.filter(project => project.client?.id === client.id);
-            return {
-                client: client,
-                projects: own.length,
-                activeProjects: own.filter(project => !!project.status && ACTIVE_STATUSES.includes(project.status)).length,
-            };
-        });
-    });
+    // Project counts and value come with each client; the backend decides which project statuses are active
+    readonly $rows = computed<ClientRow[]>(() => (this.$clients() ?? []).map(client => ({
+        client: client,
+        projects: client.numberOfProjects ?? 0,
+        activeProjects: client.numberOfActiveProjects ?? 0,
+        value: client.projectsValue ?? 0,
+    })));
     readonly $segment = computed(() => this.segments.find(segment => segment.key === this.$segmentKey()) ?? this.segments[0]);
     readonly $filteredRows = computed(() => this.$rows().filter(row => inSegment(row.client, this.$segment())));
     readonly $pageCount = computed(() => Math.max(Math.ceil(this.$filteredRows().length / PAGE_SIZE), 1));
@@ -103,11 +92,6 @@ export class ClientListShellComponent implements OnInit {
             }
         });
         effect(() => {
-            if (this.$projectsNeedRefresh()) {
-                this.projectStore.loadProjects({});
-            }
-        });
-        effect(() => {
             if (this.$page() >= this.$pageCount()) {
                 this.$page.set(this.$pageCount() - 1);
             }
@@ -115,9 +99,13 @@ export class ClientListShellComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.clientStore.setClientsNeedRefresh();
         this.clientStore.loadClients({});
-        this.projectStore.loadProjects({});
         this.configurationStore.loadConfiguration({});
+    }
+
+    onRetry(): void {
+        this.clientStore.loadClients({});
     }
 
     onSelectSegment(key: string) {
