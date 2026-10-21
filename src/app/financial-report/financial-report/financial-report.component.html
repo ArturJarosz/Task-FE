@@ -33,21 +33,9 @@
     <ng-container *ngIf="financialReport; else loadingState">
         <!-- KPIs -->
         <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
-            <section class="app-card p-6">
-                <div class="app-kpi-icon"><i class="pi pi-arrow-down-left text-xl"></i></div>
-                <div class="mt-5 app-kpi-label">Income ({{ selectedValueType }})</div>
-                <div class="mt-2 app-kpi-value">{{ kpiValue(financialReport.totalIncome) | currency:'PLN':'symbol':'1.2-2' }}</div>
-            </section>
-            <section class="app-card p-6">
-                <div class="app-kpi-icon"><i class="pi pi-arrow-up-right text-xl"></i></div>
-                <div class="mt-5 app-kpi-label">Expenses ({{ selectedValueType }})</div>
-                <div class="mt-2 app-kpi-value">{{ kpiValue(financialReport.totalExpense) | currency:'PLN':'symbol':'1.2-2' }}</div>
-            </section>
-            <section class="app-card p-6 xl:col-span-2">
-                <div class="app-kpi-icon"><i class="pi pi-wallet text-xl"></i></div>
-                <div class="mt-5 app-kpi-label">Balance ({{ selectedValueType }})</div>
-                <div class="mt-2 app-kpi-value">{{ kpiValue(financialReport.totalBalance) | currency:'PLN':'symbol':'1.2-2' }}</div>
-            </section>
+            <app-kpi-card icon="pi pi-arrow-down-left" label="Income ({{ selectedValueType }})">{{ kpiValue(financialReport.totalIncome) | currency:'PLN':'symbol':'1.2-2' }}</app-kpi-card>
+            <app-kpi-card icon="pi pi-arrow-up-right" label="Expenses ({{ selectedValueType }})">{{ kpiValue(financialReport.totalExpense) | currency:'PLN':'symbol':'1.2-2' }}</app-kpi-card>
+            <app-kpi-card icon="pi pi-wallet" label="Balance ({{ selectedValueType }})" class="xl:col-span-2">{{ kpiValue(financialReport.totalBalance) | currency:'PLN':'symbol':'1.2-2' }}</app-kpi-card>
         </div>
 
         <!-- Chart -->
@@ -126,9 +114,9 @@
                             (retry)="reloadReport.emit()"/>
         } @else {
             <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
-                <div class="app-card p-6"><p-skeleton height="6rem"/></div>
-                <div class="app-card p-6"><p-skeleton height="6rem"/></div>
-                <div class="app-card p-6 xl:col-span-2"><p-skeleton height="6rem"/></div>
+                <div class="app-card p-5"><p-skeleton height="3rem"/></div>
+                <div class="app-card p-5"><p-skeleton height="3rem"/></div>
+                <div class="app-card p-5 xl:col-span-2"><p-skeleton height="3rem"/></div>
             </div>
             <div class="app-card p-6"><p-skeleton height="20rem"/></div>
         }

@@ -4,6 +4,7 @@ export {FieldComponent} from './field/field.component';
 export {PageHeaderComponent, PageCrumb} from './page-header/page-header.component';
 export {EmptyStateComponent} from './empty-state/empty-state.component';
 export {LoadErrorComponent} from './load-error/load-error.component';
+export {KpiCardComponent} from './kpi-card/kpi-card.component';
 export {TableFooterComponent} from './table-footer/table-footer.component';
 export {EntityProjectsComponent} from './entity-projects/entity-projects.component';
 export {PartnerListComponent, PartnerRow, PartnerRef} from './partner-list/partner-list.component';

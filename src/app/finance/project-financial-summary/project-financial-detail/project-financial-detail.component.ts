@@ -9,6 +9,7 @@ import {InstallmentListShellComponent} from "../../installment/installment-list-
 import {SupplyListShellComponent} from "../../supply/supply-list-shell/supply-list-shell.component";
 import {ContractorJobListShellComponent} from "../../contractor-job/contractor-job-list-shell/contractor-job-list-shell.component";
 import {SupervisionShellComponent} from "../../supervision/supervision-shell/supervision-shell.component";
+import {KpiCardComponent} from "../../../shared";
 
 export interface FinanceTab {
     key: string;
@@ -35,7 +36,7 @@ const FINANCE_TABS: FinanceTab[] = [
     templateUrl: './project-financial-detail.component.html',
     styleUrl: './project-financial-detail.component.less',
     standalone: true,
-    imports: [CostListShellComponent, InstallmentListShellComponent, SupplyListShellComponent, ContractorJobListShellComponent, SupervisionShellComponent, NgFor, NgIf, NgSwitch, NgSwitchCase, RouterLink, CurrencyPipe]
+    imports: [CostListShellComponent, InstallmentListShellComponent, SupplyListShellComponent, ContractorJobListShellComponent, SupervisionShellComponent, KpiCardComponent, NgFor, NgIf, NgSwitch, NgSwitchCase, RouterLink, CurrencyPipe]
 })
 export class ProjectFinancialDetailComponent implements OnInit {
     @Input()

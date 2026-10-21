@@ -8,6 +8,7 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ButtonModule} from "primeng/button";
 import {AddSupplierComponent} from "../add-supplier/add-supplier.component";
 import {
+    KpiCardComponent,
     PageCrumb,
     PageHeaderComponent,
     PartnerListComponent,
@@ -25,7 +26,7 @@ const PAGE_SIZE = 10;
     styleUrl: './supplier-list-shell.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [PartnerListComponent, AddSupplierComponent, ConfirmDialogModule, ButtonModule, PageHeaderComponent, TableFooterComponent]
+    imports: [PartnerListComponent, AddSupplierComponent, ConfirmDialogModule, ButtonModule, PageHeaderComponent, KpiCardComponent, TableFooterComponent]
 })
 export class SupplierListShellComponent implements OnInit {
 

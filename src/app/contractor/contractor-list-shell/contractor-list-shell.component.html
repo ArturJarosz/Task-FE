@@ -3,20 +3,8 @@
 <div class="flex flex-col gap-6">
     <!-- KPIs -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <section class="app-card flex items-center gap-4 p-5">
-            <div class="app-kpi-icon"><i class="pi pi-wrench text-xl"></i></div>
-            <div>
-                <div class="app-kpi-label">Contractors</div>
-                <div class="text-2xl leading-8 font-bold text-gray-800 tabular-nums">{{ $kpis().total }}</div>
-            </div>
-        </section>
-        <section class="app-card flex items-center gap-4 p-5">
-            <div class="app-kpi-icon"><i class="pi pi-briefcase text-xl"></i></div>
-            <div>
-                <div class="app-kpi-label">With jobs</div>
-                <div class="text-2xl leading-8 font-bold text-gray-800 tabular-nums">{{ $kpis().withItems }}</div>
-            </div>
-        </section>
+        <app-kpi-card icon="pi pi-wrench" label="Contractors">{{ $kpis().total }}</app-kpi-card>
+        <app-kpi-card icon="pi pi-briefcase" label="With jobs">{{ $kpis().withItems }}</app-kpi-card>
     </div>
 
     <!-- Table card -->

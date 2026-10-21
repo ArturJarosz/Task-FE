@@ -96,7 +96,7 @@
                 </div>
                 <div class="px-6 pb-6">
                     <span class="app-field-label">Gross value of all {{ itemsLabel.toLowerCase() }}</span>
-                    <div class="text-2xl leading-8 font-bold text-gray-800 tabular-nums">
+                    <div class="app-kpi-value">
                         {{ (itemsData.financialData?.grossValue ?? 0) | currency:'PLN':'symbol':'1.2-2' }}
                     </div>
                 </div>

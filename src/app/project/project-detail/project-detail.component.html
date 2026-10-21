@@ -35,122 +35,119 @@
         <a class="app-seg-item" [routerLink]="['/projects', project.id, 'finance']" routerLinkActive="active">Finance</a>
     </nav>
 
-    <div *ngIf="view === 'overview'; else otherView" class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_6px)_minmax(0,1fr)] gap-6 items-start">
-        <!-- Main column -->
-        <div class="flex flex-col gap-6 min-w-0">
-            <section class="app-card">
-                <div class="app-card-header">
-                    <h3 class="app-card-title">Contract</h3>
-                    <p-button label="Edit" icon="pi pi-pencil" severity="secondary" [outlined]="true" [rounded]="true"
-                              (onClick)="onEditContract()"/>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 px-6 pb-6">
-                    <app-field label="Project value" [value]="project.contract?.offerValue | currency:'PLN':'symbol':'1.2-2'"/>
-                    <div>
-                        <span class="app-field-label">Contract status</span>
-                        <p-tag [value]="resolvedContractStatusLabel" [severity]="statusSeverity(project.contract?.status)"/>
-                    </div>
-                    <app-field label="Signing date" [value]="project.contract?.signingDate | date:'dd.MM.yyyy'"/>
-                    <app-field label="Deadline" [value]="project.contract?.deadline | date:'dd.MM.yyyy'"/>
-                    <app-field label="Start date" [value]="project.contract?.startDate | date:'dd.MM.yyyy'"/>
-                    <app-field label="End date" [value]="project.contract?.endDate | date:'dd.MM.yyyy'"/>
-                </div>
-            </section>
-
-            <section class="app-card">
-                <div class="app-card-header">
-                    <h3 class="app-card-title">Project details</h3>
-                    <p-button label="Edit" icon="pi pi-pencil" severity="secondary" [outlined]="true" [rounded]="true"
-                              (onClick)="onEditProject()"/>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 px-6 pb-6">
-                    <app-field label="Name" [value]="project.name"/>
-                    <div>
-                        <span class="app-field-label">Project status</span>
-                        <p-tag [value]="resolvedProjectStatusLabel" [severity]="statusSeverity(project.status)"/>
-                    </div>
-                    <app-field label="Type" [value]="resolvedProjectTypeLabel"/>
-                    <app-field label="Start date" [value]="project.startDate | date:'dd.MM.yyyy'"/>
-                    <app-field label="End date" [value]="project.endDate | date:'dd.MM.yyyy'"/>
-                    <app-field class="sm:col-span-2 lg:col-span-3" label="Note" [value]="project.note" emptyText="No note yet"/>
-                </div>
-            </section>
-
-            <ng-container [ngTemplateOutlet]="stagesCard"/>
-        </div>
-
-        <!-- Side column -->
-        <div class="flex flex-col gap-6">
-            <section class="rounded-2xl border border-gray-200 bg-gray-100">
-                <div class="rounded-2xl bg-white px-6 pt-6 pb-8 shadow-theme-xs">
-                    <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <h3 class="app-card-title">Payments</h3>
-                            <p class="app-card-subtitle m-0">Share of the contract value paid</p>
+    @switch (view) {
+        @case ('overview') {
+            <div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_6px)_minmax(0,1fr)] gap-6 items-start">
+                <!-- Main column -->
+                <div class="flex flex-col gap-6 min-w-0">
+                    <section class="app-card">
+                        <div class="app-card-header">
+                            <h3 class="app-card-title">Contract</h3>
+                            <p-button label="Edit" icon="pi pi-pencil" severity="secondary" [outlined]="true" [rounded]="true"
+                                      (onClick)="onEditContract()"/>
                         </div>
-                        <a [routerLink]="['/projects', project.id, 'finance']" [queryParams]="{tab: 'installments'}"
-                           class="text-sm font-medium text-brand-500 no-underline hover:text-brand-600">Finance</a>
-                    </div>
-                    <div class="relative mx-auto mt-10 w-[240px]">
-                        <svg viewBox="0 0 200 110" class="block w-full" role="img"
-                             [attr.aria-label]="paidPercent + '% of the contract value paid'">
-                            <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke-linecap="round" stroke-width="14"
-                                  class="stroke-gray-200"/>
-                            <path *ngIf="paidPercent > 0" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke-linecap="round"
-                                  stroke-width="14" class="stroke-brand-500"
-                                  [attr.stroke-dasharray]="gaugeArcLength" [attr.stroke-dashoffset]="gaugeOffset"/>
-                        </svg>
-                        <div class="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1.5">
-                            <span class="app-kpi-value">{{ paidPercent }}%</span>
-                            <span class="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-700">{{ installmentsSummary }}</span>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 px-6 pb-6">
+                            <app-field label="Project value" [value]="project.contract?.offerValue | currency:'PLN':'symbol':'1.2-2'"/>
+                            <div>
+                                <span class="app-field-label">Contract status</span>
+                                <p-tag [value]="resolvedContractStatusLabel" [severity]="statusSeverity(project.contract?.status)"/>
+                            </div>
+                            <app-field label="Signing date" [value]="project.contract?.signingDate | date:'dd.MM.yyyy'"/>
+                            <app-field label="Deadline" [value]="project.contract?.deadline | date:'dd.MM.yyyy'"/>
+                            <app-field label="Start date" [value]="project.contract?.startDate | date:'dd.MM.yyyy'"/>
+                            <app-field label="End date" [value]="project.contract?.endDate | date:'dd.MM.yyyy'"/>
                         </div>
-                    </div>
+                    </section>
+
+                    <section class="app-card">
+                        <div class="app-card-header">
+                            <h3 class="app-card-title">Project details</h3>
+                            <p-button label="Edit" icon="pi pi-pencil" severity="secondary" [outlined]="true" [rounded]="true"
+                                      (onClick)="onEditProject()"/>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 px-6 pb-6">
+                            <app-field label="Name" [value]="project.name"/>
+                            <div>
+                                <span class="app-field-label">Project status</span>
+                                <p-tag [value]="resolvedProjectStatusLabel" [severity]="statusSeverity(project.status)"/>
+                            </div>
+                            <app-field label="Type" [value]="resolvedProjectTypeLabel"/>
+                            <app-field label="Start date" [value]="project.startDate | date:'dd.MM.yyyy'"/>
+                            <app-field label="End date" [value]="project.endDate | date:'dd.MM.yyyy'"/>
+                            <app-field class="sm:col-span-2 lg:col-span-3" label="Note" [value]="project.note" emptyText="No note yet"/>
+                        </div>
+                    </section>
                 </div>
-                <dl class="m-0 grid grid-cols-3 px-2 py-4 text-center">
-                    <div class="px-2">
-                        <dt class="text-xs text-gray-500">Value</dt>
-                        <dd class="m-0 mt-1 text-base font-semibold text-gray-800 tabular-nums whitespace-nowrap">{{ (project.contract?.offerValue ?? 0) | currency:'PLN':'symbol':'1.0-0' }}</dd>
-                    </div>
-                    <div class="px-2 border-x border-gray-200">
-                        <dt class="text-xs text-gray-500">Paid</dt>
-                        <dd class="m-0 mt-1 text-base font-semibold text-gray-800 tabular-nums whitespace-nowrap">{{ paidValue | currency:'PLN':'symbol':'1.0-0' }}</dd>
-                    </div>
-                    <div class="px-2">
-                        <dt class="text-xs text-gray-500">Outstanding</dt>
-                        <dd class="m-0 mt-1 text-base font-semibold text-gray-800 tabular-nums whitespace-nowrap">{{ outstandingValue | currency:'PLN':'symbol':'1.0-0' }}</dd>
-                    </div>
-                </dl>
-            </section>
 
-            <section class="app-card">
-                <div class="app-card-header">
-                    <h3 class="app-card-title">People</h3>
+                <!-- Side column -->
+                <div class="flex flex-col gap-6">
+                    <section class="rounded-2xl border border-gray-200 bg-gray-100">
+                        <div class="rounded-2xl bg-white px-6 pt-6 pb-8 shadow-theme-xs">
+                            <div class="flex items-start justify-between gap-4">
+                                <div>
+                                    <h3 class="app-card-title">Payments</h3>
+                                    <p class="app-card-subtitle m-0">Share of the contract value paid</p>
+                                </div>
+                                <a [routerLink]="['/projects', project.id, 'finance']" [queryParams]="{tab: 'installments'}"
+                                   class="text-sm font-medium text-brand-500 no-underline hover:text-brand-600">Finance</a>
+                            </div>
+                            <div class="relative mx-auto mt-10 w-[240px]">
+                                <svg viewBox="0 0 200 110" class="block w-full" role="img"
+                                     [attr.aria-label]="paidPercent + '% of the contract value paid'">
+                                    <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke-linecap="round" stroke-width="14"
+                                          class="stroke-gray-200"/>
+                                    <path *ngIf="paidPercent > 0" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke-linecap="round"
+                                          stroke-width="14" class="stroke-brand-500"
+                                          [attr.stroke-dasharray]="gaugeArcLength" [attr.stroke-dashoffset]="gaugeOffset"/>
+                                </svg>
+                                <div class="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1.5">
+                                    <span class="app-gauge-value">{{ paidPercent }}%</span>
+                                    <span class="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-700">{{ installmentsSummary }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <dl class="m-0 grid grid-cols-3 px-2 py-4 text-center">
+                            <div class="px-2">
+                                <dt class="text-xs text-gray-500">Value</dt>
+                                <dd class="m-0 mt-1 text-base font-semibold text-gray-800 tabular-nums whitespace-nowrap">{{ (project.contract?.offerValue ?? 0) | currency:'PLN':'symbol':'1.0-0' }}</dd>
+                            </div>
+                            <div class="px-2 border-x border-gray-200">
+                                <dt class="text-xs text-gray-500">Paid</dt>
+                                <dd class="m-0 mt-1 text-base font-semibold text-gray-800 tabular-nums whitespace-nowrap">{{ paidValue | currency:'PLN':'symbol':'1.0-0' }}</dd>
+                            </div>
+                            <div class="px-2">
+                                <dt class="text-xs text-gray-500">Outstanding</dt>
+                                <dd class="m-0 mt-1 text-base font-semibold text-gray-800 tabular-nums whitespace-nowrap">{{ outstandingValue | currency:'PLN':'symbol':'1.0-0' }}</dd>
+                            </div>
+                        </dl>
+                    </section>
+
+                    <section class="app-card">
+                        <div class="app-card-header">
+                            <h3 class="app-card-title">People</h3>
+                        </div>
+                        <ul class="list-none m-0 px-6 pb-4">
+                            <li *ngFor="let person of people" class="border-b border-gray-100 last:border-b-0">
+                                <a [routerLink]="person.route" class="flex items-center gap-3 py-3 no-underline group">
+                                    <span class="app-avatar" [class]="person.avatarClass">{{ person.initials }}</span>
+                                    <span class="flex flex-col min-w-0">
+                                        <span class="text-sm font-medium text-gray-800 truncate group-hover:text-brand-500">{{ person.name }}</span>
+                                        <span class="text-xs text-gray-500">{{ person.role }}</span>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                    </section>
                 </div>
-                <ul class="list-none m-0 px-6 pb-4">
-                    <li *ngFor="let person of people" class="border-b border-gray-100 last:border-b-0">
-                        <a [routerLink]="person.route" class="flex items-center gap-3 py-3 no-underline group">
-                            <span class="app-avatar" [class]="person.avatarClass">{{ person.initials }}</span>
-                            <span class="flex flex-col min-w-0">
-                                <span class="text-sm font-medium text-gray-800 truncate group-hover:text-brand-500">{{ person.name }}</span>
-                                <span class="text-xs text-gray-500">{{ person.role }}</span>
-                            </span>
-                        </a>
-                    </li>
-                </ul>
-            </section>
-        </div>
-    </div>
-
-    <ng-template #otherView>
-        <ng-container [ngSwitch]="view">
-            <ng-container *ngSwitchCase="'stages'" [ngTemplateOutlet]="stagesCard"/>
-            <project-financial-detail-shell *ngSwitchCase="'finance'"/>
-        </ng-container>
-    </ng-template>
-
-    <ng-template #stagesCard>
-        <stage-list-shell [stages]="project.stages ?? []" [projectId]="project.id!"/>
-    </ng-template>
+            </div>
+        }
+        @case ('stages') {
+            <stage-list-shell [stages]="project.stages ?? []" [projectId]="project.id!"/>
+        }
+        @case ('finance') {
+            <project-financial-detail-shell/>
+        }
+    }
 </div>
 
 <ng-template #loading>

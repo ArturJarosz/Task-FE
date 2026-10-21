@@ -64,6 +64,11 @@
 
   --shadow-theme-xs: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
   --shadow-focus-ring: 0 0 0 4px rgba(70, 95, 255, 0.12);
+
+  /* Control height (h-control): buttons, inputs, the segmented control frame, the calendar toolbar.
+     Items inside a segmented frame (2px padding) use h-control-inner. The PrimeNG preset uses the same value. */
+  --spacing-control: 2.75rem;
+  --spacing-control-inner: calc(var(--spacing-control) - 0.25rem);
 }
 
 /* ---------- App-level sizes ---------- */
@@ -87,7 +92,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* PrimeNG: inherit Outfit and use 14px text in controls and tables (TailAdmin density) */
+/* PrimeNG: inherit Outfit and use 16px text in controls and tables */
 .p-component,
 .p-inputtext,
 .p-select-label,
@@ -101,6 +106,12 @@ body {
 .p-button-label,
 .p-datatable .p-datatable-tbody > tr > td {
   font-size: 1rem;
+}
+/* Fixed line height, so the preset's padding gives 44px controls whatever the inherited line height is */
+.p-inputtext,
+.p-select-label,
+.p-button-label {
+  line-height: 1.5rem;
 }
 .p-datatable .p-datatable-thead > tr > th {
   font-size: 0.9375rem;
@@ -149,7 +160,10 @@ body {
     @apply block mb-1.5 text-sm font-medium text-gray-700;
   }
 
-  /* KPI card content */
+  /* KPI card: <section class="app-card app-kpi-card"> with an icon tile, then a min-w-0 column with label and value */
+  .app-kpi-card {
+    @apply flex items-center gap-4 p-5;
+  }
   .app-kpi-icon {
     @apply flex items-center justify-center w-12 h-12 rounded-xl bg-gray-100 text-gray-800;
   }
@@ -157,6 +171,10 @@ body {
     @apply text-sm text-gray-500;
   }
   .app-kpi-value {
+    @apply text-2xl leading-8 font-bold text-gray-800 tabular-nums;
+  }
+  /* Large standalone figure, e.g. the paid percentage in the payments gauge */
+  .app-gauge-value {
     @apply text-[32px] leading-[40px] font-bold text-gray-800 tabular-nums;
   }
 
@@ -183,7 +201,7 @@ body {
   }
   /* Works on <a> (routed tabs) and <button> (filters) */
   .app-seg-item {
-    @apply inline-flex items-center h-10 px-4 rounded-md border-0 bg-transparent cursor-pointer font-[inherit] text-sm font-medium text-gray-500 no-underline hover:text-gray-800;
+    @apply inline-flex items-center h-control-inner px-4 rounded-md border-0 bg-transparent cursor-pointer font-[inherit] text-sm font-medium text-gray-500 no-underline hover:text-gray-800;
   }
   .app-seg-item.active {
     @apply bg-white text-gray-900 shadow-theme-xs;
@@ -224,7 +242,7 @@ body {
 }
 /* Toolbar buttons look like outline secondary buttons; the view switcher like the segmented control */
 .app-calendar .fc .fc-button {
-  @apply h-10 px-4 rounded-lg border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-theme-xs capitalize;
+  @apply h-control px-4 rounded-lg border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-theme-xs capitalize;
 }
 .app-calendar .fc .fc-button:hover:not(:disabled) {
   @apply bg-gray-50 text-gray-800;
@@ -239,7 +257,7 @@ body {
   @apply gap-0.5 p-0.5 rounded-lg bg-gray-100;
 }
 .app-calendar .fc .fc-button-group > .fc-button {
-  @apply h-9 rounded-md border-0 bg-transparent text-gray-500 shadow-none;
+  @apply h-control-inner rounded-md border-0 bg-transparent text-gray-500 shadow-none;
   margin-left: 0;
 }
 .app-calendar .fc .fc-button-group > .fc-button.fc-button-active {
@@ -247,7 +265,7 @@ body {
 }
 .app-calendar .fc .fc-prev-button,
 .app-calendar .fc .fc-next-button {
-  @apply w-10 px-0;
+  @apply w-control-inner px-0;
 }
 .app-calendar .fc .fc-col-header-cell {
   @apply bg-gray-50 py-2.5 text-xs font-medium text-gray-500;

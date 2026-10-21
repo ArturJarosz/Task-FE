@@ -3,34 +3,10 @@
 <div class="flex flex-col gap-6">
     <!-- KPIs -->
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-        <section class="app-card flex items-center gap-4 p-5">
-            <div class="app-kpi-icon"><i class="pi pi-folder text-xl"></i></div>
-            <div>
-                <div class="app-kpi-label">Projects</div>
-                <div class="text-2xl leading-8 font-bold text-gray-800 tabular-nums">{{ $kpis().total }}</div>
-            </div>
-        </section>
-        <section class="app-card flex items-center gap-4 p-5">
-            <div class="app-kpi-icon"><i class="pi pi-play-circle text-xl"></i></div>
-            <div>
-                <div class="app-kpi-label">Active</div>
-                <div class="text-2xl leading-8 font-bold text-gray-800 tabular-nums">{{ $kpis().active }}</div>
-            </div>
-        </section>
-        <section class="app-card flex items-center gap-4 p-5">
-            <div class="app-kpi-icon"><i class="pi pi-check-circle text-xl"></i></div>
-            <div>
-                <div class="app-kpi-label">Finished</div>
-                <div class="text-2xl leading-8 font-bold text-gray-800 tabular-nums">{{ $kpis().finished }}</div>
-            </div>
-        </section>
-        <section class="app-card flex items-center gap-4 p-5">
-            <div class="app-kpi-icon"><i class="pi pi-wallet text-xl"></i></div>
-            <div>
-                <div class="app-kpi-label">Contract value</div>
-                <div class="text-2xl leading-8 font-bold text-gray-800 tabular-nums">{{ $kpis().value | currency:'PLN':'symbol':'1.0-0' }}</div>
-            </div>
-        </section>
+        <app-kpi-card icon="pi pi-folder" label="Projects">{{ $kpis().total }}</app-kpi-card>
+        <app-kpi-card icon="pi pi-play-circle" label="Active">{{ $kpis().active }}</app-kpi-card>
+        <app-kpi-card icon="pi pi-check-circle" label="Finished">{{ $kpis().finished }}</app-kpi-card>
+        <app-kpi-card icon="pi pi-wallet" label="Contract value">{{ $kpis().value | currency:'PLN':'symbol':'1.0-0' }}</app-kpi-card>
     </div>
 
     <!-- Table card -->
