@@ -52,7 +52,8 @@ export class CalendarViewComponent implements OnChanges {
         select: (arg: DateSelectArg) => {
             this.slotSelected.emit({
                 date: arg.start,
-                endDate: arg.end,
+                // FullCalendar's all-day end is exclusive; the app stores the last selected day
+                endDate: arg.allDay ? addDays(arg.end, -1) : arg.end,
                 allDay: arg.allDay,
             });
         },
@@ -75,8 +76,15 @@ export class CalendarViewComponent implements OnChanges {
             id: String(event.id),
             title: event.name,
             start: event.startDateTime,
-            end: event.endDateTime,
+            // All-day events store their last day, FullCalendar expects the day after it
+            end: event.allDay && event.endDateTime ? addDays(new Date(event.endDateTime), 1) : event.endDateTime,
             allDay: event.allDay,
         }));
     }
+}
+
+function addDays(date: Date, days: number): Date {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
 }
