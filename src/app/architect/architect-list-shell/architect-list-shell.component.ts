@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, si
 import {ArchitectStore} from "../state";
 import {Architect} from "../../generated/models/architect";
 import {ArchitectListComponent, ArchitectRow} from "../architect-list/architect-list.component";
-import {LoadErrorComponent, PageCrumb, PageHeaderComponent, TableFooterComponent} from "../../shared";
+import {LoadErrorComponent, KpiCardComponent, PageCrumb, PageHeaderComponent, TableFooterComponent} from "../../shared";
 
 const PAGE_SIZE = 10;
 
@@ -11,7 +11,7 @@ const PAGE_SIZE = 10;
     templateUrl: './architect-list-shell.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [ArchitectListComponent, LoadErrorComponent, PageHeaderComponent, TableFooterComponent]
+    imports: [ArchitectListComponent, LoadErrorComponent, PageHeaderComponent, KpiCardComponent, TableFooterComponent]
 })
 export class ArchitectListShellComponent implements OnInit {
     readonly architectStore = inject(ArchitectStore);

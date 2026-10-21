@@ -41,10 +41,10 @@ export const AppThemePreset = definePreset(Aura, {
       shadow: 'none',
     },
 
-    // 44px controls with 14px text
+    // 44px controls with 16px text (line height fixed at 24px in styles.css)
     formField: {
       paddingX: '0.875rem',
-      paddingY: '0.625rem', // 22px line + 2 x 10px + 2px border = 44px
+      paddingY: '0.5625rem', // 24px line + 2 x 9px + 2px border = 44px
       borderRadius: '{border.radius.md}',
     },
 
@@ -105,8 +105,16 @@ export const AppThemePreset = definePreset(Aura, {
     button: {
       root: {
         paddingX: '1rem',
-        paddingY: '0.625rem', // 22px line + 2 x 10px + 2px border = 44px; size="small" stays smaller
+        paddingY: '0.5625rem', // 24px line + 2 x 9px + 2px border = 44px = --spacing-control in styles.css
         borderRadius: '{border.radius.md}',
+        iconOnlyWidth: 'var(--spacing-control)', // icon-only buttons are square
+        // All buttons share one height: size="small" renders like the default size
+        sm: {
+          fontSize: '1rem',
+          paddingX: '1rem',
+          paddingY: '0.5625rem',
+          iconOnlyWidth: 'var(--spacing-control)',
+        },
       },
     },
 

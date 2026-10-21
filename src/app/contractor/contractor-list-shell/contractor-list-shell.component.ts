@@ -8,6 +8,7 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ButtonModule} from "primeng/button";
 import {AddContractorComponent} from "../add-contractor/add-contractor.component";
 import {
+    KpiCardComponent,
     PageCrumb,
     PageHeaderComponent,
     PartnerListComponent,
@@ -25,7 +26,7 @@ const PAGE_SIZE = 10;
     styleUrl: './contractor-list-shell.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [PartnerListComponent, AddContractorComponent, ConfirmDialogModule, ButtonModule, PageHeaderComponent, TableFooterComponent]
+    imports: [PartnerListComponent, AddContractorComponent, ConfirmDialogModule, ButtonModule, PageHeaderComponent, KpiCardComponent, TableFooterComponent]
 })
 export class ContractorListShellComponent implements OnInit {
 

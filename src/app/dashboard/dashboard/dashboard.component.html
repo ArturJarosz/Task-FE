@@ -3,53 +3,15 @@
 <div class="flex flex-col gap-6">
     <!-- KPIs -->
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-        <section class="app-card p-6">
-            <div class="app-kpi-icon"><i class="pi pi-folder text-xl" aria-hidden="true"></i></div>
-            <div class="mt-5 app-kpi-label">Active projects</div>
-            @if (projects) {
-                <div class="mt-2 flex flex-wrap items-end justify-between gap-2">
-                    <span class="app-kpi-value">{{ activeProjects.length }}</span>
-                    <span class="rounded-full px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-700">{{ totalProjects }} in total</span>
-                </div>
-            } @else if (projectsLoadFailed) {
-                <div class="mt-2 text-sm text-gray-500">Couldn't load</div>
-            } @else {
-                <p-skeleton styleClass="mt-2" height="2.375rem" width="6rem"/>
-            }
-        </section>
-        <section class="app-card p-6">
-            <div class="app-kpi-icon"><i class="pi pi-arrow-down-left text-xl" aria-hidden="true"></i></div>
-            <div class="mt-5 app-kpi-label">Income in {{ currentYear }} (gross)</div>
-            @if (report) {
-                <div class="mt-2 app-kpi-value">{{ yearTotals.income | currency:'PLN':'symbol':'1.2-2' }}</div>
-            } @else if (reportLoadFailed) {
-                <div class="mt-2 text-sm text-gray-500">Couldn't load</div>
-            } @else {
-                <p-skeleton styleClass="mt-2" height="2.375rem" width="10rem"/>
-            }
-        </section>
-        <section class="app-card p-6">
-            <div class="app-kpi-icon"><i class="pi pi-arrow-up-right text-xl" aria-hidden="true"></i></div>
-            <div class="mt-5 app-kpi-label">Expenses in {{ currentYear }} (gross)</div>
-            @if (report) {
-                <div class="mt-2 app-kpi-value">{{ yearTotals.expenses | currency:'PLN':'symbol':'1.2-2' }}</div>
-            } @else if (reportLoadFailed) {
-                <div class="mt-2 text-sm text-gray-500">Couldn't load</div>
-            } @else {
-                <p-skeleton styleClass="mt-2" height="2.375rem" width="10rem"/>
-            }
-        </section>
-        <section class="app-card p-6">
-            <div class="app-kpi-icon"><i class="pi pi-wallet text-xl" aria-hidden="true"></i></div>
-            <div class="mt-5 app-kpi-label">Balance in {{ currentYear }} (gross)</div>
-            @if (report) {
-                <div class="mt-2 app-kpi-value">{{ yearTotals.balance | currency:'PLN':'symbol':'1.2-2' }}</div>
-            } @else if (reportLoadFailed) {
-                <div class="mt-2 text-sm text-gray-500">Couldn't load</div>
-            } @else {
-                <p-skeleton styleClass="mt-2" height="2.375rem" width="10rem"/>
-            }
-        </section>
+        <app-kpi-card icon="pi pi-folder" label="Active projects" [loading]="!projects" [loadFailed]="projectsLoadFailed">
+            {{ activeProjects.length }}
+            <span class="rounded-full px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-700">{{ totalProjects }} in total</span>
+        </app-kpi-card>
+        @for (kpi of yearKpis; track kpi.key) {
+            <app-kpi-card [icon]="kpi.icon" label="{{ kpi.label }} in {{ currentYear }} (gross)" [loading]="!report" [loadFailed]="reportLoadFailed">
+                {{ yearTotals[kpi.key] | currency:'PLN':'symbol':'1.2-2' }}
+            </app-kpi-card>
+        }
     </div>
 
     <!-- Chart next to the year summary -->
