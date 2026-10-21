@@ -37,7 +37,7 @@ Tailwind's `text-xs` / `text-sm` / `text-base` are redefined in `styles.css` as 
 | Page title | 22px / 600 | `.app-page-title`, one per page |
 | Dialog title | 26px / 600 | Dialog headers |
 | Card title | 20px / 600 | `.app-card-title` |
-| KPI number | 32px / 700 (24px in compact cards) | `.app-kpi-value` |
+| KPI number | 24px / 700 (32px for a standalone figure such as the payments gauge) | `.app-kpi-value` (`.app-gauge-value`) |
 | Body | 16px / 400 | Everything else |
 | Value | 16px / 500 | `.app-field-value`, names in tables |
 | Form label | 16px / 500, `gray-700` | `.app-form-label` |
@@ -48,7 +48,7 @@ Money and counts use `.app-num` (tabular, right-aligned) and the PLN pipe: `{{ v
 
 ### Shape and spacing
 - Radius: 8px controls, 12px icon tiles and menus, 16px cards, 24px dialogs, full for tags and avatars.
-- Controls are 44px tall (inputs, selects, buttons). Small buttons and segmented items are 36–40px.
+- Controls are 44px tall: inputs, selects, buttons, the segmented control frame (40px items plus 2px padding) and the calendar toolbar, so controls in one row always line up. The height is one token, `--spacing-control` in `styles.css` (`h-control`, and `h-control-inner` for items inside a segmented frame); the preset's padding adds up to it. Icon-only buttons are 44×44. `size="small"` renders like the default size, so don't use it.
 - Gaps: 24px between cards and grid columns (`gap-6`), 24px card padding (`p-6`), 20px vertical card header padding (`py-5`).
 - Shadows: only `shadow-theme-xs` on inputs, outline buttons, and the active segment, plus a soft overlay shadow on dialogs and menus.
 - Focus: 4px soft blue halo (`shadow-focus-ring`), set in the preset.
@@ -89,14 +89,14 @@ A row of cards is either one full-width card, or cards whose widths are 25%, 50%
 - Three cards: `grid grid-cols-1 xl:grid-cols-4 gap-6`, with the widest card `xl:col-span-2` (25 / 25 / 50).
 
 ### Dashboard
-1. A row of four KPI cards (see Card rows). Each has a 48px grey icon tile, a label, a 30px number, and a delta or context pill.
+1. A row of four KPI cards (see Card rows). Each is an `<app-kpi-card icon="pi pi-…" label="…" [loading] [loadFailed]>` (`src/app/shared/kpi-card`), the same card the list pages use: a 48px grey icon tile on the left, then the label above a 24px number (the projected content), plus an optional context pill next to the number. It shows the skeleton and "Couldn't load" itself.
 2. A chart card (title, subtitle, segmented Monthly / Quarterly / Annually) next to a summary card.
 3. List cards ("Upcoming events") next to table cards ("Active projects"). Each shows at most 5 rows and has a "See all" outline button that opens the full page.
 
 Today (`src/app/dashboard`): Active projects, plus gross income, expenses and balance for the current year; an income and expenses chart (Annually covers the last 5 years) next to the year summary; upcoming events next to active projects. The dashboard keeps its own `DashboardStore`, so it never changes the financial report page's filters.
 
 ### List page (Projects, Clients…)
-1. Optional row of small KPI cards.
+1. Optional row of `<app-kpi-card>`s.
 2. One card holding the table. Its header has the title and subtitle on the left; on the right sit a status segmented filter, a "Filter" outline button, and the primary "New project" button.
 3. The table header band is `gray-50`. Rows have a checkbox and a two-line name (name in 500 `gray-800`, type in 12px `gray-500`). People appear as initials avatars plus name and role, followed by status pills, money right-aligned, and a `⋯` row menu.
 4. The footer has "Showing 1–10 of N" plus Previous and Next buttons (`p-paginator` styled to match).
@@ -104,7 +104,7 @@ Today (`src/app/dashboard`): Active projects, plus gross income, expenses and ba
 ### Detail page (Project, Client…)
 1. A header card with a 72px brand-tinted icon tile, the name (20px/600), a status pill, and a meta line with dividers (type | client | architect). Export and `⋯` sit on the right.
 2. Routed sub-pages as a segmented control (`.app-seg`): Overview, Stages, Finance, Documents.
-3. Two columns: the main column holds section cards (Contract, Project details, Stages); the side column (about 340px) holds the payments summary and People.
+3. Two columns: the main column holds section cards (Contract, Project details); sub-page content such as the stages list lives only on its own tab, never repeated on Overview; the side column (about 340px) holds the payments summary and People.
 4. Section cards have the title on the left and a rounded "Edit" outline button with a pencil on the right. Fields sit in a 3-column grid with label above value. Empty values show "Not set" in `gray-400`.
 
 ### Edit dialog

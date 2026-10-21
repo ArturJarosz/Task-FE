@@ -4,7 +4,7 @@ import {PeriodType} from "../../generated/models/period-type";
 import {FinancialReportPeriod} from "../../generated/models/financial-report-period";
 import {FinancialReportCategoryGroup} from "../../generated/models/financial-report-category-group";
 import {FinancialPartialData} from "../../generated/models/financial-partial-data";
-import {LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../shared";
+import {LoadErrorComponent, KpiCardComponent, PageCrumb, PageHeaderComponent} from "../../shared";
 import {DatePickerModule} from "primeng/datepicker";
 import {ChartModule} from "primeng/chart";
 import {TableModule} from "primeng/table";
@@ -54,7 +54,7 @@ const EXPENSE_CATEGORIES: CategoryDef[] = [
     styleUrl: './financial-report.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [PageHeaderComponent, LoadErrorComponent, DatePickerModule, ChartModule, TableModule, SkeletonModule, FormsModule, NgIf, NgFor, NgClass, CurrencyPipe, DatePipe]
+    imports: [PageHeaderComponent, LoadErrorComponent, KpiCardComponent, DatePickerModule, ChartModule, TableModule, SkeletonModule, FormsModule, NgIf, NgFor, NgClass, CurrencyPipe, DatePipe]
 })
 export class FinancialReportComponent implements OnInit, OnChanges {
     @Input()

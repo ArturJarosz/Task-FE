@@ -8,7 +8,7 @@ import {TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {CalendarEvent, Client, ClientType, ConfigurationEntry, FinancialReport, FinancialReportPeriod, Project, ProjectStatus} from "../../generated/models";
 import {PeriodType} from "../../generated/models/period-type";
-import {EmptyStateComponent, PageCrumb, PageHeaderComponent} from "../../shared";
+import {EmptyStateComponent, KpiCardComponent, PageCrumb, PageHeaderComponent} from "../../shared";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {statusSeverity} from "../../shared/status-severity";
 import {barChartOptions, cssColor, periodLabel} from "../../shared/utils/chart-utils";
@@ -29,7 +29,7 @@ export interface YearTotals {
     templateUrl: './dashboard.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [PageHeaderComponent, EmptyStateComponent, ButtonModule, ChartModule, SkeletonModule, TableModule, TagModule,
+    imports: [PageHeaderComponent, EmptyStateComponent, KpiCardComponent, ButtonModule, ChartModule, SkeletonModule, TableModule, TagModule,
         RouterLink, CurrencyPipe]
 })
 export class DashboardComponent implements OnInit, OnChanges {
@@ -72,6 +72,11 @@ export class DashboardComponent implements OnInit, OnChanges {
         {label: 'Annually', value: PeriodType.YEARLY},
     ];
     readonly currentYear = new Date().getFullYear();
+    readonly yearKpis: {key: keyof YearTotals, label: string, icon: string}[] = [
+        {key: 'income', label: 'Income', icon: 'pi pi-arrow-down-left'},
+        {key: 'expenses', label: 'Expenses', icon: 'pi pi-arrow-up-right'},
+        {key: 'balance', label: 'Balance', icon: 'pi pi-wallet'},
+    ];
 
     activeProjects: Project[] = [];
     totalProjects = 0;

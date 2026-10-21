@@ -31,7 +31,7 @@ import {TagModule} from "primeng/tag";
 import {DialogModule} from "primeng/dialog";
 import {MenuModule} from "primeng/menu";
 import {SkeletonModule} from "primeng/skeleton";
-import {NgFor, NgIf, NgSwitch, NgSwitchCase, NgTemplateOutlet, CurrencyPipe, DatePipe} from "@angular/common";
+import {NgFor, NgIf, CurrencyPipe, DatePipe} from "@angular/common";
 import {RouterLink, RouterLinkActive} from "@angular/router";
 import {TooltipModule} from "primeng/tooltip";
 import {MenuItem} from "primeng/api";
@@ -55,7 +55,7 @@ const GAUGE_ARC_LENGTH = Math.PI * 80;
     styleUrls: ['./project-detail.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [LoadErrorComponent, FieldComponent, PageHeaderComponent, StageListShellComponent, ProjectFinancialDetailShellComponent, SelectModule, DatePickerModule, ButtonModule, InputTextModule, Textarea, TagModule, DialogModule, MenuModule, SkeletonModule, ReactiveFormsModule, NgIf, NgFor, NgSwitch, NgSwitchCase, NgTemplateOutlet, RouterLink, RouterLinkActive, CurrencyPipe, DatePipe, TooltipModule]
+    imports: [LoadErrorComponent, FieldComponent, PageHeaderComponent, StageListShellComponent, ProjectFinancialDetailShellComponent, SelectModule, DatePickerModule, ButtonModule, InputTextModule, Textarea, TagModule, DialogModule, MenuModule, SkeletonModule, ReactiveFormsModule, NgIf, NgFor, RouterLink, RouterLinkActive, CurrencyPipe, DatePipe, TooltipModule]
 })
 export class ProjectDetailComponent implements OnChanges {
     @Input()
