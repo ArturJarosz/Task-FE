@@ -1,0 +1,190 @@
+<div class="text-sm border-t border-gray-200">
+    <!-- Connection -->
+    <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-2.5 border-b border-gray-100"
+         aria-live="polite">
+        <div class="min-w-0">
+            <span class="font-medium text-gray-800">Connection</span>
+            @if (connectionCheckFailed) {
+                <p class="m-0 text-xs text-gray-500">Couldn't check the connection</p>
+            } @else if (connectionText) {
+                <p class="m-0 text-xs text-gray-500">
+                    {{ connectionText.hint }}
+                    @if (connection?.checkedDateTime) {
+                        · Checked at {{ connection!.checkedDateTime | date:'HH:mm' }}
+                    }
+                </p>
+                @if (showConnectionMessage) {
+                    <p class="m-0 mt-1 text-xs text-gray-500 break-words font-mono">{{ connection!.message }}</p>
+                }
+            } @else {
+                <p-skeleton width="16rem" height="1rem" styleClass="mt-1"/>
+            }
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+            <!-- While checking, the button's spinner stands in for the status -->
+            @if (!connectionChecking && connection?.status) {
+                <p-tag [value]="connectionText!.label" [severity]="statusSeverity(connection!.status)"/>
+            }
+            <!-- The tooltip sits on a wrapper: a disabled button gets no pointer events -->
+            <span class="inline-flex" pTooltip="Save your changes first: the check uses the saved settings"
+                  tooltipPosition="left" [tooltipDisabled]="!form.dirty">
+                <p-button label="Check connection" icon="pi pi-refresh" severity="secondary" [outlined]="true"
+                          [loading]="connectionChecking" [disabled]="form.dirty" (onClick)="checkConnection.emit()"/>
+            </span>
+        </div>
+    </div>
+
+    @if (loadFailed) {
+        <app-empty-state icon="pi pi-exclamation-triangle" title="Couldn't load Google Calendar settings"
+                         text="Check your connection and try again.">
+            <p-button label="Try again" icon="pi pi-refresh" severity="secondary" [outlined]="true" (onClick)="retry.emit()"/>
+        </app-empty-state>
+    } @else if (loading) {
+        @for (row of [1, 2, 3, 4]; track row) {
+            <div class="flex items-center justify-between gap-4 px-5 py-3 border-b border-gray-100">
+                <p-skeleton width="12rem" height="1rem"/>
+                <p-skeleton width="10rem" height="2.75rem"/>
+            </div>
+        }
+    } @else {
+        <!-- No form submit: Enter in a field would otherwise submit natively and reload the page -->
+        <form [formGroup]="form" (submit)="$event.preventDefault(); onSave()">
+            <!-- Sync on/off -->
+            <div class="flex items-center justify-between gap-4 px-5 py-2.5 border-b border-gray-100">
+                <div class="min-w-0">
+                    <label for="calendarSyncEnabled" class="font-medium text-gray-800">Sync with Google Calendar</label>
+                    <p class="m-0 text-xs" [class]="keyMissing ? 'text-error-600' : 'text-gray-500'">
+                        @if (keyMissing) {
+                            Add a service account key to turn sync on
+                        } @else {
+                            Events are sent to Google right away and changes made there come back every 15 minutes
+                        }
+                    </p>
+                </div>
+                <p-toggleswitch inputId="calendarSyncEnabled" formControlName="enabled"/>
+            </div>
+
+            <!-- Service account key -->
+            <div class="px-5 py-2.5 border-b border-gray-100">
+                <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-1">
+                            <label for="calendarCredentials" class="font-medium text-gray-800">Service account key</label>
+                            <!-- autoHide off: the guide stays open while the pointer is on it, so its links can be clicked -->
+                            <p-button icon="pi pi-question-circle" [text]="true" [rounded]="true" severity="secondary"
+                                      ariaLabel="How to get a service account key" [pTooltip]="keyGuide"
+                                      tooltipPosition="bottom" tooltipEvent="both" [autoHide]="false"
+                                      tooltipStyleClass="max-w-md"/>
+                        </div>
+                        <p class="m-0 text-xs text-gray-500 break-all">
+                            @if (keySaved && savedKeyEmail) {
+                                Saved for {{ savedKeyEmail }}
+                            } @else if (keySaved) {
+                                Saved
+                            } @else {
+                                Not set
+                            }
+                        </p>
+                    </div>
+                    @if (keySaved && !replacingKey) {
+                        <p-button label="Replace key" icon="pi pi-key" severity="secondary" [outlined]="true"
+                                  (onClick)="onReplaceKey()"/>
+                    }
+                </div>
+                @if (!keySaved || replacingKey) {
+                    <div class="mt-3">
+                        <textarea id="calendarCredentials" pTextarea formControlName="credentials" rows="6"
+                                  class="w-full font-mono text-xs" spellcheck="false" autocomplete="off"
+                                  placeholder='{"type": "service_account", "client_email": "…", "private_key": "…"}'
+                                  aria-describedby="calendarCredentialsHint"
+                                  [attr.aria-invalid]="form.controls.credentials.invalid"></textarea>
+                        <div class="flex flex-wrap items-start justify-between gap-x-4 gap-y-1 mt-1.5">
+                            <p id="calendarCredentialsHint" class="m-0 text-xs min-w-0 break-all"
+                               [class]="form.controls.credentials.invalid ? 'text-error-600'
+                                   : keyForAnotherAccount ? 'text-warning-700' : 'text-gray-500'">
+                                @if (form.controls.credentials.invalid) {
+                                    This isn't a service account key. In Google Cloud open IAM › Service accounts,
+                                    pick the account and add a JSON key
+                                } @else if (keyForAnotherAccount) {
+                                    This key is for {{ $pastedKeyEmail() }}, another account. Saving moves sync to a new
+                                    calendar of that account and sends all events there again
+                                } @else if ($pastedKeyEmail()) {
+                                    Key for {{ $pastedKeyEmail() }}
+                                } @else {
+                                    Paste the JSON key of a Google Cloud service account with the Calendar API enabled.
+                                    It is stored on the server and never shown again
+                                }
+                            </p>
+                            <div class="shrink-0">
+                                <input #keyFile type="file" accept=".json,application/json" class="sr-only"
+                                       tabindex="-1" aria-hidden="true" (change)="onKeyFileSelected($event)"/>
+                                <p-button label="Load from file" icon="pi pi-upload" severity="secondary" [text]="true"
+                                          (onClick)="keyFile.click()"/>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Calendar name -->
+            <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-2.5 border-b border-gray-100">
+                <div class="min-w-0">
+                    <label for="calendarName" class="font-medium text-gray-800">Calendar name</label>
+                    <p id="calendarNameHint" class="m-0 text-xs"
+                       [class]="form.controls.calendarName.invalid ? 'text-error-600' : 'text-gray-500'">
+                        @if (form.controls.calendarName.invalid) {
+                            Enter a name of up to 255 characters
+                        } @else {
+                            Used when the app creates its calendar in Google; renaming later doesn't rename it
+                        }
+                    </p>
+                </div>
+                <input id="calendarName" type="text" pInputText formControlName="calendarName" class="w-full sm:w-64"
+                       aria-describedby="calendarNameHint" [attr.aria-invalid]="form.controls.calendarName.invalid"/>
+            </div>
+
+            <!-- Application name -->
+            <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-2.5 border-b border-gray-100">
+                <div class="min-w-0">
+                    <label for="applicationName" class="font-medium text-gray-800">Application name</label>
+                    <p id="applicationNameHint" class="m-0 text-xs"
+                       [class]="form.controls.applicationName.invalid ? 'text-error-600' : 'text-gray-500'">
+                        @if (form.controls.applicationName.invalid) {
+                            Enter a name of up to 255 characters
+                        } @else {
+                            Sent to Google with every request, so it shows in the Cloud project's logs
+                        }
+                    </p>
+                </div>
+                <input id="applicationName" type="text" pInputText formControlName="applicationName"
+                       class="w-full sm:w-64" aria-describedby="applicationNameHint"
+                       [attr.aria-invalid]="form.controls.applicationName.invalid"/>
+            </div>
+
+            <div class="flex flex-wrap justify-end gap-3 px-5 py-3">
+                @if (form.dirty || replacingKey) {
+                    <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
+                }
+                <p-button type="submit" label="Save changes" [loading]="saving" [disabled]="!canSave"/>
+            </div>
+        </form>
+    }
+</div>
+
+<ng-template #keyGuide>
+    <div class="text-xs leading-relaxed">
+        <p class="m-0 mb-2 font-semibold">How to get a service account key</p>
+        <ol class="m-0 mb-2 pl-4 flex flex-col gap-1">
+            <li>Open <a href="https://console.cloud.google.com/" target="_blank" rel="noopener" class="underline">Google Cloud
+                Console</a> and pick a project, or create one.</li>
+            <li>Go to APIs &amp; Services › Library, find <strong>Google Calendar API</strong> and click Enable.</li>
+            <li>Go to IAM &amp; Admin › Service accounts and click Create service account. Give it a name; it needs no
+                roles.</li>
+            <li>Open the new account, go to the Keys tab and choose Add key › Create new key › JSON. A <code>.json</code>
+                file downloads.</li>
+            <li>Paste the file's contents here or use Load from file, then save.</li>
+        </ol>
+        <p class="m-0">Keep the file private: anyone who has it can use the account.</p>
+    </div>
+</ng-template>
+

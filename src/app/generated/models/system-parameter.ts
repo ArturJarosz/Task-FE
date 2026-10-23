@@ -10,4 +10,9 @@ export interface SystemParameter {
   singleValue?: boolean;
   type?: string;
   value?: string;
+
+  /**
+   * Whether the parameter has a value. Values of SECRET parameters are never returned.
+   */
+  valueSet?: boolean;
 }

@@ -25,7 +25,12 @@
                 <div role="row" class="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_2.75rem] gap-3 items-center px-5 py-1.5 border-b border-gray-100 last:border-b-0 hover:bg-gray-50">
                     <span role="cell" class="min-w-0 truncate font-medium text-gray-800">{{ parameter.name }}</span>
                     <span role="cell" class="app-num text-left">
-                        @if (parameter.value) {
+                        @if (parameter.type === SystemParameterType.SECRET) {
+                            <!-- The API never returns a secret, only whether it is set -->
+                            <span [class]="parameter.valueSet ? 'font-medium text-gray-800' : 'text-gray-400'">
+                                {{ parameter.valueSet ? 'Set' : 'Not set' }}
+                            </span>
+                        } @else if (parameter.value) {
                             <span class="font-medium text-gray-800">{{ formatValue(parameter.value, parameter.type) }}</span>
                         } @else {
                             <span class="text-gray-400">Not set</span>

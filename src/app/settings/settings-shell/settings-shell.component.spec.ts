@@ -73,4 +73,39 @@ describe('SettingsShellComponent', () => {
 
         expect(harness.routeNativeElement!.textContent).toContain("Couldn't load system parameters");
     });
+
+    it('should leave the Google Calendar parameters out of the system parameter list', () => {
+        httpTesting.expectOne(request => request.url.endsWith('/system-parameters')).flush([
+            {id: 1, name: 'Vat tax', type: 'DECIMAL_NUMBER', value: '0.23', defaultValue: '0.23'},
+            {id: 4, name: 'Google calendar credentials', type: 'SECRET', valueSet: false},
+            {id: 7, name: 'Google calendar sync', type: 'BOOLEAN', value: 'false'}
+        ]);
+        harness.detectChanges();
+
+        let rows = harness.routeNativeElement!.querySelectorAll('[aria-label="System parameters"] [role="row"]');
+        let names = Array.from(rows).map(row => row.querySelector('[role="cell"]')?.textContent?.trim()).filter(name => name);
+        expect(names).toEqual(['Vat tax']);
+    });
+
+    it('should show the Google Calendar section with its connection status', async () => {
+        httpTesting.expectOne(request => request.url.endsWith('/system-parameters')).flush([]);
+        await harness.navigateByUrl('/settings/google-calendar', SettingsShellComponent);
+        httpTesting.expectOne(request => request.url.endsWith('/system-parameters')).flush([
+            {id: 4, name: 'Google calendar credentials', type: 'SECRET', valueSet: true},
+            {id: 5, name: 'Google calendar name', type: 'TEXT', value: 'Task', valueSet: true},
+            {id: 6, name: 'Google calendar application name', type: 'TEXT', value: 'Task', valueSet: true},
+            {id: 7, name: 'Google calendar sync', type: 'BOOLEAN', value: 'true', valueSet: true}
+        ]);
+        httpTesting.expectOne(request => request.url.endsWith('/calendars/connection-status')).flush({
+            status: 'CONNECTED', serviceAccountEmail: 'task@project.iam.gserviceaccount.com',
+            checkedDateTime: '2026-10-23T21:40:00'
+        });
+        harness.detectChanges();
+
+        let element = harness.routeNativeElement!;
+        expect(element.querySelector('nav .app-nav-item.active')?.textContent).toContain('Google Calendar');
+        expect(element.textContent).toContain('Connected');
+        expect(element.textContent).toContain('Saved for task@project.iam.gserviceaccount.com');
+        expect((element.querySelector('#calendarName') as HTMLInputElement).value).toBe('Task');
+    });
 });

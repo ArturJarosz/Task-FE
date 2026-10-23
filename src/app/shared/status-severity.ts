@@ -3,13 +3,15 @@
 
 import {CalendarEventSyncStatus} from '../generated/models/calendar-event-sync-status';
 import {ContractStatus} from '../generated/models/contract-status';
+import {GoogleCalendarConnectionStatus} from '../generated/models/google-calendar-connection-status';
 import {ProjectStatus} from '../generated/models/project-status';
 import {StageStatus} from '../generated/models/stage-status';
 import {TaskStatus} from '../generated/models/task-status';
 
 export type TagSeverity = 'secondary' | 'info' | 'warn' | 'success' | 'danger' | 'contrast';
 
-export type Status = ProjectStatus | StageStatus | TaskStatus | ContractStatus | CalendarEventSyncStatus;
+export type Status = ProjectStatus | StageStatus | TaskStatus | ContractStatus | CalendarEventSyncStatus
+    | GoogleCalendarConnectionStatus;
 
 // Several enums share values (TO_DO, DONE, REJECTED, COMPLETED...), so the map is keyed by the string value.
 // Adding a value to any of the enums above makes this a compile error until it gets a severity.
@@ -29,6 +31,14 @@ const SEVERITY: Record<`${Status}`, TagSeverity> = {
     PENDING: 'warn',
     SYNCED: 'success',
     DELETE_PENDING: 'warn',
+    // Google Calendar connection
+    DISABLED: 'secondary',
+    NOT_CONFIGURED: 'secondary',
+    CONNECTED: 'success',
+    INVALID_CREDENTIALS: 'danger',
+    PERMISSION_DENIED: 'danger',
+    CALENDAR_NOT_FOUND: 'danger',
+    CONNECTION_FAILED: 'danger',
 };
 
 export function statusSeverity(status: Status | string | null | undefined): TagSeverity {

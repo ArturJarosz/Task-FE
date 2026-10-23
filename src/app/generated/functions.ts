@@ -181,6 +181,8 @@ export type { UpdateCalendarEvent$Params as UpdateCalendarEvent$Params } from '.
 export { updateCalendarEvent as updateCalendarEvent } from './fn/calendar/update-calendar-event';
 export type { DeleteCalendarEvent$Params as DeleteCalendarEvent$Params } from './fn/calendar/delete-calendar-event';
 export { deleteCalendarEvent as deleteCalendarEvent } from './fn/calendar/delete-calendar-event';
+export type { GetGoogleCalendarConnectionStatus$Params as GetGoogleCalendarConnectionStatus$Params } from './fn/calendar/get-google-calendar-connection-status';
+export { getGoogleCalendarConnectionStatus as getGoogleCalendarConnectionStatus } from './fn/calendar/get-google-calendar-connection-status';
 export type { CreateUser$Params as CreateUser$Params } from './fn/user/create-user';
 export { createUser as createUser } from './fn/user/create-user';
 export type { GetCurrentUser$Params as GetCurrentUser$Params } from './fn/user/get-current-user';

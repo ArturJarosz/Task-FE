@@ -37,6 +37,7 @@ import {ClientRestService, ClientRestServiceImpl} from './client/rest/client-res
 import {ArchitectRestService, ArchitectRestServiceImpl} from './architect/rest/architect-rest.service';
 import {CalendarRestService, CalendarRestServiceImpl} from './calendar/rest/calendar-rest.service';
 import {SystemParameterRestService, SystemParameterRestServiceImpl} from './settings/rest/system-parameter-rest.service';
+import {GoogleCalendarConnectionRestService, GoogleCalendarConnectionRestServiceImpl} from './settings/rest/google-calendar-connection-rest.service';
 
 registerLocaleData(localePl); // money as "50 000,00 zł", dates as "15.10.2026"
 
@@ -89,5 +90,6 @@ export const appConfig: ApplicationConfig = {
         {provide: ArchitectRestService, useClass: ArchitectRestServiceImpl},
         {provide: CalendarRestService, useClass: CalendarRestServiceImpl},
         {provide: SystemParameterRestService, useClass: SystemParameterRestServiceImpl},
+        {provide: GoogleCalendarConnectionRestService, useClass: GoogleCalendarConnectionRestServiceImpl},
     ]
 };
