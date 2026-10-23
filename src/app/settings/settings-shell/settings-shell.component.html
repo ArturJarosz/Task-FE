@@ -1,0 +1,51 @@
+<app-page-header title="Settings" [crumbs]="$crumbs()"/>
+
+<div class="grid grid-cols-1 xl:grid-cols-[calc(25%_-_18px)_minmax(0,1fr)] gap-6 items-start">
+    <nav class="app-card p-4" aria-label="Settings sections">
+        @for (group of sectionGroups; track group.label) {
+            <div class="app-nav-group first:mt-0">{{ group.label }}</div>
+            <ul class="list-none m-0 p-0 flex flex-wrap xl:flex-col gap-1">
+                @for (section of group.sections; track section.key) {
+                    <li>
+                        <a class="app-nav-item" [routerLink]="['/settings', section.key]" routerLinkActive="active"
+                           ariaCurrentWhenActive="page">
+                            <i [class]="section.icon" aria-hidden="true"></i>
+                            <span>{{ section.label }}</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
+    </nav>
+
+    @switch ($section()?.key) {
+        @case ('system-parameters') {
+            <section class="app-card overflow-hidden min-w-0">
+                <div class="px-5 py-4">
+                    <h2 class="m-0 text-base font-semibold text-gray-800">System parameters</h2>
+                    <p class="m-0 text-xs text-gray-500">Values the application uses in its calculations</p>
+                </div>
+                <system-parameter-list [systemParameters]="$systemParameters()"
+                                       [loading]="$loading() && !$loadFailed()"
+                                       [loadFailed]="$loadFailed()"
+                                       (editParameter)="onEdit($event)"
+                                       (retry)="onRetry()"/>
+            </section>
+        }
+        @case ('appearance') {
+            <section class="app-card overflow-hidden min-w-0">
+                <div class="px-5 py-4">
+                    <h2 class="m-0 text-base font-semibold text-gray-800">Appearance</h2>
+                    <p class="m-0 text-xs text-gray-500">Light or dark theme and the brand color</p>
+                </div>
+                <appearance-settings [themeColorParameter]="$themeColorParameter()"
+                                     [loading]="$loading() && !$loadFailed()"
+                                     [loadFailed]="$loadFailed()"
+                                     (saveThemeColor)="onSave($event)"
+                                     (retry)="onRetry()"/>
+            </section>
+        }
+    }
+</div>
+
+<edit-system-parameter [systemParameter]="$editedParameter()" (save)="onSave($event)" (closed)="onEditClosed()"/>

@@ -1,0 +1,53 @@
+@if (loadFailed) {
+    <app-empty-state icon="pi pi-exclamation-triangle" title="Couldn't load system parameters"
+                     text="Check your connection and try again.">
+        <p-button label="Try again" icon="pi pi-refresh" severity="secondary" [outlined]="true" (onClick)="retry.emit()"/>
+    </app-empty-state>
+} @else {
+    <div role="table" aria-label="System parameters" class="text-sm">
+        <div role="row" class="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_2.75rem] gap-3 items-center px-5 py-2 bg-gray-50 border-y border-gray-200 text-xs text-gray-500">
+            <span role="columnheader">Name</span>
+            <span role="columnheader">Value</span>
+            <span role="columnheader">Default</span>
+            <span role="columnheader"><span class="sr-only">Actions</span></span>
+        </div>
+        @if (loading) {
+            @for (row of skeletonRows; track row) {
+                <div role="row" class="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_2.75rem] gap-3 items-center px-5 py-3 border-b border-gray-100 last:border-b-0">
+                    <p-skeleton width="9rem" height="1rem"/>
+                    <p-skeleton width="4rem" height="1rem"/>
+                    <p-skeleton width="4rem" height="1rem"/>
+                    <span></span>
+                </div>
+            }
+        } @else {
+            @for (parameter of systemParameters; track parameter.id) {
+                <div role="row" class="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_2.75rem] gap-3 items-center px-5 py-1.5 border-b border-gray-100 last:border-b-0 hover:bg-gray-50">
+                    <span role="cell" class="min-w-0 truncate font-medium text-gray-800">{{ parameter.name }}</span>
+                    <span role="cell" class="app-num text-left">
+                        @if (parameter.value) {
+                            <span class="font-medium text-gray-800">{{ formatValue(parameter.value, parameter.type) }}</span>
+                        } @else {
+                            <span class="text-gray-400">Not set</span>
+                        }
+                    </span>
+                    <span role="cell" class="app-num text-left">
+                        @if (parameter.defaultValue) {
+                            <span class="text-gray-500">{{ formatValue(parameter.defaultValue, parameter.type) }}</span>
+                        } @else {
+                            <span class="text-gray-400">Not set</span>
+                        }
+                    </span>
+                    <span role="cell" class="text-right">
+                        <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" severity="secondary"
+                                  [pTooltip]="'Edit ' + parameter.name" tooltipPosition="left"
+                                  [ariaLabel]="'Edit ' + parameter.name" (onClick)="editParameter.emit(parameter)"/>
+                    </span>
+                </div>
+            } @empty {
+                <app-empty-state icon="pi pi-sliders-h" title="No system parameters"
+                                 text="Parameters are added by the backend and show up here once they exist."/>
+            }
+        }
+    </div>
+}

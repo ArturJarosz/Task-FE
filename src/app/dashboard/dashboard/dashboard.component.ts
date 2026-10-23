@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {CurrencyPipe} from "@angular/common";
 import {RouterLink} from "@angular/router";
 import {ButtonModule} from "primeng/button";
@@ -11,7 +11,7 @@ import {PeriodType} from "../../generated/models/period-type";
 import {EmptyStateComponent, KpiCardComponent, PageCrumb, PageHeaderComponent} from "../../shared";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {statusSeverity} from "../../shared/status-severity";
-import {barChartOptions, cssColor, periodLabel} from "../../shared/utils/chart-utils";
+import {barChartOptions, cssColor, periodLabel, rebuildOnThemeChange} from "../../shared/utils/chart-utils";
 import {eventDay, eventMonth, eventWhen} from "../../shared/utils/event-date-utils";
 import {isActiveProject} from "../../shared/utils/project-status-utils";
 
@@ -32,7 +32,7 @@ export interface YearTotals {
     imports: [PageHeaderComponent, EmptyStateComponent, KpiCardComponent, ButtonModule, ChartModule, SkeletonModule, TableModule, TagModule,
         RouterLink, CurrencyPipe]
 })
-export class DashboardComponent implements OnInit, OnChanges {
+export class DashboardComponent implements OnChanges {
     @Input()
     report: FinancialReport | null = null;
     @Input()
@@ -86,8 +86,11 @@ export class DashboardComponent implements OnInit, OnChanges {
     chartData: any = {};
     chartOptions: any = {};
 
-    ngOnInit(): void {
-        this.chartOptions = barChartOptions(false);
+    constructor() {
+        rebuildOnThemeChange(() => {
+            this.chartOptions = barChartOptions(false);
+            this.buildChartData();
+        });
     }
 
     ngOnChanges({report, projects, activeProjectStatuses, upcomingEvents}: SimpleChanges): void {

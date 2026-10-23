@@ -30,6 +30,7 @@ import {BreadcrumbService, BreadcrumbServiceImpl} from '../app/shared/breadcrumb
 import {ClientRestService, ClientRestServiceImpl} from '../app/client/rest/client-rest.service';
 import {ArchitectRestService, ArchitectRestServiceImpl} from '../app/architect/rest/architect-rest.service';
 import {CalendarRestService, CalendarRestServiceImpl} from '../app/calendar/rest/calendar-rest.service';
+import {SystemParameterRestService, SystemParameterRestServiceImpl} from '../app/settings/rest/system-parameter-rest.service';
 
 registerLocaleData(localePl);
 
@@ -74,5 +75,6 @@ export function provideTestDependencies(): (Provider | EnvironmentProviders)[] {
         {provide: ClientRestService, useClass: ClientRestServiceImpl},
         {provide: ArchitectRestService, useClass: ArchitectRestServiceImpl},
         {provide: CalendarRestService, useClass: CalendarRestServiceImpl},
+        {provide: SystemParameterRestService, useClass: SystemParameterRestServiceImpl},
     ];
 }

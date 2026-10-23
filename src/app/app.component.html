@@ -1,8 +1,8 @@
 <p-toast [life]="12000"></p-toast>
 
-<div class="min-h-screen flex bg-gray-50 dark:bg-surface-950">
+<div class="min-h-screen flex bg-gray-50">
     <!-- Backdrop for the sidebar on small screens -->
-    <div *ngIf="mobileSidebarOpen" class="fixed inset-0 z-30 bg-gray-900/40 lg:hidden" (click)="closeMobileSidebar()"></div>
+    <div *ngIf="mobileSidebarOpen" class="fixed inset-0 z-30 bg-black/40 lg:hidden" (click)="closeMobileSidebar()"></div>
 
     <!-- Sidebar -->
     <aside id="app-sidebar"
@@ -10,7 +10,7 @@
            [ngClass]="{'lg:w-[90px]': sidebarCollapsed, '-translate-x-full': !mobileSidebarOpen}">
         <div class="flex items-center shrink-0 h-(--app-topbar-h) px-6" [ngClass]="{'lg:justify-center lg:px-0': sidebarCollapsed}">
             <a routerLink="/home" class="flex items-center" aria-label="OMCD home">
-                <img src="assets/images/logo.svg" alt="OMCD" class="h-10"
+                <img src="assets/images/logo.svg" alt="OMCD" class="app-logo h-10"
                      [ngClass]="{'lg:w-10 lg:object-cover lg:object-left': sidebarCollapsed}">
             </a>
         </div>
@@ -76,7 +76,7 @@
                         <ng-container *ngIf="item.route; else elseBlock">
                             <a [routerLink]="item.route" class="p-menuitem-link">
                                 <span [ngClass]="[item.icon ? item.icon : '', 'text-color']"></span>
-                                <span class="text-primary font-semibold">{{ item.label }}</span>
+                                <span class="text-brand-500 font-semibold">{{ item.label }}</span>
                             </a>
                         </ng-container>
                         <ng-template #elseBlock>

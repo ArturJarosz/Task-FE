@@ -1,5 +1,7 @@
 import {PeriodType} from "../../generated/models/period-type";
 import './chart-tooltip';
+import {ChangeDetectorRef, effect, inject, untracked} from "@angular/core";
+import {ThemeService} from "../../theme/theme.service";
 
 // Shared look of the income/expense bar charts on the dashboard and the financial report
 
@@ -12,6 +14,18 @@ const PLN_SHORT = new Intl.NumberFormat('pl-PL', {maximumFractionDigits: 0});
 // Value of a CSS custom property from the @theme block in styles.css
 export function cssColor(variable: string): string {
     return getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
+}
+
+// Runs `rebuild` now and again whenever the theme repaints (dark mode, brand color): charts copy the CSS colors when
+// built, so they would keep the old ones. Call it in a constructor (it needs the component's injection context).
+export function rebuildOnThemeChange(rebuild: () => void): void {
+    const themeService = inject(ThemeService);
+    const changeDetector = inject(ChangeDetectorRef);
+    effect(() => {
+        themeService.$appliedColors();
+        untracked(rebuild);
+        changeDetector.markForCheck();
+    });
 }
 
 // X-axis label of a report period that starts on `startDate` (yyyy-mm-dd): "Oct", "Q4" or "2026", plus the year when asked
@@ -42,7 +56,10 @@ export function barChartOptions(stacked: boolean): any {
             tooltip: {
                 // Beside the hovered bars, so it never covers the data it explains
                 position: 'beside',
+                // Dark tooltip on light pages, light on dark ones: text takes the surface colour
                 backgroundColor: cssColor('--color-gray-800'),
+                titleColor: cssColor('--color-white'),
+                bodyColor: cssColor('--color-white'),
                 padding: 12,
                 cornerRadius: 8,
                 titleFont: {...font, weight: '600'},
