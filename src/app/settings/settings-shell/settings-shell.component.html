@@ -45,6 +45,24 @@
                                      (retry)="onRetry()"/>
             </section>
         }
+        @case ('google-calendar') {
+            <section class="app-card overflow-hidden min-w-0">
+                <div class="px-5 py-4">
+                    <h2 class="m-0 text-base font-semibold text-gray-800">Google Calendar</h2>
+                    <p class="m-0 text-xs text-gray-500">Two-way sync of calendar events through a Google service account</p>
+                </div>
+                <google-calendar-settings [parameters]="$googleCalendarParameters()"
+                                          [loading]="$loading() && !$loadFailed()"
+                                          [loadFailed]="$loadFailed()"
+                                          [saving]="systemParameterStore.systemParametersSaving()"
+                                          [connection]="googleCalendarSettingsStore.connection()"
+                                          [connectionChecking]="googleCalendarSettingsStore.connectionChecking()"
+                                          [connectionCheckFailed]="googleCalendarSettingsStore.connectionCheckFailed()"
+                                          (save)="onGoogleCalendarSave($event)"
+                                          (checkConnection)="onCheckGoogleCalendarConnection()"
+                                          (retry)="onRetry()"/>
+            </section>
+        }
     }
 </div>
 

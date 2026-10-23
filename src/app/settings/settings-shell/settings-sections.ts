@@ -19,6 +19,11 @@ export const SETTINGS_SECTION_GROUPS: SettingsSectionGroup[] = [
             {key: 'appearance', label: 'Appearance', icon: 'pi pi-palette', showsSystemParameters: true},
         ]
     },
+    {
+        label: 'Integrations', sections: [
+            {key: 'google-calendar', label: 'Google Calendar', icon: 'pi pi-calendar', showsSystemParameters: true},
+        ]
+    },
 ];
 
 export const SETTINGS_SECTIONS: SettingsSection[] = SETTINGS_SECTION_GROUPS.flatMap(group => group.sections);

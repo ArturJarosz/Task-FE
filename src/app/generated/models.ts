@@ -30,6 +30,8 @@ export type { FinancialPartialData } from './models/financial-partial-data';
 export type { FinancialReport } from './models/financial-report';
 export type { FinancialReportCategoryGroup } from './models/financial-report-category-group';
 export type { FinancialReportPeriod } from './models/financial-report-period';
+export type { GoogleCalendarConnection } from './models/google-calendar-connection';
+export { GoogleCalendarConnectionStatus } from './models/google-calendar-connection-status';
 export type { Installment } from './models/installment';
 export type { InstallmentProjectData } from './models/installment-project-data';
 export type { Installments } from './models/installments';

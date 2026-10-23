@@ -58,4 +58,36 @@ describe('EditSystemParameterComponent', () => {
 
         expect(saveSpy).not.toHaveBeenCalled();
     });
+
+    it('should edit a boolean with a toggle switch', () => {
+        let saved: SystemParameter | undefined;
+        component.save.subscribe(parameter => saved = parameter);
+        let flag: SystemParameter = {id: 2, name: 'Feature flag', type: 'BOOLEAN', value: 'false'};
+        fixture.componentRef.setInput('systemParameter', flag);
+        fixture.detectChanges();
+
+        expect(document.querySelector('p-toggleswitch')).not.toBeNull();
+        component.booleanValue.setValue(true);
+        component.onSave();
+
+        expect(saved).toEqual({...flag, value: 'true'});
+    });
+
+    it('should edit a secret in an empty password field', () => {
+        let saveSpy = jasmine.createSpy('save');
+        component.save.subscribe(saveSpy);
+        let secret: SystemParameter = {id: 3, name: 'Api key', type: 'SECRET', valueSet: true};
+        fixture.componentRef.setInput('systemParameter', secret);
+        fixture.detectChanges();
+
+        let input = document.querySelector('#systemParameterValue') as HTMLInputElement;
+        expect(input.type).toBe('password');
+        expect(input.value).toBe('');
+        component.onSave();
+        expect(saveSpy).not.toHaveBeenCalled();
+
+        component.textValue.setValue('new-key');
+        component.onSave();
+        expect(saveSpy).toHaveBeenCalledWith({...secret, value: 'new-key'});
+    });
 });
