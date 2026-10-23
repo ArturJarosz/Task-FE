@@ -8,17 +8,29 @@
     </ng-template>
     <!-- No form directive here, so Enter would submit natively and reload the page -->
     <form (submit)="$event.preventDefault(); onSave()">
-        <label for="systemParameterValue" class="app-form-label">Value <span class="text-error-600">*</span></label>
+        <label for="systemParameterValue" class="app-form-label">
+            Value
+            @if (!isBoolean) {
+                <span class="text-error-600">*</span>
+            }
+        </label>
         @if (isNumeric) {
             <p-inputnumber inputId="systemParameterValue" [formControl]="numberValue" mode="decimal" locale="pl-PL"
                            [minFractionDigits]="0" [maxFractionDigits]="maxFractionDigits" [fluid]="true"
                            (onBlur)="numberValue.markAsDirty()"/>
+        } @else if (isBoolean) {
+            <p-toggleswitch inputId="systemParameterValue" [formControl]="booleanValue"/>
+        } @else if (isSecret) {
+            <input id="systemParameterValue" type="password" autocomplete="new-password" [formControl]="textValue"
+                   pInputText class="w-full" (blur)="textValue.markAsDirty()"/>
         } @else {
             <input id="systemParameterValue" type="text" [formControl]="textValue" pInputText class="w-full"
                    (blur)="textValue.markAsDirty()"/>
         }
         @if (valueControl.invalid && valueControl.dirty) {
             <small class="block mt-1.5 text-xs text-error-600">Enter a value</small>
+        } @else if (isSecret) {
+            <small class="block mt-1.5 text-xs text-gray-500">The saved value is never shown. Enter a new one to replace it</small>
         } @else if (defaultValueText) {
             <small class="block mt-1.5 text-xs text-gray-500">Default value: {{ defaultValueText }}</small>
         }

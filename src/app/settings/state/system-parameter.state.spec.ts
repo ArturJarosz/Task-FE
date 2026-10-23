@@ -32,4 +32,39 @@ describe('SystemParameterStore', () => {
 
         expect(store.systemParameters()).toEqual([{...vatTax, value: '0.08'}, {...hourRate, value: '120'}]);
     });
+
+    it('should save a group of parameters in order and run afterSave once at the end', () => {
+        let afterSave = jasmine.createSpy('afterSave');
+        store.updateSystemParameters({
+            systemParameters: [{...vatTax, value: '0.08'}, {...hourRate, value: '120'}],
+            successMessage: 'Saved', afterSave: afterSave
+        });
+        expect(store.systemParametersSaving()).toBeTrue();
+
+        httpTesting.expectOne(request => request.url.endsWith('/system-parameters/1')).flush({...vatTax, value: '0.08'});
+        expect(afterSave).not.toHaveBeenCalled();
+        httpTesting.expectOne(request => request.url.endsWith('/system-parameters/2')).flush({...hourRate, value: '120'});
+
+        expect(store.systemParametersSaving()).toBeFalse();
+        expect(afterSave).toHaveBeenCalledTimes(1);
+        expect(store.systemParameters()).toEqual([{...vatTax, value: '0.08'}, {...hourRate, value: '120'}]);
+    });
+
+    it('should stop a group at the first failed parameter and keep working', () => {
+        let afterSave = jasmine.createSpy('afterSave');
+        store.updateSystemParameters({
+            systemParameters: [{...vatTax, value: 'bad'}, {...hourRate, value: '120'}],
+            successMessage: 'Saved', afterSave: afterSave
+        });
+        httpTesting.expectOne(request => request.url.endsWith('/system-parameters/1'))
+            .flush({message: 'Not valid'}, {status: 400, statusText: 'Bad request'});
+        httpTesting.expectNone(request => request.url.endsWith('/system-parameters/2'));
+        expect(store.systemParametersSaving()).toBeFalse();
+        expect(afterSave).toHaveBeenCalledTimes(1);
+        expect(store.systemParameters()).toEqual([vatTax, hourRate]);
+
+        store.updateSystemParameters({systemParameters: [{...hourRate, value: '120'}], successMessage: 'Saved'});
+        httpTesting.expectOne(request => request.url.endsWith('/system-parameters/2')).flush({...hourRate, value: '120'});
+        expect(store.systemParameters()).toEqual([vatTax, {...hourRate, value: '120'}]);
+    });
 });

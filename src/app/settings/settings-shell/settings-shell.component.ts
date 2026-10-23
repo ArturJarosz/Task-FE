@@ -4,10 +4,12 @@ import {toSignal} from "@angular/core/rxjs-interop";
 import {map} from "rxjs";
 import {PageCrumb, PageHeaderComponent} from "../../shared";
 import {SystemParameter} from "../../generated/models/system-parameter";
-import {SystemParameterStore} from "../state";
+import {GoogleCalendarSettingsStore, SystemParameterStore} from "../state";
 import {EditSystemParameterComponent} from "../edit-system-parameter/edit-system-parameter.component";
 import {SystemParameterListComponent} from "../system-parameter-list/system-parameter-list.component";
 import {AppearanceSettingsComponent} from "../appearance-settings/appearance-settings.component";
+import {GoogleCalendarSettingsComponent} from "../google-calendar-settings/google-calendar-settings.component";
+import {GOOGLE_CALENDAR_PARAMETERS, toGoogleCalendarParameters} from "../google-calendar-parameters";
 import {THEME_COLOR_PARAMETER} from "../../theme/theme-colors";
 import {SETTINGS_SECTION_GROUPS, SETTINGS_SECTIONS} from "./settings-sections";
 
@@ -17,10 +19,11 @@ import {SETTINGS_SECTION_GROUPS, SETTINGS_SECTIONS} from "./settings-sections";
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     imports: [PageHeaderComponent, SystemParameterListComponent, EditSystemParameterComponent,
-        AppearanceSettingsComponent, RouterLink, RouterLinkActive]
+        AppearanceSettingsComponent, GoogleCalendarSettingsComponent, RouterLink, RouterLinkActive]
 })
 export class SettingsShellComponent {
     readonly systemParameterStore = inject(SystemParameterStore);
+    readonly googleCalendarSettingsStore = inject(GoogleCalendarSettingsStore);
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
 
@@ -34,14 +37,18 @@ export class SettingsShellComponent {
         {label: this.$section()?.label ?? ''},
     ]);
 
-    // The theme color has its own editor under Appearance
+    // The theme color and the Google Calendar parameters have their own sections
     readonly $systemParameters = computed(() => this.systemParameterStore.systemParameters()
-        .filter(parameter => parameter.name !== THEME_COLOR_PARAMETER));
+        .filter(parameter => parameter.name !== THEME_COLOR_PARAMETER
+            && !GOOGLE_CALENDAR_PARAMETERS.includes(parameter.name ?? '')));
     readonly $themeColorParameter = computed(() => this.systemParameterStore.systemParameters()
         .find(parameter => parameter.name === THEME_COLOR_PARAMETER));
     readonly $loading = this.systemParameterStore.systemParametersNeedRefresh;
     readonly $loadFailed = this.systemParameterStore.systemParametersLoadFailed;
     readonly $editedParameter = signal<SystemParameter | null>(null);
+
+    readonly $googleCalendarParameters = computed(() =>
+        toGoogleCalendarParameters(this.systemParameterStore.systemParameters()));
 
     constructor() {
         effect(() => {
@@ -57,6 +64,12 @@ export class SettingsShellComponent {
                     this.systemParameterStore.setSystemParametersNeedRefresh();
                     this.systemParameterStore.loadSystemParameters({});
                 });
+            }
+        });
+        effect(() => {
+            if (this.$section()?.key === 'google-calendar') {
+                // Check again on every visit: the connection depends on Google, not only on the settings
+                untracked(() => this.googleCalendarSettingsStore.checkConnection({}));
             }
         });
     }
@@ -76,5 +89,13 @@ export class SettingsShellComponent {
 
     onEditClosed(): void {
         this.$editedParameter.set(null);
+    }
+
+    onGoogleCalendarSave(systemParameters: SystemParameter[]): void {
+        this.googleCalendarSettingsStore.saveParameters(systemParameters);
+    }
+
+    onCheckGoogleCalendarConnection(): void {
+        this.googleCalendarSettingsStore.checkConnection({});
     }
 }
