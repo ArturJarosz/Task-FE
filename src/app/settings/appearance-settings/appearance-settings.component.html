@@ -1,0 +1,68 @@
+<div class="text-sm border-t border-gray-200">
+    <!-- Dark theme -->
+    <div class="flex items-center justify-between gap-4 px-5 py-2.5 border-b border-gray-100">
+        <div class="min-w-0">
+            <label for="darkMode" class="font-medium text-gray-800">Dark theme</label>
+            <p class="m-0 text-xs text-gray-500">Saved to your account, so it follows you to other browsers</p>
+        </div>
+        <p-toggleswitch inputId="darkMode" [ngModel]="$darkMode()" (ngModelChange)="onDarkModeChange($event)"/>
+    </div>
+
+    @if (loadFailed) {
+        <app-empty-state icon="pi pi-exclamation-triangle" title="Couldn't load the brand color"
+                         text="Check your connection and try again.">
+            <p-button label="Try again" icon="pi pi-refresh" severity="secondary" [outlined]="true" (onClick)="retry.emit()"/>
+        </app-empty-state>
+    } @else {
+        <!-- Brand color -->
+        <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-2.5 border-b border-gray-100">
+            <div class="min-w-0">
+                <label for="brandColor" class="font-medium text-gray-800">Brand color</label>
+                <p id="brandColorHint" class="m-0 text-xs"
+                   [class]="!$draftValid() ? 'text-error-600' : $lowContrast() ? 'text-warning-700' : 'text-gray-500'">
+                    @if (!$draftValid()) {
+                        Enter a color as #RRGGBB
+                    } @else if ($lowContrast()) {
+                        This color is light, so links and icons in it may be hard to read
+                    } @else {
+                        Buttons, links, selection and charts, for everyone · Default {{ defaultColor.toUpperCase() }}
+                    }
+                </p>
+            </div>
+            @if (loading) {
+                <p-skeleton width="10rem" height="2.75rem"/>
+            } @else {
+                <div class="flex items-center gap-2 shrink-0">
+                    <p-colorpicker [ngModel]="$pickerColor()" (onChange)="onDraftChange($any($event.value))" format="hex"
+                                   appendTo="body"/>
+                    <input id="brandColor" type="text" pInputText class="w-28 font-mono uppercase" maxlength="7"
+                           [value]="$draftColor()" (input)="onDraftChange($any($event.target).value)"
+                           [attr.aria-invalid]="!$draftValid()" aria-describedby="brandColorHint"/>
+                    <p-button icon="pi pi-replay" [text]="true" [rounded]="true" severity="secondary"
+                              pTooltip="Reset to default" tooltipPosition="left" ariaLabel="Reset brand color to default"
+                              [disabled]="$pickerColor() === defaultColor.toLowerCase()" (onClick)="onResetToDefault()"/>
+                </div>
+            }
+        </div>
+
+        @if (!loading) {
+            <!-- Preview of the brand color in the controls that use it -->
+            <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-2.5 border-b border-gray-100" aria-label="Preview">
+                <span class="text-xs text-gray-500">Preview</span>
+                <div class="flex flex-wrap items-center gap-3">
+                    <p-button label="Outlined" [outlined]="true" tabindex="-1"/>
+                    <p-tag value="Selected"/>
+                    <span class="app-nav-item active min-h-0 py-1.5"><i class="pi pi-folder" aria-hidden="true"></i><span>Active item</span></span>
+                    <span class="font-semibold text-brand-500">Link text</span>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap justify-end gap-3 px-5 py-3">
+                @if ($changed() || !$draftValid()) {
+                    <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
+                }
+                <p-button label="Save changes" [disabled]="!$changed()" (onClick)="onSave()"/>
+            </div>
+        }
+    }
+</div>

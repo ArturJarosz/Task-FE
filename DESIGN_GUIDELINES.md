@@ -2,12 +2,12 @@
 
 Rules every screen in this app follows. When building or changing UI, by hand or with Claude Code, read this file first. If a screen needs something not covered here, add the rule here first, then build it.
 
-Stack: Angular 19, PrimeNG 19 (styled mode, `AppThemePreset` in `src/app/theme/app-theme-preset.ts`, based on Aura), Tailwind 4 with `tailwindcss-primeui`. The look follows the TailAdmin dashboard: Outfit font, blue `#465fff` accent, white 16px-rounded cards on a light grey page.
+Stack: Angular 19, PrimeNG 19 (styled mode, `AppThemePreset` in `src/app/theme/app-theme-preset.ts`, based on Aura), Tailwind 4 with `tailwindcss-primeui`. The look follows the TailAdmin dashboard: Outfit font, a brand colour (default blue `#465fff`, configurable), white 16px-rounded cards on a light grey page, and a dark theme (section 2, "Theming").
 
 ## 1. Principles
 
 1. **Soft cards on grey.** A page is white cards (1px `gray-200` border, 16px radius, no shadow) on `gray-50`. Never nest cards in cards, accordions in cards, or tabs inside accordions.
-2. **Blue means action or selection.** `brand-500` is for primary buttons, the active nav item, the active tab, links, and focus. Status uses its own colors (section 5). Everything else is grey.
+2. **Brand colour means action or selection.** `brand-500` is for primary buttons, the active nav item, the active tab, links, and focus. Status uses its own colors (section 5). Everything else is grey.
 3. **Say what a button does.** Buttons have text labels ("New project", "Add stage", "Save changes"). Icon-only buttons are allowed only for row actions (`⋯`), close buttons, and top bar icons, always with `aria-label` and a tooltip.
 4. **Read first, edit on purpose.** Detail pages show values as text. Each section card has a rounded "Edit" button that opens a dialog with the form.
 5. **Tokens, not overrides.** Colors, radius, and spacing come from `app-theme-preset.ts` and the `@theme` block in `styles.css`. No `::ng-deep`, no hex values in components, no inline color styles. Use Tailwind classes such as `text-gray-500` and `bg-brand-50`, which match the tokens.
@@ -15,6 +15,8 @@ Stack: Angular 19, PrimeNG 19 (styled mode, `AppThemePreset` in `src/app/theme/a
 ## 2. Tokens
 
 ### Color
+Values are the light-theme defaults; the dark theme and the brand colour setting change them at runtime (see "Theming").
+
 | Role | Value | Tailwind | Use |
 |---|---|---|---|
 | Brand / primary | `#465fff` | `brand-500` | Primary buttons, active nav, active tab, links |
@@ -51,11 +53,22 @@ Money and counts use `.app-num` (tabular, right-aligned) and the PLN pipe: `{{ v
 - Controls are 44px tall: inputs, selects, buttons, the segmented control frame (40px items plus 2px padding) and the calendar toolbar, so controls in one row always line up. The height is one token, `--spacing-control` in `styles.css` (`h-control`, and `h-control-inner` for items inside a segmented frame); the preset's padding adds up to it. Icon-only buttons are 44×44. `size="small"` renders like the default size, so don't use it.
 - Gaps: 24px between cards and grid columns (`gap-6`), 24px card padding (`p-6`), 20px vertical card header padding (`py-5`).
 - Shadows: only `shadow-theme-xs` on inputs, outline buttons, and the active segment, plus a soft overlay shadow on dialogs and menus.
-- Focus: 4px soft blue halo (`shadow-focus-ring`), set in the preset.
+- Focus: 4px soft brand halo (`shadow-focus-ring`), set in the preset.
+
+### Theming (brand colour and dark mode)
+Every colour is a CSS variable, and PrimeNG and Tailwind read the same ones, so components never need to know the theme.
+- **Brand colour:** the "Theme color" system parameter (`#rrggbb`, one value for everyone), edited under Settings › Appearance. `ThemeService` turns it into the `--app-brand-50…950` scale plus `--app-brand-contrast` (white or `gray-900`, whichever reads better on `brand-500`) and writes them on `<html>`. The PrimeNG `primary` palette and Tailwind's `brand-*` both point at these variables. The default `#465fff` keeps the hand-tuned shades from `styles.css`.
+- **Dark mode:** `<html class="app-dark">`, a per-user choice (Settings › Appearance), saved per user as the `THEME_MODE` user configuration (`USER_CONFIGURATION` table; `GET /users/current/configurations`, `PUT /users/current/configurations/THEME_MODE` with `LIGHT` or `DARK`). `localStorage` keeps a copy so the next start paints the right mode before the user loads; a user without an account record keeps the choice in the browser only. The `.app-dark` block in `styles.css` gives the same variables dark values: the grey scale runs the other way (`gray-50` is the darkest background, `gray-800` the light main text), `white` becomes the dark card surface, and `brand-50/100`, `success-50`, `warning-50` and `error-50` become dim tints, with their text shades lighter. PrimeNG's own dark scheme is off (`darkModeSelector: 'none'`); its light scheme follows the variables.
+- **Rules:**
+  - Use the token classes as usual (`bg-white`, `text-gray-800`, `bg-brand-50 text-brand-600`). They adapt by themselves, so don't add `dark:` variants.
+  - `white` means "surface", not the colour white. For text on a brand fill use `var(--app-brand-contrast)`, and for a fill that must not change in dark mode use `--app-brand-500`.
+  - For backdrops use `bg-black/40`, not a grey (greys flip).
+  - Charts read colours with `cssColor()` when they build their data, so they pick up the theme of the moment they render.
+  - No new hex values in the preset or components: add a variable in `styles.css` with a light and a dark value.
 
 ## 3. App shell
 
-- **Sidebar** (`--app-sidebar-w`, 290px): white, right border `gray-200`. The logo sits at the top. Groups are labelled in uppercase 12px `gray-500`: *Work* (Dashboard, Projects, Calendar), *People* (Architects, Clients, Contractors, Suppliers), *Finance* (Financial report).
+- **Sidebar** (`--app-sidebar-w`, 290px): white, right border `gray-200`. The logo sits at the top. Groups are labelled in uppercase 12px `gray-500`: *Work* (Dashboard, Projects, Calendar), *People* (Architects, Clients, Contractors, Suppliers), *Finance* (Financial report), *Admin* (Settings).
   - Items: `.app-nav-item`, 14px medium `gray-700`, 8px radius, hover `gray-100`.
   - Active item: `.app-nav-item.active`, with `brand-50` background and `brand-500` text and icon.
   - Icons are PrimeIcons only (remove `font-awesome`):
@@ -70,6 +83,7 @@ Money and counts use `.app-num` (tabular, right-aligned) and the PLN pipe: `{{ v
     | Contractors | `pi-wrench` |
     | Suppliers | `pi-truck` |
     | Financial report | `pi-chart-bar` |
+    | Settings | `pi-cog` |
 - **Top bar** (76px): white with a bottom border. It holds a search field (44px, "Search or type command...", ⌘K hint) on the left, and on the right a round 44px notifications button plus the user avatar, name, and chevron.
   - **User menu:** a `p-menu` popup, 256px wide and right-aligned under the avatar. Its `start` template shows the avatar, name and email over a `gray-200` divider; the items below are actions only (today just "Log out" with `pi-sign-out`). The chevron turns 180° while the menu is open. Never show information as a disabled menu item.
 - **Menus** (user menu, row `⋯` menus): 12px radius, 8px list padding, 14px `gray-700` items with `gray-500` icons and a `gray-100` hover. These come from the `menu` tokens in the preset.
@@ -110,8 +124,23 @@ Today (`src/app/dashboard`): Active projects, plus gross income, expenses and ba
 ### Edit dialog
 `p-dialog` with 24px radius, about 700px wide, 32px padding. It has a title, a one-line description, and a round grey close button. The form is a 2-column grid with labels above 44px inputs, plus a "Cancel" outline button and a "Save changes" primary button on the bottom right.
 
-### Signed-out page (`/not-logged-in`)
-Renders inside the app shell. One centered card (`max-w-lg`, `mt-12`, `p-8`, text centered) with a 56px grey lock tile, the page title "You are not logged in", one line saying what signing in unlocks, and a live countdown to the sign-in redirect (`aria-live="polite"`). The only button is the primary "Log in now", which starts login at once. The redirect still happens after the countdown.
+### Settings page (`/settings/:section`)
+A 25% section nav card next to a 75% content column (`grid grid-cols-1 xl:grid-cols-[calc(25%_-_18px)_minmax(0,1fr)] gap-6 items-start`). The nav groups sections under `.app-nav-group` labels and links them with `.app-nav-item` (active: `routerLinkActive="active"`); below `xl` the items wrap in a row above the content. Each section is its own route, listed in `settings-sections.ts`; `/settings` opens the first one and the breadcrumb ends with the section name (Home › Settings › System parameters).
+
+Settings cards are compact, unlike other pages: the card header is `px-5 py-4` with a 18px/600 title (`text-base font-semibold`) over a 14px `gray-500` subtitle, and the body is a list of short rows (`px-5 py-2.5`, `border-b border-gray-100`) under a `gray-200` top line. Each row has the setting's name (500 `gray-800`) and a 14px hint on the left, and its value or control on the right. Row edit and reset buttons are icon-only text buttons with `aria-label` and a tooltip.
+
+Sections today:
+- **System parameters**: a compact table (`gray-50` header band with Name, Value, Default; one row per parameter, values tabular) with a pencil button per row. It opens the standard edit dialog with one field whose input matches the parameter type (`TEXT` text input, `NUMBER` and `DECIMAL_NUMBER` `p-inputnumber` in Polish format), the default value as a hint, a text "Reset to default" button on the left and "Cancel" / "Save changes" on the right. The "Theme color" parameter is left out here; Appearance edits it.
+- **Appearance**: compact rows. "Dark theme" has a hint ("Saved to your account…") and a `p-toggleswitch` on the right; it applies at once. "Brand color" has a `p-colorpicker`, a 112px monospace `#RRGGBB` field and a reset icon button on the right, with the default value in the hint. A colour whose contrast with white is below 3:1 gets a warning hint instead, because `brand-500` is used for links. A "Preview" row shows an outlined button, a tag, an active nav item and link text. While editing, the whole app previews the colour; "Cancel" and the primary "Save changes" sit at the bottom right, and leaving the section drops an unsaved preview.
+
+### Signed-out pages (`/not-logged-in`, `/logout`)
+Render inside the app shell with `data: {ownPageHeader: true}` on the route and no page header or breadcrumb. The top bar shows only the sidebar toggle, because search, notifications and the user menu need a signed-in user. One centered card (`max-w-lg`, `mt-12`, `p-8` at every width, text centered) with a 56px grey icon tile, the page title, one line of explanation, and a live countdown to the redirect, "Redirecting to the login page in 3 s…" (`aria-live="polite"`). The only button is primary and starts login at once; the redirect still happens after the countdown. Copy says "log in" and "logged out", never "sign in" or "signed out".
+
+| Variant | When | Icon | Title | Line | Button |
+|---|---|---|---|---|---|
+| Not logged in | `/not-logged-in` | `pi-lock` | You are not logged in | Log in to see projects, clients and finances. | Log in now |
+| Session expired | `/not-logged-in?reason=expired`, set by `AuthorizationService` when the stored session can't be renewed | `pi-lock` | Your session has expired | For your security you were logged out. Log in again to keep working. | Log in now |
+| Logged out | `/logout` | `pi-sign-out` | You have been logged out | Log in again to get back to your projects. | Log in again |
 
 ## 5. Components
 
@@ -163,9 +192,10 @@ Inside the card: a 56px grey circle with an icon, a 16px/600 title ("No stages y
 
 ## 7. Checklist before merging UI
 - [ ] Cards: white, `gray-200` border, 16px radius, no shadow, never nested
-- [ ] One primary (blue) button per card or dialog
+- [ ] One primary (brand colour) button per card or dialog
 - [ ] Statuses are `p-tag` pills through `statusSeverity()`
 - [ ] Money is right-aligned, tabular, and in PLN format
 - [ ] Every table has an empty state
-- [ ] No hex colors, `::ng-deep`, or inline colors in components
+- [ ] No hex colors, `::ng-deep`, `dark:` variants, or inline colors in components
+- [ ] Checked in the dark theme and with a non-default brand colour (Settings › Appearance)
 - [ ] Icon-only buttons have `aria-label` and a tooltip

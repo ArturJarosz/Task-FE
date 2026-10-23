@@ -9,12 +9,34 @@
 @import 'tailwindcss';
 @import 'tailwindcss-primeui';
 
-/* dark: variants apply only under <html class="app-dark">, matching the PrimeNG darkModeSelector */
+/* Dark mode: <html class="app-dark"> (ThemeService) swaps the colour variables below, so every gray-*, brand-*,
+   status and PrimeNG colour adapts by itself. Templates need no dark: variants; the variant stays for rare exceptions. */
 @custom-variant dark (&:where(.app-dark, .app-dark *));
 
+/* ---------- Brand palette ----------
+   ThemeService writes these from the "Theme color" system parameter (generated 50-950 scale, plus the text colour
+   that reads best on brand-500). The values here are the default TailAdmin blue #465fff. PrimeNG's primary palette
+   points at them too (app-theme-preset.ts), so one set of variables colours everything. */
+:root {
+  --app-brand-50: #ecf3ff;
+  --app-brand-100: #dde9ff;
+  --app-brand-200: #c2d6ff;
+  --app-brand-300: #9cb9ff;
+  --app-brand-400: #7592ff;
+  --app-brand-500: #465fff;
+  --app-brand-600: #3641f5;
+  --app-brand-700: #2a31d8;
+  --app-brand-800: #252dae;
+  --app-brand-900: #262e89;
+  --app-brand-950: #161950;
+  --app-brand-contrast: #ffffff;
+  --app-focus-ring: color-mix(in srgb, var(--app-brand-500) 12%, transparent);
+}
+
 /* ---------- Tailwind theme: same palette as the PrimeNG preset ----------
-   After this, bg-brand-50, text-brand-500, text-gray-500, border-gray-200 … match the mockups. */
-@theme {
+   After this, bg-brand-50, text-brand-500, text-gray-500, border-gray-200 … match the mockups.
+   static: Tailwind would otherwise drop the variables no class uses, but the PrimeNG preset reads them too. */
+@theme static {
   --font-sans: 'Outfit', system-ui, sans-serif;
 
   /* Text one step larger than Tailwind's defaults (Outfit reads small); spacing is unchanged */
@@ -25,14 +47,17 @@
   --text-base: 1.125rem;
   --text-base--line-height: 1.625rem;
 
-  --color-brand-50: #ecf3ff;
-  --color-brand-100: #dde9ff;
-  --color-brand-200: #c2d6ff;
-  --color-brand-300: #9cb9ff;
-  --color-brand-400: #7592ff;
-  --color-brand-500: #465fff;
-  --color-brand-600: #3641f5;
-  --color-brand-700: #2a31d8;
+  --color-brand-50: var(--app-brand-50);
+  --color-brand-100: var(--app-brand-100);
+  --color-brand-200: var(--app-brand-200);
+  --color-brand-300: var(--app-brand-300);
+  --color-brand-400: var(--app-brand-400);
+  --color-brand-500: var(--app-brand-500);
+  --color-brand-600: var(--app-brand-600);
+  --color-brand-700: var(--app-brand-700);
+
+  /* Card and control surface; dark mode makes it dark, so text on brand fills uses --app-brand-contrast instead */
+  --color-white: #ffffff;
 
   --color-gray-50: #f9fafb;
   --color-gray-100: #f2f4f7;
@@ -44,6 +69,7 @@
   --color-gray-700: #344054;
   --color-gray-800: #1d2939;
   --color-gray-900: #101828;
+  --color-gray-950: #0c111d;
 
   --color-success-50: #ecfdf3;
   --color-success-700: #027a48;
@@ -54,8 +80,8 @@
   --color-error-700: #b42318;
 
   /* Chart series, in fixed order (validated with the dataviz palette validator: CVD and normal-vision pass on light).
-     1 is the brand blue; 2-4 follow the reference categorical order; 5 is reserved for expenses. */
-  --color-chart-1: #465fff;
+     1 follows the brand colour; 2-4 follow the reference categorical order; 5 is reserved for expenses. */
+  --color-chart-1: var(--color-brand-500);
   --color-chart-2: #eb6834;
   --color-chart-3: #1baf7a;
   --color-chart-4: #eda100;
@@ -63,12 +89,58 @@
   --color-chart-6: #7a5af8;
 
   --shadow-theme-xs: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
-  --shadow-focus-ring: 0 0 0 4px rgba(70, 95, 255, 0.12);
+  --shadow-focus-ring: 0 0 0 4px var(--app-focus-ring);
 
   /* Control height (h-control): buttons, inputs, the segmented control frame, the calendar toolbar.
      Items inside a segmented frame (2px padding) use h-control-inner. The PrimeNG preset uses the same value. */
   --spacing-control: 2.75rem;
   --spacing-control-inner: calc(var(--spacing-control) - 0.25rem);
+}
+
+/* ---------- Dark mode ----------
+   Same variable names, dark values: the gray scale runs the other way (gray-50 is the darkest page background,
+   gray-800 the light main text), the surface turns dark, and the light brand/status tints become dim tints. */
+.app-dark {
+  color-scheme: dark;
+
+  --color-white: #161d2b;
+  --color-gray-50: #0f1520;
+  --color-gray-100: #1d2534;
+  --color-gray-200: #273244;
+  --color-gray-300: #344054;
+  --color-gray-400: #667085;
+  --color-gray-500: #98a2b3;
+  --color-gray-600: #a9b3c2;
+  --color-gray-700: #d0d5dd;
+  --color-gray-800: #e4e7ec;
+  --color-gray-900: #f2f4f7;
+  --color-gray-950: #f9fafb;
+
+  /* Tints for backgrounds; text shades one step lighter so they keep their contrast on the dark surface */
+  --color-brand-50: color-mix(in srgb, var(--app-brand-500) 16%, var(--color-white));
+  --color-brand-100: color-mix(in srgb, var(--app-brand-500) 26%, var(--color-white));
+  --color-brand-200: color-mix(in srgb, var(--app-brand-500) 40%, var(--color-white));
+  --color-brand-300: var(--app-brand-400);
+  --color-brand-400: var(--app-brand-300);
+  --color-brand-500: var(--app-brand-400);
+  --color-brand-600: var(--app-brand-300);
+  --color-brand-700: var(--app-brand-200);
+
+  --color-success-50: #0d2a20;
+  --color-success-700: #47cd89;
+  --color-warning-50: #33250d;
+  --color-warning-700: #fdb022;
+  --color-error-50: #371a1b;
+  --color-error-600: #f97066;
+  --color-error-700: #fda29b;
+
+  --app-focus-ring: color-mix(in srgb, var(--app-brand-400) 30%, transparent);
+  --shadow-theme-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* The logo is drawn in black; show it white on the dark sidebar */
+.app-dark .app-logo {
+  filter: invert(1);
 }
 
 /* ---------- App-level sizes ---------- */
@@ -182,8 +254,9 @@ body {
   .app-nav-group {
     @apply px-3 mt-6 mb-2 text-xs uppercase tracking-wide text-gray-500;
   }
+  /* min-h-control keeps rows as tall with the label hidden (collapsed sidebar): .pi icons have line-height 1 */
   .app-nav-item {
-    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 no-underline hover:bg-gray-100;
+    @apply flex items-center gap-3 min-h-control px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 no-underline hover:bg-gray-100;
   }
   .app-nav-item i {
     @apply text-lg text-gray-500;
@@ -226,11 +299,11 @@ body {
   --fc-page-bg-color: var(--color-white);
   --fc-neutral-bg-color: var(--color-gray-50);
   --fc-today-bg-color: var(--color-brand-50);
-  --fc-highlight-color: rgba(70, 95, 255, 0.08);
+  --fc-highlight-color: color-mix(in srgb, var(--color-brand-500) 8%, transparent);
   --fc-now-indicator-color: var(--color-error-600);
-  --fc-event-bg-color: var(--color-brand-500);
-  --fc-event-border-color: var(--color-brand-500);
-  --fc-event-text-color: var(--color-white);
+  --fc-event-bg-color: var(--app-brand-500);
+  --fc-event-border-color: var(--app-brand-500);
+  --fc-event-text-color: var(--app-brand-contrast);
   font-size: 0.9375rem;
   color: var(--color-gray-700);
 }

@@ -11,7 +11,7 @@ import {TableModule} from "primeng/table";
 import {SkeletonModule} from "primeng/skeleton";
 import {FormsModule} from "@angular/forms";
 import {NgIf, NgFor, NgClass, CurrencyPipe, DatePipe} from "@angular/common";
-import {barChartOptions, cssColor, periodLabel} from "../../shared/utils/chart-utils";
+import {barChartOptions, cssColor, periodLabel, rebuildOnThemeChange} from "../../shared/utils/chart-utils";
 
 type ValueType = 'gross' | 'net';
 
@@ -97,9 +97,15 @@ export class FinancialReportComponent implements OnInit, OnChanges {
     chartOptions: any = {};
     summaryRows: SummaryRow[] = [];
 
+    constructor() {
+        rebuildOnThemeChange(() => {
+            this.chartOptions = barChartOptions(true);
+            this.buildChartData();
+        });
+    }
+
     ngOnInit(): void {
         this.selectedRange = [this.startDate, this.endDate];
-        this.chartOptions = barChartOptions(true);
     }
 
     ngOnChanges({financialReport, startDate, endDate}: SimpleChanges): void {

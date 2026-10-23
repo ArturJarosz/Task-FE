@@ -22,6 +22,7 @@ import {ClientDetailShellComponent} from './client/client-detail-shell/client-de
 import {ArchitectListShellComponent} from './architect/architect-list-shell/architect-list-shell.component';
 import {ArchitectDetailShellComponent} from './architect/architect-detail-shell/architect-detail-shell.component';
 import {CalendarShellComponent} from './calendar/calendar-shell/calendar-shell.component';
+import {SettingsShellComponent} from './settings/settings-shell/settings-shell.component';
 
 export const appRoutes: Routes = [
     {path: '', redirectTo: 'home', pathMatch: 'full'},
@@ -55,9 +56,12 @@ export const appRoutes: Routes = [
     {path: 'financial-report', component: FinancialReportShellComponent, canActivate: [loggedInGuardGuard], data: {ownPageHeader: true}},
     // Calendar routes
     {path: 'calendar', component: CalendarShellComponent, canActivate: [loggedInGuardGuard], data: {ownPageHeader: true}},
+    // Settings routes
+    {path: 'settings', redirectTo: 'settings/system-parameters', pathMatch: 'full'},
+    {path: 'settings/:section', component: SettingsShellComponent, canActivate: [loggedInGuardGuard], data: {ownPageHeader: true}},
     // Security routes
-    {path: 'logout', component: LogoutComponent},
-    {path: 'not-logged-in', component: NotLoggedInComponent},
+    {path: 'logout', component: LogoutComponent, data: {ownPageHeader: true}},
+    {path: 'not-logged-in', component: NotLoggedInComponent, data: {ownPageHeader: true}},
     // Client routes
     {path: 'clients', component: ClientListShellComponent, canActivate: [loggedInGuardGuard], data: {ownPageHeader: true}},
     {path: 'clients/:id', component: ClientDetailShellComponent, canActivate: [loggedInGuardGuard], data: {ownPageHeader: true}},

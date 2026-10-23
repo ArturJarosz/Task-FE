@@ -1,4 +1,4 @@
-import {isDevMode, ApplicationConfig, LOCALE_ID} from '@angular/core';
+import {isDevMode, ApplicationConfig, inject, LOCALE_ID, provideAppInitializer} from '@angular/core';
 import {registerLocaleData} from '@angular/common';
 import localePl from '@angular/common/locales/pl';
 import {provideRouter} from '@angular/router';
@@ -13,6 +13,7 @@ import {authHttpInterceptorFn, provideAuth0} from '@auth0/auth0-angular';
 
 import {appRoutes} from './app.routes';
 import {AppThemePreset} from './theme/app-theme-preset';
+import {ThemeService} from './theme/theme.service';
 import {auth_config} from './auth.config';
 
 import {AuthorizationService, AuthorizationServiceImpl} from './security/authorization.service';
@@ -35,6 +36,7 @@ import {BreadcrumbService, BreadcrumbServiceImpl} from './shared/breadcrumb/brea
 import {ClientRestService, ClientRestServiceImpl} from './client/rest/client-rest.service';
 import {ArchitectRestService, ArchitectRestServiceImpl} from './architect/rest/architect-rest.service';
 import {CalendarRestService, CalendarRestServiceImpl} from './calendar/rest/calendar-rest.service';
+import {SystemParameterRestService, SystemParameterRestServiceImpl} from './settings/rest/system-parameter-rest.service';
 
 registerLocaleData(localePl); // money as "50 000,00 zł", dates as "15.10.2026"
 
@@ -52,8 +54,8 @@ export const appConfig: ApplicationConfig = {
             theme: {
                 preset: AppThemePreset,
                 options: {
-                    // Dark mode only when <html class="app-dark"> is set, never by OS setting alone
-                    darkModeSelector: '.app-dark',
+                    // PrimeNG's dark scheme stays off: <html class="app-dark"> swaps the CSS variables the preset reads
+                    darkModeSelector: 'none',
                     // Layer order is declared at the top of styles.css so Tailwind utilities still win
                     cssLayer: {
                         name: 'primeng',
@@ -62,6 +64,8 @@ export const appConfig: ApplicationConfig = {
                 }
             }
         }),
+        // Light/dark mode and the last known brand color, applied before the first render
+        provideAppInitializer(() => inject(ThemeService).init()),
         ConfirmationService,
         MessageService,
         {provide: AuthorizationService, useClass: AuthorizationServiceImpl},
@@ -84,5 +88,6 @@ export const appConfig: ApplicationConfig = {
         {provide: ClientRestService, useClass: ClientRestServiceImpl},
         {provide: ArchitectRestService, useClass: ArchitectRestServiceImpl},
         {provide: CalendarRestService, useClass: CalendarRestServiceImpl},
+        {provide: SystemParameterRestService, useClass: SystemParameterRestServiceImpl},
     ]
 };

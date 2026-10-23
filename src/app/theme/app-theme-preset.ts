@@ -1,21 +1,27 @@
 // App theme v2 — PrimeNG 19 preset ("TailAdmin" style). Rules: DESIGN_GUIDELINES.md
 //
-// Blue #465fff accent, TailAdmin greys, soft radii (8px controls, 16px cards), pill status tags.
+// Brand colour (default blue #465fff), TailAdmin greys, soft radii (8px controls, 16px cards), pill status tags.
 // Every PrimeNG component reads these tokens. Change the look HERE, never with ::ng-deep.
+//
+// Colours are CSS variables from styles.css, never hex values: ThemeService rewrites the brand palette at runtime
+// (Settings > Appearance) and <html class="app-dark"> swaps every variable to its dark value. PrimeNG's own dark
+// colour scheme is off (darkModeSelector: 'none' in app.config.ts); this light scheme serves both modes.
 // If TypeScript flags a component token name, check that component's "Theming" tab in the PrimeNG docs.
 
 import { definePreset } from '@primeng/themes';
 import Aura from '@primeng/themes/aura';
+import { BRAND_SHADES, BrandPalette } from './theme-colors';
 
-// TailAdmin palettes (copied from its source, src/styles.css)
-const brand = {
-  50: '#ecf3ff', 100: '#dde9ff', 200: '#c2d6ff', 300: '#9cb9ff', 400: '#7592ff',
-  500: '#465fff', 600: '#3641f5', 700: '#2a31d8', 800: '#252dae', 900: '#262e89', 950: '#161950',
-};
-const gray = {
-  0: '#ffffff', 50: '#f9fafb', 100: '#f2f4f7', 200: '#e4e7ec', 300: '#d0d5dd', 400: '#98a2b3',
-  500: '#667085', 600: '#475467', 700: '#344054', 800: '#1d2939', 900: '#101828', 950: '#0c111d',
-};
+const scale = (variable: (shade: number) => string) =>
+  Object.fromEntries(BRAND_SHADES.map(shade => [shade, variable(shade)])) as BrandPalette;
+
+// Raw brand palette, the same in both modes: fills such as primary buttons, with --app-brand-contrast text
+const brand = scale(shade => `var(--app-brand-${shade})`);
+// Brand as Tailwind's brand-* classes see it: tints and text shades that dark mode adjusts
+const brandTint = scale(shade => `var(--color-brand-${shade})`);
+// Greys; 0 is the card/control surface
+const gray = { 0: 'var(--color-white)', ...scale(shade => `var(--color-gray-${shade})`) };
+const white = 'var(--color-white)';
 
 export const AppThemePreset = definePreset(Aura, {
   primitive: {
@@ -32,11 +38,11 @@ export const AppThemePreset = definePreset(Aura, {
   semantic: {
     primary: brand,
 
-    // TailAdmin focus: soft 4px blue halo
+    // TailAdmin focus: soft 4px brand halo
     focusRing: {
       width: '4px',
       style: 'solid',
-      color: 'rgba(70, 95, 255, 0.12)',
+      color: 'var(--app-focus-ring)',
       offset: '0',
       shadow: 'none',
     },
@@ -53,15 +59,15 @@ export const AppThemePreset = definePreset(Aura, {
         surface: gray,
         primary: {
           color: brand[500],
-          contrastColor: '#ffffff',
+          contrastColor: 'var(--app-brand-contrast)',
           hoverColor: brand[600],
           activeColor: brand[700],
         },
         highlight: {
-          background: brand[50],
-          focusBackground: brand[100],
-          color: brand[600],
-          focusColor: brand[700],
+          background: brandTint[50],
+          focusBackground: brandTint[100],
+          color: brandTint[600],
+          focusColor: brandTint[700],
         },
         text: {
           color: gray[800],
@@ -70,23 +76,23 @@ export const AppThemePreset = definePreset(Aura, {
           hoverMutedColor: gray[600],
         },
         content: {
-          background: '#ffffff',
+          background: white,
           hoverBackground: gray[50],
           borderColor: gray[200],
           color: gray[800],
           hoverColor: gray[900],
         },
         formField: {
-          background: '#ffffff',
+          background: white,
           borderColor: gray[300],
           hoverBorderColor: gray[400],
-          focusBorderColor: brand[300],
-          invalidBorderColor: '#fda29b',
+          focusBorderColor: brandTint[300],
+          invalidBorderColor: 'var(--color-error-600)',
           disabledBackground: gray[50],
           disabledColor: gray[500],
           placeholderColor: gray[400],
           color: gray[800],
-          shadow: '0 1px 2px 0 rgba(16, 24, 40, 0.05)',
+          shadow: 'var(--shadow-theme-xs)',
         },
       },
     },
@@ -137,13 +143,13 @@ export const AppThemePreset = definePreset(Aura, {
       // Text one shade darker than TailAdmin's so it passes 4.5:1 contrast
       colorScheme: {
         light: {
-          primary: { background: brand[50], color: brand[600] },
-          info: { background: brand[50], color: brand[600] },
+          primary: { background: brandTint[50], color: brandTint[600] },
+          info: { background: brandTint[50], color: brandTint[600] },
           secondary: { background: gray[100], color: gray[700] },
-          success: { background: '#ecfdf3', color: '#027a48' },
-          warn: { background: '#fffaeb', color: '#b54708' },
-          danger: { background: '#fef3f2', color: '#b42318' },
-          contrast: { background: gray[800], color: '#ffffff' },
+          success: { background: 'var(--color-success-50)', color: 'var(--color-success-700)' },
+          warn: { background: 'var(--color-warning-50)', color: 'var(--color-warning-700)' },
+          danger: { background: 'var(--color-error-50)', color: 'var(--color-error-700)' },
+          contrast: { background: gray[800], color: white },
         },
       },
     },
@@ -163,6 +169,32 @@ export const AppThemePreset = definePreset(Aura, {
       },
     },
 
+    // Toasts in the status colours, so they also read in dark mode (Aura's own pastels stay light)
+    toast: {
+      colorScheme: {
+        light: {
+          info: toastSeverity(brandTint[50], brandTint[600]),
+          success: toastSeverity('var(--color-success-50)', 'var(--color-success-700)'),
+          warn: toastSeverity('var(--color-warning-50)', 'var(--color-warning-700)'),
+          error: toastSeverity('var(--color-error-50)', 'var(--color-error-700)'),
+        },
+      },
+    },
+
+    // The handle stays white, so it stands out on the grey track in both modes
+    toggleswitch: {
+      colorScheme: {
+        light: {
+          handle: {
+            background: '#ffffff',
+            hoverBackground: '#ffffff',
+            checkedBackground: '#ffffff',
+            checkedHoverBackground: '#ffffff',
+          },
+        },
+      },
+    },
+
     datatable: {
       headerCell: {
         background: gray[50],
@@ -178,3 +210,13 @@ export const AppThemePreset = definePreset(Aura, {
     },
   },
 });
+
+function toastSeverity(background: string, color: string) {
+  return {
+    background,
+    borderColor: `color-mix(in srgb, ${color} 30%, transparent)`,
+    color,
+    detailColor: gray[700],
+    closeButton: { hoverBackground: `color-mix(in srgb, ${color} 12%, transparent)`, focusRing: { color } },
+  };
+}
