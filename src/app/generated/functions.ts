@@ -185,3 +185,7 @@ export type { CreateUser$Params as CreateUser$Params } from './fn/user/create-us
 export { createUser as createUser } from './fn/user/create-user';
 export type { GetCurrentUser$Params as GetCurrentUser$Params } from './fn/user/get-current-user';
 export { getCurrentUser as getCurrentUser } from './fn/user/get-current-user';
+export type { GetCurrentUserConfigurations$Params as GetCurrentUserConfigurations$Params } from './fn/user/get-current-user-configurations';
+export { getCurrentUserConfigurations as getCurrentUserConfigurations } from './fn/user/get-current-user-configurations';
+export type { UpdateCurrentUserConfiguration$Params as UpdateCurrentUserConfiguration$Params } from './fn/user/update-current-user-configuration';
+export { updateCurrentUserConfiguration as updateCurrentUserConfiguration } from './fn/user/update-current-user-configuration';

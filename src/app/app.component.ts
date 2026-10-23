@@ -3,6 +3,7 @@ import {toSignal} from "@angular/core/rxjs-interop";
 import {MenuItem} from "primeng/api";
 import {ConfigurationStore} from "./shared/configuration/state";
 import {UserStore} from "./shared/user/state";
+import {SystemParameterStore} from "./settings/state";
 import {AuthorizationService} from "./security/authorization.service";
 import {ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
 import {filter} from "rxjs";
@@ -47,6 +48,11 @@ const NAV_GROUPS: NavGroup[] = [
             {label: 'Financial report', icon: 'pi pi-chart-bar', route: '/financial-report'},
         ]
     },
+    {
+        label: 'Admin', items: [
+            {label: 'Settings', icon: 'pi pi-cog', route: '/settings'},
+        ]
+    },
 ];
 
 // Below this width the sidebar is an overlay opened from the top bar instead of a collapsible column
@@ -79,6 +85,8 @@ export class AppComponent implements OnInit {
 
     readonly configurationStore = inject(ConfigurationStore);
     readonly userStore = inject(UserStore);
+    // Holds the "Theme color" parameter; ThemeService applies it as soon as it loads
+    private readonly systemParameterStore = inject(SystemParameterStore);
     private readonly authorization = inject(AuthorizationService);
     private readonly authUser = toSignal(this.authorization.getUser());
     // Backend user first; the Auth0 profile covers the time before (or a failure of) GET /users/current
@@ -96,6 +104,8 @@ export class AppComponent implements OnInit {
                 if (isAuthenticated) {
                     this.configurationStore.loadConfiguration({});
                     this.userStore.loadCurrentUser({});
+                    this.userStore.loadConfigurations({});
+                    this.systemParameterStore.loadSystemParameters({});
                 }
             })
 
