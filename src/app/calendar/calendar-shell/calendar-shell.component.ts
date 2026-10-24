@@ -24,8 +24,10 @@ export class CalendarShellComponent implements OnInit {
 
     $events: Signal<CalendarEvent[]> = this.calendarStore.events;
     $upcomingEvents: Signal<CalendarEvent[]> = this.calendarStore.upcomingEvents;
+    $pastEvents: Signal<CalendarEvent[]> = this.calendarStore.pastEvents;
     $eventsNeedRefresh: Signal<boolean> = this.calendarStore.eventsNeedRefresh;
     $upcomingEventsNeedRefresh: Signal<boolean> = this.calendarStore.upcomingEventsNeedRefresh;
+    $pastEventsNeedRefresh: Signal<boolean> = this.calendarStore.pastEventsNeedRefresh;
 
     showAddEventComponent = false;
     selectedEvent: CalendarEvent | null = null;
@@ -42,10 +44,16 @@ export class CalendarShellComponent implements OnInit {
                 this.calendarStore.loadUpcomingEvents({});
             }
         });
+        effect(() => {
+            if (this.$pastEventsNeedRefresh()) {
+                this.calendarStore.loadPastEvents({});
+            }
+        });
     }
 
     ngOnInit(): void {
         this.calendarStore.loadUpcomingEvents({});
+        this.calendarStore.loadPastEvents({});
     }
 
     onRangeChange(range: DateRange): void {

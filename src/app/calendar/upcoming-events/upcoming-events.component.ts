@@ -27,6 +27,15 @@ const SYNC_LABELS: Record<CalendarEventSyncStatus, string> = {
 export class UpcomingEventsComponent {
     @Input()
     events: CalendarEvent[] = [];
+    @Input()
+    title = 'Upcoming events';
+    @Input()
+    emptyTitle = 'No upcoming events';
+    @Input()
+    emptyText = 'Events you add to the calendar show up here.';
+    // Grey date tiles instead of brand ones, for events that already happened
+    @Input()
+    muted = false;
 
     @Output()
     editEvent: EventEmitter<CalendarEvent> = new EventEmitter<CalendarEvent>();
