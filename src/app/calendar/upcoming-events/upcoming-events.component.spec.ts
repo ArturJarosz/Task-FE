@@ -20,4 +20,14 @@ describe('UpcomingEventsComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should show the given title and empty state', () => {
+    fixture.componentRef.setInput('title', 'Past events');
+    fixture.componentRef.setInput('emptyTitle', 'No past events');
+    fixture.detectChanges();
+
+    const text = fixture.nativeElement.textContent;
+    expect(text).toContain('Past events');
+    expect(text).toContain('No past events');
+  });
 });
