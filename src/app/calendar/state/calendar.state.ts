@@ -11,6 +11,7 @@ import {MessageService} from "primeng/api";
 import {toTimeZoneString} from "../../shared/utils/date-utils";
 
 const UPCOMING_EVENTS_RANGE_DAYS = 90;
+const PAST_EVENTS_RANGE_DAYS = 90;
 
 export interface CalendarState extends AppState {
     events: CalendarEvent[];
@@ -18,6 +19,8 @@ export interface CalendarState extends AppState {
     eventsNeedRefresh: boolean;
     upcomingEvents: CalendarEvent[];
     upcomingEventsNeedRefresh: boolean;
+    pastEvents: CalendarEvent[];
+    pastEventsNeedRefresh: boolean;
     selectedEvent: CalendarEvent | null;
 }
 
@@ -27,6 +30,8 @@ export const initialState: CalendarState = {
     eventsNeedRefresh: true,
     upcomingEvents: [],
     upcomingEventsNeedRefresh: true,
+    pastEvents: [],
+    pastEventsNeedRefresh: true,
     selectedEvent: null,
 }
 
@@ -49,6 +54,9 @@ export const CalendarStore = signalStore(
             },
             setUpcomingEventsNeedRefresh() {
                 patchState(store, {upcomingEventsNeedRefresh: true});
+            },
+            setPastEventsNeedRefresh() {
+                patchState(store, {pastEventsNeedRefresh: true});
             },
             loadEvents: rxMethod<{}>(
                 pipe(
@@ -89,13 +97,40 @@ export const CalendarStore = signalStore(
                     })
                 )
             ),
+            loadPastEvents: rxMethod<{}>(
+                pipe(
+                    switchMap(() => {
+                        if (store.pastEventsNeedRefresh()) {
+                            // Ends yesterday, since today's events are already listed as upcoming
+                            const rangeStart = new Date();
+                            rangeStart.setDate(rangeStart.getDate() - PAST_EVENTS_RANGE_DAYS);
+                            const rangeEnd = new Date();
+                            rangeEnd.setDate(rangeEnd.getDate() - 1);
+                            return calendarRestService.getCalendarEvents(toTimeZoneString(rangeStart)!, toTimeZoneString(rangeEnd)!)
+                                .pipe(
+                                    tap(events => patchState(store, {
+                                        pastEvents: [...events].sort((a, b) =>
+                                            (b.startDateTime ?? '').localeCompare(a.startDateTime ?? '')),
+                                        pastEventsNeedRefresh: false
+                                    })),
+                                    catchError(() => EMPTY)
+                                )
+                        }
+                        return of({});
+                    })
+                )
+            ),
             createCalendarEvent: rxMethod<{ event: CalendarEvent }>(
                 pipe(
                     switchMap(({event}) => {
                         return calendarRestService.createCalendarEvent(event)
                             .pipe(
                                 tap(event => {
-                                    patchState(store, {eventsNeedRefresh: true, upcomingEventsNeedRefresh: true});
+                                    patchState(store, {
+                                        eventsNeedRefresh: true,
+                                        upcomingEventsNeedRefresh: true,
+                                        pastEventsNeedRefresh: true
+                                    });
                                     messageService.add({
                                         severity: MessageSeverity.INFO,
                                         summary: `New event created`,
@@ -116,6 +151,7 @@ export const CalendarStore = signalStore(
                                     patchState(store, {
                                         eventsNeedRefresh: true,
                                         upcomingEventsNeedRefresh: true,
+                                        pastEventsNeedRefresh: true,
                                         selectedEvent: null
                                     });
                                     messageService.add({
@@ -143,6 +179,7 @@ export const CalendarStore = signalStore(
                                     patchState(store, {
                                         eventsNeedRefresh: true,
                                         upcomingEventsNeedRefresh: true,
+                                        pastEventsNeedRefresh: true,
                                         selectedEvent: null,
                                     });
                                 }),

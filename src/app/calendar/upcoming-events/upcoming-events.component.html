@@ -1,17 +1,18 @@
 <section class="app-card">
     <div class="app-card-header">
         <div>
-            <h2 class="app-card-title">Upcoming events</h2>
+            <h2 class="app-card-title">{{ title }}</h2>
             <p class="app-card-subtitle m-0">{{ events.length }} {{ events.length === 1 ? 'event' : 'events' }}</p>
         </div>
     </div>
     @if (events.length === 0) {
-        <app-empty-state icon="pi pi-calendar" title="No upcoming events" text="Events you add to the calendar show up here."/>
+        <app-empty-state icon="pi pi-calendar" [title]="emptyTitle" [text]="emptyText"/>
     } @else {
         <ul class="list-none m-0 px-6 pb-4">
             @for (event of events; track event.id) {
                 <li class="flex items-start gap-3 py-3 border-b border-gray-100 last:border-b-0">
-                    <div class="flex flex-col items-center justify-center shrink-0 w-12 h-12 rounded-xl bg-brand-50 text-brand-600">
+                    <div class="flex flex-col items-center justify-center shrink-0 w-12 h-12 rounded-xl"
+                         [class]="muted ? 'bg-gray-100 text-gray-500' : 'bg-brand-50 text-brand-600'">
                         <span class="text-base leading-5 font-semibold">{{ eventDay(event.startDateTime) }}</span>
                         <span class="text-[12px] leading-4 uppercase">{{ eventMonth(event.startDateTime) }}</span>
                     </div>
