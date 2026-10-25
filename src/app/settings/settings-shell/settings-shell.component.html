@@ -61,9 +61,21 @@
                                           (save)="onGoogleCalendarSave($event)"
                                           (checkConnection)="onCheckGoogleCalendarConnection()"
                                           (retry)="onRetry()"/>
+                @if (googleCalendarSettingsStore.connection()?.status === GoogleCalendarConnectionStatus.CONNECTED) {
+                    <google-calendar-shares [shares]="googleCalendarSettingsStore.shares()"
+                                            [loading]="googleCalendarSettingsStore.sharesLoading()"
+                                            [loadFailed]="googleCalendarSettingsStore.sharesLoadFailed()"
+                                            [adding]="googleCalendarSettingsStore.shareAdding()"
+                                            [revoking]="googleCalendarSettingsStore.shareRevoking()"
+                                            (add)="googleCalendarSettingsStore.addShare($event)"
+                                            (revoke)="onRevokeGoogleCalendarShare($event)"
+                                            (retry)="googleCalendarSettingsStore.loadShares()"/>
+                }
             </section>
         }
     }
 </div>
 
 <edit-system-parameter [systemParameter]="$editedParameter()" (save)="onSave($event)" (closed)="onEditClosed()"/>
+
+<p-confirmDialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>
