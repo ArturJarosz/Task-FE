@@ -2,6 +2,8 @@ import {ChangeDetectionStrategy, Component, computed, effect, inject, signal, un
 import {ActivatedRoute, Router, RouterLink, RouterLinkActive} from "@angular/router";
 import {toSignal} from "@angular/core/rxjs-interop";
 import {map} from "rxjs";
+import {ConfirmationService} from "primeng/api";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {PageCrumb, PageHeaderComponent} from "../../shared";
 import {SystemParameter} from "../../generated/models/system-parameter";
 import {GoogleCalendarSettingsStore, SystemParameterStore} from "../state";
@@ -9,6 +11,9 @@ import {EditSystemParameterComponent} from "../edit-system-parameter/edit-system
 import {SystemParameterListComponent} from "../system-parameter-list/system-parameter-list.component";
 import {AppearanceSettingsComponent} from "../appearance-settings/appearance-settings.component";
 import {GoogleCalendarSettingsComponent} from "../google-calendar-settings/google-calendar-settings.component";
+import {GoogleCalendarSharesComponent} from "../google-calendar-shares/google-calendar-shares.component";
+import {CalendarShare} from "../../generated/models/calendar-share";
+import {GoogleCalendarConnectionStatus} from "../../generated/models/google-calendar-connection-status";
 import {GOOGLE_CALENDAR_PARAMETERS, toGoogleCalendarParameters} from "../google-calendar-parameters";
 import {THEME_COLOR_PARAMETER} from "../../theme/theme-colors";
 import {SETTINGS_SECTION_GROUPS, SETTINGS_SECTIONS} from "./settings-sections";
@@ -19,13 +24,17 @@ import {SETTINGS_SECTION_GROUPS, SETTINGS_SECTIONS} from "./settings-sections";
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     imports: [PageHeaderComponent, SystemParameterListComponent, EditSystemParameterComponent,
-        AppearanceSettingsComponent, GoogleCalendarSettingsComponent, RouterLink, RouterLinkActive]
+        AppearanceSettingsComponent, GoogleCalendarSettingsComponent, GoogleCalendarSharesComponent, ConfirmDialogModule,
+        RouterLink, RouterLinkActive]
 })
 export class SettingsShellComponent {
     readonly systemParameterStore = inject(SystemParameterStore);
     readonly googleCalendarSettingsStore = inject(GoogleCalendarSettingsStore);
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
+    private readonly confirmationService = inject(ConfirmationService);
+
+    protected readonly GoogleCalendarConnectionStatus = GoogleCalendarConnectionStatus;
 
     readonly sectionGroups = SETTINGS_SECTION_GROUPS;
 
@@ -97,5 +106,22 @@ export class SettingsShellComponent {
 
     onCheckGoogleCalendarConnection(): void {
         this.googleCalendarSettingsStore.checkConnection({});
+    }
+
+    onRevokeGoogleCalendarShare(share: CalendarShare): void {
+        this.confirmationService.confirm({
+            header: 'Revoke access',
+            message: `${share.email} will no longer see the calendar in their Google Calendar.`,
+            icon: 'pi pi-exclamation-triangle',
+            acceptButtonProps: {label: 'Revoke', severity: 'danger'},
+            rejectButtonProps: {label: 'Cancel', severity: 'secondary', outlined: true},
+            accept: () => {
+                this.googleCalendarSettingsStore.removeShare(share.email!);
+                this.confirmationService.close();
+            },
+            reject: () => {
+                this.confirmationService.close();
+            }
+        });
     }
 }
