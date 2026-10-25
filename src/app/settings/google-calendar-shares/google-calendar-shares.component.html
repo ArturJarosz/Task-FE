@@ -1,0 +1,67 @@
+<div class="text-sm border-t border-gray-200">
+    <div class="px-5 py-3 border-b border-gray-100">
+        <h3 class="m-0 text-sm font-semibold text-gray-800">People with access</h3>
+        <p class="m-0 text-xs text-gray-500">
+            They get an email from Google and see the calendar in their own Google Calendar after clicking
+            <em>Add this calendar</em> in it
+        </p>
+    </div>
+
+    @if (loadFailed) {
+        <app-empty-state icon="pi pi-exclamation-triangle" title="Couldn't load people with access"
+                         text="Check the connection and try again.">
+            <p-button label="Try again" icon="pi pi-refresh" severity="secondary" [outlined]="true" (onClick)="retry.emit()"/>
+        </app-empty-state>
+    } @else if (loading) {
+        @for (row of [1, 2]; track row) {
+            <div class="flex items-center justify-between gap-4 px-5 py-3 border-b border-gray-100">
+                <p-skeleton width="14rem" height="1rem"/>
+                <p-skeleton width="8rem" height="2rem"/>
+            </div>
+        }
+    } @else {
+        <ul class="m-0 p-0 list-none">
+            @for (share of shares; track share.email) {
+                <li class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-2.5 border-b border-gray-100">
+                    <span class="min-w-0 break-all text-gray-800">{{ share.email }}</span>
+                    <div class="flex items-center gap-3 shrink-0">
+                        <p-tag [value]="roleLabel(share.role)" [severity]="statusSeverity(share.role)"/>
+                        @if (canRevoke(share)) {
+                            <p-button label="Revoke" icon="pi pi-times" severity="secondary" [text]="true" size="small"
+                                      [loading]="revoking === share.email" [disabled]="!!revoking"
+                                      [ariaLabel]="'Revoke access for ' + share.email" (onClick)="revoke.emit(share)"/>
+                        } @else {
+                            <span class="text-xs text-gray-500">Managed in Google</span>
+                        }
+                    </div>
+                </li>
+            } @empty {
+                <li class="px-5 py-3 border-b border-gray-100 text-xs text-gray-500">
+                    The calendar isn't shared with anyone yet
+                </li>
+            }
+        </ul>
+
+        <!-- No form submit: Enter in a field would otherwise submit natively and reload the page -->
+        <form [formGroup]="form" (submit)="$event.preventDefault(); onAdd()"
+              class="flex flex-wrap items-start gap-3 px-5 py-3">
+            <div class="flex-1 min-w-[14rem]">
+                <label for="shareEmail" class="sr-only">Email</label>
+                <input id="shareEmail" type="email" pInputText formControlName="email" placeholder="name@gmail.com"
+                       class="w-full" aria-describedby="shareEmailHint"
+                       [attr.aria-invalid]="form.controls.email.touched && form.controls.email.invalid"/>
+                @if (alreadyShared) {
+                    <p id="shareEmailHint" class="m-0 mt-1 text-xs text-error-600">This person already has access</p>
+                } @else if (form.controls.email.touched && form.controls.email.invalid) {
+                    <p id="shareEmailHint" class="m-0 mt-1 text-xs text-error-600">Enter a valid email address</p>
+                }
+            </div>
+            <label for="shareRole" class="sr-only">Access</label>
+            <p-select inputId="shareRole" formControlName="role" [options]="roleOptions" optionLabel="label"
+                      optionValue="value" appendTo="body" class="w-36"/>
+            <!-- Outline: "Save changes" above is the card's primary button -->
+            <p-button type="submit" label="Share" icon="pi pi-user-plus" severity="secondary" [outlined]="true"
+                      [loading]="adding" [disabled]="!canAdd"/>
+        </form>
+    }
+</div>

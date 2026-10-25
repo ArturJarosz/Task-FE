@@ -32,6 +32,7 @@ import {ArchitectRestService, ArchitectRestServiceImpl} from '../app/architect/r
 import {CalendarRestService, CalendarRestServiceImpl} from '../app/calendar/rest/calendar-rest.service';
 import {SystemParameterRestService, SystemParameterRestServiceImpl} from '../app/settings/rest/system-parameter-rest.service';
 import {GoogleCalendarConnectionRestService, GoogleCalendarConnectionRestServiceImpl} from '../app/settings/rest/google-calendar-connection-rest.service';
+import {GoogleCalendarShareRestService, GoogleCalendarShareRestServiceImpl} from '../app/settings/rest/google-calendar-share-rest.service';
 
 registerLocaleData(localePl);
 
@@ -78,5 +79,6 @@ export function provideTestDependencies(): (Provider | EnvironmentProviders)[] {
         {provide: CalendarRestService, useClass: CalendarRestServiceImpl},
         {provide: SystemParameterRestService, useClass: SystemParameterRestServiceImpl},
         {provide: GoogleCalendarConnectionRestService, useClass: GoogleCalendarConnectionRestServiceImpl},
+        {provide: GoogleCalendarShareRestService, useClass: GoogleCalendarShareRestServiceImpl},
     ];
 }

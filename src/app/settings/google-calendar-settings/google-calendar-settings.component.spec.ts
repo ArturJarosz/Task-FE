@@ -19,6 +19,9 @@ function prepareParameters(sync: boolean, keySaved: boolean): GoogleCalendarPara
         calendarName: {id: 5, name: 'Google calendar name', type: 'TEXT', value: 'Task', valueSet: true},
         applicationName: {id: 6, name: 'Google calendar application name', type: 'TEXT', value: 'Task', valueSet: true},
         sync: {id: 7, name: 'Google calendar sync', type: 'BOOLEAN', value: String(sync), valueSet: true},
+        pollInterval: {id: 8, name: 'Google calendar poll interval', type: 'NUMBER', value: '15', valueSet: true},
+        pushRetryInterval: {id: 9, name: 'Google calendar push retry interval', type: 'NUMBER', value: '1',
+            valueSet: true},
     };
 }
 
@@ -91,11 +94,31 @@ describe('GoogleCalendarSettingsComponent', () => {
         expect(fixture.nativeElement.querySelector('#calendarCredentials')).toBeNull();
         expect(fixture.nativeElement.textContent).toContain('Saved for task@project.iam.gserviceaccount.com');
 
-        component.form.controls.calendarName.setValue('Office');
+        component.form.controls.pollInterval.setValue('30');
         component.form.markAsDirty();
         component.onSave();
 
-        expect(saved).toEqual([{...prepareParameters(true, true).calendarName!, value: 'Office'}]);
+        expect(saved).toEqual([{...prepareParameters(true, true).pollInterval!, value: '30'}]);
+    });
+
+    it('should lock the calendar and application names while sync works', () => {
+        setParameters(prepareParameters(true, true));
+        component.form.controls.calendarName.setValue('Office');
+        fixture.componentRef.setInput('connection', {status: GoogleCalendarConnectionStatus.CONNECTED});
+        fixture.detectChanges();
+
+        expect(component.form.controls.calendarName.disabled).toBeTrue();
+        expect(component.form.controls.calendarName.value).toBe('Task');
+        expect(fixture.nativeElement.querySelector('#applicationName').disabled).toBeTrue();
+
+        fixture.componentRef.setInput('connection', {status: GoogleCalendarConnectionStatus.INVALID_CREDENTIALS});
+        fixture.detectChanges();
+        expect(component.form.controls.calendarName.enabled).toBeTrue();
+
+        setParameters(prepareParameters(false, true));
+        fixture.componentRef.setInput('connection', {status: GoogleCalendarConnectionStatus.CONNECTED});
+        fixture.detectChanges();
+        expect(component.form.controls.applicationName.enabled).toBeTrue();
     });
 
     it('should warn when a new key is for another service account', () => {
@@ -214,5 +237,46 @@ describe('GoogleCalendarSettingsComponent', () => {
         expect(tooltip?.textContent).toContain('Google Calendar API');
         expect(tooltip?.querySelector('a')?.getAttribute('href')).toBe('https://console.cloud.google.com/');
         helpButton.closest('p-button').dispatchEvent(new Event('mouseleave'));
+    });
+
+    it('should save changed sync intervals and describe the saved poll interval', () => {
+        setParameters(prepareParameters(true, true));
+        expect(fixture.nativeElement.textContent).toContain('come back every 15 minutes');
+
+        component.form.controls.pollInterval.setValue(' 5 ');
+        component.form.controls.pushRetryInterval.setValue('3');
+        component.form.markAsDirty();
+        component.onSave();
+
+        expect(saved).toEqual([
+            {...prepareParameters(true, true).pollInterval!, value: '5'},
+            {...prepareParameters(true, true).pushRetryInterval!, value: '3'},
+        ]);
+    });
+
+    it('should save intervals without leading zeros and skip ones that only differ by them', () => {
+        setParameters(prepareParameters(true, true));
+
+        component.form.controls.pollInterval.setValue('015');
+        component.form.controls.pushRetryInterval.setValue('05');
+        component.form.markAsDirty();
+        component.onSave();
+
+        expect(saved).toEqual([{...prepareParameters(true, true).pushRetryInterval!, value: '5'}]);
+    });
+
+    it('should not save intervals that are not whole minutes from 1 to 1440', () => {
+        setParameters(prepareParameters(true, true));
+
+        for (let value of ['0', '1441', '1.5', 'abc', '']) {
+            component.form.controls.pollInterval.setValue(value);
+            component.form.markAsDirty();
+            expect(component.canSave).withContext(value).toBeFalse();
+        }
+        component.onSave();
+        fixture.detectChanges();
+
+        expect(saved).toBeUndefined();
+        expect(fixture.nativeElement.textContent).toContain('Enter whole minutes from 1 to 1440');
     });
 });

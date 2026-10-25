@@ -57,7 +57,8 @@
                         @if (keyMissing) {
                             Add a service account key to turn sync on
                         } @else {
-                            Events are sent to Google right away and changes made there come back every 15 minutes
+                            Events are sent to Google right away and changes made there come back every
+                            {{ storedPollInterval === '1' ? 'minute' : storedPollInterval + ' minutes' }}
                         }
                     </p>
                 </div>
@@ -70,8 +71,10 @@
                     <div class="min-w-0">
                         <div class="flex items-center gap-1">
                             <label for="calendarCredentials" class="font-medium text-gray-800">Service account key</label>
-                            <!-- autoHide off: the guide stays open while the pointer is on it, so its links can be clicked -->
+                            <!-- autoHide off: the guide stays open while the pointer is on it, so its links can be clicked.
+                                 -my-3 trims the 44px button to the 20px label line so this row is as tall as the others -->
                             <p-button icon="pi pi-question-circle" [text]="true" [rounded]="true" severity="secondary"
+                                      styleClass="-my-3"
                                       ariaLabel="How to get a service account key" [pTooltip]="keyGuide"
                                       tooltipPosition="bottom" tooltipEvent="both" [autoHide]="false"
                                       tooltipStyleClass="max-w-md"/>
@@ -159,6 +162,46 @@
                 <input id="applicationName" type="text" pInputText formControlName="applicationName"
                        class="w-full sm:w-64" aria-describedby="applicationNameHint"
                        [attr.aria-invalid]="form.controls.applicationName.invalid"/>
+            </div>
+
+            <!-- Poll interval -->
+            <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-2.5 border-b border-gray-100">
+                <div class="min-w-0">
+                    <label for="pollInterval" class="font-medium text-gray-800">Fetch changes from Google every</label>
+                    <p id="pollIntervalHint" class="m-0 text-xs"
+                       [class]="form.controls.pollInterval.invalid ? 'text-error-600' : 'text-gray-500'">
+                        @if (form.controls.pollInterval.invalid) {
+                            Enter whole minutes from {{ minIntervalMinutes }} to {{ maxIntervalMinutes }}
+                        } @else {
+                            How long changes made in Google take to show up here
+                        }
+                    </p>
+                </div>
+                <div class="flex items-center gap-2 w-full sm:w-64">
+                    <input id="pollInterval" type="text" inputmode="numeric" pInputText formControlName="pollInterval" class="w-full"
+                           aria-describedby="pollIntervalHint" [attr.aria-invalid]="form.controls.pollInterval.invalid"/>
+                    <span class="text-gray-500 shrink-0">min</span>
+                </div>
+            </div>
+
+            <!-- Push retry interval -->
+            <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-2.5 border-b border-gray-100">
+                <div class="min-w-0">
+                    <label for="pushRetryInterval" class="font-medium text-gray-800">Retry unsent events every</label>
+                    <p id="pushRetryIntervalHint" class="m-0 text-xs"
+                       [class]="form.controls.pushRetryInterval.invalid ? 'text-error-600' : 'text-gray-500'">
+                        @if (form.controls.pushRetryInterval.invalid) {
+                            Enter whole minutes from {{ minIntervalMinutes }} to {{ maxIntervalMinutes }}
+                        } @else {
+                            Events that couldn't reach Google are sent again after this time
+                        }
+                    </p>
+                </div>
+                <div class="flex items-center gap-2 w-full sm:w-64">
+                    <input id="pushRetryInterval" type="text" inputmode="numeric" pInputText formControlName="pushRetryInterval" class="w-full"
+                           aria-describedby="pushRetryIntervalHint" [attr.aria-invalid]="form.controls.pushRetryInterval.invalid"/>
+                    <span class="text-gray-500 shrink-0">min</span>
+                </div>
             </div>
 
             <div class="flex flex-wrap justify-end gap-3 px-5 py-3">

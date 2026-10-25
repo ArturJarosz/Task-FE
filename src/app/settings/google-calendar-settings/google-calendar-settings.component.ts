@@ -54,12 +54,30 @@ const CONNECTION_TEXTS: Record<GoogleCalendarConnectionStatus, ConnectionText> =
 };
 
 const MAX_NAME_LENGTH = 255;
+// Same limits as the backend: whole minutes, at most one day
+export const MIN_INTERVAL_MINUTES = 1;
+export const MAX_INTERVAL_MINUTES = 1440;
+const DEFAULT_POLL_INTERVAL = '15';
+const DEFAULT_PUSH_RETRY_INTERVAL = '1';
 // Service account keys are about 2.3 kB; anything far bigger is the wrong file
 const MAX_KEY_FILE_SIZE = 64 * 1024;
 
 function serviceAccountKeyValidator(control: AbstractControl<string>): ValidationErrors | null {
     let value = control.value?.trim();
     return !value || parseServiceAccountKey(value) ? null : {serviceAccountKey: true};
+}
+
+function intervalValidator(control: AbstractControl<string>): ValidationErrors | null {
+    let value = control.value?.trim() ?? '';
+    let minutes = Number(value);
+    return /^\d{1,4}$/.test(value) && minutes >= MIN_INTERVAL_MINUTES && minutes <= MAX_INTERVAL_MINUTES
+        ? null : {interval: true};
+}
+
+// "05" and "5" are the same interval; saving and the hint use the plain number
+function normalizeMinutes(value: string): string {
+    let trimmed = value.trim();
+    return /^\d+$/.test(trimmed) ? String(Number(trimmed)) : trimmed;
 }
 
 @Component({
@@ -111,7 +129,13 @@ export class GoogleCalendarSettingsComponent implements OnChanges {
         }),
         // Empty keeps the saved key; the backend never sends the key back
         credentials: new FormControl('', {nonNullable: true, validators: [serviceAccountKeyValidator]}),
+        pollInterval: new FormControl(DEFAULT_POLL_INTERVAL, {nonNullable: true, validators: [intervalValidator]}),
+        pushRetryInterval: new FormControl(DEFAULT_PUSH_RETRY_INTERVAL,
+            {nonNullable: true, validators: [intervalValidator]}),
     });
+
+    protected readonly minIntervalMinutes = MIN_INTERVAL_MINUTES;
+    protected readonly maxIntervalMinutes = MAX_INTERVAL_MINUTES;
 
     // The key field is shown when there is no saved key yet, or after "Replace key"
     replacingKey = false;
@@ -152,6 +176,16 @@ export class GoogleCalendarSettingsComponent implements OnChanges {
         return this.form.dirty && this.form.valid && !this.keyMissing && !this.saving;
     }
 
+    // The names are set up once: the app creates its calendar with them, so they stay fixed while sync works
+    get namesLocked(): boolean {
+        return this.storedValues().enabled && this.connection?.status === GoogleCalendarConnectionStatus.CONNECTED;
+    }
+
+    // The saved interval, not the typed one: the hint describes how the sync runs now
+    get storedPollInterval(): string {
+        return normalizeMinutes(this.storedValues().pollInterval);
+    }
+
     get connectionText(): ConnectionText | null {
         let status = this.connection?.status;
         return status ? CONNECTION_TEXTS[status] : null;
@@ -172,6 +206,7 @@ export class GoogleCalendarSettingsComponent implements OnChanges {
         } else if (changes['parameters'] && !this.saving) {
             this.resetForm();
         }
+        this.updateNamesLock();
     }
 
     onReplaceKey(): void {
@@ -217,6 +252,9 @@ export class GoogleCalendarSettingsComponent implements OnChanges {
             [this.parameters?.credentials, value.credentials.trim(), stored.credentials],
             [this.parameters?.calendarName, value.calendarName.trim(), stored.calendarName],
             [this.parameters?.applicationName, value.applicationName.trim(), stored.applicationName],
+            [this.parameters?.pollInterval, normalizeMinutes(value.pollInterval), normalizeMinutes(stored.pollInterval)],
+            [this.parameters?.pushRetryInterval, normalizeMinutes(value.pushRetryInterval),
+                normalizeMinutes(stored.pushRetryInterval)],
             [this.parameters?.sync, String(value.enabled), String(stored.enabled)],
         ];
         let changed = changes.filter(([, newValue, storedValue]) => newValue !== storedValue);
@@ -239,7 +277,27 @@ export class GoogleCalendarSettingsComponent implements OnChanges {
             calendarName: this.parameters?.calendarName?.value ?? '',
             applicationName: this.parameters?.applicationName?.value ?? '',
             credentials: '',
+            pollInterval: this.parameters?.pollInterval?.value ?? DEFAULT_POLL_INTERVAL,
+            pushRetryInterval: this.parameters?.pushRetryInterval?.value ?? DEFAULT_PUSH_RETRY_INTERVAL,
         };
+    }
+
+    // Locking drops a typed name too, as getRawValue would still save it
+    private updateNamesLock(): void {
+        let stored = this.storedValues();
+        let controls = this.form.controls;
+        let nameControls: [FormControl<string>, string][] = [
+            [controls.calendarName, stored.calendarName],
+            [controls.applicationName, stored.applicationName],
+        ];
+        for (let [control, storedValue] of nameControls) {
+            if (this.namesLocked && control.enabled) {
+                control.reset(storedValue);
+                control.disable();
+            } else if (!this.namesLocked && control.disabled) {
+                control.enable();
+            }
+        }
     }
 
     private resetForm(): void {
@@ -261,6 +319,12 @@ export class GoogleCalendarSettingsComponent implements OnChanges {
         }
         if (this.parameters?.applicationName !== before?.applicationName) {
             controls.applicationName.reset(stored.applicationName);
+        }
+        if (this.parameters?.pollInterval !== before?.pollInterval) {
+            controls.pollInterval.reset(stored.pollInterval);
+        }
+        if (this.parameters?.pushRetryInterval !== before?.pushRetryInterval) {
+            controls.pushRetryInterval.reset(stored.pushRetryInterval);
         }
         if (this.parameters?.credentials !== before?.credentials) {
             controls.credentials.reset(stored.credentials);

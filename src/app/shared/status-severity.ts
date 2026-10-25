@@ -2,6 +2,7 @@
 // Keys are the backend status enums from src/app/generated/models; values are p-tag severities.
 
 import {CalendarEventSyncStatus} from '../generated/models/calendar-event-sync-status';
+import {CalendarShareRole} from '../generated/models/calendar-share-role';
 import {ContractStatus} from '../generated/models/contract-status';
 import {GoogleCalendarConnectionStatus} from '../generated/models/google-calendar-connection-status';
 import {ProjectStatus} from '../generated/models/project-status';
@@ -11,7 +12,7 @@ import {TaskStatus} from '../generated/models/task-status';
 export type TagSeverity = 'secondary' | 'info' | 'warn' | 'success' | 'danger' | 'contrast';
 
 export type Status = ProjectStatus | StageStatus | TaskStatus | ContractStatus | CalendarEventSyncStatus
-    | GoogleCalendarConnectionStatus;
+    | GoogleCalendarConnectionStatus | CalendarShareRole;
 
 // Several enums share values (TO_DO, DONE, REJECTED, COMPLETED...), so the map is keyed by the string value.
 // Adding a value to any of the enums above makes this a compile error until it gets a severity.
@@ -39,6 +40,11 @@ const SEVERITY: Record<`${Status}`, TagSeverity> = {
     PERMISSION_DENIED: 'danger',
     CALENDAR_NOT_FOUND: 'danger',
     CONNECTION_FAILED: 'danger',
+    // Google Calendar share role
+    READER: 'info',
+    WRITER: 'success',
+    FREE_BUSY_READER: 'secondary',
+    OWNER: 'warn',
 };
 
 export function statusSeverity(status: Status | string | null | undefined): TagSeverity {
