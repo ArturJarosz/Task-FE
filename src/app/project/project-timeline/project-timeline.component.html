@@ -1,0 +1,319 @@
+<div class="flex flex-col gap-6">
+    <!-- KPIs -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+        <app-kpi-card icon="pi pi-flag" label="Project start">
+            @if (start) {
+                {{ start | date:'dd.MM.yyyy' }}
+                <p-tag [value]="relativeDays(start)" [severity]="start > today ? 'info' : 'secondary'"/>
+            } @else {
+                <span class="text-sm font-normal text-gray-400">Not set</span>
+            }
+        </app-kpi-card>
+        <app-kpi-card icon="pi pi-flag-fill" label="Project end">
+            @if (end) {
+                {{ end | date:'dd.MM.yyyy' }}
+                @if (endBeforeStart) {
+                    <p-tag value="Before start" severity="danger"/>
+                } @else {
+                    <p-tag [value]="relativeDays(end)" severity="secondary"/>
+                }
+            } @else {
+                <span class="text-sm font-normal text-gray-400">Not set</span>
+                @if (openEnded && elapsedDays > 0) {
+                    <p-tag value="Ongoing" severity="warn"/>
+                }
+            }
+        </app-kpi-card>
+        <app-kpi-card icon="pi pi-arrows-h" label="Project duration">
+            @if (durationDays > 0) {
+                {{ dayCount(durationDays) }}
+                <p-tag [value]="durationMonths === 1 ? '1 month' : durationMonths + ' months'" severity="secondary"/>
+            } @else if (openEnded && elapsedDays > 0) {
+                {{ dayCount(elapsedDays) }}
+                <p-tag value="So far" severity="secondary"/>
+            } @else {
+                <span class="text-sm font-normal text-gray-400">Not set</span>
+            }
+        </app-kpi-card>
+        <app-kpi-card icon="pi pi-clock" label="Contract deadline">
+            @if (contractDeadline) {
+                {{ contractDeadline | date:'dd.MM.yyyy' }}
+                <p-tag [value]="relativeDays(contractDeadline)" [severity]="daysToDeadline! < 0 ? 'danger' : 'warn'"/>
+            } @else {
+                <span class="text-sm font-normal text-gray-400">Not set</span>
+            }
+        </app-kpi-card>
+    </div>
+
+    <!-- Chart -->
+    <section class="app-card overflow-hidden">
+        <div class="app-card-header">
+            <div>
+                <h3 class="app-card-title">Project timeline</h3>
+            </div>
+        </div>
+
+        @if (rangeStart) {
+            <!-- An installment's payment date: a tick in a green circle when paid, an empty grey circle while due, a clock in a red circle once overdue -->
+            <ng-template #paymentMarker let-payment>
+                @let paymentText = 'Installment · ' + (payment.date | date:'dd.MM.yyyy') + ' · ' + (payment.value | currency:'PLN':'symbol':'1.2-2') + ' · ' + payment.stateLabel;
+                <span class="absolute top-1/2 z-20 w-[18px] h-[18px] -ml-[9px] -translate-y-1/2 cursor-default"
+                      [style.left.%]="payment.left" tabindex="0" role="img"
+                      [attr.aria-label]="paymentText" [pTooltip]="paymentText" tooltipPosition="top" tooltipStyleClass="text-xs"><svg class="block" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+                    @switch (payment.state) {
+                        @case ('paid') {
+                            <svg:circle cx="9" cy="9" r="9" class="fill-success-700"/><svg:path d="M5.5 9.2l2.3 2.3 4.7-4.8" fill="none" class="stroke-white" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+                        }
+                        @case ('due') {
+                            <svg:circle cx="9" cy="9" r="8" class="fill-white stroke-gray-500" stroke-width="1.75"/>
+                        }
+                        @case ('overdue') {
+                            <svg:circle cx="9" cy="9" r="9" class="fill-error-600"/><svg:path d="M9 4.8V9l2.8 1.8" fill="none" class="stroke-white" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+                        }
+                    }
+                </svg></span>
+            </ng-template>
+
+            <!-- Dates that can't be drawn (done without an end, or an end before the start): a warning at the start instead of a bar -->
+            <ng-template #dateErrorMarker let-text let-left="left">
+                <span class="absolute top-1/2 z-20 flex items-center justify-center w-5 h-5 -ml-2.5 -translate-y-1/2 rounded-full bg-white text-error-600 cursor-default"
+                      [style.left.%]="left" tabindex="0" role="img"
+                      [attr.aria-label]="text" [pTooltip]="text" tooltipPosition="top" tooltipStyleClass="text-xs"><i class="pi pi-exclamation-triangle text-[16px]" aria-hidden="true"></i></span>
+            </ng-template>
+
+            <div class="isolate overflow-x-auto overflow-y-hidden border-t border-gray-100">
+                <div class="relative" [style.min-width.px]="chartMinWidth + 240">
+                    <!-- Column lines behind the rows, and today above them but under the bars and markers (no z-index, so the later
+                         rows paint over it); both over the track column only -->
+                    <div class="pointer-events-none absolute inset-y-0 left-[240px] right-0 -z-10" aria-hidden="true">
+                        @for (tick of ticks; track tick.left) {
+                            <div class="absolute inset-y-0 border-l border-gray-100" [style.left.%]="tick.left"></div>
+                        }
+                    </div>
+                    <div class="pointer-events-none absolute inset-y-0 left-[240px] right-0" aria-hidden="true">
+                        @if (todayLeft !== null) {
+                            <!-- Starts in the header's today lane, under the 32px month row and 6px from the lane's top, where the label sits -->
+                            <div class="absolute top-[38px] bottom-0 w-0.5 -translate-x-1/2 bg-today" [style.left.%]="todayLeft">
+                                <!-- The label shows today's date, shaped like the bars; its tooltip says what the line is -->
+                                <span class="pointer-events-auto absolute top-0 flex h-6 items-center whitespace-nowrap rounded-md bg-today px-2.5 text-xs font-medium tabular-nums text-today-ink cursor-default" [class]="todayLabelClass"
+                                      pTooltip="Today" tooltipPosition="top" tooltipStyleClass="text-xs">{{ today | date:'dd.MM' }}</span>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Months as "May'25" on one line. Under them, still in the header, a lane for the today label, so it never
+                         sits on the contract row -->
+                    <div class="flex bg-gray-50 border-b border-gray-100">
+                        <div class="sticky left-0 z-30 -mb-px w-[240px] shrink-0 border-b border-gray-100 bg-gray-50">
+                            <div class="flex items-end h-8 px-6 pb-1.5 text-xs font-medium text-gray-500">Phase</div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="relative h-8">
+                                @for (tick of ticks; track tick.left) {
+                                    <div class="absolute inset-y-0 flex items-end pl-2 pb-1.5 text-xs font-medium text-gray-700 whitespace-nowrap" [style.left.%]="tick.left">{{ tick.label }}</div>
+                                }
+                            </div>
+                            @if (todayLeft !== null) {
+                                <div class="h-9" aria-hidden="true"></div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Contract, set apart from the project rows below by a stronger line. Dates are in the bar's tooltip -->
+                    <div class="flex border-b border-gray-200">
+                        <div class="sticky left-0 z-30 -mb-px flex items-center w-[240px] shrink-0 border-b border-gray-200 bg-white px-6">
+                            <span class="text-sm font-medium text-gray-800">Contract</span>
+                        </div>
+                        <div class="relative flex-1 h-11">
+                            @if (contract.dateError) {
+                                <ng-container *ngTemplateOutlet="dateErrorMarker; context: {$implicit: contract.dateError, left: contract.left}"/>
+                            } @else if (contract.start) {
+                                <!-- Tooltip: name, dates (always, "no end date" when missing), duration, then the deadline if there is one -->
+                                <ng-template #contractTip><div class="font-medium">Contract</div><div class="tabular-nums">{{ contract.start | date:'dd.MM.yyyy' }} – {{ contract.open || !contract.end ? 'no end date' : (contract.end | date:'dd.MM.yyyy') }}</div><div class="tabular-nums">{{ contract.label }}</div>@if (contractDeadline) {<div class="tabular-nums">Deadline {{ contractDeadline | date:'dd.MM.yyyy' }}</div>}</ng-template>
+                                <div class="absolute top-2.5 h-6 flex items-center overflow-hidden rounded-md px-2.5 text-xs font-medium whitespace-nowrap bg-gray-200 text-gray-800"
+                                     [class.rounded-r-none]="!!contract.toDeadline" [style.left.%]="contract.left" [style.width.%]="contract.width"
+                                     [style.padding-left]="contract.labelPad ? 'calc(' + contract.labelPad + '% + 10px)' : null"
+                                     [pTooltip]="contractTip" tooltipPosition="top" tooltipStyleClass="text-xs">
+                                    @if (contract.labelAt === 'inside') {
+                                        <span class="truncate tabular-nums">{{ contract.label }}</span>
+                                    }
+                                </div>
+                                @if (contract.pastDeadline) {
+                                    <div class="app-past-deadline pointer-events-none absolute top-2.5 h-6 rounded-r-md" [class.rounded-l-md]="contract.pastDeadline.whole"
+                                         [style.left.%]="contract.pastDeadline.left" [style.width.%]="contract.pastDeadline.width" aria-hidden="true"></div>
+                                }
+                                @if (contract.toDeadline) {
+                                    <!-- Ongoing: dashed on to its deadline -->
+                                    <div class="absolute top-2.5 h-6 rounded-r-md border-2 border-l-0 border-dashed border-gray-300"
+                                         [style.left.%]="contract.toDeadline.left" [style.width.%]="contract.toDeadline.width" aria-hidden="true"></div>
+                                }
+                                @if (contract.labelAt === 'after') {
+                                    <span class="absolute top-1/2 -translate-y-1/2 z-20 rounded bg-white px-1 text-xs font-medium whitespace-nowrap text-gray-700"
+                                          [style.left]="contract.labelLeft">{{ contract.label }}</span>
+                                } @else if (contract.labelAt === 'before') {
+                                    <span class="absolute top-1/2 -translate-y-1/2 z-20 rounded bg-white px-1 text-xs font-medium whitespace-nowrap text-gray-700"
+                                          [style.right]="labelBefore(contract.left)">{{ contract.label }}</span>
+                                }
+                            } @else {
+                                <span class="absolute top-1/2 -translate-y-1/2 left-2 text-xs text-gray-400">No start date yet</span>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Project: the work and its stages. Dates are in the bar's tooltip -->
+                    <div class="flex border-b border-gray-100">
+                        <div class="sticky left-0 z-30 -mb-px flex items-center w-[240px] shrink-0 border-b border-gray-100 bg-white px-6">
+                            <span class="text-sm font-medium text-gray-800">Project</span>
+                        </div>
+                        <div class="relative flex-1 h-11">
+                            @if (work.dateError) {
+                                <ng-container *ngTemplateOutlet="dateErrorMarker; context: {$implicit: work.dateError, left: work.left}"/>
+                            } @else if (work.start) {
+                                <!-- Tooltip: name, then dates (always, "no end date" when missing), then duration -->
+                                <ng-template #workTip><div class="font-medium">Project</div><div class="tabular-nums">{{ work.start | date:'dd.MM.yyyy' }} – {{ work.open || !work.end ? 'no end date' : (work.end | date:'dd.MM.yyyy') }}</div><div class="tabular-nums">{{ work.label }}</div></ng-template>
+                                <div class="absolute top-2.5 h-6 flex items-center overflow-hidden rounded-md px-2.5 text-xs font-medium whitespace-nowrap bg-(--app-brand-500) text-(--app-brand-contrast)"
+                                     [style.left.%]="work.left" [style.width.%]="work.width"
+                                     [style.padding-left]="work.labelPad ? 'calc(' + work.labelPad + '% + 10px)' : null"
+                                     [pTooltip]="workTip" tooltipPosition="top" tooltipStyleClass="text-xs">
+                                    @if (work.labelAt === 'inside') {
+                                        <span class="truncate tabular-nums">{{ work.label }}</span>
+                                    }
+                                </div>
+                                @if (work.labelAt === 'after') {
+                                    <span class="absolute top-1/2 -translate-y-1/2 z-20 rounded bg-white px-1 text-xs font-medium whitespace-nowrap text-gray-700"
+                                          [style.left]="work.labelLeft">{{ work.label }}</span>
+                                } @else if (work.labelAt === 'before') {
+                                    <span class="absolute top-1/2 -translate-y-1/2 z-20 rounded bg-white px-1 text-xs font-medium whitespace-nowrap text-gray-700"
+                                          [style.right]="labelBefore(work.left)">{{ work.label }}</span>
+                                }
+                            } @else {
+                                <span class="absolute top-1/2 -translate-y-1/2 left-2 text-xs text-gray-400">No start date yet</span>
+                            }
+                            @for (payment of otherPayments; track $index) {
+                                <ng-container *ngTemplateOutlet="paymentMarker; context: {$implicit: payment}"/>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Stages: name only, and bars with no text (name, dates, length and deadline are in the tooltip), with their installments' payment dates -->
+                    @for (stage of stages; track stage.id; let last = $last) {
+                        <div class="flex" [class.border-b]="!last" [class.border-gray-100]="!last">
+                            <div class="sticky left-0 z-30 -mb-px flex items-center w-[240px] shrink-0 border-b border-gray-100 bg-white px-6 min-w-0">
+                                <a [routerLink]="['/projects', project.id, 'stages', stage.id]"
+                                   class="block truncate text-sm font-medium text-gray-800 no-underline hover:text-brand-500">{{ stage.name }}</a>
+                            </div>
+                            <div class="relative flex-1 h-11">
+                                @if (stage.start && stage.end) {
+                                    <!-- Tooltip: name, dates (always, "no end date" when missing), duration, then the deadline if there is one -->
+                                    <ng-template #stageTip><div class="font-medium">{{ stage.name }}</div><div class="tabular-nums">{{ stage.start | date:'dd.MM.yyyy' }} – {{ stage.open || !stage.end ? 'no end date' : (stage.end | date:'dd.MM.yyyy') }}</div><div class="tabular-nums">{{ stage.label }}</div>@if (stage.deadline) {<div class="tabular-nums">Deadline {{ stage.deadline | date:'dd.MM.yyyy' }}</div>}</ng-template>
+                                    <div class="absolute top-2.5 h-6 rounded-md"
+                                         [class]="stage.barClass" [class.rounded-r-none]="!!stage.toDeadline" [style.left.%]="stage.left" [style.width.%]="stage.width"
+                                         [pTooltip]="stageTip" tooltipPosition="top" tooltipStyleClass="text-xs"></div>
+                                    @if (stage.pastDeadline) {
+                                        <div class="app-past-deadline pointer-events-none absolute top-2.5 h-6 rounded-r-md" [class.rounded-l-md]="stage.pastDeadline.whole"
+                                             [style.left.%]="stage.pastDeadline.left" [style.width.%]="stage.pastDeadline.width" aria-hidden="true"></div>
+                                    }
+                                    @if (stage.toDeadline) {
+                                        <!-- Ongoing: dashed on to its deadline -->
+                                        <div class="absolute top-2.5 h-6 rounded-r-md border-2 border-l-0 border-dashed border-brand-300"
+                                             [style.left.%]="stage.toDeadline.left" [style.width.%]="stage.toDeadline.width" aria-hidden="true"></div>
+                                    }
+                                } @else if (stage.dateError) {
+                                    <ng-container *ngTemplateOutlet="dateErrorMarker; context: {$implicit: stage.dateError, left: stage.left}"/>
+                                } @else if (stage.note) {
+                                    <span class="absolute top-1/2 -translate-y-1/2 left-2 text-xs text-gray-400">{{ stage.note }}</span>
+                                } @else if (!stage.start) {
+                                    <span class="absolute top-1/2 -translate-y-1/2 left-2 text-xs text-gray-400">No dates yet</span>
+                                }
+                                @for (payment of stage.payments; track $index) {
+                                    <ng-container *ngTemplateOutlet="paymentMarker; context: {$implicit: payment}"/>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @if (installmentsLoadFailed) {
+                <div class="flex flex-wrap items-center justify-between gap-3 px-6 py-3 border-t border-gray-100">
+                    <span class="flex items-center gap-2 text-sm text-gray-500"><i class="pi pi-exclamation-circle text-error-600" aria-hidden="true"></i>Installment payment dates couldn't be loaded.</span>
+                    <p-button label="Try again" severity="secondary" [outlined]="true" (onClick)="reloadInstallments.emit()"/>
+                </div>
+            }
+            <ul class="list-none m-0 flex flex-wrap gap-x-5 gap-y-2 px-6 py-4 border-t border-gray-100 text-xs text-gray-500">
+                <li class="flex items-center gap-2"><span class="app-past-deadline w-4 h-2.5 rounded-sm" aria-hidden="true"></span>Past deadline</li>
+                @if (anyDateError) {
+                    <li class="flex items-center gap-2"><span class="flex items-center justify-center w-4 h-4 text-error-600" aria-hidden="true"><i class="pi pi-exclamation-triangle text-[13px]"></i></span>Date error</li>
+                }
+                <li class="flex items-center gap-2"><svg width="12" height="12" viewBox="0 0 18 18" aria-hidden="true"><svg:circle cx="9" cy="9" r="9" class="fill-success-700"/><svg:path d="M5.5 9.2l2.3 2.3 4.7-4.8" fill="none" class="stroke-white" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></svg>Installment, paid</li>
+                <li class="flex items-center gap-2"><svg width="12" height="12" viewBox="0 0 18 18" aria-hidden="true"><svg:circle cx="9" cy="9" r="7.75" class="fill-white stroke-gray-500" stroke-width="2.5"/></svg>Installment, not paid</li>
+                <li class="flex items-center gap-2"><svg width="12" height="12" viewBox="0 0 18 18" aria-hidden="true"><svg:circle cx="9" cy="9" r="9" class="fill-error-600"/><svg:path d="M9 4.8V9l2.8 1.8" fill="none" class="stroke-white" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></svg>Installment, overdue</li>
+            </ul>
+        } @else {
+            <app-empty-state icon="pi pi-calendar" title="No dates yet"
+                             text="Set the contract dates on the Overview tab or add dates to the stages to see the timeline."/>
+        }
+    </section>
+
+    <!-- Progress -->
+    <section class="app-card">
+        <div class="app-card-header">
+            <div>
+                <h3 class="app-card-title">Progress</h3>
+                <p class="app-card-subtitle m-0">Time passed between the project start and end</p>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-x-10 gap-y-6 px-6 pb-6">
+            <div>
+                @if (durationDays > 0) {
+                    <div class="flex items-baseline justify-between gap-3">
+                        <span class="app-gauge-value">{{ elapsedPercent }}%</span>
+                        <span class="text-sm text-gray-500 tabular-nums">{{ elapsedDays }} of {{ dayCount(durationDays) }}</span>
+                    </div>
+                    <div class="mt-3 h-2 rounded bg-gray-100" role="progressbar" aria-label="Time passed"
+                         [attr.aria-valuenow]="elapsedPercent" aria-valuemin="0" aria-valuemax="100">
+                        <div class="h-2 rounded bg-brand-500" [style.width.%]="elapsedPercent"></div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-xs text-gray-500 tabular-nums">
+                        <span>{{ start | date:'dd.MM.yyyy' }}</span>
+                        <span>{{ end | date:'dd.MM.yyyy' }}</span>
+                    </div>
+                } @else if (endBeforeStart) {
+                    <p class="m-0 text-sm text-gray-500">The project end date is before its start date, so progress can't be shown.</p>
+                } @else if (openEnded && elapsedDays > 0) {
+                    <div class="flex items-baseline justify-between gap-3">
+                        <span class="app-gauge-value">Day {{ elapsedDays }}</span>
+                        <span class="text-sm text-gray-500 tabular-nums">since {{ start | date:'dd.MM.yyyy' }}</span>
+                    </div>
+                    <p class="m-0 mt-3 text-sm text-gray-500">The project has no end date yet, so the share of time passed can't be shown.</p>
+                } @else {
+                    <p class="m-0 text-sm text-gray-500">Set the start and end dates to track progress.</p>
+                }
+            </div>
+            <dl class="m-0 grid grid-cols-1 sm:grid-cols-3 gap-5 content-start">
+                <div>
+                    <dt class="app-field-label">Stages done</dt>
+                    <dd class="m-0 text-base font-semibold text-gray-800 tabular-nums">{{ stagesDone }} of {{ stages.length }}</dd>
+                </div>
+                <div>
+                    <dt class="app-field-label">Installments paid</dt>
+                    @if (installmentsLoadFailed) {
+                        <dd class="m-0 text-base text-gray-400">Couldn't load</dd>
+                    } @else {
+                        <dd class="m-0 text-base font-semibold text-gray-800 tabular-nums">{{ installmentsPaid }} of {{ installmentsCount }}</dd>
+                    }
+                </div>
+                <div>
+                    <dt class="app-field-label">Days to deadline</dt>
+                    @if (daysToDeadline === null) {
+                        <dd class="m-0 text-base text-gray-400">Not set</dd>
+                    } @else if (daysToDeadline < 0) {
+                        <dd class="m-0 text-base font-semibold text-error-700 tabular-nums">{{ dayCount(-daysToDeadline) }} late</dd>
+                    } @else {
+                        <dd class="m-0 text-base font-semibold text-gray-800 tabular-nums">{{ daysToDeadline }}</dd>
+                    }
+                </div>
+            </dl>
+        </div>
+    </section>
+</div>

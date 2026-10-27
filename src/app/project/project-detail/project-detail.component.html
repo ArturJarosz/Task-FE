@@ -32,6 +32,7 @@
         <a class="app-seg-item" [routerLink]="['/projects', project.id]" routerLinkActive="active"
            [routerLinkActiveOptions]="{exact: true}">Overview</a>
         <a class="app-seg-item" [routerLink]="['/projects', project.id, 'stages']" routerLinkActive="active">Stages</a>
+        <a class="app-seg-item" [routerLink]="['/projects', project.id, 'timeline']" routerLinkActive="active">Timeline</a>
         <a class="app-seg-item" [routerLink]="['/projects', project.id, 'finance']" routerLinkActive="active">Finance</a>
     </nav>
 
@@ -143,6 +144,10 @@
         }
         @case ('stages') {
             <stage-list-shell [stages]="project.stages ?? []" [projectId]="project.id!"/>
+        }
+        @case ('timeline') {
+            <project-timeline [project]="project" [installments]="installments" [installmentsLoadFailed]="installmentsLoadFailed"
+                              [stageStatuses]="stageStatuses" (reloadInstallments)="reloadInstallmentsEvent.emit()"/>
         }
         @case ('finance') {
             <project-financial-detail-shell/>

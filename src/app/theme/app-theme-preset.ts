@@ -1,6 +1,6 @@
 // App theme v2 — PrimeNG 19 preset ("TailAdmin" style). Rules: DESIGN_GUIDELINES.md
 //
-// Brand colour (default blue #465fff), TailAdmin greys, soft radii (8px controls, 16px cards), pill status tags.
+// Brand colour (default muted blue #415cc8), TailAdmin greys, soft radii (8px controls, 16px cards), pill status tags.
 // Every PrimeNG component reads these tokens. Change the look HERE, never with ::ng-deep.
 //
 // Colours are CSS variables from styles.css, never hex values: ThemeService rewrites the brand palette at runtime

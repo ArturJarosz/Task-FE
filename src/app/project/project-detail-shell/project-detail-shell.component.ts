@@ -37,7 +37,9 @@ export class ProjectDetailShellComponent implements OnInit {
     $projectTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.projectTypes;
     $projectStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.projectStatuses;
     $contractStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.contractStatuses;
+    $stageStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.stageStatuses;
     $installments: Signal<Installment[]> = computed(() => this.installmentStore.installmentProjectData().installments ?? []);
+    $installmentsLoadFailed: Signal<boolean> = this.installmentStore.installmentsLoadFailed;
 
     constructor(private route: ActivatedRoute, private projectStoreOld: Store<ProjectState>,
                 private router: Router,
@@ -87,5 +89,9 @@ export class ProjectDetailShellComponent implements OnInit {
 
     onReload(): void {
         this.projectStore.loadProject({});
+    }
+
+    onReloadInstallments(): void {
+        this.installmentStore.loadProjectInstallments({});
     }
 }

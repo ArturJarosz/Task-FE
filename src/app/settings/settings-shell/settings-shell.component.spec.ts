@@ -44,7 +44,7 @@ describe('SettingsShellComponent', () => {
     it('should leave the theme color out of the system parameter list', () => {
         httpTesting.expectOne(request => request.url.endsWith('/system-parameters')).flush([
             {id: 1, name: 'Vat tax', type: 'DECIMAL_NUMBER', value: '0.23', defaultValue: '0.23'},
-            {id: 3, name: 'Theme color', type: 'TEXT', value: '#465fff', defaultValue: '#465fff'}
+            {id: 3, name: 'Theme color', type: 'TEXT', value: '#415cc8', defaultValue: '#415cc8'}
         ]);
         harness.detectChanges();
 
@@ -57,7 +57,7 @@ describe('SettingsShellComponent', () => {
         httpTesting.expectOne(request => request.url.endsWith('/system-parameters')).flush([]);
         await harness.navigateByUrl('/settings/appearance', SettingsShellComponent);
         httpTesting.expectOne(request => request.url.endsWith('/system-parameters'))
-            .flush([{id: 3, name: 'Theme color', type: 'TEXT', value: '#0f766e', defaultValue: '#465fff'}]);
+            .flush([{id: 3, name: 'Theme color', type: 'TEXT', value: '#0f766e', defaultValue: '#415cc8'}]);
         harness.detectChanges();
 
         let element = harness.routeNativeElement!;

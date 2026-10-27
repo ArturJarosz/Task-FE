@@ -15,20 +15,22 @@
 
 /* ---------- Brand palette ----------
    ThemeService writes these from the "Theme color" system parameter (generated 50-950 scale, plus the text colour
-   that reads best on brand-500). The values here are the default TailAdmin blue #465fff. PrimeNG's primary palette
-   points at them too (app-theme-preset.ts), so one set of variables colours everything. */
+   that reads best on brand-500). The values here are the default muted blue #415cc8 (DEFAULT_BRAND_COLOR), as
+   PrimeNG's palette() generates them, except 50: the generated one (#f6f7fc) is almost white, so it is a 10% tint
+   instead. PrimeNG's primary palette points at them too (app-theme-preset.ts), so one set of variables colours
+   everything. */
 :root {
-  --app-brand-50: #ecf3ff;
-  --app-brand-100: #dde9ff;
-  --app-brand-200: #c2d6ff;
-  --app-brand-300: #9cb9ff;
-  --app-brand-400: #7592ff;
-  --app-brand-500: #465fff;
-  --app-brand-600: #3641f5;
-  --app-brand-700: #2a31d8;
-  --app-brand-800: #252dae;
-  --app-brand-900: #262e89;
-  --app-brand-950: #161950;
+  --app-brand-50: #eceff9;
+  --app-brand-100: #d1d8f2;
+  --app-brand-200: #adb9e7;
+  --app-brand-300: #899add;
+  --app-brand-400: #657bd2;
+  --app-brand-500: #415cc8;
+  --app-brand-600: #374eaa;
+  --app-brand-700: #2e408c;
+  --app-brand-800: #24336e;
+  --app-brand-900: #1a2550;
+  --app-brand-950: #101732;
   --app-brand-contrast: #ffffff;
   --app-focus-ring: color-mix(in srgb, var(--app-brand-500) 12%, transparent);
 }
@@ -75,6 +77,10 @@
   --color-success-700: #027a48;
   --color-warning-50: #fffaeb;
   --color-warning-700: #b54708;
+  /* Timeline "Today" line and label, the same in both themes: sky dark enough for white text (4.6:1);
+     today-ink stays white in the dark theme, where the white token turns dark */
+  --color-today: #007bb8;
+  --color-today-ink: #ffffff;
   --color-error-50: #fef3f2;
   --color-error-600: #d92d20;
   --color-error-700: #b42318;
@@ -288,6 +294,13 @@ body {
   /* Money and numbers line up */
   .app-num {
     @apply text-right tabular-nums whitespace-nowrap;
+  }
+
+  /* Timeline: the stretch of a bar past its deadline, soft red and white stripes at 45° */
+  .app-past-deadline {
+    background: repeating-linear-gradient(45deg,
+      color-mix(in srgb, var(--color-error-600) 60%, var(--color-white)) 0 4px,
+      var(--color-white) 4px 8px);
   }
 }
 

@@ -3,9 +3,12 @@
                 [projectStatuses]="$projectStatuses()"
                 [contractStatuses]="$contractStatuses()"
                 [projectTypes]="$projectTypes()"
+                [stageStatuses]="$stageStatuses()"
                 [installments]="$installments()"
+                [installmentsLoadFailed]="$installmentsLoadFailed()"
                 [view]="view"
                 (updateProjectEvent)="onUpdateProject($event)"
-                (removeProjectEvent)="onRemoveProject($event)" (reloadEvent)="onReload()">
+                (removeProjectEvent)="onRemoveProject($event)" (reloadEvent)="onReload()"
+                (reloadInstallmentsEvent)="onReloadInstallments()">
 </project-detail>
 <p-confirmDialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>
