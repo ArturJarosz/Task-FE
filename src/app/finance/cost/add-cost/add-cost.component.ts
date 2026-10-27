@@ -1,30 +1,29 @@
-import {Component, EventEmitter, inject, Input, OnInit, Output, Signal} from '@angular/core';
-import {AddCostFormProvider} from "./add-cost-form-provider";
+import {ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output, Signal} from '@angular/core';
+import {AddCostForm, AddCostFormProvider} from "./add-cost-form-provider";
 import {CostStore} from "../state";
 import {ConfigurationStore} from "../../../shared/configuration/state";
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {Cost} from "../../../generated/models/cost";
 import {ConfigurationEntry} from "../../../generated/models/configuration-entry";
 import {toTimeZoneString} from "../../../shared/utils/date-utils";
+import {isControlInvalid, isPaymentDateMissing} from "../../../shared/utils/form-utils";
 import {AbstractAddEditComponent} from "../../../shared";
-
-import {ReactiveFormsModule} from "@angular/forms";
 import {DialogModule} from "primeng/dialog";
 import {SelectModule} from "primeng/select";
 import {InputNumberModule} from "primeng/inputnumber";
 import {ToggleSwitchModule} from "primeng/toggleswitch";
 import {DatePickerModule} from "primeng/datepicker";
 import {InputTextModule} from "primeng/inputtext";
-import {Textarea} from "primeng/inputtextarea";
+import {Textarea} from "primeng/textarea";
 import {ButtonModule} from "primeng/button";
-import {NgClass} from "@angular/common";
 
 @Component({
     selector: 'add-cost',
     templateUrl: './add-cost.component.html',
     styleUrl: './add-cost.component.less',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [DialogModule, SelectModule, InputNumberModule, ToggleSwitchModule, DatePickerModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule, NgClass]
+    imports: [DialogModule, SelectModule, InputNumberModule, ToggleSwitchModule, DatePickerModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule]
 })
 export class AddCostComponent implements OnInit, AbstractAddEditComponent {
     @Input()
@@ -32,27 +31,20 @@ export class AddCostComponent implements OnInit, AbstractAddEditComponent {
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    header: string = "Add new Cost";
+    header: string = "New cost";
 
     readonly costStore = inject(CostStore);
     readonly configurationStore = inject(ConfigurationStore);
     $costCategories: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.costCategories;
 
-    addCostForm!: FormGroup;
+    addCostForm!: FormGroup<AddCostForm>;
 
     constructor(private addCostFormProvider: AddCostFormProvider) {
     }
 
     ngOnInit(): void {
         this.configurationStore.loadConfiguration({});
-        this.addCostForm = this.addCostFormProvider.getAddCostForm();
-        this.addCostForm.valueChanges.subscribe(() => {
-            if (this.addCostForm.value.paid && this.addCostForm.controls['paymentDate'].disabled) {
-                this.addCostForm.controls['paymentDate'].enable();
-            } else if (!this.addCostForm.value.paid && this.addCostForm.controls['paymentDate'].enabled) {
-                this.addCostForm.controls['paymentDate'].disable();
-            }
-        });
+        this.resetFields();
     }
 
     onClose(): void {
@@ -68,29 +60,35 @@ export class AddCostComponent implements OnInit, AbstractAddEditComponent {
 
     onSave(): void {
         this.visible = false;
-        let cost: Cost = this.createCost();
-        this.costStore.createCost({cost: cost});
+        this.costStore.createCost({cost: this.createCost()});
     }
 
+    isFieldInvalid(path: string): boolean {
+        return isControlInvalid(this.addCostForm, path);
+    }
 
-    private createCost(): Cost {
-        let cost: Cost;
-        cost = {
-            name: this.addCostForm.get('name')?.value,
-            category: this.addCostForm.get('category')?.value,
-            date: toTimeZoneString(this.addCostForm.get('date')?.value),
-            value: this.addCostForm.get('value')?.value,
-            hasInvoice: this.addCostForm.get('hasInvoice')?.value,
-            paid: this.addCostForm.get('paid')?.value,
-            paymentDate: this.addCostForm.get('paid')?.value ? toTimeZoneString(this.addCostForm.controls['paymentDate'].value) : undefined,
-            payable: true,
-            note: this.addCostForm.get('note')?.value,
-        };
-        return cost;
+    isPaymentDateMissing(): boolean {
+        return isPaymentDateMissing(this.addCostForm);
     }
 
     isSaveEnabled(): boolean {
         return this.addCostForm.valid;
+    }
+
+    private createCost(): Cost {
+        const value = this.addCostForm.getRawValue();
+        return {
+            name: value.name,
+            category: value.category,
+            date: toTimeZoneString(value.date),
+            value: value.value ?? 0,
+            hasInvoice: value.hasInvoice,
+            paid: value.paid,
+            // A payment date only makes sense once the cost is paid
+            paymentDate: value.paid && value.paymentDate ? toTimeZoneString(value.paymentDate) : undefined,
+            payable: true,
+            note: value.note ?? undefined,
+        };
     }
 
     private resetFields(): void {

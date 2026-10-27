@@ -1,4 +1,4 @@
-import {Component, EventEmitter, inject, Input, OnInit, Output, Signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output, Signal} from '@angular/core';
 import {ContractorJobStore} from "../state/contractor-job.state";
 import {ContractorStore} from "../../../contractor/state";
 import {Contractor} from "../../../generated/models/contractor";
@@ -7,22 +7,23 @@ import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {AbstractAddEditComponent} from "../../../shared";
 import {ContractorJob} from "../../../generated/models/contractor-job";
 import {toTimeZoneString} from "../../../shared/utils/date-utils";
+import {isControlInvalid, isPaymentDateMissing} from "../../../shared/utils/form-utils";
 import {DialogModule} from "primeng/dialog";
 import {SelectModule} from "primeng/select";
 import {InputNumberModule} from "primeng/inputnumber";
 import {ToggleSwitchModule} from "primeng/toggleswitch";
 import {DatePickerModule} from "primeng/datepicker";
 import {InputTextModule} from "primeng/inputtext";
-import {Textarea} from "primeng/inputtextarea";
+import {Textarea} from "primeng/textarea";
 import {ButtonModule} from "primeng/button";
-import {NgClass} from "@angular/common";
 
 @Component({
     selector: 'add-contractor-job',
     templateUrl: './add-contractor-job.component.html',
     styleUrl: './add-contractor-job.component.less',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [DialogModule, SelectModule, InputNumberModule, ToggleSwitchModule, DatePickerModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule, NgClass]
+    imports: [DialogModule, SelectModule, InputNumberModule, ToggleSwitchModule, DatePickerModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule]
 })
 export class AddContractorJobComponent implements OnInit, AbstractAddEditComponent {
 
@@ -31,7 +32,7 @@ export class AddContractorJobComponent implements OnInit, AbstractAddEditCompone
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    header: string = "Add Contractor Job";
+    header: string = "New contractor job";
 
     readonly contractorJobStore = inject(ContractorJobStore);
     readonly contractorStore = inject(ContractorStore);
@@ -45,14 +46,7 @@ export class AddContractorJobComponent implements OnInit, AbstractAddEditCompone
 
     ngOnInit(): void {
         this.contractorStore.loadContractors({});
-        this.addContractorJobForm = this.formProvider.getAddContractorJobForm();
-        this.addContractorJobForm.valueChanges.subscribe(() => {
-            if (this.addContractorJobForm.value.paid && this.addContractorJobForm.controls.paymentDate.disabled) {
-                this.addContractorJobForm.controls.paymentDate.enable();
-            } else if (!this.addContractorJobForm.value.paid && this.addContractorJobForm.controls.paymentDate.enabled) {
-                this.addContractorJobForm.controls.paymentDate.disable();
-            }
-        });
+        this.resetFields();
     }
 
     onCancel(): void {
@@ -68,8 +62,15 @@ export class AddContractorJobComponent implements OnInit, AbstractAddEditCompone
 
     onSave(): void {
         this.visible = false;
-        let contractorJob: ContractorJob = this.createContractorJob();
-        this.contractorJobStore.createContractorJob({contractorJob});
+        this.contractorJobStore.createContractorJob({contractorJob: this.createContractorJob()});
+    }
+
+    isFieldInvalid(path: string): boolean {
+        return isControlInvalid(this.addContractorJobForm, path);
+    }
+
+    isPaymentDateMissing(): boolean {
+        return isPaymentDateMissing(this.addContractorJobForm);
     }
 
     isSaveEnabled(): boolean {
@@ -77,22 +78,21 @@ export class AddContractorJobComponent implements OnInit, AbstractAddEditCompone
     }
 
     private resetFields(): void {
-        this.addContractorJobForm.reset();
+        this.addContractorJobForm = this.formProvider.getAddContractorJobForm();
     }
 
     private createContractorJob(): ContractorJob {
-        let contractorJob: ContractorJob;
-        contractorJob = {
-            name: this.addContractorJobForm.value.name,
-            paid: this.addContractorJobForm.value.paid,
-            contractorId: this.addContractorJobForm.value.contractorId,
-            value: this.addContractorJobForm.value.value,
-            hasInvoice: this.addContractorJobForm.value.hasInvoice,
-            note: this.addContractorJobForm.value.note,
-            paymentDate: this.addContractorJobForm.value.paid ? toTimeZoneString(this.addContractorJobForm.controls.paymentDate.value!) : undefined,
+        const value = this.addContractorJobForm.getRawValue();
+        return {
+            name: value.name,
+            paid: value.paid,
+            contractorId: value.contractorId ?? undefined,
+            value: value.value ?? 0,
+            hasInvoice: value.hasInvoice,
+            note: value.note,
+            // A payment date only makes sense once the job is paid
+            paymentDate: value.paid && value.paymentDate ? toTimeZoneString(value.paymentDate) : undefined,
             payable: true
-        }
-        return contractorJob;
+        };
     }
-
 }

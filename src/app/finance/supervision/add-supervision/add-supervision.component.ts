@@ -1,4 +1,4 @@
-import {Component, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {AddSupervisionForm, AddSupervisionFormProvider} from "./add-supervision-form-provider";
 import {Supervision} from "../../../generated/models/supervision";
@@ -13,10 +13,11 @@ import {ButtonModule} from "primeng/button";
     selector: 'add-supervision',
     templateUrl: './add-supervision.component.html',
     styleUrl: './add-supervision.component.less',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     imports: [DialogModule, InputNumberModule, ToggleSwitchModule, ButtonModule, ReactiveFormsModule]
 })
-export class AddSupervisionComponent implements OnInit, AbstractAddEditComponent{
+export class AddSupervisionComponent implements OnInit, AbstractAddEditComponent {
     @Input()
     visible = false;
     @Input()
@@ -24,7 +25,7 @@ export class AddSupervisionComponent implements OnInit, AbstractAddEditComponent
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    header: string = "Add new Supervision";
+    header: string = "New supervision";
 
     readonly supervisionStore = inject(SupervisionStore);
 
@@ -34,43 +35,40 @@ export class AddSupervisionComponent implements OnInit, AbstractAddEditComponent
     }
 
     ngOnInit(): void {
-        this.addSupervisionForm = this.addSupervisionFormProvider.getAddSupervisionForm();
+        this.resetFields();
         this.supervisionStore.setProjectId(this.projectId);
     }
 
     onClose(): void {
+        this.resetFields();
         this.notify.emit(false);
         this.visible = false;
     }
 
     onCancel(): void {
         this.visible = false;
+        this.resetFields();
     }
 
     onSave(): void {
         this.visible = false;
-        let supervision: Supervision = this.createSupervision();
-        this.supervisionStore.createSupervision({supervision: supervision});
-    }
-
-    private createSupervision(): Supervision {
-        let supervision: Supervision = {};
-
-        // add rest
-        supervision = {
-            projectId: this.projectId,
-            hasInvoice: this.addSupervisionForm.get('hasInvoice')?.value,
-            baseNetRate: this.addSupervisionForm.get('baseNetValue')?.value,
-            visitNetRate: this.addSupervisionForm.get('visitNetRate')?.value,
-            hourlyNetRate: this.addSupervisionForm.get('hourlyNetRate')?.value,
-            visitCount: 0
-        }
-
-        return supervision;
+        this.supervisionStore.createSupervision({supervision: this.createSupervision()});
     }
 
     isSaveEnabled(): boolean {
         return this.addSupervisionForm.valid;
+    }
+
+    private createSupervision(): Supervision {
+        const value = this.addSupervisionForm.getRawValue();
+        return {
+            projectId: this.projectId,
+            hasInvoice: value.hasInvoice,
+            baseNetRate: value.baseNetValue ?? 0,
+            visitNetRate: value.visitNetRate ?? 0,
+            hourlyNetRate: value.hourlyNetRate ?? 0,
+            visitCount: 0
+        };
     }
 
     private resetFields(): void {

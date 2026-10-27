@@ -1,49 +1,37 @@
-<p-dialog header="Add Supervision" [(visible)]="visible" appendTo="body" [modal]="true"
-          [style]="{ width: '50vw', 'max-width': '800px'}"
-          (onHide)="onClose()">
+<p-dialog [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
+          [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onClose()">
     <ng-template pTemplate="header">
-        <div class="flex flex-col gap-2">
-            <h1 class="m-0 text-surface-900 font-semibold leading-normal">{{ header }}</h1>
+        <div class="flex flex-col gap-1">
+            <span class="p-dialog-title">{{ header }}</span>
+            <span class="text-sm text-gray-500">Set the net rates for the author's supervision of this project.</span>
         </div>
     </ng-template>
-    <form [formGroup]="addSupervisionForm">
-        <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
-            <div class="flex gap-4">
-                <div class="w-4/12">
-                    <label for="baseNetValue" class="block text-color text-base top-label">Base rate</label>
-                    <p-inputNumber formControlName="baseNetValue" id="baseNetValue" mode="decimal"
-                                   [minFractionDigits]="2" [maxFractionDigits]="2"
-                                   styleClass="w-full" inputStyleClass="w-full"></p-inputNumber>
-                </div>
-                <div class="w-4/12">
-                    <label for="visitNetRate" class="block text-color text-base top-label">Visit rate</label>
-                    <p-inputNumber formControlName="visitNetRate" id="visitNetRate" mode="decimal"
-                                   [minFractionDigits]="2" [maxFractionDigits]="2"
-                                   styleClass="w-full" inputStyleClass="w-full"></p-inputNumber>
-                </div>
-                <div class="w-4/12">
-                    <label for="hourlyNetRate" class="block text-color text-base top-label">Hourly rate</label>
-                    <p-inputNumber formControlName="hourlyNetRate" id="hourlyNetRate" mode="decimal"
-                                   [minFractionDigits]="2" [maxFractionDigits]="2"
-                                   styleClass="w-full" inputStyleClass="w-full"></p-inputNumber>
-                </div>
-            </div>
+    <form [formGroup]="addSupervisionForm" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div class="sm:col-span-2">
+            <label for="addSupervisionBaseRate" class="app-form-label">Base rate <span class="text-error-600">*</span></label>
+            <p-inputnumber inputId="addSupervisionBaseRate" formControlName="baseNetValue" mode="decimal" locale="pl-PL"
+                           [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0" suffix=" zł" [fluid]="true"/>
+            <small class="block mt-1.5 text-xs text-gray-500">Net fee for the whole supervision</small>
         </div>
-        <div class="flex flex-col gap-4 mt-4 border-t border-surface pt-2">
-            <div class="flex gap-4">
-                <div class="w-6/12">
-                    <label for="hasInvoice" class="block text-color text-base top-label">Has invoice</label>
-                    <p-toggleSwitch formControlName="hasInvoice" id="hasInvoice"></p-toggleSwitch>
-                </div>
-            </div>
+        <div>
+            <label for="addSupervisionVisitRate" class="app-form-label">Visit rate <span class="text-error-600">*</span></label>
+            <p-inputnumber inputId="addSupervisionVisitRate" formControlName="visitNetRate" mode="decimal" locale="pl-PL"
+                           [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0" suffix=" zł" [fluid]="true"/>
+            <small class="block mt-1.5 text-xs text-gray-500">Net fee per visit</small>
+        </div>
+        <div>
+            <label for="addSupervisionHourlyRate" class="app-form-label">Hourly rate <span class="text-error-600">*</span></label>
+            <p-inputnumber inputId="addSupervisionHourlyRate" formControlName="hourlyNetRate" mode="decimal" locale="pl-PL"
+                           [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0" suffix=" zł" [fluid]="true"/>
+            <small class="block mt-1.5 text-xs text-gray-500">Net fee per hour of a visit</small>
+        </div>
+        <div class="flex items-center gap-3">
+            <p-toggleswitch inputId="addSupervisionHasInvoice" formControlName="hasInvoice"/>
+            <label for="addSupervisionHasInvoice" class="text-sm font-medium text-gray-700 cursor-pointer">Has invoice</label>
         </div>
     </form>
     <ng-template pTemplate="footer">
-        <div class="flex gap-4 justify-end border-t border-surface pt-8">
-            <p-button label="Cancel" styleClass="p-button-outlined p-button-secondary"
-                      (onClick)="onCancel()"></p-button>
-            <p-button label="Save" styleClass="p-button-outlined" [disabled]="!isSaveEnabled()"
-                      (onClick)="onSave()"></p-button>
-        </div>
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
+        <p-button label="Create supervision" icon="pi pi-plus" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
     </ng-template>
 </p-dialog>
