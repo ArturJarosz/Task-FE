@@ -21,6 +21,7 @@ import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
 import {FieldComponent, LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../shared";
 import {statusSeverity} from "../../shared/status-severity";
 import {StageListShellComponent} from "../../stage/stage-list-shell/stage-list-shell.component";
+import {ProjectTimelineComponent} from "../project-timeline/project-timeline.component";
 import {ProjectFinancialDetailShellComponent} from "../../finance/project-financial-summary/project-financial-detail-shell/project-financial-detail-shell.component";
 import {SelectModule} from "primeng/select";
 import {DatePickerModule} from "primeng/datepicker";
@@ -36,7 +37,7 @@ import {RouterLink, RouterLinkActive} from "@angular/router";
 import {TooltipModule} from "primeng/tooltip";
 import {MenuItem} from "primeng/api";
 
-export type ProjectDetailView = 'overview' | 'stages' | 'finance';
+export type ProjectDetailView = 'overview' | 'stages' | 'timeline' | 'finance';
 
 export interface ProjectPerson {
     initials: string;
@@ -55,7 +56,7 @@ const GAUGE_ARC_LENGTH = Math.PI * 80;
     styleUrls: ['./project-detail.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [LoadErrorComponent, FieldComponent, PageHeaderComponent, StageListShellComponent, ProjectFinancialDetailShellComponent, SelectModule, DatePickerModule, ButtonModule, InputTextModule, Textarea, TagModule, DialogModule, MenuModule, SkeletonModule, ReactiveFormsModule, NgIf, NgFor, RouterLink, RouterLinkActive, CurrencyPipe, DatePipe, TooltipModule]
+    imports: [LoadErrorComponent, FieldComponent, PageHeaderComponent, StageListShellComponent, ProjectTimelineComponent, ProjectFinancialDetailShellComponent, SelectModule, DatePickerModule, ButtonModule, InputTextModule, Textarea, TagModule, DialogModule, MenuModule, SkeletonModule, ReactiveFormsModule, NgIf, NgFor, RouterLink, RouterLinkActive, CurrencyPipe, DatePipe, TooltipModule]
 })
 export class ProjectDetailComponent implements OnChanges {
     @Input()
@@ -71,11 +72,17 @@ export class ProjectDetailComponent implements OnChanges {
     @Input()
     projectTypes!: ConfigurationEntry[] | null;
     @Input()
+    stageStatuses: ConfigurationEntry[] | null = [];
+    @Input()
     installments: Installment[] | null = [];
+    @Input()
+    installmentsLoadFailed: boolean = false;
     @Input()
     view: ProjectDetailView = 'overview';
     @Output()
     reloadEvent: EventEmitter<void> = new EventEmitter<void>();
+    @Output()
+    reloadInstallmentsEvent: EventEmitter<void> = new EventEmitter<void>();
     @Output()
     updateProjectEvent: EventEmitter<Project> = new EventEmitter<Project>();
     @Output()
