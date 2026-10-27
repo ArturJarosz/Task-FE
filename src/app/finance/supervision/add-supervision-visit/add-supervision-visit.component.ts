@@ -1,10 +1,11 @@
-import {Component, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {AddSupervisionVisitForm, AddSupervisionVisitFormProvider} from "./add-supervision-visit-form-provider";
 import {SupervisionVisit} from "../../../generated/models/supervision-visit";
 import {AbstractAddEditComponent} from "../../../shared";
 import {SupervisionStore} from "../state/supervision.state";
 import {toTimeZoneString} from "../../../shared/utils/date-utils";
+import {isControlInvalid} from "../../../shared/utils/form-utils";
 import {DialogModule} from "primeng/dialog";
 import {DatePickerModule} from "primeng/datepicker";
 import {InputNumberModule} from "primeng/inputnumber";
@@ -15,6 +16,7 @@ import {ButtonModule} from "primeng/button";
     selector: 'add-supervision-visit',
     templateUrl: './add-supervision-visit.component.html',
     styleUrl: './add-supervision-visit.component.less',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     imports: [DialogModule, DatePickerModule, InputNumberModule, ToggleSwitchModule, ButtonModule, ReactiveFormsModule]
 })
@@ -26,7 +28,7 @@ export class AddSupervisionVisitComponent implements OnInit, AbstractAddEditComp
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    header: string = "Add Supervision Visit";
+    header: string = "New supervision visit";
 
     readonly supervisionStore = inject(SupervisionStore);
 
@@ -36,7 +38,7 @@ export class AddSupervisionVisitComponent implements OnInit, AbstractAddEditComp
     }
 
     ngOnInit(): void {
-        this.addSupervisionVisitForm = this.formProvider.getAddSupervisionVisitForm();
+        this.resetFields();
     }
 
     onClose(): void {
@@ -52,9 +54,11 @@ export class AddSupervisionVisitComponent implements OnInit, AbstractAddEditComp
 
     onSave(): void {
         this.visible = false;
-        let supervisionVisit: SupervisionVisit = this.createSupervisionVisit();
-        this.supervisionStore.createSupervisionVisit({supervisionVisit});
-        this.resetFields();
+        this.supervisionStore.createSupervisionVisit({supervisionVisit: this.createSupervisionVisit()});
+    }
+
+    isFieldInvalid(path: string): boolean {
+        return isControlInvalid(this.addSupervisionVisitForm, path);
     }
 
     isSaveEnabled(): boolean {
@@ -66,11 +70,12 @@ export class AddSupervisionVisitComponent implements OnInit, AbstractAddEditComp
     }
 
     private createSupervisionVisit(): SupervisionVisit {
+        const value = this.addSupervisionVisitForm.getRawValue();
         return {
             supervisionId: this.supervisionId,
-            dateOfVisit: toTimeZoneString(this.addSupervisionVisitForm.value.dateOfVisit!),
-            hoursCount: this.addSupervisionVisitForm.value.hoursCount,
-            payable: this.addSupervisionVisitForm.value.payable
+            dateOfVisit: toTimeZoneString(value.dateOfVisit!),
+            hoursCount: value.hoursCount ?? 0,
+            payable: value.payable
         };
     }
 }

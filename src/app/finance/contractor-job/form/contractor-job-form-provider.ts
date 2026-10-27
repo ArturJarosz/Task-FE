@@ -1,4 +1,5 @@
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {paymentDateRequiredWhenPaid} from "../../../shared/utils/form-utils";
 import {Injectable} from "@angular/core";
 
 @Injectable({
@@ -11,22 +12,22 @@ export class ContractorJobFormProvider {
     public getAddContractorJobForm(): FormGroup<AddContractorJobForm> {
         return this.formBuilder.nonNullable.group<AddContractorJobForm>({
             name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
-            value: this.formBuilder.nonNullable.control<number>(0.0, [Validators.required]),
-            hasInvoice: this.formBuilder.nonNullable.control<boolean>(false, [Validators.required]),
-            paid: this.formBuilder.nonNullable.control<boolean>(false, [Validators.required]),
-            paymentDate: this.formBuilder.control<Date | null>({value: null, disabled: true}),
+            value: this.formBuilder.control<number | null>(null, [Validators.required, Validators.min(0.01)]),
+            hasInvoice: this.formBuilder.nonNullable.control<boolean>(false),
+            paid: this.formBuilder.nonNullable.control<boolean>(false),
+            paymentDate: this.formBuilder.control<Date | null>(null),
             note: this.formBuilder.nonNullable.control<string>(''),
-            contractorId: this.formBuilder.nonNullable.control<number>(0)
-        })
+            contractorId: this.formBuilder.control<number | null>(null, [Validators.required])
+        }, {validators: paymentDateRequiredWhenPaid})
     }
 }
 
 export interface AddContractorJobForm {
     name: FormControl<string>;
     note: FormControl<string>;
-    value: FormControl<number>;
+    value: FormControl<number | null>;
     hasInvoice: FormControl<boolean>,
     paid: FormControl<boolean>,
     paymentDate: FormControl<Date | null>,
-    contractorId: FormControl<number>
+    contractorId: FormControl<number | null>
 }

@@ -1,23 +1,25 @@
-import {Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnChanges, OnInit, Output} from '@angular/core';
 import {InstallmentStore} from "../state/installment.state";
 import {AbstractAddEditComponent} from "../../../shared";
 import {Stage} from "../../../generated/models/stage";
-import {FormGroup, ReactiveFormsModule} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {InstallmentForm, InstallmentFormProvider} from "../form/installment-form-provider";
 import {Installment} from "../../../generated/models/installment";
 import {toTimeZoneString} from "../../../shared/utils/date-utils";
+import {isControlInvalid, isPaymentDateMissing, paymentDateRequiredWhenPaid} from "../../../shared/utils/form-utils";
 import {DialogModule} from "primeng/dialog";
 import {SelectModule} from "primeng/select";
 import {InputNumberModule} from "primeng/inputnumber";
 import {ToggleSwitchModule} from "primeng/toggleswitch";
 import {DatePickerModule} from "primeng/datepicker";
-import {Textarea} from "primeng/inputtextarea";
+import {Textarea} from "primeng/textarea";
 import {ButtonModule} from "primeng/button";
 
 @Component({
     selector: 'add-installment',
     templateUrl: './add-installment.component.html',
     styleUrl: './add-installment.component.less',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     imports: [DialogModule, SelectModule, InputNumberModule, ToggleSwitchModule, DatePickerModule, Textarea, ButtonModule, ReactiveFormsModule]
 })
@@ -25,43 +27,30 @@ export class AddInstallmentComponent implements OnInit, AbstractAddEditComponent
     @Input()
     visible = false;
     @Input()
-    stages!: Array<Stage>;
+    stages: Array<Stage> = [];
     @Input()
-    stagesWithoutInstallmentIds!: Array<number>;
+    stagesWithoutInstallmentIds: Array<number> | undefined;
 
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     readonly installmentStore = inject(InstallmentStore);
-    header: string = "Add new Installment";
+    header: string = "New installment";
 
     addInstallmentForm!: FormGroup<InstallmentForm>;
-    stagesWithoutInstallment!: Array<Stage>;
-
+    stagesWithoutInstallment: Array<Stage> = [];
 
     constructor(private addInstallmentFormProvider: InstallmentFormProvider) {
     }
 
     ngOnInit(): void {
-        this.addInstallmentForm = this.addInstallmentFormProvider.getInstallmentForm();
-        this.addInstallmentForm.valueChanges.subscribe(form => {
-            if (this.addInstallmentForm.value.paid && this.addInstallmentForm.controls.paymentDate.disabled) {
-                this.addInstallmentForm.controls.paymentDate.enable()
-            } else if (!this.addInstallmentForm.value.paid && this.addInstallmentForm.controls.paymentDate.enabled) {
-                this.addInstallmentForm.controls.paymentDate.disable()
-            }
-        })
+        this.resetFields();
     }
 
-    ngOnChanges(changes: SimpleChanges) {
-        if (this.stagesWithoutInstallmentIds) {
-            this.stagesWithoutInstallment = this.stages.filter(
-                stage => this.stagesWithoutInstallmentIds.includes(stage.id!)
-            );
-            if (this.addInstallmentForm && this.stagesWithoutInstallment.length > 0) {
-                this.addInstallmentForm.patchValue({stageId: this.stagesWithoutInstallment[0].id});
-            }
-        }
+    ngOnChanges(): void {
+        const ids = this.stagesWithoutInstallmentIds ?? [];
+        this.stagesWithoutInstallment = (this.stages ?? []).filter(stage => ids.includes(stage.id!));
+        this.prefillStage();
     }
 
     onClose(): void {
@@ -77,28 +66,52 @@ export class AddInstallmentComponent implements OnInit, AbstractAddEditComponent
 
     onSave(): void {
         this.visible = false;
-        let installment: Installment = this.createInstallment();
-        this.installmentStore.createInstallment({installment: installment});
+        this.installmentStore.createInstallment({installment: this.createInstallment()});
+    }
+
+    isFieldInvalid(path: string): boolean {
+        return isControlInvalid(this.addInstallmentForm, path);
+    }
+
+    isPaymentDateMissing(): boolean {
+        return isPaymentDateMissing(this.addInstallmentForm);
     }
 
     isSaveEnabled(): boolean {
-        return this.addInstallmentForm.valid;
+        return this.addInstallmentForm.valid && this.isAvailableStage(this.addInstallmentForm.controls.stageId.value);
     }
 
     private createInstallment(): Installment {
-        let installment: Installment;
-        installment = {
-            value: this.addInstallmentForm.value.value,
-            stageId: this.addInstallmentForm.value.stageId,
-            hasInvoice: this.addInstallmentForm.value.hasInvoice,
-            paid: this.addInstallmentForm.value.paid,
-            paymentDate: this.addInstallmentForm.value.paid? toTimeZoneString(this.addInstallmentForm.value.paymentDate!) : undefined,
-            note: this.addInstallmentForm.value.note!,
-        }
-        return installment;
+        const value = this.addInstallmentForm.getRawValue();
+        return {
+            value: value.value,
+            stageId: value.stageId,
+            hasInvoice: value.hasInvoice,
+            paid: value.paid,
+            // A payment date only makes sense once the installment is paid
+            paymentDate: value.paid && value.paymentDate ? toTimeZoneString(value.paymentDate) : undefined,
+            note: value.note ?? undefined,
+        };
     }
 
     private resetFields(): void {
         this.addInstallmentForm = this.addInstallmentFormProvider.getInstallmentForm();
+        // The provider is shared with the installment detail page, so the add-only rules are added here
+        this.addInstallmentForm.controls.value.addValidators(Validators.min(0.01));
+        this.addInstallmentForm.addValidators(paymentDateRequiredWhenPaid);
+        this.addInstallmentForm.updateValueAndValidity();
+        this.prefillStage();
+    }
+
+    // Selects the first stage without an installment unless a valid one is already picked
+    private prefillStage(): void {
+        if (!this.addInstallmentForm || this.isAvailableStage(this.addInstallmentForm.controls.stageId.value)) {
+            return;
+        }
+        this.addInstallmentForm.patchValue({stageId: this.stagesWithoutInstallment[0]?.id ?? 0});
+    }
+
+    private isAvailableStage(stageId: number): boolean {
+        return this.stagesWithoutInstallment.some(stage => stage.id === stageId);
     }
 }

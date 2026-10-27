@@ -1,6 +1,8 @@
 <supervision-visit-detail
-    [supervisionVisit]="$supervisionVisit()"
+    [supervisionVisit]="$supervisionVisit()" [loadFailed]="$supervisionVisitLoadFailed()"
+    [projectId]="projectId"
+    [projectName]="$projectName()"
     (updateVisitEvent)="updateVisit($event)"
-    (deleteVisitEvent)="deleteVisit($event)">
+    (deleteVisitEvent)="deleteVisit($event)" (reloadEvent)="onReload()">
 </supervision-visit-detail>
-<p-confirmDialog></p-confirmDialog>
+<p-confirmDialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>

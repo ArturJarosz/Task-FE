@@ -1,30 +1,29 @@
-import {Component, EventEmitter, inject, Input, OnInit, Output, Signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output, Signal} from '@angular/core';
 import {AbstractAddEditComponent} from "../../../shared";
 import {SupplierStore} from "../../../supplier/state";
 import {Supplier} from "../../../generated/models/supplier";
 import {AddSupplyForm, SupplyFormProvider} from "../form";
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {SupplyStore} from "../state/supply.state";
 import {Supply} from "../../../generated/models/supply";
 import {toTimeZoneString} from "../../../shared/utils/date-utils";
-
-import {ReactiveFormsModule} from "@angular/forms";
+import {isControlInvalid, isPaymentDateMissing} from "../../../shared/utils/form-utils";
 import {DialogModule} from "primeng/dialog";
 import {SelectModule} from "primeng/select";
 import {InputNumberModule} from "primeng/inputnumber";
 import {ToggleSwitchModule} from "primeng/toggleswitch";
 import {DatePickerModule} from "primeng/datepicker";
 import {InputTextModule} from "primeng/inputtext";
-import {Textarea} from "primeng/inputtextarea";
+import {Textarea} from "primeng/textarea";
 import {ButtonModule} from "primeng/button";
-import {NgClass} from "@angular/common";
 
 @Component({
     selector: 'add-supply',
     templateUrl: './add-supply.component.html',
     styleUrl: './add-supply.component.less',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [DialogModule, SelectModule, InputNumberModule, ToggleSwitchModule, DatePickerModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule, NgClass]
+    imports: [DialogModule, SelectModule, InputNumberModule, ToggleSwitchModule, DatePickerModule, InputTextModule, Textarea, ButtonModule, ReactiveFormsModule]
 })
 export class AddSupplyComponent implements OnInit, AbstractAddEditComponent {
     @Input()
@@ -33,7 +32,7 @@ export class AddSupplyComponent implements OnInit, AbstractAddEditComponent {
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    header: string = "Add new Supply";
+    header: string = "New supply";
 
     readonly supplierStore = inject(SupplierStore);
     readonly supplyStore = inject(SupplyStore);
@@ -47,14 +46,7 @@ export class AddSupplyComponent implements OnInit, AbstractAddEditComponent {
 
     ngOnInit(): void {
         this.supplierStore.loadSuppliers({});
-        this.addSupplyForm = this.formProvider.getAddSupplyForm();
-        this.addSupplyForm.valueChanges.subscribe(() => {
-            if (this.addSupplyForm.value.paid && this.addSupplyForm.controls.paymentDate.disabled) {
-                this.addSupplyForm.controls.paymentDate.enable();
-            } else if (!this.addSupplyForm.value.paid && this.addSupplyForm.controls.paymentDate.enabled) {
-                this.addSupplyForm.controls.paymentDate.disable();
-            }
-        });
+        this.resetFields();
     }
 
     onClose(): void {
@@ -70,27 +62,34 @@ export class AddSupplyComponent implements OnInit, AbstractAddEditComponent {
 
     onSave(): void {
         this.visible = false;
-        let supply: Supply = this.createSupply();
-        this.supplyStore.createSupply({supply: supply});
+        this.supplyStore.createSupply({supply: this.createSupply()});
     }
 
-    private createSupply(): Supply {
-        let supply: Supply;
-        supply = {
-            name: this.addSupplyForm.value.name,
-            paid: this.addSupplyForm.value.paid,
-            supplierId: this.addSupplyForm.value.supplierId,
-            value: this.addSupplyForm.value.value,
-            hasInvoice: this.addSupplyForm.value.hasInvoice,
-            note: this.addSupplyForm.value.note,
-            paymentDate: this.addSupplyForm.value.paid ? toTimeZoneString(this.addSupplyForm.controls.paymentDate.value!) : undefined,
-            payable: true
-        }
-        return supply;
+    isFieldInvalid(path: string): boolean {
+        return isControlInvalid(this.addSupplyForm, path);
+    }
+
+    isPaymentDateMissing(): boolean {
+        return isPaymentDateMissing(this.addSupplyForm);
     }
 
     isSaveEnabled(): boolean {
         return this.addSupplyForm.valid;
+    }
+
+    private createSupply(): Supply {
+        const value = this.addSupplyForm.getRawValue();
+        return {
+            name: value.name,
+            paid: value.paid,
+            supplierId: value.supplierId ?? undefined,
+            value: value.value ?? 0,
+            hasInvoice: value.hasInvoice,
+            note: value.note,
+            // A payment date only makes sense once the supply is paid
+            paymentDate: value.paid && value.paymentDate ? toTimeZoneString(value.paymentDate) : undefined,
+            payable: true
+        };
     }
 
     private resetFields(): void {
