@@ -1,87 +1,140 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {SupervisionVisit} from "../../../generated/models/supervision-visit";
+import {ChangeDetectionStrategy, Component, EventEmitter, inject, Input, LOCALE_ID, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {DecimalPipe, formatDate} from "@angular/common";
 import {FormGroup, ReactiveFormsModule} from '@angular/forms';
-import {SupervisionVisitForm, SupervisionVisitFormProvider} from "../form/supervision-visit-form-provider";
-import {cloneDeep} from "lodash";
-import {toDateIfExists, toTimeZoneString} from "../../../shared/utils/date-utils";
-import {WrapperComponent} from "../../../shared/wrapper/wrapper.component";
-import {Accordion, AccordionPanel, AccordionHeader, AccordionContent} from "primeng/accordion";
-import {DatePickerModule} from "primeng/datepicker";
-import {InputNumberModule} from "primeng/inputnumber";
-import {ToggleSwitchModule} from "primeng/toggleswitch";
+import {MenuItem} from "primeng/api";
 import {ButtonModule} from "primeng/button";
-import {DatePipe} from "@angular/common";
+import {DatePickerModule} from "primeng/datepicker";
+import {DialogModule} from "primeng/dialog";
+import {InputNumberModule} from "primeng/inputnumber";
+import {MenuModule} from "primeng/menu";
+import {SkeletonModule} from "primeng/skeleton";
+import {ToggleSwitchModule} from "primeng/toggleswitch";
+import {TooltipModule} from "primeng/tooltip";
+import {SupervisionVisit} from "../../../generated/models/supervision-visit";
+import {SupervisionVisitForm, SupervisionVisitFormProvider} from "../form/supervision-visit-form-provider";
+import {FieldComponent, LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../../shared";
+import {toDateIfExists, toTimeZoneString} from "../../../shared/utils/date-utils";
+import {changedFields, isControlInvalid} from "../../../shared/utils/form-utils";
+
+type VisitFormValue = ReturnType<FormGroup<SupervisionVisitForm>['getRawValue']>;
+
+const DATA_FIELDS: (keyof VisitFormValue)[] = ['dateOfVisit', 'hoursCount', 'payable'];
 
 @Component({
     selector: 'supervision-visit-detail',
     templateUrl: './supervision-visit-detail.component.html',
     styleUrl: './supervision-visit-detail.component.less',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [WrapperComponent, Accordion, AccordionPanel, AccordionHeader, AccordionContent, DatePickerModule, InputNumberModule, ToggleSwitchModule, ButtonModule, ReactiveFormsModule, DatePipe]
+    imports: [LoadErrorComponent, PageHeaderComponent, FieldComponent, ButtonModule, DatePickerModule, DialogModule,
+        InputNumberModule, MenuModule, SkeletonModule, ToggleSwitchModule, TooltipModule, ReactiveFormsModule, DecimalPipe]
 })
-export class SupervisionVisitDetailComponent implements OnInit, OnChanges {
+export class SupervisionVisitDetailComponent implements OnChanges {
     @Input()
     supervisionVisit!: SupervisionVisit | null;
+    @Input()
+    loadFailed: boolean = false;
+    @Input()
+    projectId: number = 0;
+    @Input()
+    projectName: string = '';
 
+    @Output()
+    reloadEvent: EventEmitter<void> = new EventEmitter<void>();
     @Output()
     updateVisitEvent: EventEmitter<SupervisionVisit> = new EventEmitter<SupervisionVisit>();
-
     @Output()
-    deleteVisitEvent: EventEmitter<{visitId: number, dateOfVisit: string}> = new EventEmitter<{visitId: number, dateOfVisit: string}>();
+    deleteVisitEvent: EventEmitter<{ visitId: number, visitDate: string }> = new EventEmitter<{ visitId: number, visitDate: string }>();
 
-    initialVisitDetailForm!: FormGroup<SupervisionVisitForm>;
-    visitDetailForm!: FormGroup<SupervisionVisitForm>;
+    private readonly locale = inject(LOCALE_ID);
+
+    visitDetailForm: FormGroup<SupervisionVisitForm>;
+    private initialValue!: VisitFormValue;
+    showEditDialog = false;
+    // Set by "Save changes" until the store returns the saved visit; the form keeps the edits so a failed save can be retried
+    private savePending = false;
+
+    crumbs: PageCrumb[] = [];
+    actions: MenuItem[] = [
+        {label: 'Delete visit', icon: 'pi pi-trash', command: () => this.onDelete()}
+    ];
+    visitDate = '';
 
     constructor(private supervisionVisitFormProvider: SupervisionVisitFormProvider) {
+        this.visitDetailForm = this.supervisionVisitFormProvider.getSupervisionVisitForm();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (this.supervisionVisit && this.visitDetailForm) {
-            this.fillFormData();
-            this.initialVisitDetailForm = cloneDeep(this.visitDetailForm);
+        if (changes['supervisionVisit'] && this.supervisionVisit) {
+            this.resetForm();
         }
+        this.visitDate = this.supervisionVisit?.dateOfVisit
+            ? formatDate(this.supervisionVisit.dateOfVisit, 'dd.MM.yyyy', this.locale)
+            : '';
+        this.crumbs = [
+            {label: 'Home', route: ['/home']},
+            {label: 'Projects', route: ['/projects']},
+            {label: this.projectName || 'Project', route: ['/projects', this.projectId]},
+            {label: 'Finance', route: ['/projects', this.projectId, 'finance']},
+            {label: this.visitDate ? `Visit ${this.visitDate}` : 'Visit'},
+        ];
     }
 
-    ngOnInit(): void {
-        this.visitDetailForm = this.supervisionVisitFormProvider.getSupervisionVisitForm();
-        this.fillFormData();
+    isFieldInvalid(path: string): boolean {
+        return isControlInvalid(this.visitDetailForm, path);
     }
 
-    private fillFormData(): void {
-        if (!this.supervisionVisit) {
-            return;
-        }
-        this.visitDetailForm.patchValue({
-            dateOfVisit: toDateIfExists(this.supervisionVisit.dateOfVisit),
-            hoursCount: this.supervisionVisit.hoursCount,
-            payable: this.supervisionVisit.payable
-        })
+    get dataNeedsUpdate(): boolean {
+        return changedFields(this.initialValue, this.visitDetailForm.getRawValue(), DATA_FIELDS).length > 0;
     }
 
-    isFormChanged(): boolean {
-        if (this.visitDetailForm.pristine) {
-            return false;
+    onEdit(): void {
+        if (!this.savePending) {
+            this.resetForm();
         }
-        return JSON.stringify(this.initialVisitDetailForm.value) !== JSON.stringify(this.visitDetailForm.value);
+        this.showEditDialog = true;
+    }
+
+    onCancelEdit(): void {
+        this.showEditDialog = false;
+        this.resetForm();
+    }
+
+    onEditDialogHide(): void {
+        if (!this.savePending) {
+            this.resetForm();
+        }
     }
 
     onSave(): void {
-        let visit: SupervisionVisit = {
+        const value = this.visitDetailForm.getRawValue();
+        this.updateVisitEvent.emit({
             id: this.supervisionVisit?.id,
             supervisionId: this.supervisionVisit?.supervisionId,
-            dateOfVisit: toTimeZoneString(this.visitDetailForm.value.dateOfVisit),
-            hoursCount: this.visitDetailForm.value.hoursCount,
-            payable: this.visitDetailForm.value.payable
-        };
-        this.updateVisitEvent.emit(visit);
+            dateOfVisit: toTimeZoneString(value.dateOfVisit ?? undefined),
+            hoursCount: value.hoursCount ?? 0,
+            payable: value.payable
+        });
+        this.savePending = true;
+        this.showEditDialog = false;
     }
 
     onDelete(): void {
-        if (this.supervisionVisit?.id && this.supervisionVisit?.dateOfVisit) {
-            this.deleteVisitEvent.emit({
-                visitId: this.supervisionVisit.id,
-                dateOfVisit: this.supervisionVisit.dateOfVisit
-            });
+        if (this.supervisionVisit?.id) {
+            this.deleteVisitEvent.emit({visitId: this.supervisionVisit.id, visitDate: this.visitDate});
         }
+    }
+
+    private resetForm(): void {
+        if (!this.supervisionVisit) {
+            return;
+        }
+        this.visitDetailForm.reset({
+            dateOfVisit: toDateIfExists(this.supervisionVisit.dateOfVisit) ?? null,
+            hoursCount: this.supervisionVisit.hoursCount ?? 0,
+            payable: this.supervisionVisit.payable ?? false
+        });
+        this.initialValue = this.visitDetailForm.getRawValue();
+        this.savePending = false;
     }
 }

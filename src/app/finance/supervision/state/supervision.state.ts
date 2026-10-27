@@ -21,6 +21,7 @@ export interface SupervisionState extends AppState {
     supervisionId: number | undefined;
     visitId: number | undefined;
     projectId: number | undefined;
+    supervisionVisitLoadFailed: boolean;
 }
 
 export const initialState: SupervisionState = {
@@ -32,7 +33,8 @@ export const initialState: SupervisionState = {
     supervisionVisitNeedsRefresh: true,
     supervisionId: undefined,
     visitId: undefined,
-    projectId: undefined
+    projectId: undefined,
+    supervisionVisitLoadFailed: false
 }
 
 export const SupervisionStore = signalStore(
@@ -146,6 +148,7 @@ export const SupervisionStore = signalStore(
         ),
         loadSupervisionVisit: rxMethod<{}>(
             pipe(
+                tap(() => patchState(store, {supervisionVisitLoadFailed: false})),
                 switchMap(() => {
                     if (store.supervisionVisitNeedsRefresh() && store.supervisionId() && store.visitId()) {
                         return supervisionRestService.getSupervisionVisit(store.supervisionId()!, store.visitId()!)
@@ -153,7 +156,11 @@ export const SupervisionStore = signalStore(
                                 supervisionVisit: visit,
                                 supervisionVisitNeedsRefresh: false
                             })),
-                                catchError(() => EMPTY));
+                                // The REST service already shows the error toast; keep the stream alive for the next load
+                                catchError(() => {
+                                    patchState(store, {supervisionVisitLoadFailed: true});
+                                    return EMPTY;
+                                }));
                     }
                     return of(null);
                 })
@@ -188,8 +195,11 @@ export const SupervisionStore = signalStore(
                     return supervisionRestService.deleteSupervisionVisit(store.supervisionId()!, store.visitId()!)
                         .pipe(
                             tap(() => {
+                                // Forget the deleted visit's id, so opening its page again loads it and shows the error
                                 patchState(store, {
                                     supervisionVisit: null,
+                                    visitId: undefined,
+                                    supervisionVisitNeedsRefresh: true,
                                     supervisionVisitsNeedRefresh: true,
                                     supervisionNeedsRefresh: true
                                 });
