@@ -10,7 +10,7 @@ describe('AppearanceSettingsComponent', () => {
     let fixture: ComponentFixture<AppearanceSettingsComponent>;
     let themeService: ThemeService;
 
-    const themeColor: SystemParameter = {id: 3, name: 'Theme color', type: 'TEXT', value: '#465fff', defaultValue: '#465fff'};
+    const themeColor: SystemParameter = {id: 3, name: 'Theme color', type: 'TEXT', value: '#415cc8', defaultValue: '#415cc8'};
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -27,7 +27,7 @@ describe('AppearanceSettingsComponent', () => {
 
     afterEach(() => {
         themeService.setMode('light');
-        themeService.setBrandColor('#465fff');
+        themeService.setBrandColor('#415cc8');
     });
 
     it('should switch the theme to dark', () => {
@@ -69,7 +69,7 @@ describe('AppearanceSettingsComponent', () => {
         component.onDraftChange('#dc2626');
         component.onCancel();
 
-        expect(component.$draftColor()).toBe('#465fff');
+        expect(component.$draftColor()).toBe('#415cc8');
         expect(component.$changed()).toBeFalse();
         expect(document.documentElement.style.getPropertyValue('--app-brand-500')).toBe('');
     });
@@ -80,7 +80,7 @@ describe('AppearanceSettingsComponent', () => {
 
         component.onResetToDefault();
 
-        expect(component.$pickerColor()).toBe('#465fff');
+        expect(component.$pickerColor()).toBe('#415cc8');
         expect(component.$changed()).toBeTrue();
     });
 });

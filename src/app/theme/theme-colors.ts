@@ -2,7 +2,7 @@ import {palette} from '@primeng/themes';
 
 // Brand color as stored in the "Theme color" system parameter; the backend seeds it with this default
 export const THEME_COLOR_PARAMETER = 'Theme color';
-export const DEFAULT_BRAND_COLOR = '#465fff';
+export const DEFAULT_BRAND_COLOR = '#415cc8';
 
 export const BRAND_SHADES = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] as const;
 export type BrandPalette = Record<(typeof BRAND_SHADES)[number], string>;

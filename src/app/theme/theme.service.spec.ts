@@ -38,7 +38,7 @@ describe('ThemeService', () => {
         httpTesting.verify();
         patchState(unprotected(TestBed.inject(UserStore)), {currentUser: null, configurations: null});
         service.setMode('light');
-        service.setBrandColor('#465fff');
+        service.setBrandColor('#415cc8');
         localStorage.removeItem('task.theme.mode');
         localStorage.removeItem('task.theme.modeUser');
         localStorage.removeItem('task.theme.brandColor');
@@ -159,7 +159,7 @@ describe('ThemeService', () => {
 
     it('should go back to the stylesheet shades for the default color', () => {
         service.setBrandColor('#0f766e');
-        service.setBrandColor('#465fff');
+        service.setBrandColor('#415cc8');
 
         expect(root.style.getPropertyValue('--app-brand-500')).toBe('');
         expect(root.style.getPropertyValue('--app-brand-contrast')).toBe('');
@@ -183,13 +183,13 @@ describe('ThemeService', () => {
         expect(service.$appliedColors()).toEqual({mode: 'dark', brandColor: '#dc2626'});
 
         service.resetPreview();
-        expect(service.$appliedColors().brandColor).toBe('#465fff');
+        expect(service.$appliedColors().brandColor).toBe('#415cc8');
     });
 
     it('should apply the theme color system parameter once it loads', () => {
         let store = TestBed.inject(SystemParameterStore);
         patchState(unprotected(store), {
-            systemParameters: [{id: 3, name: 'Theme color', type: 'TEXT', value: '#7c3aed', defaultValue: '#465fff'}]
+            systemParameters: [{id: 3, name: 'Theme color', type: 'TEXT', value: '#7c3aed', defaultValue: '#415cc8'}]
         });
         TestBed.flushEffects();
 

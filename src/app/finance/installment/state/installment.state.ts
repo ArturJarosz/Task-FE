@@ -14,6 +14,7 @@ export interface InstallmentState {
     installments: Installment[];
     installmentProjectData: InstallmentProjectData,
     installmentsNeedRefresh: boolean;
+    installmentsLoadFailed: boolean;
     installmentNeedsRefresh: boolean;
     installmentId: number | undefined;
     projectId: number | undefined;
@@ -24,6 +25,7 @@ export const initialState: InstallmentState = {
     installments: [],
     installmentProjectData: {},
     installmentsNeedRefresh: true,
+    installmentsLoadFailed: false,
     installmentNeedsRefresh: true,
     installmentId: undefined,
     projectId: undefined
@@ -42,6 +44,8 @@ export const InstallmentStore = signalStore(
         },
         setProjectId(projectId: number) {
             if (store.projectId() !== projectId) {
+                // Drop the previous project's installments, so they are never shown on this one while it loads
+                patchState(store, {installments: [], installmentProjectData: {}, installmentsLoadFailed: false});
                 this.setInstallmentsNeedRefresh();
             }
             patchState(store, {projectId: projectId});
@@ -56,6 +60,7 @@ export const InstallmentStore = signalStore(
             pipe(
                 switchMap(() => {
                     if (store.installmentsNeedRefresh()) {
+                        patchState(store, {installmentsLoadFailed: false});
                         return installmentRestService.getProjectInstallmentData(store.projectId()!)
                             .pipe(
                                 tap(installmentsData => patchState(store, {
@@ -63,7 +68,11 @@ export const InstallmentStore = signalStore(
                                     installmentProjectData: installmentsData,
                                     installmentsNeedRefresh: false
                                 })),
-                                catchError(() => EMPTY)
+                                // The REST service already shows the error toast; keep the stream alive for the next load
+                                catchError(() => {
+                                    patchState(store, {installmentsLoadFailed: true});
+                                    return EMPTY;
+                                })
                             )
                     }
                     return of({})
