@@ -1,0 +1,35 @@
+<p-dialog [visible]="visible" (visibleChange)="!$event && closed.emit()" [modal]="true" appendTo="body" [draggable]="false"
+          [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}">
+    <ng-template pTemplate="header">
+        <div class="flex flex-col gap-1">
+            <span class="p-dialog-title">Add widget</span>
+            <span class="text-sm text-gray-500">Row {{ (rowIndex ?? 0) + 1 }} has {{ free }}% of its width free.</span>
+        </div>
+    </ng-template>
+    @if (options.length === 0) {
+        <p class="m-0 text-gray-500">Every widget is already on your dashboard.</p>
+    } @else {
+        <ul class="list-none m-0 p-0 flex flex-col gap-2">
+            @for (option of options; track option.definition.type) {
+                <li>
+                    <button type="button" [disabled]="option.width === null" (click)="add.emit(option.definition.type)"
+                            class="flex items-center gap-4 w-full p-3 rounded-xl border border-gray-200 bg-white text-left font-[inherit] cursor-pointer hover:border-brand-300 hover:bg-brand-50 focus-visible:outline-none focus-visible:shadow-focus-ring disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:border-gray-200 disabled:hover:bg-white">
+                        <span class="app-kpi-icon shrink-0"><i [class]="option.definition.icon + ' text-xl'" aria-hidden="true"></i></span>
+                        <span class="flex-1 min-w-0">
+                            <span class="block font-medium text-gray-800">{{ option.definition.name }}</span>
+                            <span class="block text-sm text-gray-500">{{ option.definition.description }}</span>
+                        </span>
+                        @if (option.width !== null) {
+                            <span class="shrink-0 text-sm text-gray-500 tabular-nums">{{ option.width }}% wide</span>
+                        } @else {
+                            <span class="shrink-0 text-sm text-gray-500">Needs {{ option.definition.minWidth }}% free</span>
+                        }
+                    </button>
+                </li>
+            }
+        </ul>
+    }
+    <ng-template pTemplate="footer">
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="closed.emit()"/>
+    </ng-template>
+</p-dialog>

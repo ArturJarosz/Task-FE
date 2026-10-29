@@ -53,17 +53,23 @@ export const UserStore = signalStore(
                     ))
             )
         ),
+        // Stores a configuration another store has just saved
+        setConfiguration(saved: UserConfiguration) {
+            patchState(store, {
+                configurations: [
+                    ...(store.configurations() ?? []).filter(configuration => configuration.name !== saved.name),
+                    saved
+                ]
+            });
+        },
+    })),
+    withMethods((store, userRestService = inject(UserRestService)) => ({
         // The REST service shows the error toast; the setting then just stays in this browser
         updateConfiguration: rxMethod<{ name: UserConfigurationName, value: string }>(
             pipe(
                 switchMap(({name, value}) => userRestService.updateCurrentUserConfiguration(name, value)
                     .pipe(
-                        tap(saved => patchState(store, {
-                            configurations: [
-                                ...(store.configurations() ?? []).filter(configuration => configuration.name !== name),
-                                saved
-                            ]
-                        })),
+                        tap(saved => store.setConfiguration(saved)),
                         catchError(() => EMPTY)
                     ))
             )

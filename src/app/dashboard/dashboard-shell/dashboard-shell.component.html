@@ -8,6 +8,15 @@
            [projectStatuses]="$projectStatuses()"
            [activeProjectStatuses]="$activeProjectStatuses()"
            [upcomingEvents]="$upcomingEvents()"
+           [layout]="$layout()"
+           [draftLayout]="$draftLayout()"
+           [layoutLoading]="$layoutLoading()"
+           [layoutSaving]="$layoutSaving()"
            (periodTypeChange)="onPeriodTypeChange($event)"
            (reloadReport)="onReloadReport()"
-           (reloadProjects)="onReloadProjects()"/>
+           (reloadProjects)="onReloadProjects()"
+           (editStart)="dashboardStore.startEditing()"
+           (editCancel)="dashboardStore.cancelEditing()"
+           (editReset)="dashboardStore.resetDraft()"
+           (editSave)="dashboardStore.saveLayout({})"
+           (draftLayoutChange)="dashboardStore.updateDraft($event)"/>

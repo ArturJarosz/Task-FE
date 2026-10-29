@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, effect, inject, OnInit, Signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect, inject, OnDestroy, OnInit, Signal} from '@angular/core';
 import {DashboardStore} from "../state/dashboard.state";
 import {ProjectStore} from "../../project/state";
 import {CalendarStore} from "../../calendar/state";
@@ -6,6 +6,7 @@ import {ConfigurationStore} from "../../shared/configuration/state";
 import {CalendarEvent, ConfigurationEntry, FinancialReport, Project, ProjectStatus} from "../../generated/models";
 import {PeriodType} from "../../generated/models/period-type";
 import {DashboardComponent} from "../dashboard/dashboard.component";
+import {DashboardLayout} from "../layout/dashboard-layout";
 
 @Component({
     selector: 'dashboard-shell',
@@ -14,7 +15,7 @@ import {DashboardComponent} from "../dashboard/dashboard.component";
     standalone: true,
     imports: [DashboardComponent]
 })
-export class DashboardShellComponent implements OnInit {
+export class DashboardShellComponent implements OnInit, OnDestroy {
     readonly dashboardStore = inject(DashboardStore);
     readonly projectStore = inject(ProjectStore);
     readonly calendarStore = inject(CalendarStore);
@@ -32,6 +33,10 @@ export class DashboardShellComponent implements OnInit {
     $projectTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.projectTypes;
     $projectStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.projectStatuses;
     $activeProjectStatuses: Signal<ProjectStatus[]> = this.configurationStore.configuration!.activeProjectStatuses;
+    $layout: Signal<DashboardLayout> = this.dashboardStore.layout;
+    $draftLayout: Signal<DashboardLayout | null> = this.dashboardStore.draftLayout;
+    $layoutLoading: Signal<boolean> = this.dashboardStore.layoutLoading;
+    $layoutSaving: Signal<boolean> = this.dashboardStore.layoutSaving;
 
     constructor() {
         effect(() => {
@@ -49,6 +54,11 @@ export class DashboardShellComponent implements OnInit {
     ngOnInit(): void {
         this.dashboardStore.loadReport({});
         this.configurationStore.loadConfiguration({});
+    }
+
+    // Leaving the page drops an unsaved layout, so the dashboard never opens in edit mode
+    ngOnDestroy(): void {
+        this.dashboardStore.cancelEditing();
     }
 
     // Until the first load finishes the store still holds its initial empty list; null shows skeletons instead
