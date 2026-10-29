@@ -3,8 +3,9 @@
 
 
 /**
- * Settings a user can define; THEME_MODE takes a ThemeMode value
+ * Settings a user can define; THEME_MODE takes a ThemeMode value, DASHBOARD_LAYOUT a JSON document with the rows and widgets of the user's dashboard (its format belongs to the frontend, at most 4000 characters)
  */
 export enum UserConfigurationName {
-  THEME_MODE = 'THEME_MODE'
+  THEME_MODE = 'THEME_MODE',
+  DASHBOARD_LAYOUT = 'DASHBOARD_LAYOUT'
 }
