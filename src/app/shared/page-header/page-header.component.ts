@@ -7,7 +7,7 @@ export interface PageCrumb {
     route?: (string | number)[];
 }
 
-// Page title on the left, breadcrumb on the right (DESIGN_GUIDELINES.md, "Every page").
+// Page title on the left, breadcrumb and any projected page actions on the right (DESIGN_GUIDELINES.md, "Every page").
 // Routes that render it set data: {ownPageHeader: true} so the app shell hides its own breadcrumb bar.
 @Component({
     selector: 'app-page-header',

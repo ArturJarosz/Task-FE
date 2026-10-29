@@ -8,7 +8,7 @@ Stack: Angular 19, PrimeNG 19 (styled mode, `AppThemePreset` in `src/app/theme/a
 
 1. **Soft cards on grey.** A page is white cards (1px `gray-200` border, 16px radius, no shadow) on `gray-50`. Never nest cards in cards, accordions in cards, or tabs inside accordions.
 2. **Brand colour means action or selection.** `brand-500` is for primary buttons, the active nav item, the active tab, links, and focus. Status uses its own colors (section 5). Everything else is grey.
-3. **Say what a button does.** Buttons have text labels ("New project", "Add stage", "Save changes"). Icon-only buttons are allowed only for row actions (`⋯`), close buttons, top bar icons, and field help (see "Field help"), always with `aria-label` and a tooltip.
+3. **Say what a button does.** Buttons have text labels ("New project", "Add stage", "Save changes"). Icon-only buttons are allowed only for row actions (`⋯`), close buttons, top bar icons, field help (see "Field help") and the dashboard's "Customize dashboard" button, always with `aria-label` and a tooltip.
 4. **Read first, edit on purpose.** Detail pages show values as text. Each section card has a rounded "Edit" button that opens a dialog with the form.
 5. **Tokens, not overrides.** Colors, radius, and spacing come from `app-theme-preset.ts` and the `@theme` block in `styles.css`. No `::ng-deep`, no hex values in components, no inline color styles. Use Tailwind classes such as `text-gray-500` and `bg-brand-50`, which match the tokens.
 
@@ -93,7 +93,7 @@ Every colour is a CSS variable, and PrimeNG and Tailwind read the same ones, so 
 
 ### Every page
 `.app-page-header`: page title on the left, breadcrumb on the right (Home › Projects › Lublin 01).
-Use `<app-page-header title="Project" [crumbs]="crumbs"/>` (`src/app/shared/page-header`) and set `data: {ownPageHeader: true}` on the page's route so the app shell hides its old breadcrumb bar. Read-only fields use `<app-field label="…" [value]="…"/>` (`src/app/shared/field`), which shows "Not set" (or `emptyText`) when empty.
+Use `<app-page-header title="Project" [crumbs]="crumbs"/>` (`src/app/shared/page-header`) and set `data: {ownPageHeader: true}` on the page's route so the app shell hides its old breadcrumb bar. Page-wide actions (only the dashboard has any today) go inside it as content and sit right of the breadcrumb. Read-only fields use `<app-field label="…" [value]="…"/>` (`src/app/shared/field`), which shows "Not set" (or `emptyText`) when empty.
 
 ### Card rows (every page)
 A row of cards is either one full-width card, or cards whose widths are 25%, 50% or 75%. Never `auto-fit`, never fixed sidebar widths such as 340px, and never three equal cards. Below `xl` (1280px) every card is full width and the rows stack. From `xl` the row is a 4-column grid:
@@ -103,11 +103,25 @@ A row of cards is either one full-width card, or cards whose widths are 25%, 50%
 - Three cards: `grid grid-cols-1 xl:grid-cols-4 gap-6`, with the widest card `xl:col-span-2` (25 / 25 / 50).
 
 ### Dashboard
+Each user arranges their own dashboard out of widgets, in rows of **stacks**. A stack is a column of up to three widgets on top of each other; it is 25%, 50%, 75% or 100% wide, never narrower than the minimum of any widget in it, and the stacks of a row add up to at most 100%. A row is as tall as its tallest stack, and the widgets of a stack split its height equally (minus the 24px gap); when their content needs more, the row grows instead, so a chart at 50% next to a stack of Year summary and Upcoming events gives each of those half the chart's height. Every card stretches to the height it gets. The layout is saved per user as the `DASHBOARD_LAYOUT` user configuration (`PUT /users/current/configurations/DASHBOARD_LAYOUT`, a versioned JSON document the frontend owns, at most 4000 characters; version 2 has stacks, version 1 layouts are read as one stack per widget). Until a user saves one they see the default layout, one widget per stack:
 1. A row of four KPI cards (see Card rows). Each is an `<app-kpi-card icon="pi pi-…" label="…" [loading] [loadFailed]>` (`src/app/shared/kpi-card`), the same card the list pages use: a 48px grey icon tile on the left, then the label above a 24px number (the projected content), plus an optional context pill next to the number. It shows the skeleton and "Couldn't load" itself.
-2. A chart card (title, subtitle, segmented Monthly / Quarterly / Annually) next to a summary card.
-3. List cards ("Upcoming events") next to table cards ("Active projects"). Each shows at most 5 rows and has a "See all" outline button that opens the full page.
+2. A chart card (title, subtitle, segmented Monthly / Quarterly / Annually) at 75% next to a summary card at 25%.
+3. A list card ("Upcoming events") next to a table card ("Active projects"), 50% each. Each shows at most 5 rows and has a "See all" outline button that opens the full page.
 
-Today (`src/app/dashboard`): Active projects, plus gross income, expenses and balance for the current year; an income and expenses chart (Annually covers the last 5 years) next to the year summary; upcoming events next to active projects. The dashboard keeps its own `DashboardStore`, so it never changes the financial report page's filters.
+Widgets (`DASHBOARD_WIDGETS` in `src/app/dashboard/layout/dashboard-layout.ts`; each can be placed once): Active projects count, Income / Expenses / Balance this year (KPI cards), Income and expenses chart (at least 50%; Annually covers the last 5 years), Year summary, Upcoming events, Active projects table (at least 50%). A new widget gets a definition there, a case in the dashboard's widget template, and a minimum width if it is a chart or table.
+
+Rows follow Card rows, with stacks in place of cards: from `xl` a row is a 4-column grid and a stack spans its width. Between `md` and `xl` a row is 2 columns: in a row of only 25% and 50% stacks each takes one column (a last odd one spans both), in any other row every stack is full width. Below `md` every stack is full width. The widgets of a stack always stay on top of each other.
+
+**Edit mode.** A round outline icon button (`pi-sliders-h`, "Customize dashboard") right of the breadcrumb switches to edit mode; there the header shows a text "Reset to default", an outline "Cancel" and the primary "Save layout" instead. Saving leaves edit mode with a "Dashboard saved" toast; a failed save keeps edit mode and the draft. Leaving the page drops unsaved changes. In edit mode:
+- A grey hint line says how to move stacks and widgets.
+- Each row is a dashed `gray-300` 16px-rounded area (not a card) with "Row N", "N% free" and a `⋯` menu (Move row up, Move row down, Remove row).
+- Each stack is a `gray-100` 16px-rounded panel. Its top bar is a `pi-arrows-alt` grip, a segmented width control (on a `gray-200` track; widths that don't fit are disabled) and a `⋯` menu (Move left, Move right, Move to row above, Move to row below, Remove stack, or Remove widget for a stack of one). Dragging the bar moves the stack within its row or into any row with room for it, where it narrows to the free space.
+- Each widget in a stack has a bar above it: a grip, the widget name and a `⋯` menu (Move up and Move down within a stack of several, Move into stack on the left / right, Move out of stack, Remove widget). Dragging the bar moves the widget within its stack or into another stack with fewer than three widgets that is wide enough for it; a stack it leaves empty disappears. "Move out of stack" puts it in a new stack right after, taking the row's free space first and then narrowing the stack it leaves. The widget itself shows as in view mode but `inert`.
+- The free part of a row (at least 25%) is a dashed `.app-add-tile` area. Dropping a widget there gives it a stack of its own. While some widget not on the dashboard fits there, it is an "Add widget" button that opens a dialog listing those widgets (icon tile, name, one line, the width it will get, or "Needs N% free" disabled); picking one adds it as a new stack. Otherwise it says "Drop a widget here to give it its own stack".
+- A full-width dashed "Add row" tile ends the page.
+- An empty saved dashboard shows one card with an empty state and an outline "Customize dashboard" button.
+
+The dashboard keeps its own `DashboardStore`, so it never changes the financial report page's filters; it also holds the layout being edited.
 
 ### List page (Projects, Clients…)
 1. Optional row of `<app-kpi-card>`s.
