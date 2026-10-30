@@ -23,12 +23,10 @@ import {ClientFormModel} from "../../client/form/client-form-provider";
 import {ProjectFormProvider} from "../form/project-form-provider";
 import {Architect} from "../../generated/models/architect";
 import {ArchitectFormModel} from "../../architect/model/architect";
-import {cloneDeep} from "lodash";
 import {DialogModule} from "primeng/dialog";
 import {SelectModule} from "primeng/select";
 import {InputTextModule} from "primeng/inputtext";
 import {ButtonModule} from "primeng/button";
-import {NgIf} from "@angular/common";
 import {InputNumberModule} from "primeng/inputnumber";
 
 @Component({
@@ -36,15 +34,13 @@ import {InputNumberModule} from "primeng/inputnumber";
     templateUrl: './add-project.component.html',
     styleUrls: ['./add-project.component.less'],
     standalone: true,
-    imports: [DialogModule, SelectModule, InputNumberModule, InputTextModule, ButtonModule, ReactiveFormsModule, NgIf]
+    imports: [DialogModule, SelectModule, InputNumberModule, InputTextModule, ButtonModule, ReactiveFormsModule]
 })
 export class AddProjectComponent implements OnInit, OnChanges {
     @Input()
     visible = false;
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
-
-    header: string = "New project";
 
     readonly clientStore = inject(ClientStore);
     readonly configurationStore = inject(ConfigurationStore);
@@ -61,7 +57,7 @@ export class AddProjectComponent implements OnInit, OnChanges {
     $projectTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.projectTypes;
     $architects: Signal<Architect[] | null> = this.architectStore.architects!;
     $architectsModel: Signal<ArchitectFormModel[]> = computed(() => {
-        let architects: ArchitectFormModel[] = cloneDeep(this.$architects()!) as ArchitectFormModel[];
+        let architects: ArchitectFormModel[] = structuredClone(this.$architects()!) as ArchitectFormModel[];
         architects.forEach(architect => architect.resolvedName = `${architect.firstName} ${architect.lastName}`);
         return architects;
     });

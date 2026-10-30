@@ -29,7 +29,7 @@ import {Project} from "../../generated/models/project";
 import {Installment} from "../../generated/models/installment";
 import {Stage} from "../../generated/models/stage";
 import {ConfigurationEntry, StageStatus} from "../../generated/models";
-import {EmptyStateComponent, KpiCardComponent} from "../../shared";
+import {EmptyStateComponent, KpiCardComponent, NotSetComponent} from "../../shared";
 import {resolveLabel} from "../../shared/utils/label-utils";
 
 // Where a bar's label goes: inside it, or next to it when the bar is too short to hold it
@@ -141,7 +141,7 @@ const DONE_WITHOUT_END = 'Done, but the stage has no end date';
     templateUrl: './project-timeline.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [KpiCardComponent, EmptyStateComponent, TagModule, TooltipModule, ButtonModule, RouterLink, DatePipe, CurrencyPipe, NgTemplateOutlet]
+    imports: [KpiCardComponent, EmptyStateComponent, TagModule, TooltipModule, ButtonModule, RouterLink, DatePipe, CurrencyPipe, NgTemplateOutlet, NotSetComponent]
 })
 export class ProjectTimelineComponent implements OnInit, OnChanges {
     @Input()

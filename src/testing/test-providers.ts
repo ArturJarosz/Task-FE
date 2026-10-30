@@ -4,8 +4,6 @@ import localePl from '@angular/common/locales/pl';
 import {provideHttpClient} from '@angular/common/http';
 import {provideHttpClientTesting} from '@angular/common/http/testing';
 import {provideRouter} from '@angular/router';
-import {provideNoopAnimations} from '@angular/platform-browser/animations';
-import {provideStore} from '@ngrx/store';
 import {ConfirmationService, MessageService} from 'primeng/api';
 import {AuthService} from '@auth0/auth0-angular';
 import {EMPTY, of} from 'rxjs';
@@ -49,9 +47,7 @@ const authServiceStub: Partial<AuthService> = {
 export function provideTestDependencies(): (Provider | EnvironmentProviders)[] {
     return [
         provideRouter([]),
-        provideNoopAnimations(),
         {provide: LOCALE_ID, useValue: 'pl'},
-        provideStore({}),
         provideHttpClient(),
         provideHttpClientTesting(),
         ConfirmationService,

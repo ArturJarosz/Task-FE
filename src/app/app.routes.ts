@@ -35,7 +35,7 @@ export const appRoutes: Routes = [
     {path: 'projects/:projectId/stages/:stageId/tasks/:taskId', component: TaskDetailShellComponent, canActivate: [loggedInGuardGuard], data: {ownPageHeader: true}},
     // Finance routes
     {path: 'projects/:projectId/costs/:costId', component: CostDetailShellComponent, canActivate: [loggedInGuardGuard], data: {ownPageHeader: true}},
-    {path: 'projects/:projectId/installments/:installmentId', component: InstallmentDetailShellComponent, canActivate: [loggedInGuardGuard]},
+    {path: 'projects/:projectId/installments/:installmentId', component: InstallmentDetailShellComponent, canActivate: [loggedInGuardGuard], data: {ownPageHeader: true}},
     {path: 'projects/:projectId/timeline', component: ProjectDetailShellComponent, canActivate: [loggedInGuardGuard], data: {ownPageHeader: true, view: 'timeline'}},
     {path: 'projects/:projectId/finance', component: ProjectDetailShellComponent, canActivate: [loggedInGuardGuard], data: {ownPageHeader: true, view: 'finance'}},
     {path: 'projects/:projectId/supervision/:supervisionId/visits/:visitId', component: SupervisionVisitDetailShellComponent, canActivate: [loggedInGuardGuard], data: {ownPageHeader: true}},

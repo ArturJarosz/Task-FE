@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input} from "@angular/core";
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
-import {NgIf} from "@angular/common";
 import {SelectModule} from "primeng/select";
 import {InputTextModule} from "primeng/inputtext";
 import {Textarea} from "primeng/textarea";
@@ -13,7 +12,7 @@ import {ConfigurationEntry} from "../../generated/models/configuration-entry";
     templateUrl: 'partner-form-fields.component.html',
     changeDetection: ChangeDetectionStrategy.Default,
     standalone: true,
-    imports: [ReactiveFormsModule, NgIf, SelectModule, InputTextModule, Textarea]
+    imports: [ReactiveFormsModule, SelectModule, InputTextModule, Textarea]
 })
 export class PartnerFormFieldsComponent {
     @Input()

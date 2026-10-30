@@ -1,20 +1,26 @@
 <div class="flex flex-col gap-3 px-6 pb-6">
     <dl class="m-0 grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-px overflow-hidden rounded-xl border border-gray-200 bg-gray-200">
-        <div *ngFor="let stat of stats" class="bg-gray-50 px-4 py-3">
-            <dt class="text-xs text-gray-500">{{ stat.label }}</dt>
-            <dd class="m-0 mt-1 text-base font-semibold text-gray-800 tabular-nums whitespace-nowrap">
-                {{ stat.money ? ((stat.value ?? 0) | currency:'PLN':'symbol':'1.2-2') : (stat.value ?? 0) }}
-            </dd>
-        </div>
-    </dl>
-    <div *ngIf="hasAveragedData">
-        <span class="app-field-label">Average per item</span>
-        <dl class="m-0 grid grid-cols-2 xl:grid-cols-4 gap-px overflow-hidden rounded-xl border border-gray-200 bg-gray-200">
-            <div *ngFor="let stat of averageStats" class="bg-gray-50 px-4 py-3">
+        @for (stat of stats; track stat.label) {
+            <div class="bg-gray-50 px-4 py-3">
                 <dt class="text-xs text-gray-500">{{ stat.label }}</dt>
-                <dd class="m-0 mt-1 text-base font-semibold text-gray-800 tabular-nums whitespace-nowrap">{{ (stat.value ?? 0) | currency:'PLN':'symbol':'1.2-2' }}</dd>
+                <dd class="m-0 mt-1 text-base font-semibold text-gray-800 tabular-nums whitespace-nowrap">
+                    {{ stat.money ? ((stat.value ?? 0) | currency:'PLN':'symbol':'1.2-2') : (stat.value ?? 0) }}
+                </dd>
             </div>
-        </dl>
-    </div>
+        }
+    </dl>
+    @if (hasAveragedData) {
+        <div>
+            <span class="app-field-label">Average per item</span>
+            <dl class="m-0 grid grid-cols-2 xl:grid-cols-4 gap-px overflow-hidden rounded-xl border border-gray-200 bg-gray-200">
+                @for (stat of averageStats; track stat.label) {
+                    <div class="bg-gray-50 px-4 py-3">
+                        <dt class="text-xs text-gray-500">{{ stat.label }}</dt>
+                        <dd class="m-0 mt-1 text-base font-semibold text-gray-800 tabular-nums whitespace-nowrap">{{ (stat.value ?? 0) | currency:'PLN':'symbol':'1.2-2' }}</dd>
+                    </div>
+                }
+            </dl>
+        </div>
+    }
 </div>
 <ng-content select="[wrapper-list]"></ng-content>

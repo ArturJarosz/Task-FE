@@ -11,13 +11,17 @@
                 <label for="firstName" class="app-form-label">First name <span class="text-error-600">*</span></label>
                 <input id="firstName" type="text" formControlName="firstName" pInputText class="w-full"
                        (blur)="markAsDirty('firstName')"/>
-                <small *ngIf="isFieldInvalid('firstName')" class="block mt-1.5 text-xs text-error-600">Enter a first name</small>
+                @if (isFieldInvalid('firstName')) {
+                    <small class="block mt-1.5 text-xs text-error-600">Enter a first name</small>
+                }
             </div>
             <div>
                 <label for="lastName" class="app-form-label">Last name <span class="text-error-600">*</span></label>
                 <input id="lastName" type="text" formControlName="lastName" pInputText class="w-full"
                        (blur)="markAsDirty('lastName')"/>
-                <small *ngIf="isFieldInvalid('lastName')" class="block mt-1.5 text-xs text-error-600">Enter a last name</small>
+                @if (isFieldInvalid('lastName')) {
+                    <small class="block mt-1.5 text-xs text-error-600">Enter a last name</small>
+                }
             </div>
         }
         @case (ClientType.CORPORATE.toString()) {
@@ -25,7 +29,9 @@
                 <label for="companyName" class="app-form-label">Company name <span class="text-error-600">*</span></label>
                 <input id="companyName" type="text" formControlName="companyName" pInputText class="w-full"
                        (blur)="markAsDirty('companyName')"/>
-                <small *ngIf="isFieldInvalid('companyName')" class="block mt-1.5 text-xs text-error-600">Enter a company name</small>
+                @if (isFieldInvalid('companyName')) {
+                    <small class="block mt-1.5 text-xs text-error-600">Enter a company name</small>
+                }
             </div>
         }
     }

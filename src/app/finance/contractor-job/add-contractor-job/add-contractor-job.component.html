@@ -1,8 +1,8 @@
 <p-dialog [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onClose()">
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <div class="flex flex-col gap-1">
-            <span class="p-dialog-title">{{ header }}</span>
+            <span class="p-dialog-title">New contractor job</span>
             <span class="text-sm text-gray-500">Add work done by a contractor, its value and payment.</span>
         </div>
     </ng-template>
@@ -45,7 +45,7 @@
         <div>
             @if (addContractorJobForm.controls.paid.value) {
                 <label for="addContractorJobPaymentDate" class="app-form-label">Payment date <span class="text-error-600">*</span></label>
-                <p-datePicker inputId="addContractorJobPaymentDate" formControlName="paymentDate" dateFormat="dd.mm.yy"
+                <p-datepicker inputId="addContractorJobPaymentDate" formControlName="paymentDate" dateFormat="dd.mm.yy"
                               [showIcon]="true" appendTo="body" [fluid]="true"
                               (onClose)="addContractorJobForm.controls.paymentDate.markAsTouched()"/>
                 @if (isPaymentDateMissing()) {
@@ -58,7 +58,7 @@
             <textarea id="addContractorJobNote" formControlName="note" pTextarea rows="3" [autoResize]="true" class="w-full"></textarea>
         </div>
     </form>
-    <ng-template pTemplate="footer">
+    <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
         <p-button label="Create contractor job" icon="pi pi-plus" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
     </ng-template>

@@ -55,7 +55,7 @@
 <!-- Edit visit -->
 <p-dialog [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onEditDialogHide()">
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">Edit visit</span>
             <span class="text-sm text-gray-500">Change the date, the hours spent and whether the visit is payable.</span>
@@ -64,7 +64,7 @@
     <form [formGroup]="visitDetailForm" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
             <label for="visitDate" class="app-form-label">Date of visit <span class="text-error-600">*</span></label>
-            <p-datePicker inputId="visitDate" formControlName="dateOfVisit" dateFormat="dd.mm.yy"
+            <p-datepicker inputId="visitDate" formControlName="dateOfVisit" dateFormat="dd.mm.yy"
                           [showIcon]="true" appendTo="body" [fluid]="true" (onClose)="visitDetailForm.controls.dateOfVisit.markAsTouched()"/>
             @if (isFieldInvalid('dateOfVisit')) {
                 <small class="block mt-1.5 text-xs text-error-600">Select the date of the visit</small>
@@ -83,7 +83,7 @@
             <label for="visitPayable" class="text-sm font-medium text-gray-700 cursor-pointer">Payable</label>
         </div>
     </form>
-    <ng-template pTemplate="footer">
+    <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancelEdit()"/>
         <p-button label="Save changes" [disabled]="!dataNeedsUpdate || visitDetailForm.invalid"
                   (onClick)="onSave()"/>

@@ -1,6 +1,7 @@
 export {MessageSeverity} from './message';
-export {WrapperComponent} from './wrapper/wrapper.component';
 export {FieldComponent} from './field/field.component';
+export {NotSetComponent} from './not-set/not-set.component';
+export {YesNoMarkComponent} from './yes-no-mark/yes-no-mark.component';
 export {PageHeaderComponent, PageCrumb} from './page-header/page-header.component';
 export {EmptyStateComponent} from './empty-state/empty-state.component';
 export {LoadErrorComponent} from './load-error/load-error.component';

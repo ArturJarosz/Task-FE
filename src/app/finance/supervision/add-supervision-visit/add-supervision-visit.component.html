@@ -1,15 +1,15 @@
 <p-dialog [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onClose()">
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <div class="flex flex-col gap-1">
-            <span class="p-dialog-title">{{ header }}</span>
+            <span class="p-dialog-title">New supervision visit</span>
             <span class="text-sm text-gray-500">Record a supervision visit and the hours spent on site.</span>
         </div>
     </ng-template>
     <form [formGroup]="addSupervisionVisitForm" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
             <label for="addSupervisionVisitDate" class="app-form-label">Date of visit <span class="text-error-600">*</span></label>
-            <p-datePicker inputId="addSupervisionVisitDate" formControlName="dateOfVisit" dateFormat="dd.mm.yy"
+            <p-datepicker inputId="addSupervisionVisitDate" formControlName="dateOfVisit" dateFormat="dd.mm.yy"
                           [showIcon]="true" appendTo="body" [fluid]="true" (onClose)="addSupervisionVisitForm.controls.dateOfVisit.markAsTouched()"/>
             @if (isFieldInvalid('dateOfVisit')) {
                 <small class="block mt-1.5 text-xs text-error-600">Select the date of the visit</small>
@@ -28,7 +28,7 @@
             <label for="addSupervisionVisitPayable" class="text-sm font-medium text-gray-700 cursor-pointer">Payable</label>
         </div>
     </form>
-    <ng-template pTemplate="footer">
+    <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
         <p-button label="Create visit" icon="pi pi-plus" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
     </ng-template>

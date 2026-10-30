@@ -20,7 +20,7 @@ describe('ThemeService', () => {
     const THEME_MODE_URL = '/users/current/configurations/THEME_MODE';
     const loadUser = (user: User, configurations: UserConfiguration[] = []) => {
         patchState(unprotected(TestBed.inject(UserStore)), {currentUser: user, configurations: configurations});
-        TestBed.flushEffects();
+        TestBed.tick();
     };
     const themeMode = (value: ThemeMode): UserConfiguration => ({name: UserConfigurationName.THEME_MODE, value});
 
@@ -119,7 +119,7 @@ describe('ThemeService', () => {
 
     it('should keep a mode picked before the user settings load and save it over them', () => {
         patchState(unprotected(TestBed.inject(UserStore)), {currentUser: {id: 7, username: 'anna'}, configurations: null});
-        TestBed.flushEffects();
+        TestBed.tick();
         service.setMode('dark');
         httpTesting.expectOne(request => request.url.endsWith(THEME_MODE_URL)).flush(themeMode(ThemeMode.DARK));
 
@@ -135,7 +135,7 @@ describe('ThemeService', () => {
 
     it('should wait for the user settings before saving the browser mode', () => {
         patchState(unprotected(TestBed.inject(UserStore)), {currentUser: {id: 7, username: 'anna'}, configurations: null});
-        TestBed.flushEffects();
+        TestBed.tick();
 
         httpTesting.expectNone(request => request.url.endsWith(THEME_MODE_URL));
     });
@@ -191,7 +191,7 @@ describe('ThemeService', () => {
         patchState(unprotected(store), {
             systemParameters: [{id: 3, name: 'Theme color', type: 'TEXT', value: '#7c3aed', defaultValue: '#415cc8'}]
         });
-        TestBed.flushEffects();
+        TestBed.tick();
 
         expect(service.$brandColor()).toBe('#7c3aed');
         expect(root.style.getPropertyValue('--app-brand-500')).toBe('#7c3aed');

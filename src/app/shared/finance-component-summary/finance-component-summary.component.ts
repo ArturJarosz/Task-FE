@@ -1,10 +1,9 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnChanges} from '@angular/core';
 import {FormGroup} from "@angular/forms";
 import {
     FinanceObjectSummaryForm
 } from "../../finance/project-financial-summary/form/project-financial-summary-form-provider";
-
-import {NgFor, NgIf, CurrencyPipe} from "@angular/common";
+import {CurrencyPipe} from "@angular/common";
 
 export interface FinanceStat {
     label: string;
@@ -18,9 +17,9 @@ export interface FinanceStat {
     templateUrl: './finance-component-summary.component.html',
     styleUrl: './finance-component-summary.component.less',
     standalone: true,
-    imports: [NgFor, NgIf, CurrencyPipe]
+    imports: [CurrencyPipe]
 })
-export class FinanceComponentSummaryComponent {
+export class FinanceComponentSummaryComponent implements OnChanges {
     @Input()
     financeComponentDataForm!: FormGroup<FinanceObjectSummaryForm>;
     @Input()
@@ -28,21 +27,27 @@ export class FinanceComponentSummaryComponent {
     @Input()
     averageFinanceComponentDataForm!: FormGroup<FinanceObjectSummaryForm>;
 
-    get stats(): FinanceStat[] {
-        let value = this.financeComponentDataForm?.value ?? {};
-        return [
-            {label: 'Count', value: value.count, money: false},
-            {label: 'Paid', value: value.paid, money: false},
-            ...toMoneyStats(value)
-        ];
-    }
+    stats: FinanceStat[] = toStats({});
+    averageStats: FinanceStat[] = toMoneyStats({});
 
-    get averageStats(): FinanceStat[] {
-        return toMoneyStats(this.averageFinanceComponentDataForm?.value ?? {});
+    // The parents pass a new, already filled form whenever their data changes, so the stats are built only here
+    ngOnChanges(): void {
+        this.stats = toStats(this.financeComponentDataForm?.value ?? {});
+        this.averageStats = toMoneyStats(this.averageFinanceComponentDataForm?.value ?? {});
     }
 }
 
-function toMoneyStats(value: Partial<{ grossValue: number | null, netValue: number | null, incomeTax: number | null, vatTax: number | null }>): FinanceStat[] {
+type SummaryValue = FormGroup<FinanceObjectSummaryForm>['value'];
+
+function toStats(value: SummaryValue): FinanceStat[] {
+    return [
+        {label: 'Count', value: value.count, money: false},
+        {label: 'Paid', value: value.paid, money: false},
+        ...toMoneyStats(value)
+    ];
+}
+
+function toMoneyStats(value: SummaryValue): FinanceStat[] {
     return [
         {label: 'Gross value', value: value.grossValue, money: true},
         {label: 'Net value', value: value.netValue, money: true},

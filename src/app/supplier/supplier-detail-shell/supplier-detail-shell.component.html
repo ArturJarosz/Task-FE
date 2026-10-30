@@ -1,18 +1,18 @@
-<app-partner-detail *ngIf="$supplier() as supplier; else loading"
-                     [partner]="supplier"
-                     [categories]="$supplierTypes()"
-                     [itemsData]="$itemsData()"
-                     [projectNames]="$projectNames()"
-                     entityLabel="supplier"
-                     itemsLabel="Supplies"
-                     itemRouteSegment="supplies"
-                     itemsIcon="pi pi-box"
-                     itemsEmptyText="Supplies show up here once they are added to a project."
-                     (updateEvent)="onUpdate($event)"
-                     (deleteEvent)="onDelete($event)">
-</app-partner-detail>
-
-<ng-template #loading>
+@if ($supplier(); as supplier) {
+    <app-partner-detail
+                         [partner]="supplier"
+                         [categories]="$supplierTypes()"
+                         [itemsData]="$itemsData()"
+                         [projectNames]="$projectNames()"
+                         entityLabel="supplier"
+                         itemsLabel="Supplies"
+                         itemRouteSegment="supplies"
+                         itemsIcon="pi pi-box"
+                         itemsEmptyText="Supplies show up here once they are added to a project."
+                         (updateEvent)="onUpdate($event)"
+                         (deleteEvent)="onDelete($event)">
+    </app-partner-detail>
+} @else {
     @if ($supplierLoadFailed()) {
         <app-load-error title="Couldn't load this supplier" backLabel="Back to suppliers" [backRoute]="['/suppliers']"
                         (retry)="onRetry()"/>
@@ -32,6 +32,6 @@
             </div>
         </div>
     }
-</ng-template>
+}
 
-<p-confirmDialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>
+<p-confirmdialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>

@@ -17,7 +17,6 @@ export interface ProjectState extends AppState {
     projectId: number | undefined,
     projectsNeedRefresh: boolean,
     projectNeedsRefresh: boolean,
-    projectHasSupervision: boolean,
     projectLoadFailed: boolean,
     projectsLoadFailed: boolean,
 }
@@ -29,7 +28,6 @@ export const initialState: ProjectState = {
     projectId: undefined,
     projectsNeedRefresh: true,
     projectNeedsRefresh: true,
-    projectHasSupervision: false,
     projectLoadFailed: false,
     projectsLoadFailed: false,
 }
@@ -45,12 +43,9 @@ export const ProjectStore = signalStore(
             return '';
         })
     })),
-    withComputed(({project, projectId}) => ({
-            projectHasSupervision: computed(() => {
-                return project() && project()?.supervision != null;
-            })
-        }
-    )),
+    withComputed(({project}) => ({
+        projectHasSupervision: computed(() => project()?.supervision != null)
+    })),
     withMethods((store, projectRestService = inject(ProjectRestService), messageService = inject(MessageService),
                  financialDataStore = inject(FinancialDataStore)) => ({
         setProjectId(projectId: number) {

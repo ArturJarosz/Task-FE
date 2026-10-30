@@ -1,5 +1,5 @@
 <p-table [value]="rows" [rowHover]="true" [tableStyle]="{'min-width': '44rem'}">
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <tr>
             <th>{{ entityTitle }}</th>
             <th>Contact</th>
@@ -7,7 +7,7 @@
             <th class="w-16"><span class="sr-only">Actions</span></th>
         </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-row>
+    <ng-template #body let-row>
         <tr [routerLink]="[routeBase, row.id]" class="cursor-pointer">
             <td>
                 <div class="flex items-center gap-3">
@@ -19,10 +19,18 @@
                 </div>
             </td>
             <td>
-                <div *ngIf="row.email || row.telephone; else notSet" class="min-w-0">
-                    <div *ngIf="row.email" class="text-gray-800 truncate">{{ row.email }}</div>
-                    <div *ngIf="row.telephone" class="text-xs text-gray-500">{{ row.telephone }}</div>
-                </div>
+                @if (row.email || row.telephone) {
+                    <div class="min-w-0">
+                        @if (row.email) {
+                            <div class="text-gray-800 truncate">{{ row.email }}</div>
+                        }
+                        @if (row.telephone) {
+                            <div class="text-xs text-gray-500">{{ row.telephone }}</div>
+                        }
+                    </div>
+                } @else {
+                    <app-not-set/>
+                }
             </td>
             <td class="app-num">{{ row.count }}</td>
             <td class="text-right">
@@ -32,7 +40,7 @@
             </td>
         </tr>
     </ng-template>
-    <ng-template pTemplate="emptymessage">
+    <ng-template #emptymessage>
         <tr>
             <td colspan="4" class="p-0">
                 <app-empty-state [icon]="icon" [title]="'No ' + entityLabel + 's yet'" [text]="emptyText"/>
@@ -41,5 +49,3 @@
     </ng-template>
 </p-table>
 <p-menu #rowMenu [model]="rowMenuItems" [popup]="true" appendTo="body"/>
-
-<ng-template #notSet><span class="text-gray-400">Not set</span></ng-template>

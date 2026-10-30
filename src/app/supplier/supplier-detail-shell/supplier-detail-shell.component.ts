@@ -11,7 +11,6 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {ConfirmationService} from "primeng/api";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {SkeletonModule} from "primeng/skeleton";
-import {NgIf} from "@angular/common";
 import {Partner, PartnerDetailComponent, PartnerItemsData, PartnerRef, LoadErrorComponent} from "../../shared";
 
 @Component({
@@ -20,7 +19,7 @@ import {Partner, PartnerDetailComponent, PartnerItemsData, PartnerRef, LoadError
     styleUrl: './supplier-detail-shell.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [LoadErrorComponent, PartnerDetailComponent, ConfirmDialogModule, SkeletonModule, NgIf]
+    imports: [LoadErrorComponent, PartnerDetailComponent, ConfirmDialogModule, SkeletonModule]
 })
 export class SupplierDetailShellComponent implements OnInit {
     supplierId!: number;

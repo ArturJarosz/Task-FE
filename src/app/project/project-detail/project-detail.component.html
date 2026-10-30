@@ -1,161 +1,160 @@
 <app-page-header title="Project" [crumbs]="crumbs"/>
 
-<div *ngIf="project; else loading" class="flex flex-col gap-6">
-    <!-- Header card -->
-    <section class="app-card flex flex-wrap items-center gap-5 p-6">
-        <div class="flex items-center justify-center shrink-0 w-[72px] h-[72px] rounded-2xl bg-brand-50 text-brand-500">
-            <i [class]="projectIcon + ' text-3xl'"></i>
-        </div>
-        <div class="flex-1 min-w-0">
-            <div class="flex flex-wrap items-center gap-3">
-                <h2 class="m-0 text-xl leading-[30px] font-semibold text-gray-800">{{ project.name }}</h2>
-                <p-tag [value]="resolvedProjectStatusLabel" [severity]="statusSeverity(project.status)"/>
+@if (project) {
+    <div class="flex flex-col gap-6">
+        <!-- Header card -->
+        <section class="app-card flex flex-wrap items-center gap-5 p-6">
+            <div class="flex items-center justify-center shrink-0 w-[72px] h-[72px] rounded-2xl bg-brand-50 text-brand-500">
+                <i [class]="projectIcon + ' text-3xl'"></i>
             </div>
-            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-sm text-gray-500">
-                <span>{{ resolvedProjectTypeLabel }}</span>
-                <span class="w-px h-4 bg-gray-200"></span>
-                <span>Client: {{ clientName }}</span>
-                <span class="w-px h-4 bg-gray-200"></span>
-                <span>Architect: {{ architectName }}</span>
-            </div>
-        </div>
-        <div class="flex items-center gap-3">
-            <p-button icon="pi pi-ellipsis-h" severity="secondary" [outlined]="true"
-                      pTooltip="More actions" tooltipPosition="bottom" ariaLabel="More actions"
-                      (onClick)="actionsMenu.toggle($event)"/>
-            <p-menu #actionsMenu [model]="actions" [popup]="true" appendTo="body"/>
-        </div>
-    </section>
-
-    <!-- Routed sub-pages -->
-    <nav class="app-seg self-start" aria-label="Project sections">
-        <a class="app-seg-item" [routerLink]="['/projects', project.id]" routerLinkActive="active"
-           [routerLinkActiveOptions]="{exact: true}">Overview</a>
-        <a class="app-seg-item" [routerLink]="['/projects', project.id, 'stages']" routerLinkActive="active">Stages</a>
-        <a class="app-seg-item" [routerLink]="['/projects', project.id, 'timeline']" routerLinkActive="active">Timeline</a>
-        <a class="app-seg-item" [routerLink]="['/projects', project.id, 'finance']" routerLinkActive="active">Finance</a>
-    </nav>
-
-    @switch (view) {
-        @case ('overview') {
-            <div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_6px)_minmax(0,1fr)] gap-6 items-start">
-                <!-- Main column -->
-                <div class="flex flex-col gap-6 min-w-0">
-                    <section class="app-card">
-                        <div class="app-card-header">
-                            <h3 class="app-card-title">Contract</h3>
-                            <p-button label="Edit" icon="pi pi-pencil" severity="secondary" [outlined]="true" [rounded]="true"
-                                      (onClick)="onEditContract()"/>
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 px-6 pb-6">
-                            <app-field label="Project value" [value]="project.contract?.offerValue | currency:'PLN':'symbol':'1.2-2'"/>
-                            <div>
-                                <span class="app-field-label">Contract status</span>
-                                <p-tag [value]="resolvedContractStatusLabel" [severity]="statusSeverity(project.contract?.status)"/>
-                            </div>
-                            <app-field label="Signing date" [value]="project.contract?.signingDate | date:'dd.MM.yyyy'"/>
-                            <app-field label="Deadline" [value]="project.contract?.deadline | date:'dd.MM.yyyy'"/>
-                            <app-field label="Start date" [value]="project.contract?.startDate | date:'dd.MM.yyyy'"/>
-                            <app-field label="End date" [value]="project.contract?.endDate | date:'dd.MM.yyyy'"/>
-                        </div>
-                    </section>
-
-                    <section class="app-card">
-                        <div class="app-card-header">
-                            <h3 class="app-card-title">Project details</h3>
-                            <p-button label="Edit" icon="pi pi-pencil" severity="secondary" [outlined]="true" [rounded]="true"
-                                      (onClick)="onEditProject()"/>
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 px-6 pb-6">
-                            <app-field label="Name" [value]="project.name"/>
-                            <div>
-                                <span class="app-field-label">Project status</span>
-                                <p-tag [value]="resolvedProjectStatusLabel" [severity]="statusSeverity(project.status)"/>
-                            </div>
-                            <app-field label="Type" [value]="resolvedProjectTypeLabel"/>
-                            <app-field label="Start date" [value]="project.startDate | date:'dd.MM.yyyy'"/>
-                            <app-field label="End date" [value]="project.endDate | date:'dd.MM.yyyy'"/>
-                            <app-field class="sm:col-span-2 lg:col-span-3" label="Note" [value]="project.note" emptyText="No note yet"/>
-                        </div>
-                    </section>
+            <div class="flex-1 min-w-0">
+                <div class="flex flex-wrap items-center gap-3">
+                    <h2 class="m-0 text-xl leading-[30px] font-semibold text-gray-800">{{ project.name }}</h2>
+                    <p-tag [value]="resolvedProjectStatusLabel" [severity]="statusSeverity(project.status)"/>
                 </div>
-
-                <!-- Side column -->
-                <div class="flex flex-col gap-6">
-                    <section class="rounded-2xl border border-gray-200 bg-gray-100">
-                        <div class="rounded-2xl bg-white px-6 pt-6 pb-8 shadow-theme-xs">
-                            <div class="flex items-start justify-between gap-4">
+                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-sm text-gray-500">
+                    <span>{{ resolvedProjectTypeLabel }}</span>
+                    <span class="w-px h-4 bg-gray-200"></span>
+                    <span>Client: {{ clientName }}</span>
+                    <span class="w-px h-4 bg-gray-200"></span>
+                    <span>Architect: {{ architectName }}</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <p-button icon="pi pi-ellipsis-h" severity="secondary" [outlined]="true"
+                          pTooltip="More actions" tooltipPosition="bottom" ariaLabel="More actions"
+                          (onClick)="actionsMenu.toggle($event)"/>
+                <p-menu #actionsMenu [model]="actions" [popup]="true" appendTo="body"/>
+            </div>
+        </section>
+        <!-- Routed sub-pages -->
+        <nav class="app-seg self-start" aria-label="Project sections">
+            <a class="app-seg-item" [routerLink]="['/projects', project.id]" routerLinkActive="active"
+               [routerLinkActiveOptions]="{exact: true}">Overview</a>
+            <a class="app-seg-item" [routerLink]="['/projects', project.id, 'stages']" routerLinkActive="active">Stages</a>
+            <a class="app-seg-item" [routerLink]="['/projects', project.id, 'timeline']" routerLinkActive="active">Timeline</a>
+            <a class="app-seg-item" [routerLink]="['/projects', project.id, 'finance']" routerLinkActive="active">Finance</a>
+        </nav>
+        @switch (view) {
+            @case ('overview') {
+                <div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_6px)_minmax(0,1fr)] gap-6 items-start">
+                    <!-- Main column -->
+                    <div class="flex flex-col gap-6 min-w-0">
+                        <section class="app-card">
+                            <div class="app-card-header">
+                                <h3 class="app-card-title">Contract</h3>
+                                <p-button label="Edit" icon="pi pi-pencil" severity="secondary" [outlined]="true" [rounded]="true"
+                                          (onClick)="onEditContract()"/>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 px-6 pb-6">
+                                <app-field label="Project value" [value]="project.contract?.offerValue | currency:'PLN':'symbol':'1.2-2'"/>
                                 <div>
-                                    <h3 class="app-card-title">Payments</h3>
-                                    <p class="app-card-subtitle m-0">Share of the contract value paid</p>
+                                    <span class="app-field-label">Contract status</span>
+                                    <p-tag [value]="resolvedContractStatusLabel" [severity]="statusSeverity(project.contract?.status)"/>
                                 </div>
-                                <a [routerLink]="['/projects', project.id, 'finance']" [queryParams]="{tab: 'installments'}"
-                                   class="text-sm font-medium text-brand-500 no-underline hover:text-brand-600">Finance</a>
+                                <app-field label="Signing date" [value]="project.contract?.signingDate | date:'dd.MM.yyyy'"/>
+                                <app-field label="Deadline" [value]="project.contract?.deadline | date:'dd.MM.yyyy'"/>
+                                <app-field label="Start date" [value]="project.contract?.startDate | date:'dd.MM.yyyy'"/>
+                                <app-field label="End date" [value]="project.contract?.endDate | date:'dd.MM.yyyy'"/>
                             </div>
-                            <div class="relative mx-auto mt-10 w-[240px]">
-                                <svg viewBox="0 0 200 110" class="block w-full" role="img"
-                                     [attr.aria-label]="paidPercent + '% of the contract value paid'">
-                                    <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke-linecap="round" stroke-width="14"
-                                          class="stroke-gray-200"/>
-                                    <path *ngIf="paidPercent > 0" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke-linecap="round"
-                                          stroke-width="14" class="stroke-brand-500"
-                                          [attr.stroke-dasharray]="gaugeArcLength" [attr.stroke-dashoffset]="gaugeOffset"/>
-                                </svg>
-                                <div class="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1.5">
-                                    <span class="app-gauge-value">{{ paidPercent }}%</span>
-                                    <span class="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-700">{{ installmentsSummary }}</span>
+                        </section>
+                        <section class="app-card">
+                            <div class="app-card-header">
+                                <h3 class="app-card-title">Project details</h3>
+                                <p-button label="Edit" icon="pi pi-pencil" severity="secondary" [outlined]="true" [rounded]="true"
+                                          (onClick)="onEditProject()"/>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 px-6 pb-6">
+                                <app-field label="Name" [value]="project.name"/>
+                                <div>
+                                    <span class="app-field-label">Project status</span>
+                                    <p-tag [value]="resolvedProjectStatusLabel" [severity]="statusSeverity(project.status)"/>
+                                </div>
+                                <app-field label="Type" [value]="resolvedProjectTypeLabel"/>
+                                <app-field label="Start date" [value]="project.startDate | date:'dd.MM.yyyy'"/>
+                                <app-field label="End date" [value]="project.endDate | date:'dd.MM.yyyy'"/>
+                                <app-field class="sm:col-span-2 lg:col-span-3" label="Note" [value]="project.note" emptyText="No note yet"/>
+                            </div>
+                        </section>
+                    </div>
+                    <!-- Side column -->
+                    <div class="flex flex-col gap-6">
+                        <section class="rounded-2xl border border-gray-200 bg-gray-100">
+                            <div class="rounded-2xl bg-white px-6 pt-6 pb-8 shadow-theme-xs">
+                                <div class="flex items-start justify-between gap-4">
+                                    <div>
+                                        <h3 class="app-card-title">Payments</h3>
+                                        <p class="app-card-subtitle m-0">Share of the contract value paid</p>
+                                    </div>
+                                    <a [routerLink]="['/projects', project.id, 'finance']" [queryParams]="{tab: 'installments'}"
+                                       class="text-sm font-medium text-brand-500 no-underline hover:text-brand-600">Finance</a>
+                                </div>
+                                <div class="relative mx-auto mt-10 w-[240px]">
+                                    <svg viewBox="0 0 200 110" class="block w-full" role="img"
+                                         [attr.aria-label]="paidPercent + '% of the contract value paid'">
+                                        <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke-linecap="round" stroke-width="14"
+                                              class="stroke-gray-200"/>
+                                        @if (paidPercent > 0) {
+                                            <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke-linecap="round"
+                                                  stroke-width="14" class="stroke-brand-500"
+                                                  [attr.stroke-dasharray]="gaugeArcLength" [attr.stroke-dashoffset]="gaugeOffset"/>
+                                        }
+                                    </svg>
+                                    <div class="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1.5">
+                                        <span class="app-gauge-value">{{ paidPercent }}%</span>
+                                        <span class="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-700">{{ installmentsSummary }}</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <dl class="m-0 grid grid-cols-3 px-2 py-4 text-center">
-                            <div class="px-2">
-                                <dt class="text-xs text-gray-500">Value</dt>
-                                <dd class="m-0 mt-1 text-base font-semibold text-gray-800 tabular-nums whitespace-nowrap">{{ (project.contract?.offerValue ?? 0) | currency:'PLN':'symbol':'1.0-0' }}</dd>
+                            <dl class="m-0 grid grid-cols-3 px-2 py-4 text-center">
+                                <div class="px-2">
+                                    <dt class="text-xs text-gray-500">Value</dt>
+                                    <dd class="m-0 mt-1 text-base font-semibold text-gray-800 tabular-nums whitespace-nowrap">{{ (project.contract?.offerValue ?? 0) | currency:'PLN':'symbol':'1.0-0' }}</dd>
+                                </div>
+                                <div class="px-2 border-x border-gray-200">
+                                    <dt class="text-xs text-gray-500">Paid</dt>
+                                    <dd class="m-0 mt-1 text-base font-semibold text-gray-800 tabular-nums whitespace-nowrap">{{ paidValue | currency:'PLN':'symbol':'1.0-0' }}</dd>
+                                </div>
+                                <div class="px-2">
+                                    <dt class="text-xs text-gray-500">Outstanding</dt>
+                                    <dd class="m-0 mt-1 text-base font-semibold text-gray-800 tabular-nums whitespace-nowrap">{{ outstandingValue | currency:'PLN':'symbol':'1.0-0' }}</dd>
+                                </div>
+                            </dl>
+                        </section>
+                        <section class="app-card">
+                            <div class="app-card-header">
+                                <h3 class="app-card-title">People</h3>
                             </div>
-                            <div class="px-2 border-x border-gray-200">
-                                <dt class="text-xs text-gray-500">Paid</dt>
-                                <dd class="m-0 mt-1 text-base font-semibold text-gray-800 tabular-nums whitespace-nowrap">{{ paidValue | currency:'PLN':'symbol':'1.0-0' }}</dd>
-                            </div>
-                            <div class="px-2">
-                                <dt class="text-xs text-gray-500">Outstanding</dt>
-                                <dd class="m-0 mt-1 text-base font-semibold text-gray-800 tabular-nums whitespace-nowrap">{{ outstandingValue | currency:'PLN':'symbol':'1.0-0' }}</dd>
-                            </div>
-                        </dl>
-                    </section>
-
-                    <section class="app-card">
-                        <div class="app-card-header">
-                            <h3 class="app-card-title">People</h3>
-                        </div>
-                        <ul class="list-none m-0 px-6 pb-4">
-                            <li *ngFor="let person of people" class="border-b border-gray-100 last:border-b-0">
-                                <a [routerLink]="person.route" class="flex items-center gap-3 py-3 no-underline group">
-                                    <span class="app-avatar" [class]="person.avatarClass">{{ person.initials }}</span>
-                                    <span class="flex flex-col min-w-0">
-                                        <span class="text-sm font-medium text-gray-800 truncate group-hover:text-brand-500">{{ person.name }}</span>
-                                        <span class="text-xs text-gray-500">{{ person.role }}</span>
-                                    </span>
-                                </a>
-                            </li>
-                        </ul>
-                    </section>
+                            <ul class="list-none m-0 px-6 pb-4">
+                                @for (person of people; track person.role) {
+                                    <li class="border-b border-gray-100 last:border-b-0">
+                                        <a [routerLink]="person.route" class="flex items-center gap-3 py-3 no-underline group">
+                                            <span class="app-avatar" [class]="person.avatarClass">{{ person.initials }}</span>
+                                            <span class="flex flex-col min-w-0">
+                                                <span class="text-sm font-medium text-gray-800 truncate group-hover:text-brand-500">{{ person.name }}</span>
+                                                <span class="text-xs text-gray-500">{{ person.role }}</span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </section>
+                    </div>
                 </div>
-            </div>
+            }
+            @case ('stages') {
+                <stage-list-shell [stages]="project.stages ?? []" [projectId]="project.id!"/>
+            }
+            @case ('timeline') {
+                <project-timeline [project]="project" [installments]="installments" [installmentsLoadFailed]="installmentsLoadFailed"
+                                  [stageStatuses]="stageStatuses" (reloadInstallments)="reloadInstallmentsEvent.emit()"/>
+            }
+            @case ('finance') {
+                <project-financial-detail-shell/>
+            }
         }
-        @case ('stages') {
-            <stage-list-shell [stages]="project.stages ?? []" [projectId]="project.id!"/>
-        }
-        @case ('timeline') {
-            <project-timeline [project]="project" [installments]="installments" [installmentsLoadFailed]="installmentsLoadFailed"
-                              [stageStatuses]="stageStatuses" (reloadInstallments)="reloadInstallmentsEvent.emit()"/>
-        }
-        @case ('finance') {
-            <project-financial-detail-shell/>
-        }
-    }
-</div>
-
-<ng-template #loading>
+    </div>
+} @else {
     @if (loadFailed) {
         <app-load-error title="Couldn't load this project" backLabel="Back to projects"
                         [backRoute]="['/projects']" (retry)="reloadEvent.emit()"/>
@@ -174,12 +173,12 @@
             </div>
         </div>
     }
-</ng-template>
+}
 
 <!-- Edit contract -->
 <p-dialog [(visible)]="showContractDialog" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onCancelEdit()">
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">Edit contract</span>
             <span class="text-sm text-gray-500">Update the contract status and its key dates.</span>
@@ -194,27 +193,27 @@
             </div>
             <div>
                 <label for="signingDate" class="app-form-label">Signing date</label>
-                <p-datePicker inputId="signingDate" formControlName="signingDate" dateFormat="dd.mm.yy"
+                <p-datepicker inputId="signingDate" formControlName="signingDate" dateFormat="dd.mm.yy"
                               [showIcon]="true" appendTo="body" [fluid]="true"/>
             </div>
             <div>
                 <label for="contractStartDate" class="app-form-label">Start date</label>
-                <p-datePicker inputId="contractStartDate" formControlName="startDate" dateFormat="dd.mm.yy"
+                <p-datepicker inputId="contractStartDate" formControlName="startDate" dateFormat="dd.mm.yy"
                               [showIcon]="true" appendTo="body" [fluid]="true"/>
             </div>
             <div>
                 <label for="contractEndDate" class="app-form-label">End date</label>
-                <p-datePicker inputId="contractEndDate" formControlName="endDate" dateFormat="dd.mm.yy"
+                <p-datepicker inputId="contractEndDate" formControlName="endDate" dateFormat="dd.mm.yy"
                               [showIcon]="true" appendTo="body" [fluid]="true"/>
             </div>
             <div>
                 <label for="deadline" class="app-form-label">Deadline</label>
-                <p-datePicker inputId="deadline" formControlName="deadline" dateFormat="dd.mm.yy"
+                <p-datepicker inputId="deadline" formControlName="deadline" dateFormat="dd.mm.yy"
                               [showIcon]="true" appendTo="body" [fluid]="true"/>
             </div>
         </div>
     </form>
-    <ng-template pTemplate="footer">
+    <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancelEdit()"/>
         <p-button label="Save changes" [disabled]="!shouldUpdateContract()" (onClick)="onContractUpdate()"/>
     </ng-template>
@@ -223,7 +222,7 @@
 <!-- Edit project details -->
 <p-dialog [(visible)]="showProjectDialog" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onCancelEdit()">
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">Edit project details</span>
             <span class="text-sm text-gray-500">Change the project name, type and note.</span>
@@ -234,7 +233,9 @@
             <label for="name" class="app-form-label">Name <span class="text-error-600">*</span></label>
             <input id="name" formControlName="name" pInputText class="w-full"
                    (blur)="projectDetailsForm.get('name')?.markAsDirty()"/>
-            <small *ngIf="isFieldInvalid('name')" class="block mt-1.5 text-xs text-error-600">Enter a project name</small>
+            @if (isFieldInvalid('name')) {
+                <small class="block mt-1.5 text-xs text-error-600">Enter a project name</small>
+            }
         </div>
         <div>
             <label for="type" class="app-form-label">Type <span class="text-error-600">*</span></label>
@@ -246,7 +247,7 @@
             <textarea id="note" formControlName="note" pTextarea rows="4" [autoResize]="true" class="w-full"></textarea>
         </div>
     </form>
-    <ng-template pTemplate="footer">
+    <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancelEdit()"/>
         <p-button label="Save changes" [disabled]="!shouldUpdateProject() || projectDetailsForm.invalid" (onClick)="onProjectUpdate()"/>
     </ng-template>

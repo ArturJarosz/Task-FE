@@ -40,7 +40,7 @@ export class AddCalendarEventComponent implements OnChanges {
         this.calendarEventForm = this.formProvider.getCalendarEventFormGroup();
     }
 
-    get header(): string {
+    get title(): string {
         return this.event ? 'Edit event' : 'New event';
     }
 

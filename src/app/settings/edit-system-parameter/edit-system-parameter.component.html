@@ -1,6 +1,6 @@
 <p-dialog [visible]="visible" (visibleChange)="!$event && onHide()" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}">
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">Edit {{ systemParameter?.name }}</span>
             <span class="text-sm text-gray-500">The new value is used from the next calculation on.</span>
@@ -35,7 +35,7 @@
             <small class="block mt-1.5 text-xs text-gray-500">Default value: {{ defaultValueText }}</small>
         }
     </form>
-    <ng-template pTemplate="footer">
+    <ng-template #footer>
         @if (systemParameter?.defaultValue) {
             <p-button label="Reset to default" icon="pi pi-replay" severity="secondary" [text]="true" class="mr-auto"
                       (onClick)="onResetToDefault()"/>

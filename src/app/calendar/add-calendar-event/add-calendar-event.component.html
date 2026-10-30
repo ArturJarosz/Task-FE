@@ -1,8 +1,8 @@
 <p-dialog [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onClose()">
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <div class="flex flex-col gap-1">
-            <span class="p-dialog-title">{{ header }}</span>
+            <span class="p-dialog-title">{{ title }}</span>
             <span class="text-sm text-gray-500">{{ event ? 'Change the name, time or description.' : 'Add a meeting, site visit or deadline.' }}</span>
         </div>
     </ng-template>
@@ -16,18 +16,18 @@
             }
         </div>
         <div class="sm:col-span-2 flex items-center gap-3">
-            <p-toggleSwitch formControlName="allDay" inputId="allDay"/>
+            <p-toggleswitch formControlName="allDay" inputId="allDay"/>
             <label for="allDay" class="text-sm font-medium text-gray-700">All day</label>
         </div>
         <div>
             <label for="startDateTime" class="app-form-label">Start <span class="text-error-600">*</span></label>
-            <p-datePicker inputId="startDateTime" formControlName="startDateTime" dateFormat="dd.mm.yy"
+            <p-datepicker inputId="startDateTime" formControlName="startDateTime" dateFormat="dd.mm.yy"
                           [showTime]="!calendarEventForm.get('allDay')?.value" hourFormat="24" [showIcon]="true"
                           appendTo="body" [fluid]="true"/>
         </div>
         <div>
             <label for="endDateTime" class="app-form-label">End <span class="text-error-600">*</span></label>
-            <p-datePicker inputId="endDateTime" formControlName="endDateTime" dateFormat="dd.mm.yy"
+            <p-datepicker inputId="endDateTime" formControlName="endDateTime" dateFormat="dd.mm.yy"
                           [showTime]="!calendarEventForm.get('allDay')?.value" hourFormat="24" [showIcon]="true"
                           appendTo="body" [fluid]="true"/>
         </div>
@@ -39,7 +39,7 @@
             <textarea id="description" formControlName="description" pTextarea rows="3" [autoResize]="true" class="w-full"></textarea>
         </div>
     </form>
-    <ng-template pTemplate="footer">
+    <ng-template #footer>
         <div class="flex flex-1 items-center justify-between gap-3">
             <div>
                 @if (event) {

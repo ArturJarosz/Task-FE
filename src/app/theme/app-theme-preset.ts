@@ -8,8 +8,8 @@
 // colour scheme is off (darkModeSelector: 'none' in app.config.ts); this light scheme serves both modes.
 // If TypeScript flags a component token name, check that component's "Theming" tab in the PrimeNG docs.
 
-import { definePreset } from '@primeng/themes';
-import Aura from '@primeng/themes/aura';
+import { definePreset } from '@primeuix/themes';
+import Aura from '@primeuix/themes/aura';
 import { BRAND_SHADES, BrandPalette } from './theme-colors';
 
 const scale = (variable: (shade: number) => string) =>

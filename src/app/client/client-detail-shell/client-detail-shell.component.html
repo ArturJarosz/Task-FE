@@ -1,14 +1,14 @@
-<client-detail *ngIf="$client() as client; else loading"
-               [client]="client"
-               [clientTypes]="$clientTypes()"
-               [projectsSummary]="$clientProjectsSummary()"
-               [projectTypes]="$projectTypes()"
-               [projectStatuses]="$projectStatuses()"
-               (updateClientEvent)="onUpdate($event)"
-               (deleteClientEvent)="onDelete($event)">
-</client-detail>
-
-<ng-template #loading>
+@if ($client(); as client) {
+    <client-detail
+                   [client]="client"
+                   [clientTypes]="$clientTypes()"
+                   [projectsSummary]="$clientProjectsSummary()"
+                   [projectTypes]="$projectTypes()"
+                   [projectStatuses]="$projectStatuses()"
+                   (updateClientEvent)="onUpdate($event)"
+                   (deleteClientEvent)="onDelete($event)">
+    </client-detail>
+} @else {
     @if ($clientLoadFailed()) {
         <app-load-error title="Couldn't load this client" backLabel="Back to clients" [backRoute]="['/clients']"
                         (retry)="onRetry()"/>
@@ -28,6 +28,6 @@
             </div>
         </div>
     }
-</ng-template>
+}
 
-<p-confirmDialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>
+<p-confirmdialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>

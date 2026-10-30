@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
-import {NgIf} from "@angular/common";
 import {Router, RouterLink} from "@angular/router";
 import {TableModule} from "primeng/table";
 import {ButtonModule} from "primeng/button";
@@ -7,6 +6,7 @@ import {Menu, MenuModule} from "primeng/menu";
 import {TooltipModule} from "primeng/tooltip";
 import {MenuItem} from "primeng/api";
 import {EmptyStateComponent} from "../empty-state/empty-state.component";
+import {NotSetComponent} from "../not-set/not-set.component";
 
 // A business partner row: contractors and suppliers share the same shape
 export interface PartnerRow {
@@ -29,7 +29,7 @@ export interface PartnerRef {
     templateUrl: 'partner-list.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [TableModule, ButtonModule, MenuModule, TooltipModule, RouterLink, NgIf, EmptyStateComponent]
+    imports: [TableModule, ButtonModule, MenuModule, TooltipModule, RouterLink, EmptyStateComponent, NotSetComponent]
 })
 export class PartnerListComponent {
     @Input()

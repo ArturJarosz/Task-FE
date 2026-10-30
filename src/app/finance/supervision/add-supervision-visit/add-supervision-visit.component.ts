@@ -28,8 +28,6 @@ export class AddSupervisionVisitComponent implements OnInit, AbstractAddEditComp
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    header: string = "New supervision visit";
-
     readonly supervisionStore = inject(SupervisionStore);
 
     addSupervisionVisitForm!: FormGroup<AddSupervisionVisitForm>;

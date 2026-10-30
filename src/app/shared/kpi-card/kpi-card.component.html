@@ -4,7 +4,7 @@
     @if (loadFailed) {
         <div class="text-sm leading-8 text-gray-500">Couldn't load</div>
     } @else if (loading) {
-        <p-skeleton styleClass="mt-1" height="1.75rem" width="8rem"/>
+        <p-skeleton class="mt-1" height="1.75rem" width="8rem"/>
     } @else {
         <div class="app-kpi-value flex flex-wrap items-center gap-2"><ng-content/></div>
     }

@@ -5,14 +5,14 @@ import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {ClientForm, ClientFormProvider} from "../form/client-form-provider";
 import {ClientDto} from "../model/client";
 import {ClientFormFieldsComponent} from "../client-form-fields/client-form-fields.component";
-import {EntityProjectsComponent, FieldComponent, PageCrumb, PageHeaderComponent} from "../../shared";
+import {EntityProjectsComponent, FieldComponent, PageCrumb, PageHeaderComponent, NotSetComponent} from "../../shared";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
 import {MenuModule} from "primeng/menu";
 import {TooltipModule} from "primeng/tooltip";
 import {MenuItem} from "primeng/api";
-import {CurrencyPipe, NgIf} from "@angular/common";
+import {CurrencyPipe} from "@angular/common";
 
 @Component({
     selector: 'client-detail',
@@ -20,8 +20,8 @@ import {CurrencyPipe, NgIf} from "@angular/common";
     styleUrls: ['./client-detail.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [PageHeaderComponent, FieldComponent, EntityProjectsComponent, ClientFormFieldsComponent, ButtonModule, DialogModule,
-        MenuModule, TooltipModule, ReactiveFormsModule, NgIf, CurrencyPipe]
+    imports: [PageHeaderComponent, FieldComponent, EntityProjectsComponent, ClientFormFieldsComponent, ButtonModule,
+        DialogModule, MenuModule, TooltipModule, ReactiveFormsModule, CurrencyPipe, NotSetComponent]
 })
 export class ClientDetailComponent implements OnChanges {
     @Input()

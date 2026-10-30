@@ -31,8 +31,6 @@ export class AddCostComponent implements OnInit, AbstractAddEditComponent {
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    header: string = "New cost";
-
     readonly costStore = inject(CostStore);
     readonly configurationStore = inject(ConfigurationStore);
     $costCategories: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.costCategories;

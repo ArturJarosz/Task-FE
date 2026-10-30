@@ -1,11 +1,11 @@
-<architect-detail *ngIf="$architect() as architect; else loading"
-                  [architect]="architect"
-                  [projectsSummary]="$architectProjectsSummary()"
-                  [projectTypes]="$projectTypes()"
-                  [projectStatuses]="$projectStatuses()">
-</architect-detail>
-
-<ng-template #loading>
+@if ($architect(); as architect) {
+    <architect-detail
+                      [architect]="architect"
+                      [projectsSummary]="$architectProjectsSummary()"
+                      [projectTypes]="$projectTypes()"
+                      [projectStatuses]="$projectStatuses()">
+    </architect-detail>
+} @else {
     @if ($architectLoadFailed()) {
         <app-load-error title="Couldn't load this architect" backLabel="Back to architects" [backRoute]="['/architects']"
                         (retry)="onRetry()"/>
@@ -25,4 +25,4 @@
             </div>
         </div>
     }
-</ng-template>
+}

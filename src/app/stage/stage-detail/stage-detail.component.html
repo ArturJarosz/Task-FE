@@ -124,7 +124,7 @@
 <!-- Edit stage details -->
 <p-dialog [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onCancelEdit()">
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">Edit stage details</span>
             <span class="text-sm text-gray-500">Change the stage name, type, architect, dates and note.</span>
@@ -152,17 +152,17 @@
         </div>
         <div>
             <label for="stageDeadline" class="app-form-label">Deadline</label>
-            <p-datePicker inputId="stageDeadline" formControlName="deadline" dateFormat="dd.mm.yy"
+            <p-datepicker inputId="stageDeadline" formControlName="deadline" dateFormat="dd.mm.yy"
                           [showIcon]="true" appendTo="body" [fluid]="true"/>
         </div>
         <div>
             <label for="stageStartDate" class="app-form-label">Start date</label>
-            <p-datePicker inputId="stageStartDate" formControlName="startDate" dateFormat="dd.mm.yy"
+            <p-datepicker inputId="stageStartDate" formControlName="startDate" dateFormat="dd.mm.yy"
                           [showIcon]="true" appendTo="body" [fluid]="true"/>
         </div>
         <div>
             <label for="stageEndDate" class="app-form-label">End date</label>
-            <p-datePicker inputId="stageEndDate" formControlName="endDate" dateFormat="dd.mm.yy"
+            <p-datepicker inputId="stageEndDate" formControlName="endDate" dateFormat="dd.mm.yy"
                           [showIcon]="true" appendTo="body" [fluid]="true"/>
         </div>
         <div class="sm:col-span-2">
@@ -170,7 +170,7 @@
             <textarea id="stageNote" formControlName="note" pTextarea rows="4" [autoResize]="true" class="w-full"></textarea>
         </div>
     </form>
-    <ng-template pTemplate="footer">
+    <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancelEdit()"/>
         <p-button label="Save changes" [disabled]="!isUpdated || stageDetailsForm.invalid" (onClick)="onSave()"/>
     </ng-template>

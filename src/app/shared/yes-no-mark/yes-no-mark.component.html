@@ -1,0 +1,5 @@
+@if (value) {
+    <i class="pi pi-check-circle text-success-700" [attr.aria-label]="label + ': yes'"></i>
+} @else {
+    <span class="text-gray-400" [attr.aria-label]="label + ': no'">—</span>
+}

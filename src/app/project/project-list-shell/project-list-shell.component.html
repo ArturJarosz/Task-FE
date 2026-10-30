@@ -18,12 +18,14 @@
             </div>
             <div class="flex flex-wrap items-center gap-3">
                 <div class="app-seg" role="group" aria-label="Filter by status">
-                    <button *ngFor="let segment of $segments()" type="button" class="app-seg-item gap-2"
-                            [class.active]="segment.key === $segmentKey()" [attr.aria-pressed]="segment.key === $segmentKey()"
-                            (click)="onSelectSegment(segment.key)">
-                        {{ segment.label }}
-                        <span class="text-xs text-gray-400 tabular-nums">{{ $segmentCounts()[segment.key] }}</span>
-                    </button>
+                    @for (segment of $segments(); track segment.key) {
+                        <button type="button" class="app-seg-item gap-2"
+                                [class.active]="segment.key === $segmentKey()" [attr.aria-pressed]="segment.key === $segmentKey()"
+                                (click)="onSelectSegment(segment.key)">
+                            {{ segment.label }}
+                            <span class="text-xs text-gray-400 tabular-nums">{{ $segmentCounts()[segment.key] }}</span>
+                        </button>
+                    }
                 </div>
                 <p-button label="New project" icon="pi pi-plus" (onClick)="onClick()"/>
             </div>
@@ -42,5 +44,5 @@
     </section>
 </div>
 
-<p-confirmDialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>
+<p-confirmdialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>
 <add-project [visible]="showComponent" (notify)="onNotify($event)"></add-project>

@@ -12,7 +12,7 @@ import {TagModule} from "primeng/tag";
 import {TooltipModule} from "primeng/tooltip";
 import {CalendarEvent, Client, ClientType, ConfigurationEntry, FinancialReport, FinancialReportPeriod, Project, ProjectStatus} from "../../generated/models";
 import {PeriodType} from "../../generated/models/period-type";
-import {EmptyStateComponent, KpiCardComponent, PageCrumb, PageHeaderComponent} from "../../shared";
+import {EmptyStateComponent, KpiCardComponent, PageCrumb, PageHeaderComponent, NotSetComponent} from "../../shared";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {statusSeverity} from "../../shared/status-severity";
 import {barChartOptions, cssColor, periodLabel, rebuildOnThemeChange} from "../../shared/utils/chart-utils";
@@ -85,7 +85,7 @@ interface YearKpi {
     standalone: true,
     imports: [PageHeaderComponent, EmptyStateComponent, KpiCardComponent, AddWidgetComponent, ButtonModule, ChartModule,
         MenuModule, SkeletonModule, TableModule, TagModule, TooltipModule, CdkDropList, CdkDrag,
-        CdkDragHandle, CdkDragPlaceholder, CdkDragPreview, RouterLink, CurrencyPipe, NgTemplateOutlet]
+        CdkDragHandle, CdkDragPlaceholder, CdkDragPreview, RouterLink, CurrencyPipe, NgTemplateOutlet, NotSetComponent]
 })
 export class DashboardComponent implements OnChanges {
     @Input()

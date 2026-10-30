@@ -13,7 +13,7 @@ import {ToastModule} from "primeng/toast";
 import {BreadcrumbModule} from "primeng/breadcrumb";
 import {ButtonModule} from "primeng/button";
 import {TooltipModule} from "primeng/tooltip";
-import {NgFor, NgIf, NgClass, AsyncPipe} from "@angular/common";
+import {NgClass, AsyncPipe} from "@angular/common";
 
 export interface NavItem {
     label: string;
@@ -63,7 +63,7 @@ const DESKTOP_MEDIA_QUERY = '(min-width: 64rem)';
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.less'],
     standalone: true,
-    imports: [ToastModule, ButtonModule, Menu, BreadcrumbModule, TooltipModule, NgFor, NgIf, NgClass, AsyncPipe, RouterLink, RouterLinkActive, RouterOutlet]
+    imports: [ToastModule, ButtonModule, Menu, BreadcrumbModule, TooltipModule, NgClass, AsyncPipe, RouterLink, RouterLinkActive, RouterOutlet]
 })
 export class AppComponent implements OnInit {
     title = 'Task-FE';

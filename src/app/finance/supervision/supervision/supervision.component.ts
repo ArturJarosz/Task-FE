@@ -4,8 +4,8 @@ import {SupervisionVisit} from '../../../generated/models/supervision-visit';
 import {TableModule} from "primeng/table";
 import {RouterLink} from "@angular/router";
 import {ButtonModule} from "primeng/button";
-import {NgFor, NgIf, DatePipe, CurrencyPipe} from "@angular/common";
-import {EmptyStateComponent} from "../../../shared";
+import {DatePipe, CurrencyPipe} from "@angular/common";
+import {EmptyStateComponent, YesNoMarkComponent} from "../../../shared";
 import {FinanceStat} from "../../../shared/finance-component-summary/finance-component-summary.component";
 
 @Component({
@@ -13,7 +13,7 @@ import {FinanceStat} from "../../../shared/finance-component-summary/finance-com
     templateUrl: './supervision.component.html',
     styleUrl: './supervision.component.less',
     standalone: true,
-    imports: [TableModule, RouterLink, NgFor, NgIf, ButtonModule, DatePipe, CurrencyPipe, EmptyStateComponent]
+    imports: [TableModule, RouterLink, ButtonModule, DatePipe, CurrencyPipe, EmptyStateComponent, YesNoMarkComponent]
 })
 export class SupervisionComponent implements OnChanges {
     @Output()

@@ -10,9 +10,9 @@ import {TagModule} from "primeng/tag";
 import {Menu, MenuModule} from "primeng/menu";
 import {MenuItem} from "primeng/api";
 import {Router, RouterLink} from "@angular/router";
-import {DatePipe, NgIf} from "@angular/common";
+import {DatePipe} from "@angular/common";
 import {TooltipModule} from "primeng/tooltip";
-import {EmptyStateComponent} from "../../shared";
+import {EmptyStateComponent, NotSetComponent} from "../../shared";
 import {statusSeverity} from "../../shared/status-severity";
 
 const ARCHITECT_NOT_FOUND_INITIAL = '?';
@@ -23,7 +23,7 @@ const ARCHITECT_NOT_FOUND_INITIAL = '?';
     styleUrl: './task-list.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [TableModule, ButtonModule, TagModule, MenuModule, RouterLink, NgIf, DatePipe, TooltipModule, EmptyStateComponent]
+    imports: [TableModule, ButtonModule, TagModule, MenuModule, RouterLink, DatePipe, TooltipModule, EmptyStateComponent, NotSetComponent]
 })
 export class TaskListComponent {
 

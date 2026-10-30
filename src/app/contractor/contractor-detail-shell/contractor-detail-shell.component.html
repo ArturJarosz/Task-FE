@@ -1,18 +1,18 @@
-<app-partner-detail *ngIf="$contractor() as contractor; else loading"
-                     [partner]="contractor"
-                     [categories]="$contractorTypes()"
-                     [itemsData]="$itemsData()"
-                     [projectNames]="$projectNames()"
-                     entityLabel="contractor"
-                     itemsLabel="Jobs"
-                     itemRouteSegment="contractorJob"
-                     itemsIcon="pi pi-wrench"
-                     itemsEmptyText="Jobs show up here once they are added to a project."
-                     (updateEvent)="onUpdate($event)"
-                     (deleteEvent)="onDelete($event)">
-</app-partner-detail>
-
-<ng-template #loading>
+@if ($contractor(); as contractor) {
+    <app-partner-detail
+                         [partner]="contractor"
+                         [categories]="$contractorTypes()"
+                         [itemsData]="$itemsData()"
+                         [projectNames]="$projectNames()"
+                         entityLabel="contractor"
+                         itemsLabel="Jobs"
+                         itemRouteSegment="contractorJob"
+                         itemsIcon="pi pi-wrench"
+                         itemsEmptyText="Jobs show up here once they are added to a project."
+                         (updateEvent)="onUpdate($event)"
+                         (deleteEvent)="onDelete($event)">
+    </app-partner-detail>
+} @else {
     @if ($contractorLoadFailed()) {
         <app-load-error title="Couldn't load this contractor" backLabel="Back to contractors" [backRoute]="['/contractors']"
                         (retry)="onRetry()"/>
@@ -32,6 +32,6 @@
             </div>
         </div>
     }
-</ng-template>
+}
 
-<p-confirmDialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>
+<p-confirmdialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>

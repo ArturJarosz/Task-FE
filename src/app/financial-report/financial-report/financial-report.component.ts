@@ -10,7 +10,7 @@ import {ChartModule} from "primeng/chart";
 import {TableModule} from "primeng/table";
 import {SkeletonModule} from "primeng/skeleton";
 import {FormsModule} from "@angular/forms";
-import {NgIf, NgFor, NgClass, CurrencyPipe, DatePipe} from "@angular/common";
+import {NgClass, CurrencyPipe, DatePipe} from "@angular/common";
 import {barChartOptions, cssColor, periodLabel, rebuildOnThemeChange} from "../../shared/utils/chart-utils";
 
 type ValueType = 'gross' | 'net';
@@ -54,7 +54,7 @@ const EXPENSE_CATEGORIES: CategoryDef[] = [
     styleUrl: './financial-report.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [PageHeaderComponent, LoadErrorComponent, KpiCardComponent, DatePickerModule, ChartModule, TableModule, SkeletonModule, FormsModule, NgIf, NgFor, NgClass, CurrencyPipe, DatePipe]
+    imports: [PageHeaderComponent, LoadErrorComponent, KpiCardComponent, DatePickerModule, ChartModule, TableModule, SkeletonModule, FormsModule, NgClass, CurrencyPipe, DatePipe]
 })
 export class FinancialReportComponent implements OnInit, OnChanges {
     @Input()

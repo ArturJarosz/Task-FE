@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, Component, Input} from "@angular/core";
-import {NgFor, NgIf} from "@angular/common";
 import {RouterLink} from "@angular/router";
 
 export interface PageCrumb {
@@ -14,7 +13,7 @@ export interface PageCrumb {
     templateUrl: 'page-header.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [NgFor, NgIf, RouterLink]
+    imports: [RouterLink]
 })
 export class PageHeaderComponent {
     @Input()

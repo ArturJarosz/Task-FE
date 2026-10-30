@@ -32,8 +32,6 @@ export class AddTaskComponent implements OnInit {
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    header: string = "New task";
-
     readonly taskStore = inject(TaskStore);
     readonly configurationStore = inject(ConfigurationStore);
     readonly architectStore = inject(ArchitectStore);

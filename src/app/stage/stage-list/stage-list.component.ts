@@ -10,8 +10,8 @@ import {MenuModule, Menu} from "primeng/menu";
 import {MenuItem} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {RouterLink} from "@angular/router";
-import {DatePipe, NgIf} from "@angular/common";
-import {EmptyStateComponent} from "../../shared";
+import {DatePipe} from "@angular/common";
+import {EmptyStateComponent, NotSetComponent} from "../../shared";
 import {statusSeverity} from "../../shared/status-severity";
 import {TooltipModule} from "primeng/tooltip";
 
@@ -23,7 +23,7 @@ const ARCHITECT_NOT_FOUND_INITIAL = '?';
     styleUrls: ['stage-list.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [TableModule, TagModule, MenuModule, ButtonModule, RouterLink, NgIf, DatePipe, TooltipModule, EmptyStateComponent]
+    imports: [TableModule, TagModule, MenuModule, ButtonModule, RouterLink, DatePipe, TooltipModule, EmptyStateComponent, NotSetComponent]
 })
 export class StageListComponent {
     @Input()

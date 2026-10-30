@@ -35,8 +35,6 @@ export class AddStageComponent implements OnInit {
     @Output()
     addStageNotify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    header: string = "New stage";
-
     readonly stageStore = inject(StageStore);
     readonly configurationStore = inject(ConfigurationStore);
     readonly architectStore = inject(ArchitectStore);

@@ -2,14 +2,14 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Client, ClientType, ConfigurationEntry} from "../../generated/models";
 import {ClientDto} from "../model/client";
-import {EmptyStateComponent} from "../../shared";
+import {EmptyStateComponent, NotSetComponent} from "../../shared";
 import {TableModule} from "primeng/table";
 import {ButtonModule} from "primeng/button";
 import {Menu, MenuModule} from "primeng/menu";
 import {MenuItem} from "primeng/api";
 import {TooltipModule} from "primeng/tooltip";
 import {Router, RouterLink} from "@angular/router";
-import {CurrencyPipe, NgIf} from "@angular/common";
+import {CurrencyPipe} from "@angular/common";
 
 export interface ClientRow {
     client: Client;
@@ -24,7 +24,7 @@ export interface ClientRow {
     styleUrls: ['./client-list.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [TableModule, ButtonModule, MenuModule, TooltipModule, RouterLink, NgIf, CurrencyPipe, EmptyStateComponent]
+    imports: [TableModule, ButtonModule, MenuModule, TooltipModule, RouterLink, CurrencyPipe, EmptyStateComponent, NotSetComponent]
 })
 export class ClientListComponent {
     @Input()

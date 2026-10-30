@@ -22,8 +22,6 @@ export class AddSupplierComponent implements OnInit {
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    header: string = "New supplier";
-
     readonly supplierStore = inject(SupplierStore);
     readonly configurationStore = inject(ConfigurationStore);
     $supplierTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.supplierTypes;

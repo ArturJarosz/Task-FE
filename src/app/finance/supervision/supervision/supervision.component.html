@@ -1,36 +1,38 @@
-<ng-container *ngIf="supervision; else noSupervision">
+@if (supervision) {
     <div class="flex flex-wrap items-center justify-between gap-4 px-6 pb-4">
         <p class="m-0 text-sm text-gray-500">Author's supervision rates and recorded visits</p>
         <p-button label="Add visit" icon="pi pi-plus" (onClick)="onAddVisitClick()"/>
     </div>
     <div class="px-6 pb-6">
         <dl class="m-0 grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-px overflow-hidden rounded-xl border border-gray-200 bg-gray-200">
-            <div *ngFor="let stat of stats" class="bg-gray-50 px-4 py-3">
-                <dt class="text-xs text-gray-500">{{ stat.label }}</dt>
-                <dd class="m-0 mt-1 text-base font-semibold text-gray-800 tabular-nums whitespace-nowrap">
-                    {{ stat.money ? ((stat.value ?? 0) | currency:'PLN':'symbol':'1.2-2') : (stat.value ?? 0) }}
-                </dd>
-            </div>
+            @for (stat of stats; track stat.label) {
+                <div class="bg-gray-50 px-4 py-3">
+                    <dt class="text-xs text-gray-500">{{ stat.label }}</dt>
+                    <dd class="m-0 mt-1 text-base font-semibold text-gray-800 tabular-nums whitespace-nowrap">
+                        {{ stat.money ? ((stat.value ?? 0) | currency:'PLN':'symbol':'1.2-2') : (stat.value ?? 0) }}
+                    </dd>
+                </div>
+            }
         </dl>
     </div>
     <p-table [value]="supervisionVisits" [tableStyle]="{'min-width': '30rem'}">
-        <ng-template pTemplate="header">
+        <ng-template #header>
             <tr>
                 <th>Date of visit</th>
                 <th class="app-num">Hours</th>
                 <th class="w-24 text-center">Payable</th>
             </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-visit>
+        <ng-template #body let-visit>
             <tr [routerLink]="['/projects', projectId, 'supervision', supervisionId, 'visits', visit.id]" class="cursor-pointer">
                 <td class="font-medium text-gray-800">{{ visit.dateOfVisit | date:'dd.MM.yyyy' }}</td>
                 <td class="app-num">{{ visit.hoursCount }}</td>
                 <td class="w-24 text-center">
-                    <i *ngIf="visit.payable; else no" class="pi pi-check-circle text-success-700" aria-label="Payable: yes"></i>
+                    <app-yes-no-mark [value]="visit.payable" label="Payable"/>
                 </td>
             </tr>
         </ng-template>
-        <ng-template pTemplate="emptymessage">
+        <ng-template #emptymessage>
             <tr>
                 <td colspan="3" class="p-0">
                     <app-empty-state icon="pi pi-calendar" title="No visits yet" text="Record each supervision visit to bill its hours."/>
@@ -38,12 +40,8 @@
             </tr>
         </ng-template>
     </p-table>
-</ng-container>
-
-<ng-template #noSupervision>
+} @else {
     <app-empty-state icon="pi pi-eye" title="No supervision yet" text="Add author's supervision to track its rates and visits.">
         <p-button label="Add supervision" icon="pi pi-plus" (onClick)="onAddSupervisionClick()"/>
     </app-empty-state>
-</ng-template>
-
-<ng-template #no><span class="text-gray-400" aria-label="No">—</span></ng-template>
+}

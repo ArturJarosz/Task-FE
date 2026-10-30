@@ -1,4 +1,4 @@
-import {palette} from '@primeng/themes';
+import {palette} from '@primeuix/themes';
 
 // Brand color as stored in the "Theme color" system parameter; the backend seeds it with this default
 export const THEME_COLOR_PARAMETER = 'Theme color';

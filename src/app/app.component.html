@@ -2,7 +2,9 @@
 
 <div class="min-h-screen flex bg-gray-50">
     <!-- Backdrop for the sidebar on small screens -->
-    <div *ngIf="mobileSidebarOpen" class="fixed inset-0 z-30 bg-black/40 lg:hidden" (click)="closeMobileSidebar()"></div>
+    @if (mobileSidebarOpen) {
+        <div class="fixed inset-0 z-30 bg-black/40 lg:hidden" (click)="closeMobileSidebar()"></div>
+    }
 
     <!-- Sidebar -->
     <aside id="app-sidebar"
@@ -16,23 +18,29 @@
         </div>
 
         <nav class="flex-1 overflow-y-auto px-4 pb-6" aria-label="Main">
-            <div *ngFor="let group of navGroups">
-                <div class="app-nav-group" [ngClass]="{'lg:text-center lg:px-0': sidebarCollapsed}">
-                    <span [ngClass]="{'lg:hidden': sidebarCollapsed}">{{ group.label }}</span>
-                    <i *ngIf="sidebarCollapsed" class="hidden lg:inline pi pi-ellipsis-h text-gray-400" aria-hidden="true"></i>
+            @for (group of navGroups; track group.label) {
+                <div>
+                    <div class="app-nav-group" [ngClass]="{'lg:text-center lg:px-0': sidebarCollapsed}">
+                        <span [ngClass]="{'lg:hidden': sidebarCollapsed}">{{ group.label }}</span>
+                        @if (sidebarCollapsed) {
+                            <i class="hidden lg:inline pi pi-ellipsis-h text-gray-400" aria-hidden="true"></i>
+                        }
+                    </div>
+                    <ul class="list-none m-0 p-0 flex flex-col gap-1">
+                        @for (item of group.items; track item.route) {
+                            <li>
+                                <a class="app-nav-item" [routerLink]="item.route" routerLinkActive="active"
+                                   [ngClass]="{'lg:justify-center lg:px-0': sidebarCollapsed}"
+                                   [pTooltip]="item.label" tooltipPosition="right" [tooltipDisabled]="!sidebarCollapsed"
+                                   (click)="closeMobileSidebar()">
+                                    <i [class]="item.icon"></i>
+                                    <span [ngClass]="{'lg:hidden': sidebarCollapsed}">{{ item.label }}</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
                 </div>
-                <ul class="list-none m-0 p-0 flex flex-col gap-1">
-                    <li *ngFor="let item of group.items">
-                        <a class="app-nav-item" [routerLink]="item.route" routerLinkActive="active"
-                           [ngClass]="{'lg:justify-center lg:px-0': sidebarCollapsed}"
-                           [pTooltip]="item.label" tooltipPosition="right" [tooltipDisabled]="!sidebarCollapsed"
-                           (click)="closeMobileSidebar()">
-                            <i [class]="item.icon"></i>
-                            <span [ngClass]="{'lg:hidden': sidebarCollapsed}">{{ item.label }}</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            }
         </nav>
     </aside>
 
@@ -43,50 +51,55 @@
                       [ariaLabel]="sidebarCollapsed ? 'Expand menu' : 'Collapse menu'"
                       [pTooltip]="sidebarCollapsed ? 'Expand menu' : 'Collapse menu'" tooltipPosition="bottom"/>
 
-            <div *ngIf="(authorizationService.isAuthenticated() | async) === true" class="flex items-center">
-                <button type="button"
-                        class="flex items-center gap-3 p-1 pr-2 rounded-full border-0 bg-transparent cursor-pointer text-gray-700 hover:bg-gray-100"
-                        aria-haspopup="menu" aria-label="Account menu" [attr.aria-expanded]="userMenuOpen"
-                        (click)="toggleUserMenu($event)">
-                    <span class="app-avatar w-11 h-11 bg-brand-50 text-brand-500">{{ getUserInitial() }}</span>
-                    <span class="hidden sm:block text-sm font-medium text-gray-700">{{ displayName }}</span>
-                    <i class="hidden sm:block pi pi-chevron-down text-xs text-gray-500 transition-transform duration-200"
-                       [ngClass]="{'rotate-180': userMenuOpen}" aria-hidden="true"></i>
-                </button>
-                <p-menu #userMenu [model]="userMenuItems" [popup]="true" appendTo="body" styleClass="w-64"
-                        (onShow)="onUserMenuShow()" (onHide)="userMenuOpen = false">
-                    <ng-template #start>
-                        <div class="flex items-center gap-3 px-3 pt-2 pb-3 mb-1 border-b border-gray-200">
-                            <span class="app-avatar bg-brand-50 text-brand-500">{{ getUserInitial() }}</span>
-                            <div class="min-w-0">
-                                <div class="text-sm font-medium text-gray-700 truncate">{{ displayName }}</div>
-                                <div *ngIf="email && email !== displayName" class="text-xs text-gray-500 truncate">{{ email }}</div>
+            @if ((authorizationService.isAuthenticated() | async) === true) {
+                <div class="flex items-center">
+                    <button type="button"
+                            class="flex items-center gap-3 p-1 pr-2 rounded-full border-0 bg-transparent cursor-pointer text-gray-700 hover:bg-gray-100"
+                            aria-haspopup="menu" aria-label="Account menu" [attr.aria-expanded]="userMenuOpen"
+                            (click)="toggleUserMenu($event)">
+                        <span class="app-avatar w-11 h-11 bg-brand-50 text-brand-500">{{ getUserInitial() }}</span>
+                        <span class="hidden sm:block text-sm font-medium text-gray-700">{{ displayName }}</span>
+                        <i class="hidden sm:block pi pi-chevron-down text-xs text-gray-500 transition-transform duration-200"
+                           [ngClass]="{'rotate-180': userMenuOpen}" aria-hidden="true"></i>
+                    </button>
+                    <p-menu #userMenu [model]="userMenuItems" [popup]="true" appendTo="body" styleClass="w-64"
+                            (onShow)="onUserMenuShow()" (onHide)="userMenuOpen = false">
+                        <ng-template #start>
+                            <div class="flex items-center gap-3 px-3 pt-2 pb-3 mb-1 border-b border-gray-200">
+                                <span class="app-avatar bg-brand-50 text-brand-500">{{ getUserInitial() }}</span>
+                                <div class="min-w-0">
+                                    <div class="text-sm font-medium text-gray-700 truncate">{{ displayName }}</div>
+                                    @if (email && email !== displayName) {
+                                        <div class="text-xs text-gray-500 truncate">{{ email }}</div>
+                                    }
+                                </div>
                             </div>
-                        </div>
-                    </ng-template>
-                </p-menu>
-            </div>
+                        </ng-template>
+                    </p-menu>
+                </div>
+            }
         </header>
 
         <!-- Content -->
         <main class="flex-1 w-full max-w-(--app-content-max) mx-auto p-4 md:p-6">
-            <div *ngIf="!ownPageHeader" class="mb-6">
-                <p-breadcrumb class="max-w-full" [model]="breadcrumbItems">
-                    <ng-template pTemplate="item" let-item>
-                        <ng-container *ngIf="item.route; else elseBlock">
-                            <a [routerLink]="item.route" class="p-menuitem-link">
-                                <span [ngClass]="[item.icon ? item.icon : '', 'text-color']"></span>
-                                <span class="text-brand-500 font-semibold">{{ item.label }}</span>
-                            </a>
-                        </ng-container>
-                        <ng-template #elseBlock>
-                            <a [href]="item.url">
-                                <span class="text-color">{{ item.label }}</span>
-                            </a>
+            @if (!ownPageHeader) {
+                <div class="mb-6">
+                    <p-breadcrumb class="max-w-full" [model]="breadcrumbItems">
+                        <ng-template #item let-item>
+                            @if (item.route) {
+                                <a [routerLink]="item.route" class="p-menuitem-link">
+                                    <span [ngClass]="[item.icon ? item.icon : '', 'text-color']"></span>
+                                    <span class="text-brand-500 font-semibold">{{ item.label }}</span>
+                                </a>
+                            } @else {
+                                <a [href]="item.url">
+                                    <span class="text-color">{{ item.label }}</span>
+                                </a>
+                            }
                         </ng-template>
-                    </ng-template>
-                </p-breadcrumb>
-            </div>
+                    </p-breadcrumb>
+                </div>
+            }
             <router-outlet></router-outlet>
         </main>
     </div>

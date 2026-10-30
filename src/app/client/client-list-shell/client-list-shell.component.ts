@@ -10,7 +10,6 @@ import {ClientListComponent, ClientRow} from "../client-list/client-list.compone
 import {AddClientComponent} from "../add-client";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ButtonModule} from "primeng/button";
-import {NgFor} from "@angular/common";
 import {LoadErrorComponent, KpiCardComponent, PageCrumb, PageHeaderComponent, TableFooterComponent} from "../../shared";
 
 const PAGE_SIZE = 10;
@@ -37,7 +36,7 @@ function inSegment(client: Client, segment: ClientSegment): boolean {
     styleUrl: './client-list-shell.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [ClientListComponent, AddClientComponent, ConfirmDialogModule, ButtonModule, NgFor, LoadErrorComponent, PageHeaderComponent, KpiCardComponent, TableFooterComponent]
+    imports: [ClientListComponent, AddClientComponent, ConfirmDialogModule, ButtonModule, LoadErrorComponent, PageHeaderComponent, KpiCardComponent, TableFooterComponent]
 })
 export class ClientListShellComponent implements OnInit {
     readonly clientStore = inject(ClientStore);
