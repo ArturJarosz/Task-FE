@@ -1,8 +1,8 @@
 <p-dialog [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onClose()">
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <div class="flex flex-col gap-1">
-            <span class="p-dialog-title">{{ header }}</span>
+            <span class="p-dialog-title">New installment</span>
             <span class="text-sm text-gray-500">Add the client payment for a stage that doesn't have one yet.</span>
         </div>
     </ng-template>
@@ -40,7 +40,7 @@
         <div>
             @if (addInstallmentForm.controls.paid.value) {
                 <label for="addInstallmentPaymentDate" class="app-form-label">Payment date <span class="text-error-600">*</span></label>
-                <p-datePicker inputId="addInstallmentPaymentDate" formControlName="paymentDate" dateFormat="dd.mm.yy"
+                <p-datepicker inputId="addInstallmentPaymentDate" formControlName="paymentDate" dateFormat="dd.mm.yy"
                               [showIcon]="true" appendTo="body" [fluid]="true"
                               (onClose)="addInstallmentForm.controls.paymentDate.markAsTouched()"/>
                 @if (isPaymentDateMissing()) {
@@ -53,7 +53,7 @@
             <textarea id="addInstallmentNote" formControlName="note" pTextarea rows="3" [autoResize]="true" class="w-full"></textarea>
         </div>
     </form>
-    <ng-template pTemplate="footer">
+    <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
         <p-button label="Create installment" icon="pi pi-plus" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
     </ng-template>

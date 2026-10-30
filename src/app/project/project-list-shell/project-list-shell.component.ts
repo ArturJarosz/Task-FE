@@ -10,7 +10,7 @@ import {ProjectListComponent} from "../project-list/project-list.component";
 import {AddProjectComponent} from "../add-project/add-project.component";
 import {ButtonModule} from "primeng/button";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
-import {CurrencyPipe, NgFor} from "@angular/common";
+import {CurrencyPipe} from "@angular/common";
 import {KpiCardComponent, PageCrumb, PageHeaderComponent, TableFooterComponent} from "../../shared";
 
 const PAGE_SIZE = 10;
@@ -41,7 +41,7 @@ function inSegment(project: Project, segment: StatusSegment): boolean {
     styleUrls: ['./project-list-shell.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [ProjectListComponent, AddProjectComponent, ButtonModule, ConfirmDialogModule, PageHeaderComponent, KpiCardComponent, TableFooterComponent, NgFor, CurrencyPipe]
+    imports: [ProjectListComponent, AddProjectComponent, ButtonModule, ConfirmDialogModule, PageHeaderComponent, KpiCardComponent, TableFooterComponent, CurrencyPipe]
 })
 export class ProjectListShellComponent {
 

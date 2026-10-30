@@ -3,7 +3,9 @@
         <label for="partnerName" class="app-form-label">Name <span class="text-error-600">*</span></label>
         <input id="partnerName" type="text" formControlName="name" pInputText class="w-full" [placeholder]="namePlaceholder"
                (blur)="markAsDirty('name')"/>
-        <small *ngIf="isFieldInvalid('name')" class="block mt-1.5 text-xs text-error-600">Enter a name</small>
+        @if (isFieldInvalid('name')) {
+            <small class="block mt-1.5 text-xs text-error-600">Enter a name</small>
+        }
     </div>
     <div>
         <label for="partnerCategory" class="app-form-label">Category <span class="text-error-600">*</span></label>

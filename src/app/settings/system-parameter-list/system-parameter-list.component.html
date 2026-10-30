@@ -33,14 +33,14 @@
                         } @else if (parameter.value) {
                             <span class="font-medium text-gray-800">{{ formatValue(parameter.value, parameter.type) }}</span>
                         } @else {
-                            <span class="text-gray-400">Not set</span>
+                            <app-not-set/>
                         }
                     </span>
                     <span role="cell" class="app-num text-left">
                         @if (parameter.defaultValue) {
                             <span class="text-gray-500">{{ formatValue(parameter.defaultValue, parameter.type) }}</span>
                         } @else {
-                            <span class="text-gray-400">Not set</span>
+                            <app-not-set/>
                         }
                     </span>
                     <span role="cell" class="text-right">

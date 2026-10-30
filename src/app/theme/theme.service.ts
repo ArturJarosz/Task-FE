@@ -1,5 +1,4 @@
-import {DOCUMENT} from '@angular/common';
-import {effect, inject, Injectable, signal, untracked} from '@angular/core';
+import {effect, inject, Injectable, signal, untracked, DOCUMENT} from '@angular/core';
 import {SystemParameterStore} from '../settings/state';
 import {UserStore} from '../shared/user/state';
 import {ThemeMode as ThemeModeDto} from '../generated/models/theme-mode';

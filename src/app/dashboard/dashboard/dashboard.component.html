@@ -296,14 +296,14 @@
                         <p-button label="See all" severity="secondary" [outlined]="true" routerLink="/projects"/>
                     </div>
                     <p-table [value]="recentActiveProjects" [rowHover]="true" [tableStyle]="{'min-width': '36rem'}">
-                        <ng-template pTemplate="header">
+                        <ng-template #header>
                             <tr>
                                 <th>Project</th>
                                 <th>Client</th>
                                 <th>Status</th>
                             </tr>
                         </ng-template>
-                        <ng-template pTemplate="body" let-project>
+                        <ng-template #body let-project>
                             <tr [routerLink]="['/projects', project.id]" class="cursor-pointer">
                                 <td>
                                     <div class="font-medium text-gray-800">{{ project.name }}</div>
@@ -316,7 +316,7 @@
                                             <span class="font-medium text-gray-800 truncate">{{ clientName }}</span>
                                         </div>
                                     } @else {
-                                        <span class="text-gray-400">Not set</span>
+                                        <app-not-set/>
                                     }
                                 </td>
                                 <td>
@@ -324,7 +324,7 @@
                                 </td>
                             </tr>
                         </ng-template>
-                        <ng-template pTemplate="emptymessage">
+                        <ng-template #emptymessage>
                             <tr>
                                 <td colspan="3" class="p-0">
                                     @if (projects) {

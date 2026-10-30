@@ -1,7 +1,9 @@
 <div class="flex flex-col gap-6">
     <!-- Financial summary -->
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-        <app-kpi-card *ngFor="let kpi of kpis" [icon]="kpi.icon" [label]="kpi.label">{{ (kpi.value ?? 0) | currency:'PLN':'symbol':'1.2-2' }}</app-kpi-card>
+        @for (kpi of kpis; track kpi.label) {
+            <app-kpi-card [icon]="kpi.icon" [label]="kpi.label">{{ (kpi.value ?? 0) | currency:'PLN':'symbol':'1.2-2' }}</app-kpi-card>
+        }
     </div>
 
     <!-- Financial components -->
@@ -12,16 +14,32 @@
                 <p class="app-card-subtitle m-0">Costs, payments and work billed to this project</p>
             </div>
             <nav class="app-seg" aria-label="Financial components">
-                <a *ngFor="let tab of tabs" class="app-seg-item" [class.active]="tab.key === selectedTab"
-                   [routerLink]="[]" [queryParams]="{tab: tab.key}" queryParamsHandling="merge">{{ tab.label }}</a>
+                @for (tab of tabs; track tab.key) {
+                    <a class="app-seg-item" [class.active]="tab.key === selectedTab"
+                       [routerLink]="[]" [queryParams]="{tab: tab.key}" queryParamsHandling="merge">{{ tab.label }}</a>
+                }
             </nav>
         </div>
-        <div *ngIf="projectId && costs" [ngSwitch]="selectedTab">
-            <cost-list-shell *ngSwitchCase="'costs'" [projectId]="projectId" [costs]="costs"></cost-list-shell>
-            <installment-list-shell *ngSwitchCase="'installments'"></installment-list-shell>
-            <supply-list-shell *ngSwitchCase="'supplies'" [projectId]="projectId"></supply-list-shell>
-            <contractor-job-list-shell *ngSwitchCase="'contractorJobs'" [projectId]="projectId"></contractor-job-list-shell>
-            <supervision-shell *ngSwitchCase="'supervision'" [projectId]="projectId"></supervision-shell>
-        </div>
+        @if (projectId && costs) {
+            <div>
+                @switch (selectedTab) {
+                    @case ('costs') {
+                        <cost-list-shell [projectId]="projectId" [costs]="costs"></cost-list-shell>
+                    }
+                    @case ('installments') {
+                        <installment-list-shell></installment-list-shell>
+                    }
+                    @case ('supplies') {
+                        <supply-list-shell [projectId]="projectId"></supply-list-shell>
+                    }
+                    @case ('contractorJobs') {
+                        <contractor-job-list-shell [projectId]="projectId"></contractor-job-list-shell>
+                    }
+                    @case ('supervision') {
+                        <supervision-shell [projectId]="projectId"></supervision-shell>
+                    }
+                }
+            </div>
+        }
     </section>
 </div>

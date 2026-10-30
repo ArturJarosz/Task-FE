@@ -1,8 +1,8 @@
 <p-dialog [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onClose()">
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <div class="flex flex-col gap-1">
-            <span class="p-dialog-title">{{ header }}</span>
+            <span class="p-dialog-title">New stage</span>
             <span class="text-sm text-gray-500">Add a phase of the work, its architect, deadline and optional client payment.</span>
         </div>
     </ng-template>
@@ -29,7 +29,7 @@
         </div>
         <div>
             <label for="addStageDeadline" class="app-form-label">Deadline</label>
-            <p-datePicker inputId="addStageDeadline" formControlName="deadline" dateFormat="dd.mm.yy"
+            <p-datepicker inputId="addStageDeadline" formControlName="deadline" dateFormat="dd.mm.yy"
                           [showIcon]="true" appendTo="body" [fluid]="true"/>
         </div>
         <div class="sm:col-span-2">
@@ -57,7 +57,7 @@
             <div>
                 @if (addStageForm.get('paid')?.value) {
                     <label for="addStagePaymentDate" class="app-form-label">Payment date</label>
-                    <p-datePicker inputId="addStagePaymentDate" formControlName="paymentDate" dateFormat="dd.mm.yy"
+                    <p-datepicker inputId="addStagePaymentDate" formControlName="paymentDate" dateFormat="dd.mm.yy"
                                   [showIcon]="true" appendTo="body" [fluid]="true"/>
                 }
             </div>
@@ -71,7 +71,7 @@
             </div>
         }
     </form>
-    <ng-template pTemplate="footer">
+    <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
         <p-button label="Create stage" icon="pi pi-plus" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
     </ng-template>

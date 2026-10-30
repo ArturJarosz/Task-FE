@@ -10,7 +10,6 @@ import {
 } from '@angular/core';
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {ProjectContractForm, ProjectCreateForm, ProjectFormProvider} from "../form/project-form-provider";
-import {cloneDeep} from 'lodash';
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Architect} from "../../generated/models/architect";
 import {Project} from "../../generated/models/project";
@@ -18,6 +17,7 @@ import {Installment} from "../../generated/models/installment";
 import {ConfigurationEntry, Contract, ContractStatus, ProjectStatus} from "../../generated/models";
 import {ContractStore} from "../contract-status/state/contract.store";
 import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
+import {changedFields} from "../../shared/utils/form-utils";
 import {FieldComponent, LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../shared";
 import {statusSeverity} from "../../shared/status-severity";
 import {StageListShellComponent} from "../../stage/stage-list-shell/stage-list-shell.component";
@@ -32,7 +32,7 @@ import {TagModule} from "primeng/tag";
 import {DialogModule} from "primeng/dialog";
 import {MenuModule} from "primeng/menu";
 import {SkeletonModule} from "primeng/skeleton";
-import {NgFor, NgIf, CurrencyPipe, DatePipe} from "@angular/common";
+import {CurrencyPipe, DatePipe} from "@angular/common";
 import {RouterLink, RouterLinkActive} from "@angular/router";
 import {TooltipModule} from "primeng/tooltip";
 import {MenuItem} from "primeng/api";
@@ -47,6 +47,8 @@ export interface ProjectPerson {
     avatarClass: string;
 }
 
+type ProjectFormValue = ReturnType<FormGroup<ProjectCreateForm>['getRawValue']>;
+
 // Semicircle gauge in the Payments card: arc of radius 80, so its length is PI * 80
 const GAUGE_ARC_LENGTH = Math.PI * 80;
 
@@ -56,7 +58,7 @@ const GAUGE_ARC_LENGTH = Math.PI * 80;
     styleUrls: ['./project-detail.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [LoadErrorComponent, FieldComponent, PageHeaderComponent, StageListShellComponent, ProjectTimelineComponent, ProjectFinancialDetailShellComponent, SelectModule, DatePickerModule, ButtonModule, InputTextModule, Textarea, TagModule, DialogModule, MenuModule, SkeletonModule, ReactiveFormsModule, NgIf, NgFor, RouterLink, RouterLinkActive, CurrencyPipe, DatePipe, TooltipModule]
+    imports: [LoadErrorComponent, FieldComponent, PageHeaderComponent, StageListShellComponent, ProjectTimelineComponent, ProjectFinancialDetailShellComponent, SelectModule, DatePickerModule, ButtonModule, InputTextModule, Textarea, TagModule, DialogModule, MenuModule, SkeletonModule, ReactiveFormsModule, RouterLink, RouterLinkActive, CurrencyPipe, DatePipe, TooltipModule]
 })
 export class ProjectDetailComponent implements OnChanges {
     @Input()
@@ -109,8 +111,8 @@ export class ProjectDetailComponent implements OnChanges {
     availableProjectStatuses: ConfigurationEntry[] = [];
     availableContractStatuses: ConfigurationEntry[] = [];
 
-    initialContractForm!: FormGroup<ProjectContractForm>;
-    initialProjectForm!: FormGroup<ProjectCreateForm>;
+    // Raw form value (contract included) from the last fill, to tell which part of the form changed
+    initialProjectValue!: ProjectFormValue;
 
     formInitialized: boolean = false;
 
@@ -127,9 +129,7 @@ export class ProjectDetailComponent implements OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         if (!this.formInitialized) {
             this.projectDetailsForm = this.formProvider.getProjectDetailForm();
-            this.initialContractForm = cloneDeep(
-                this.projectDetailsForm.get('contract') as FormGroup<ProjectContractForm>);
-            this.initialProjectForm = cloneDeep(this.projectDetailsForm);
+            this.initialProjectValue = structuredClone(this.projectDetailsForm.getRawValue());
             this.formInitialized = true;
         }
         if (this.project && changes['project']) {
@@ -153,9 +153,7 @@ export class ProjectDetailComponent implements OnChanges {
 
     resetForm(): void {
         this.fillFormData();
-        this.initialProjectForm = cloneDeep(this.projectDetailsForm);
-        this.initialContractForm = cloneDeep(
-            this.projectDetailsForm.get('contract') as FormGroup<ProjectContractForm>);
+        this.initialProjectValue = structuredClone(this.projectDetailsForm.getRawValue());
         this.projectDetailsForm.markAsPristine();
     }
 
@@ -271,32 +269,19 @@ export class ProjectDetailComponent implements OnChanges {
         if (this.projectDetailsForm.get('contract')?.pristine) {
             return false;
         }
-        let newContractForm = (this.projectDetailsForm.get('contract') as FormGroup<ProjectContractForm>);
-        let changedValues: any[] = [];
-        Object.keys(this.initialContractForm.controls)
-            .forEach(key => {
-                if (!(this.initialContractForm.get(key)?.value === newContractForm.get(key)?.value)) {
-                    changedValues.push(key);
-                }
-            });
-        return changedValues.length > 0;
+        const initialContract = this.initialProjectValue.contract;
+        const fields = Object.keys(initialContract) as (keyof ProjectFormValue['contract'])[];
+        return changedFields(initialContract, this.projectDetailsForm.getRawValue().contract, fields).length > 0;
     }
 
     shouldUpdateProject(): boolean {
         if (this.projectDetailsForm.pristine) {
             return false;
         }
-        let changedValues: any[] = [];
-        Object.keys(this.initialProjectForm.controls)
-            .forEach(key => {
-                if (key === "contract") {
-                    return;
-                }
-                if (!(this.initialProjectForm.get(key)?.value === this.projectDetailsForm.get(key)?.value)) {
-                    changedValues.push(key);
-                }
-            });
-        return changedValues.length > 0;
+        // The contract has its own dialog and save button
+        const fields = (Object.keys(this.initialProjectValue) as (keyof ProjectFormValue)[])
+            .filter(field => field !== 'contract');
+        return changedFields(this.initialProjectValue, this.projectDetailsForm.getRawValue(), fields).length > 0;
     }
 
     isFieldInvalid(path: string): boolean {

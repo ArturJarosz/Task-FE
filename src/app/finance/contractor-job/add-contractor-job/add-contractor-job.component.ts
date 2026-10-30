@@ -32,8 +32,6 @@ export class AddContractorJobComponent implements OnInit, AbstractAddEditCompone
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    header: string = "New contractor job";
-
     readonly contractorJobStore = inject(ContractorJobStore);
     readonly contractorStore = inject(ContractorStore);
 

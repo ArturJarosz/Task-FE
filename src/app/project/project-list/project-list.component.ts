@@ -9,8 +9,8 @@ import {Menu, MenuModule} from "primeng/menu";
 import {MenuItem} from "primeng/api";
 import {Router, RouterLink} from "@angular/router";
 import {TooltipModule} from "primeng/tooltip";
-import {CurrencyPipe, NgIf} from "@angular/common";
-import {EmptyStateComponent} from "../../shared";
+import {CurrencyPipe} from "@angular/common";
+import {EmptyStateComponent, NotSetComponent} from "../../shared";
 import {statusSeverity} from "../../shared/status-severity";
 
 const NOT_FOUND_INITIAL = '?';
@@ -21,7 +21,7 @@ const NOT_FOUND_INITIAL = '?';
     styleUrls: ['./project-list.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [TableModule, ButtonModule, TagModule, MenuModule, RouterLink, TooltipModule, NgIf, CurrencyPipe, EmptyStateComponent]
+    imports: [TableModule, ButtonModule, TagModule, MenuModule, RouterLink, TooltipModule, CurrencyPipe, EmptyStateComponent, NotSetComponent]
 })
 export class ProjectListComponent {
     @Input()

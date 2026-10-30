@@ -2,7 +2,7 @@
 
 Rules every screen in this app follows. When building or changing UI, by hand or with Claude Code, read this file first. If a screen needs something not covered here, add the rule here first, then build it.
 
-Stack: Angular 19, PrimeNG 19 (styled mode, `AppThemePreset` in `src/app/theme/app-theme-preset.ts`, based on Aura), Tailwind 4 with `tailwindcss-primeui`. The look follows the TailAdmin dashboard: Outfit font, a brand colour (default muted blue `#415cc8`, configurable), white 16px-rounded cards on a light grey page, and a dark theme (section 2, "Theming").
+Stack: Angular 21, PrimeNG 21 (styled mode, `AppThemePreset` in `src/app/theme/app-theme-preset.ts`, based on Aura), Tailwind 4 with `tailwindcss-primeui`. The look follows the TailAdmin dashboard: Outfit font, a brand colour (default muted blue `#415cc8`, configurable), white 16px-rounded cards on a light grey page, and a dark theme (section 2, "Theming").
 
 ## 1. Principles
 
@@ -210,7 +210,7 @@ When an entity has two statuses, label them explicitly: "Contract status" and "P
 
 ### Forms
 - `.app-form-label` above the input, in sentence case with no colon. Required fields get a red `*`.
-- Inputs fill their cell (`class="w-full"` / `styleClass="w-full"`). Money uses `p-inputnumber` with a "zł" suffix. Dates use `p-datepicker dateFormat="dd.mm.yy" [showIcon]="true" appendTo="body"`. Always set `appendTo="body"` on date pickers and selects: otherwise the popup is clipped by the card or accordion it sits in.
+- Inputs fill their cell (`class="w-full"` on native inputs, `[fluid]="true"` on `p-select`, `p-datepicker` and `p-inputnumber`). Money uses `p-inputnumber` with a "zł" suffix. Dates use `p-datepicker dateFormat="dd.mm.yy" [showIcon]="true" appendTo="body"`. Always set `appendTo="body"` on date pickers and selects: otherwise the popup is clipped by the card or accordion it sits in.
 - Errors show a light-red border plus a 12px red message under the field that says what to fix ("End date must be after the start date").
 - Hints show as a 12px `gray-500` line under the field.
 - Yes/no fields use `<p-toggleswitch inputId="…">` with its label to the right on the same row (14px medium `gray-700`). A toggle that reveals more fields ("Add an installment") gets a one-line hint under its label. On detail pages, show them read-only as "Yes" / "No" with `<app-field>`. In dialogs, put toggles together in one grid row, one toggle per column cell (`flex items-center gap-3`), so each lines up with the column below it. Place a toggle directly above the field it controls ("Paid" above "Payment date"). Never mix toggles and inputs in the same row, and never squeeze toggles into one cell.
@@ -219,9 +219,12 @@ When an entity has two statuses, label them explicitly: "Contract status" and "P
 ### Empty states
 Inside the card: a 56px grey circle with an icon, a 16px/600 title ("No stages yet"), one line of explanation, and, when not already in the card header, the create button.
 
+### Empty values
+A missing value in a table cell, list or card is `<app-not-set/>`: "Not set" in `gray-400`, regular weight even inside bold cells. Read-only fields on detail pages use `<app-field>`, which shows the same. Yes/no table columns are `<app-yes-no-mark [value]="cost.paid" label="Paid"/>`: a green check for yes and a `gray-400` dash for no, announced as "Paid: yes" / "Paid: no". Never copy the markup into a template.
+
 ### Feedback
 - A toast after save or delete: "Contract saved".
-- `p-confirmdialog` for destructive actions: "Delete Lublin 01? This can't be undone." Each page renders one `<p-confirmDialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>` in its shell; components nested in it (lists, cards) never add their own, or the dialog opens twice. Accept buttons say what happens ("Delete", "Reject stage", "Reopen stage") next to an outline "Cancel"; only deletes use `severity: 'danger'`.
+- `p-confirmdialog` for destructive actions: "Delete Lublin 01? This can't be undone." Each page renders one `<p-confirmdialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>` in its shell; components nested in it (lists, cards) never add their own, or the dialog opens twice. Accept buttons say what happens ("Delete", "Reject stage", "Reopen stage") next to an outline "Cancel"; only deletes use `severity: 'danger'`.
 - `p-skeleton` while loading, shaped like the content.
 - When a load fails, replace the skeletons with an error state: `<app-load-error>` for a whole page ("Couldn't load this stage", an outline "Back to stages" and "Try again"), or `<app-empty-state>` with a warning icon and an outline "Try again" inside a single card. KPI values show "Couldn't load" in `gray-500`. The REST error toast still appears as well.
 

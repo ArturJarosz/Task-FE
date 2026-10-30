@@ -1,6 +1,6 @@
 <p-dialog [visible]="visible" (visibleChange)="!$event && closed.emit()" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}">
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">Add widget</span>
             <span class="text-sm text-gray-500">Row {{ (rowIndex ?? 0) + 1 }} has {{ free }}% of its width free.</span>
@@ -29,7 +29,7 @@
             }
         </ul>
     }
-    <ng-template pTemplate="footer">
+    <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="closed.emit()"/>
     </ng-template>
 </p-dialog>

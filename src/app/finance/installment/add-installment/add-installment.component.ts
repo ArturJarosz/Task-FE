@@ -35,7 +35,6 @@ export class AddInstallmentComponent implements OnInit, AbstractAddEditComponent
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     readonly installmentStore = inject(InstallmentStore);
-    header: string = "New installment";
 
     addInstallmentForm!: FormGroup<InstallmentForm>;
     stagesWithoutInstallment: Array<Stage> = [];

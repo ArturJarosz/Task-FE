@@ -1,8 +1,8 @@
 <p-dialog [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onClose()">
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <div class="flex flex-col gap-1">
-            <span class="p-dialog-title">{{ header }}</span>
+            <span class="p-dialog-title">New supervision</span>
             <span class="text-sm text-gray-500">Set the net rates for the author's supervision of this project.</span>
         </div>
     </ng-template>
@@ -30,7 +30,7 @@
             <label for="addSupervisionHasInvoice" class="text-sm font-medium text-gray-700 cursor-pointer">Has invoice</label>
         </div>
     </form>
-    <ng-template pTemplate="footer">
+    <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
         <p-button label="Create supervision" icon="pi pi-plus" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
     </ng-template>

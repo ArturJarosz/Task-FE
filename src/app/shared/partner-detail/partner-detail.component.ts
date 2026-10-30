@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from "@angular/core";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {CurrencyPipe, DatePipe, NgIf} from "@angular/common";
+import {CurrencyPipe, DatePipe} from "@angular/common";
 import {RouterLink} from "@angular/router";
 import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
@@ -21,6 +21,8 @@ import {
     ProjectFinancialSummaryFormProvider
 } from "../../finance/project-financial-summary/form/project-financial-summary-form-provider";
 import {PartnerRef} from "../partner-list/partner-list.component";
+import {NotSetComponent} from "../not-set/not-set.component";
+import {YesNoMarkComponent} from "../yes-no-mark/yes-no-mark.component";
 
 // Contractor or supplier, as shown and edited on its detail page
 export interface Partner {
@@ -55,8 +57,9 @@ export interface PartnerItemsData {
     templateUrl: 'partner-detail.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [PageHeaderComponent, FieldComponent, EmptyStateComponent, PartnerFormFieldsComponent, FinanceComponentSummaryComponent,
-        ButtonModule, DialogModule, MenuModule, TableModule, TooltipModule, ReactiveFormsModule, RouterLink, NgIf, CurrencyPipe, DatePipe]
+    imports: [PageHeaderComponent, FieldComponent, EmptyStateComponent, PartnerFormFieldsComponent,
+        FinanceComponentSummaryComponent, ButtonModule, DialogModule, MenuModule, TableModule, TooltipModule,
+        ReactiveFormsModule, RouterLink, CurrencyPipe, DatePipe, NotSetComponent, YesNoMarkComponent]
 })
 export class PartnerDetailComponent implements OnChanges {
     @Input()

@@ -1,3 +1,6 @@
-<installment-detail [installment]="$installment()" (updateInstallmentEvent)="updateInstallment($event)">
-
+<installment-detail
+    [installment]="$installment()" [loadFailed]="$installmentLoadFailed()"
+    [projectId]="projectId"
+    [projectName]="$projectName()"
+    (saveEvent)="saveInstallment($event)" (reloadEvent)="onReload()">
 </installment-detail>

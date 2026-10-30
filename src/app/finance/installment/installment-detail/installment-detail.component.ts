@@ -1,90 +1,163 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {Installment} from "../../../generated/models/installment";
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import {endOfToday, startOfToday} from "date-fns";
+import {CurrencyPipe, DatePipe} from "@angular/common";
 import {FormGroup, ReactiveFormsModule} from '@angular/forms';
-import {InstallmentForm, InstallmentFormProvider} from "../form/installment-form-provider";
-import {cloneDeep} from "lodash";
-import {toDateIfExists, toTimeZoneString} from "../../../shared/utils/date-utils";
-import {WrapperComponent} from "../../../shared/wrapper/wrapper.component";
-import {Accordion, AccordionPanel, AccordionHeader, AccordionContent} from "primeng/accordion";
-import {InputNumberModule} from "primeng/inputnumber";
-import {ToggleSwitchModule} from "primeng/toggleswitch";
-import {DatePickerModule} from "primeng/datepicker";
-import {InputTextModule} from "primeng/inputtext";
+import {RouterLink} from "@angular/router";
 import {ButtonModule} from "primeng/button";
+import {DatePickerModule} from "primeng/datepicker";
+import {DialogModule} from "primeng/dialog";
+import {InputNumberModule} from "primeng/inputnumber";
+import {SkeletonModule} from "primeng/skeleton";
+import {Textarea} from "primeng/textarea";
+import {ToggleSwitchModule} from "primeng/toggleswitch";
+import {Installment} from "../../../generated/models/installment";
+import {InstallmentForm, InstallmentFormProvider} from "../form/installment-form-provider";
+import {InstallmentSave} from "../state/installment.state";
+import {EmptyStateComponent, FieldComponent, LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../../shared";
+import {toDateIfExists, toTimeZoneString} from "../../../shared/utils/date-utils";
+import {changedFields, isControlInvalid, isPaymentDateMissing, paymentDateRequiredWhenPaid} from "../../../shared/utils/form-utils";
+
+type InstallmentFormValue = ReturnType<FormGroup<InstallmentForm>['getRawValue']>;
+
+// What the update endpoint changes. It keeps the paid flag, and takes a payment date only for an installment that is
+// already paid; marking one paid is the separate payment endpoint.
+const DATA_FIELDS: (keyof InstallmentFormValue)[] = ['value', 'hasInvoice', 'note'];
 
 @Component({
     selector: 'installment-detail',
     templateUrl: './installment-detail.component.html',
     styleUrl: './installment-detail.component.less',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [WrapperComponent, Accordion, AccordionPanel, AccordionHeader, AccordionContent, InputNumberModule, ToggleSwitchModule, DatePickerModule, InputTextModule, ButtonModule, ReactiveFormsModule]
+    imports: [LoadErrorComponent, PageHeaderComponent, FieldComponent, EmptyStateComponent, ButtonModule, DatePickerModule,
+        DialogModule, InputNumberModule, SkeletonModule, Textarea, ToggleSwitchModule, ReactiveFormsModule, RouterLink,
+        CurrencyPipe, DatePipe]
 })
-export class InstallmentDetailComponent implements OnInit, OnChanges {
+export class InstallmentDetailComponent implements OnChanges {
     @Input()
     installment!: Installment | null;
+    @Input()
+    loadFailed: boolean = false;
+    @Input()
+    projectId: number = 0;
+    @Input()
+    projectName: string = '';
     @Output()
-    updateInstallmentEvent: EventEmitter<Installment> = new EventEmitter<Installment>();
+    reloadEvent: EventEmitter<void> = new EventEmitter<void>();
+    @Output()
+    saveEvent: EventEmitter<InstallmentSave> = new EventEmitter<InstallmentSave>();
 
-    initialInstallmentDetailForm!: FormGroup<InstallmentForm>;
-    installmentDetailForm!: FormGroup<InstallmentForm>;
+    detailForm: FormGroup<InstallmentForm>;
+    private initialValue!: InstallmentFormValue;
+    showEditDialog = false;
+    // The backend refuses payment dates in the future. End of the day, so a date picked or suggested today is never past it
+    readonly latestPaymentDate = endOfToday();
 
-    constructor(private installmentFormProvider: InstallmentFormProvider) {
+    crumbs: PageCrumb[] = [];
+
+    constructor(private formProvider: InstallmentFormProvider) {
+        this.detailForm = this.formProvider.getInstallmentForm();
+        this.detailForm.addValidators(paymentDateRequiredWhenPaid);
+        this.detailForm.controls.paid.valueChanges
+            .pipe(takeUntilDestroyed())
+            .subscribe(paid => this.togglePaymentDate(paid));
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (this.installment && this.installmentDetailForm) {
-            this.fillFormData();
-            this.initialInstallmentDetailForm = cloneDeep(this.installmentDetailForm);
+        if (changes['installment'] && this.installment) {
+            this.resetForm();
         }
+        this.crumbs = [
+            {label: 'Home', route: ['/home']},
+            {label: 'Projects', route: ['/projects']},
+            {label: this.projectName || 'Project', route: ['/projects', this.projectId]},
+            {label: 'Finance', route: ['/projects', this.projectId, 'finance']},
+            {label: this.installment?.stageName ?? 'Installment'},
+        ];
     }
 
-    ngOnInit(): void {
-        this.installmentDetailForm = this.installmentFormProvider.getInstallmentForm();
-        this.fillFormData();
-        this.installmentDetailForm.valueChanges.subscribe(() => {
-            if (this.installmentDetailForm.value.paid && this.installmentDetailForm.controls.paymentDate.disabled) {
-                this.installmentDetailForm.controls.paymentDate.enable();
-            } else if (!this.installmentDetailForm.value.paid && this.installmentDetailForm.controls.paymentDate.enabled) {
-                this.installmentDetailForm.controls.paymentDate.disable();
-            }
-        });
+    isFieldInvalid(path: string): boolean {
+        return isControlInvalid(this.detailForm, path);
     }
 
-    private fillFormData(): void {
-        if (!this.installment) {
-            return;
-        }
-        this.installmentDetailForm.patchValue({
-            stageName: this.installment.stageName,
-            paid: this.installment.paid,
-            paymentDate: toDateIfExists(this.installment.paymentDate),
-            value: this.installment.value,
-            hasInvoice: this.installment.hasInvoice,
-        })
-        if (this.installment.paid) {
-            this.installmentDetailForm.controls.paymentDate.enable();
-        } else {
-            this.installmentDetailForm.controls.paymentDate.disable();
-        }
+    isPaymentDateMissing(): boolean {
+        return isPaymentDateMissing(this.detailForm);
     }
 
-    isFormChanged(): boolean {
-        if (this.installmentDetailForm.pristine) {
-            return false;
-        }
-        return JSON.stringify(this.initialInstallmentDetailForm.value) !== JSON.stringify(this.installmentDetailForm.value);
+    get dataChanged(): boolean {
+        const fields: (keyof InstallmentFormValue)[] = this.installment?.paid ? [...DATA_FIELDS, 'paymentDate'] : DATA_FIELDS;
+        return changedFields(this.initialValue, this.detailForm.getRawValue(), fields).length > 0;
+    }
+
+    // Turned on in this dialog: a payment can't be undone, so an installment already paid never counts
+    get newlyPaid(): boolean {
+        return !this.installment?.paid && this.detailForm.controls.paid.value;
+    }
+
+    onEdit(): void {
+        this.resetForm();
+        this.showEditDialog = true;
+    }
+
+    onCancelEdit(): void {
+        this.showEditDialog = false;
+        this.resetForm();
     }
 
     onSave(): void {
-        let installment: Installment;
-        installment = {
-            stageName: this.installmentDetailForm.value.stageName,
-            paid: this.installmentDetailForm.value.paid,
-            paymentDate: this.installmentDetailForm.value.paid ? toTimeZoneString(this.installmentDetailForm.controls.paymentDate.value!) : undefined,
-            value: this.installmentDetailForm.value.value,
-            hasInvoice: this.installmentDetailForm.value.hasInvoice,
-        }
-        this.updateInstallmentEvent.emit(installment);
+        const value = this.detailForm.getRawValue();
+        const alreadyPaid = this.installment?.paid ?? false;
+        const paymentDate = value.paymentDate ? toTimeZoneString(value.paymentDate) : undefined;
+        this.saveEvent.emit({
+            installment: this.dataChanged ? {
+                stageName: this.installment?.stageName,
+                value: value.value,
+                hasInvoice: value.hasInvoice,
+                paid: alreadyPaid,
+                paymentDate: alreadyPaid ? paymentDate : undefined,
+                // The backend replaces the note with what is sent, so it always goes along
+                note: value.note ?? undefined,
+            } : undefined,
+            paymentDate: this.newlyPaid ? paymentDate : undefined
+        });
+        this.showEditDialog = false;
     }
 
+    private togglePaymentDate(paid: boolean): void {
+        const paymentDate = this.detailForm.controls.paymentDate;
+        if (paid) {
+            paymentDate.enable({emitEvent: false});
+            // Turning Paid on: most payments are recorded on the day they arrive. Midnight, like a date picked in the calendar
+            if (!this.installment?.paid && !paymentDate.value) {
+                paymentDate.setValue(startOfToday());
+            }
+        } else {
+            paymentDate.disable({emitEvent: false});
+        }
+    }
+
+    private resetForm(): void {
+        if (!this.installment) {
+            return;
+        }
+        const paid = this.installment.paid ?? false;
+        this.detailForm.reset({
+            value: this.installment.value ?? 0,
+            stageId: this.installment.stageId ?? 0,
+            stageName: this.installment.stageName ?? '',
+            hasInvoice: this.installment.hasInvoice ?? false,
+            note: this.installment.note ?? '',
+            paid: paid,
+            paymentDate: toDateIfExists(this.installment.paymentDate) ?? null
+        });
+        // A payment can't be undone, so a paid installment can't be switched back
+        if (paid) {
+            this.detailForm.controls.paid.disable({emitEvent: false});
+        } else {
+            this.detailForm.controls.paid.enable({emitEvent: false});
+        }
+        this.togglePaymentDate(paid);
+        this.initialValue = this.detailForm.getRawValue();
+    }
 }

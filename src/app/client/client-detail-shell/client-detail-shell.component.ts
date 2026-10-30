@@ -10,7 +10,6 @@ import {ConfirmationService} from "primeng/api";
 import {ClientDetailComponent} from "../client-detail/client-detail.component";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {SkeletonModule} from "primeng/skeleton";
-import {NgIf} from "@angular/common";
 import {LoadErrorComponent} from "../../shared";
 
 @Component({
@@ -19,7 +18,7 @@ import {LoadErrorComponent} from "../../shared";
     styleUrl: './client-detail-shell.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [LoadErrorComponent, ClientDetailComponent, ConfirmDialogModule, SkeletonModule, NgIf]
+    imports: [LoadErrorComponent, ClientDetailComponent, ConfirmDialogModule, SkeletonModule]
 })
 export class ClientDetailShellComponent implements OnInit {
     readonly clientStore = inject(ClientStore);
