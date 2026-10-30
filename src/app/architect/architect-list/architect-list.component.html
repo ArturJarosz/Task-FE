@@ -1,5 +1,5 @@
 <p-table [value]="rows" [rowHover]="true" [tableStyle]="{'min-width': '40rem'}">
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <tr>
             <th>Architect</th>
             <th class="app-num">Projects</th>
@@ -8,7 +8,7 @@
             <th class="w-12"><span class="sr-only">Open</span></th>
         </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-row>
+    <ng-template #body let-row>
         <tr [routerLink]="['/architects', row.architect.id]" class="cursor-pointer">
             <td>
                 <div class="flex items-center gap-3">
@@ -25,7 +25,7 @@
             <td class="text-right text-gray-400"><i class="pi pi-angle-right" aria-hidden="true"></i></td>
         </tr>
     </ng-template>
-    <ng-template pTemplate="emptymessage">
+    <ng-template #emptymessage>
         <tr>
             <td colspan="5" class="p-0">
                 <app-empty-state icon="pi pi-id-card" title="No architects yet"

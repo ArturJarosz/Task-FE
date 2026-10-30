@@ -1,5 +1,5 @@
 <p-table [value]="rows" [rowHover]="true" [tableStyle]="{'min-width': '60rem'}">
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <tr>
             <th>Client</th>
             <th>Contact</th>
@@ -10,7 +10,7 @@
             <th class="w-16"><span class="sr-only">Actions</span></th>
         </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-row>
+    <ng-template #body let-row>
         <tr [routerLink]="['/clients', row.client.id]" class="cursor-pointer">
             <td>
                 <div class="flex items-center gap-3">
@@ -22,13 +22,25 @@
                 </div>
             </td>
             <td>
-                <div *ngIf="row.client.contact?.email || row.client.contact?.telephone; else notSet" class="min-w-0">
-                    <div *ngIf="row.client.contact?.email" class="text-gray-800 truncate">{{ row.client.contact.email }}</div>
-                    <div *ngIf="row.client.contact?.telephone" class="text-xs text-gray-500">{{ row.client.contact.telephone }}</div>
-                </div>
+                @if (row.client.contact?.email || row.client.contact?.telephone) {
+                    <div class="min-w-0">
+                        @if (row.client.contact?.email) {
+                            <div class="text-gray-800 truncate">{{ row.client.contact.email }}</div>
+                        }
+                        @if (row.client.contact?.telephone) {
+                            <div class="text-xs text-gray-500">{{ row.client.contact.telephone }}</div>
+                        }
+                    </div>
+                } @else {
+                    <app-not-set/>
+                }
             </td>
             <td>
-                <span *ngIf="row.client.contact?.address?.city; else notSet">{{ row.client.contact.address.city }}</span>
+                @if (row.client.contact?.address?.city) {
+                    <span>{{ row.client.contact.address.city }}</span>
+                } @else {
+                    <app-not-set/>
+                }
             </td>
             <td class="app-num">{{ row.projects }}</td>
             <td class="app-num">{{ row.activeProjects }}</td>
@@ -40,7 +52,7 @@
             </td>
         </tr>
     </ng-template>
-    <ng-template pTemplate="emptymessage">
+    <ng-template #emptymessage>
         <tr>
             <td colspan="7" class="p-0">
                 <app-empty-state icon="pi pi-users" [title]="emptyTitle" [text]="emptyText"/>
@@ -49,5 +61,3 @@
     </ng-template>
 </p-table>
 <p-menu #rowMenu [model]="rowMenuItems" [popup]="true" appendTo="body"/>
-
-<ng-template #notSet><span class="text-gray-400">Not set</span></ng-template>

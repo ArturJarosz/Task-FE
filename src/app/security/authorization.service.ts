@@ -1,7 +1,6 @@
-import {Inject, Injectable} from '@angular/core';
+import {Inject, Injectable, DOCUMENT} from '@angular/core';
 import {Router} from "@angular/router";
 import {AuthService} from "@auth0/auth0-angular";
-import {DOCUMENT} from "@angular/common";
 import {Observable} from "rxjs";
 import {User} from "@auth0/auth0-spa-js";
 import {MessageService} from "primeng/api";

@@ -6,7 +6,7 @@
                 {{ start | date:'dd.MM.yyyy' }}
                 <p-tag [value]="relativeDays(start)" [severity]="start > today ? 'info' : 'secondary'"/>
             } @else {
-                <span class="text-sm font-normal text-gray-400">Not set</span>
+                <app-not-set class="text-sm"/>
             }
         </app-kpi-card>
         <app-kpi-card icon="pi pi-flag-fill" label="Project end">
@@ -18,7 +18,7 @@
                     <p-tag [value]="relativeDays(end)" severity="secondary"/>
                 }
             } @else {
-                <span class="text-sm font-normal text-gray-400">Not set</span>
+                <app-not-set class="text-sm"/>
                 @if (openEnded && elapsedDays > 0) {
                     <p-tag value="Ongoing" severity="warn"/>
                 }
@@ -32,7 +32,7 @@
                 {{ dayCount(elapsedDays) }}
                 <p-tag value="So far" severity="secondary"/>
             } @else {
-                <span class="text-sm font-normal text-gray-400">Not set</span>
+                <app-not-set class="text-sm"/>
             }
         </app-kpi-card>
         <app-kpi-card icon="pi pi-clock" label="Contract deadline">
@@ -40,7 +40,7 @@
                 {{ contractDeadline | date:'dd.MM.yyyy' }}
                 <p-tag [value]="relativeDays(contractDeadline)" [severity]="daysToDeadline! < 0 ? 'danger' : 'warn'"/>
             } @else {
-                <span class="text-sm font-normal text-gray-400">Not set</span>
+                <app-not-set class="text-sm"/>
             }
         </app-kpi-card>
     </div>

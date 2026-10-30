@@ -1,7 +1,7 @@
 <finance-component-summary [financeComponentDataForm]="contractorsJobsSummaryForm">
     <div wrapper-list>
         <p-table [value]="contractorsJobsProjectData.contractorJobs ?? []" [tableStyle]="{'min-width': '44rem'}">
-            <ng-template pTemplate="header">
+            <ng-template #header>
                 <tr>
                     <th>Name</th>
                     <th>Contractor</th>
@@ -10,16 +10,16 @@
                     <th class="w-24 text-center">Paid</th>
                 </tr>
             </ng-template>
-            <ng-template pTemplate="body" let-contractorjob>
+            <ng-template #body let-contractorjob>
                 <tr [routerLink]="['/projects', projectId, 'contractorJob', contractorjob.id]" class="cursor-pointer">
                     <td class="font-medium text-gray-800">{{ contractorjob.name }}</td>
                     <td>{{ contractorIdToContractorName.get(contractorjob.contractorId) }}</td>
                     <td class="app-num">{{ contractorjob.value | currency:'PLN':'symbol':'1.2-2' }}</td>
-                    <td class="w-24 text-center"><i *ngIf="contractorjob.hasInvoice; else no" class="pi pi-check-circle text-success-700" aria-label="Invoice: yes"></i></td>
-                    <td class="w-24 text-center"><i *ngIf="contractorjob.paid; else no" class="pi pi-check-circle text-success-700" aria-label="Paid: yes"></i></td>
+                    <td class="w-24 text-center"><app-yes-no-mark [value]="contractorjob.hasInvoice" label="Invoice"/></td>
+                    <td class="w-24 text-center"><app-yes-no-mark [value]="contractorjob.paid" label="Paid"/></td>
                 </tr>
             </ng-template>
-            <ng-template pTemplate="emptymessage">
+            <ng-template #emptymessage>
                 <tr>
                     <td [attr.colspan]="5" class="p-0">
                         <app-empty-state icon="pi pi-wrench" title="No contractor jobs yet" text="Add work done by contractors on this project."/>
@@ -29,5 +29,3 @@
         </p-table>
     </div>
 </finance-component-summary>
-
-<ng-template #no><span class="text-gray-400" aria-label="No">—</span></ng-template>

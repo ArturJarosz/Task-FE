@@ -22,8 +22,6 @@ export class AddContractorComponent implements OnInit, OnChanges {
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    header: string = "New contractor";
-
     readonly contractorStore = inject(ContractorStore);
     readonly configurationStore = inject(ConfigurationStore);
     $contractorTypes: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.contractorTypes;

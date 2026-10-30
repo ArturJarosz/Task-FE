@@ -1,12 +1,8 @@
-import {isDevMode, ApplicationConfig, inject, LOCALE_ID, provideAppInitializer} from '@angular/core';
+import {ApplicationConfig, inject, LOCALE_ID, provideAppInitializer, provideZoneChangeDetection} from '@angular/core';
 import {registerLocaleData} from '@angular/common';
 import localePl from '@angular/common/locales/pl';
 import {provideRouter} from '@angular/router';
-import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 import {provideHttpClient, withInterceptors} from '@angular/common/http';
-import {provideStore} from '@ngrx/store';
-import {provideEffects} from '@ngrx/effects';
-import {provideStoreDevtools} from '@ngrx/store-devtools';
 import {providePrimeNG} from 'primeng/config';
 import {ConfirmationService, MessageService} from 'primeng/api';
 import {authHttpInterceptorFn, provideAuth0} from '@auth0/auth0-angular';
@@ -44,12 +40,10 @@ registerLocaleData(localePl); // money as "50 000,00 zł", dates as "15.10.2026"
 
 export const appConfig: ApplicationConfig = {
     providers: [
+        // Angular 21+ defaults to zoneless change detection; the app still relies on zone.js
+        provideZoneChangeDetection(),
         provideRouter(appRoutes),
-        provideAnimationsAsync(),
         {provide: LOCALE_ID, useValue: 'pl'},
-        provideStore({}),
-        provideEffects([]),
-        provideStoreDevtools({name: 'TASK app', maxAge: 25, logOnly: !isDevMode()}),
         provideHttpClient(withInterceptors([authHttpInterceptorFn])),
         provideAuth0(auth_config),
         providePrimeNG({

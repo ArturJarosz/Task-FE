@@ -11,9 +11,10 @@
         [visible]="showAddSupervisionDialog"
         (notify)="onNotifyAddSupervision($event)">
 </add-supervision>
-<add-supervision-visit
-        *ngIf="supervisionStore.supervisionId()"
-        [supervisionId]="supervisionStore.supervisionId()!"
-        [visible]="showAddSupervisionVisitDialog"
-        (notify)="onNotifyAddSupervisionVisit($event)">
-</add-supervision-visit>
+@if (supervisionStore.supervisionId()) {
+    <add-supervision-visit
+            [supervisionId]="supervisionStore.supervisionId()!"
+            [visible]="showAddSupervisionVisitDialog"
+            (notify)="onNotifyAddSupervisionVisit($event)">
+    </add-supervision-visit>
+}

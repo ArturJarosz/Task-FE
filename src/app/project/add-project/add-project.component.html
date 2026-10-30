@@ -1,8 +1,8 @@
 <p-dialog [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onClose()">
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <div class="flex flex-col gap-1">
-            <span class="p-dialog-title">{{ header }}</span>
+            <span class="p-dialog-title">New project</span>
             <span class="text-sm text-gray-500">Add the project, its client, architect and contract value.</span>
         </div>
     </ng-template>
@@ -11,7 +11,9 @@
             <label for="name" class="app-form-label">Project name <span class="text-error-600">*</span></label>
             <input id="name" type="text" formControlName="name" pInputText class="w-full" placeholder="e.g. Lublin 02"
                    (blur)="markAsDirty('name')"/>
-            <small *ngIf="isFieldInvalid('name')" class="block mt-1.5 text-xs text-error-600">Enter a project name</small>
+            @if (isFieldInvalid('name')) {
+                <small class="block mt-1.5 text-xs text-error-600">Enter a project name</small>
+            }
         </div>
         <div>
             <label for="type" class="app-form-label">Type <span class="text-error-600">*</span></label>
@@ -35,10 +37,12 @@
             <p-inputnumber inputId="offerValue" formControlName="offerValue" mode="decimal" locale="pl-PL"
                            [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0" suffix=" zł" [fluid]="true"
                            (onBlur)="markAsDirty('offerValue')"/>
-            <small *ngIf="isFieldInvalid('offerValue')" class="block mt-1.5 text-xs text-error-600">Enter the contract value</small>
+            @if (isFieldInvalid('offerValue')) {
+                <small class="block mt-1.5 text-xs text-error-600">Enter the contract value</small>
+            }
         </div>
     </form>
-    <ng-template pTemplate="footer">
+    <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
         <p-button label="Create project" icon="pi pi-plus" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
     </ng-template>

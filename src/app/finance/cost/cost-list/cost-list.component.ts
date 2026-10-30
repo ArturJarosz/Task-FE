@@ -13,15 +13,15 @@ import {isUndefinedOrEmpty} from "../../../shared/utils/data-validation-util";
 import {FinanceComponentSummaryComponent} from "../../../shared/finance-component-summary/finance-component-summary.component";
 import {TableModule} from "primeng/table";
 import {RouterLink} from "@angular/router";
-import {NgIf, CurrencyPipe, DatePipe} from "@angular/common";
-import {EmptyStateComponent} from "../../../shared";
+import {CurrencyPipe, DatePipe} from "@angular/common";
+import {EmptyStateComponent, YesNoMarkComponent} from "../../../shared";
 
 @Component({
     selector: 'cost-list',
     templateUrl: './cost-list.component.html',
     styleUrl: './cost-list.component.less',
     standalone: true,
-    imports: [FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, NgIf, CurrencyPipe, DatePipe, EmptyStateComponent]
+    imports: [FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, CurrencyPipe, DatePipe, EmptyStateComponent, YesNoMarkComponent]
 })
 export class CostListComponent implements OnChanges {
     costs: Array<Cost> | null = [];

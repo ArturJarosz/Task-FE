@@ -1,8 +1,8 @@
 <p-dialog [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onClose()">
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <div class="flex flex-col gap-1">
-            <span class="p-dialog-title">{{ header }}</span>
+            <span class="p-dialog-title">New cost</span>
             <span class="text-sm text-gray-500">Add a project cost, such as fuel or a mistake to fix, and its payment.</span>
         </div>
     </ng-template>
@@ -40,13 +40,13 @@
         </div>
         <div>
             <label for="addCostDate" class="app-form-label">Date <span class="text-error-600">*</span></label>
-            <p-datePicker inputId="addCostDate" formControlName="date" dateFormat="dd.mm.yy"
+            <p-datepicker inputId="addCostDate" formControlName="date" dateFormat="dd.mm.yy"
                           [showIcon]="true" appendTo="body" [fluid]="true"/>
         </div>
         <div>
             @if (addCostForm.controls.paid.value) {
                 <label for="addCostPaymentDate" class="app-form-label">Payment date <span class="text-error-600">*</span></label>
-                <p-datePicker inputId="addCostPaymentDate" formControlName="paymentDate" dateFormat="dd.mm.yy"
+                <p-datepicker inputId="addCostPaymentDate" formControlName="paymentDate" dateFormat="dd.mm.yy"
                               [showIcon]="true" appendTo="body" [fluid]="true"
                               (onClose)="addCostForm.controls.paymentDate.markAsTouched()"/>
                 @if (isPaymentDateMissing()) {
@@ -59,7 +59,7 @@
             <textarea id="addCostNote" formControlName="note" pTextarea rows="3" [autoResize]="true" class="w-full"></textarea>
         </div>
     </form>
-    <ng-template pTemplate="footer">
+    <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
         <p-button label="Create cost" icon="pi pi-plus" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
     </ng-template>

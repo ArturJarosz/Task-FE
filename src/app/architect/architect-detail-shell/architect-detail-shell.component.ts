@@ -6,7 +6,6 @@ import {EntityProjectsSummary} from "../../generated/models/entity-projects-summ
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {ArchitectDetailComponent} from "../architect-detail/architect-detail.component";
-import {NgIf} from "@angular/common";
 import {SkeletonModule} from "primeng/skeleton";
 import {LoadErrorComponent} from "../../shared";
 
@@ -16,7 +15,7 @@ import {LoadErrorComponent} from "../../shared";
     styleUrl: './architect-detail-shell.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [LoadErrorComponent, ArchitectDetailComponent, NgIf, SkeletonModule]
+    imports: [LoadErrorComponent, ArchitectDetailComponent, SkeletonModule]
 })
 export class ArchitectDetailShellComponent implements OnInit {
     readonly architectStore = inject(ArchitectStore);

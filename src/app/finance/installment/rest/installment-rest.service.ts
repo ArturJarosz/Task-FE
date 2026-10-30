@@ -12,6 +12,7 @@ export abstract class InstallmentRestService {
     abstract getInstallment(projectId: number, installmentId: number): Observable<Installment>;
     abstract createInstallment(projectId: number, installment: Installment): Observable<Installment>;
     abstract updateInstallment(projectId: number, installmentId: number, installment: Installment): Observable<Installment>;
+    abstract payInstallment(projectId: number, installmentId: number, paymentDate: string): Observable<Installment>;
 }
 
 @Injectable()
@@ -44,5 +45,13 @@ export class InstallmentRestServiceImpl extends AbstractRestService implements I
             `${this.projectsUrl}/${projectId}/installments/${installmentId}`, installment)
             .pipe(catchError(error => this.handleError(error, this.messageService,
                 `Error updating installment with id: ${installmentId} for stage: ${installment.stageName}`)));
+    }
+
+    // An update never changes the paid flag; marking an installment paid is this separate call
+    payInstallment(projectId: number, installmentId: number, paymentDate: string): Observable<Installment> {
+        return this.httpClient.post<Installment>(
+            `${this.projectsUrl}/${projectId}/installments/${installmentId}/pay`, {paymentDate})
+            .pipe(catchError(error => this.handleError(error, this.messageService,
+                `Error paying installment with id: ${installmentId}`)));
     }
 }

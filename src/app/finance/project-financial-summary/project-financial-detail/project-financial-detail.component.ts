@@ -1,9 +1,9 @@
-import {Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
+import {Component, DestroyRef, inject, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {TotalProjectFinancialSummary} from "../../../generated/models/total-project-financial-summary";
 import {Cost} from "../../../generated/models/cost";
 import {ActivatedRoute, RouterLink} from "@angular/router";
-import {NgFor, NgIf, NgSwitch, NgSwitchCase, CurrencyPipe} from "@angular/common";
+import {CurrencyPipe} from "@angular/common";
 import {CostListShellComponent} from "../../cost/cost-list-shell/cost-list-shell.component";
 import {InstallmentListShellComponent} from "../../installment/installment-list-shell/installment-list-shell.component";
 import {SupplyListShellComponent} from "../../supply/supply-list-shell/supply-list-shell.component";
@@ -36,9 +36,9 @@ const FINANCE_TABS: FinanceTab[] = [
     templateUrl: './project-financial-detail.component.html',
     styleUrl: './project-financial-detail.component.less',
     standalone: true,
-    imports: [CostListShellComponent, InstallmentListShellComponent, SupplyListShellComponent, ContractorJobListShellComponent, SupervisionShellComponent, KpiCardComponent, NgFor, NgIf, NgSwitch, NgSwitchCase, RouterLink, CurrencyPipe]
+    imports: [CostListShellComponent, InstallmentListShellComponent, SupplyListShellComponent, ContractorJobListShellComponent, SupervisionShellComponent, KpiCardComponent, RouterLink, CurrencyPipe]
 })
-export class ProjectFinancialDetailComponent implements OnInit {
+export class ProjectFinancialDetailComponent implements OnInit, OnChanges {
     @Input()
     projectName!: string;
     @Input()
@@ -50,17 +50,15 @@ export class ProjectFinancialDetailComponent implements OnInit {
 
     readonly tabs = FINANCE_TABS;
     selectedTab: string = FINANCE_TABS[0].key;
+    kpis: FinanceKpi[] = toKpis(null);
 
     private readonly route = inject(ActivatedRoute);
     private readonly destroyRef = inject(DestroyRef);
 
-    get kpis(): FinanceKpi[] {
-        return [
-            {label: 'Gross value', icon: 'pi pi-wallet', value: this.projectFinancialSummary?.grossValue},
-            {label: 'Net value', icon: 'pi pi-money-bill', value: this.projectFinancialSummary?.netValue},
-            {label: 'Income tax', icon: 'pi pi-percentage', value: this.projectFinancialSummary?.incomeTax},
-            {label: 'VAT', icon: 'pi pi-receipt', value: this.projectFinancialSummary?.vatTax},
-        ];
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes['projectFinancialSummary']) {
+            this.kpis = toKpis(this.projectFinancialSummary);
+        }
     }
 
     ngOnInit(): void {
@@ -73,4 +71,13 @@ export class ProjectFinancialDetailComponent implements OnInit {
         let tab = this.tabs.find(tab => tab.key.toLowerCase() === tabName?.toLowerCase());
         return tab ? tab.key : this.tabs[0].key;
     }
+}
+
+function toKpis(summary: TotalProjectFinancialSummary | null): FinanceKpi[] {
+    return [
+        {label: 'Gross value', icon: 'pi pi-wallet', value: summary?.grossValue},
+        {label: 'Net value', icon: 'pi pi-money-bill', value: summary?.netValue},
+        {label: 'Income tax', icon: 'pi pi-percentage', value: summary?.incomeTax},
+        {label: 'VAT', icon: 'pi pi-receipt', value: summary?.vatTax},
+    ];
 }

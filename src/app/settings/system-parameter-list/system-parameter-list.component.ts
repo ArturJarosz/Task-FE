@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@
 import {ButtonModule} from "primeng/button";
 import {SkeletonModule} from "primeng/skeleton";
 import {TooltipModule} from "primeng/tooltip";
-import {EmptyStateComponent} from "../../shared";
+import {EmptyStateComponent, NotSetComponent} from "../../shared";
 import {SystemParameter} from "../../generated/models/system-parameter";
 import {formatParameterValue, SystemParameterType} from "../system-parameter-format";
 
@@ -12,7 +12,7 @@ import {formatParameterValue, SystemParameterType} from "../system-parameter-for
     templateUrl: './system-parameter-list.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [ButtonModule, SkeletonModule, TooltipModule, EmptyStateComponent]
+    imports: [ButtonModule, SkeletonModule, TooltipModule, EmptyStateComponent, NotSetComponent]
 })
 export class SystemParameterListComponent {
     @Input()

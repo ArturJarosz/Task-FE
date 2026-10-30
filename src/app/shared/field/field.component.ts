@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, Component, Input} from "@angular/core";
-import {NgIf} from "@angular/common";
 
 // Read-only field on detail pages: grey label above the value, "Not set" when empty.
 @Component({
@@ -7,7 +6,7 @@ import {NgIf} from "@angular/common";
     templateUrl: 'field.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [NgIf]
+    imports: []
 })
 export class FieldComponent {
     @Input()

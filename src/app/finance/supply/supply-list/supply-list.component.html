@@ -1,7 +1,7 @@
 <finance-component-summary [financeComponentDataForm]="supplyDataForm">
     <div wrapper-list>
         <p-table [value]="supplyProjectData?.supplies ?? []" [tableStyle]="{'min-width': '44rem'}">
-            <ng-template pTemplate="header">
+            <ng-template #header>
                 <tr>
                     <th>Name</th>
                     <th>Supplier</th>
@@ -10,16 +10,16 @@
                     <th class="w-24 text-center">Paid</th>
                 </tr>
             </ng-template>
-            <ng-template pTemplate="body" let-supply>
+            <ng-template #body let-supply>
                 <tr [routerLink]="['/projects', projectId, 'supplies', supply.id]" class="cursor-pointer">
                     <td class="font-medium text-gray-800">{{ supply.name }}</td>
                     <td>{{ supplierIdToSupplier.get(supply.supplierId) }}</td>
                     <td class="app-num">{{ supply.value | currency:'PLN':'symbol':'1.2-2' }}</td>
-                    <td class="w-24 text-center"><i *ngIf="supply.hasInvoice; else no" class="pi pi-check-circle text-success-700" aria-label="Invoice: yes"></i></td>
-                    <td class="w-24 text-center"><i *ngIf="supply.paid; else no" class="pi pi-check-circle text-success-700" aria-label="Paid: yes"></i></td>
+                    <td class="w-24 text-center"><app-yes-no-mark [value]="supply.hasInvoice" label="Invoice"/></td>
+                    <td class="w-24 text-center"><app-yes-no-mark [value]="supply.paid" label="Paid"/></td>
                 </tr>
             </ng-template>
-            <ng-template pTemplate="emptymessage">
+            <ng-template #emptymessage>
                 <tr>
                     <td [attr.colspan]="5" class="p-0">
                         <app-empty-state icon="pi pi-truck" title="No supplies yet" text="Add materials bought from suppliers for this project."/>
@@ -29,5 +29,3 @@
         </p-table>
     </div>
 </finance-component-summary>
-
-<ng-template #no><span class="text-gray-400" aria-label="No">—</span></ng-template>

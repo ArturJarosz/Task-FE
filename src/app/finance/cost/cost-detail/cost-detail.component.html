@@ -69,7 +69,7 @@
 <!-- Edit cost -->
 <p-dialog [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onCancelEdit()">
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">Edit cost</span>
             <span class="text-sm text-gray-500">Change the cost details, category and payment.</span>
@@ -91,26 +91,26 @@
         </div>
         <div>
             <label for="costValue" class="app-form-label">Value</label>
-            <p-inputNumber inputId="costValue" formControlName="value" mode="currency" currency="PLN"
+            <p-inputnumber inputId="costValue" formControlName="value" mode="currency" currency="PLN"
                            locale="pl-PL" [minFractionDigits]="2" [maxFractionDigits]="2" [fluid]="true"/>
         </div>
         <!-- One toggle per column, each above the field it relates to -->
         <div class="flex items-center gap-3">
-            <p-toggleSwitch inputId="costHasInvoice" formControlName="hasInvoice"/>
+            <p-toggleswitch inputId="costHasInvoice" formControlName="hasInvoice"/>
             <label for="costHasInvoice" class="text-sm font-medium text-gray-700">Has invoice</label>
         </div>
         <div class="flex items-center gap-3">
-            <p-toggleSwitch inputId="costPaid" formControlName="paid"/>
+            <p-toggleswitch inputId="costPaid" formControlName="paid"/>
             <label for="costPaid" class="text-sm font-medium text-gray-700">Paid</label>
         </div>
         <div>
             <label for="costDate" class="app-form-label">Date <span class="text-error-600">*</span></label>
-            <p-datePicker inputId="costDate" formControlName="date" dateFormat="dd.mm.yy"
+            <p-datepicker inputId="costDate" formControlName="date" dateFormat="dd.mm.yy"
                           [showIcon]="true" appendTo="body" [fluid]="true"/>
         </div>
         <div>
             <label for="costPaymentDate" class="app-form-label">Payment date</label>
-            <p-datePicker inputId="costPaymentDate" formControlName="paymentDate" dateFormat="dd.mm.yy"
+            <p-datepicker inputId="costPaymentDate" formControlName="paymentDate" dateFormat="dd.mm.yy"
                           [showIcon]="true" appendTo="body" [fluid]="true"/>
             <small class="block mt-1.5 text-xs text-gray-500">Available when the cost is paid</small>
         </div>
@@ -119,7 +119,7 @@
             <textarea id="costNote" formControlName="note" pTextarea rows="4" [autoResize]="true" class="w-full"></textarea>
         </div>
     </form>
-    <ng-template pTemplate="footer">
+    <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancelEdit()"/>
         <p-button label="Save changes" [disabled]="!dataNeedsUpdate || costDetailsForm.invalid"
                   (onClick)="onSave()"/>

@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input} from "@angular/core";
-import {CurrencyPipe, DatePipe, NgIf} from "@angular/common";
+import {CurrencyPipe, DatePipe} from "@angular/common";
 import {RouterLink} from "@angular/router";
 import {TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
@@ -8,6 +8,7 @@ import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {resolveLabel} from "../utils/label-utils";
 import {statusSeverity} from "../status-severity";
 import {EmptyStateComponent} from "../empty-state/empty-state.component";
+import {NotSetComponent} from "../not-set/not-set.component";
 
 // "Projects" section card on person detail pages (architect, client): the projects from an EntityProjectsSummary.
 @Component({
@@ -15,7 +16,7 @@ import {EmptyStateComponent} from "../empty-state/empty-state.component";
     templateUrl: 'entity-projects.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [TableModule, TagModule, RouterLink, NgIf, CurrencyPipe, DatePipe, EmptyStateComponent]
+    imports: [TableModule, TagModule, RouterLink, CurrencyPipe, DatePipe, EmptyStateComponent, NotSetComponent]
 })
 export class EntityProjectsComponent {
     @Input()

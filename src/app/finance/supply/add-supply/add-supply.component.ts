@@ -32,8 +32,6 @@ export class AddSupplyComponent implements OnInit, AbstractAddEditComponent {
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    header: string = "New supply";
-
     readonly supplierStore = inject(SupplierStore);
     readonly supplyStore = inject(SupplyStore);
 

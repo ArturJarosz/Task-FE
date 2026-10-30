@@ -23,9 +23,11 @@ Requires the backend repo at `../../Task/core/` with OpenAPI spec available.
 
 ### Tech Stack
 
-- Angular 19 with TypeScript 5.8
-- NgRx Signals 19 for state management
-- PrimeNG 19 (styled mode, `AppThemePreset` based on Aura) for UI components
+- Angular 21 with TypeScript 5.9 (still on zone.js: `provideZoneChangeDetection()` in `app.config.ts`)
+- NgRx Signals 21 for state management
+- PrimeNG 21 (styled mode, `AppThemePreset` based on Aura from `@primeuix/themes`) for UI components. PrimeNG 22+,
+  `@primeuix/themes` 3+ and primeicons 8+ use the commercial PrimeUI License (licence key required), so don't upgrade
+  past PrimeNG 21 / primeicons 7 without a licence decision
 - Tailwind CSS v4 + `tailwindcss-primeui` for styling, Outfit font, PrimeIcons only
 - Auth0 for authentication
 - Jasmine/Karma for testing
@@ -186,8 +188,12 @@ code completion and should not be edited manually. Also they are used in API ser
 - Style PrimeNG through `app-theme-preset.ts` tokens, never with `::ng-deep` or hex values in components
 - Buttons have text labels; at most one primary button per card or dialog; icon-only buttons need `aria-label` and `pTooltip`
 - Copy is sentence case ("Edit contract", "New project"); use "Net", never "Nett"
+- Templates use built-in control flow (`@if`, `@for`, `@switch`). Give `@for` a stable `track` key (`item.id`,
+  `stat.label`); tracking the item itself breaks with lists rebuilt by a getter (NG0100 in dev mode)
+- PrimeNG templates are template refs (`<ng-template #body let-row>`), never `pTemplate`, and PrimeNG tags are
+  lowercase (`p-datepicker`, `p-confirmdialog`); both old forms stop working in PrimeNG 22
 
 
 ### Docs
 - Always use context7 to fetch up-to-date docs before implementing
-- Always use https://v19.primeng.org/ as a source of documentation for PrimeNG related topics
+- Always use https://v21.primeng.org/ as a source of documentation for PrimeNG related topics

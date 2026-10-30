@@ -10,10 +10,10 @@
             <h2 class="m-0 text-xl leading-[30px] font-semibold text-gray-800">{{ clientName }}</h2>
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-sm text-gray-500">
                 <span>{{ typeLabel }}</span>
-                <ng-container *ngIf="client.contact?.address?.city">
+                @if (client.contact?.address?.city) {
                     <span class="w-px h-4 bg-gray-200"></span>
                     <span>{{ client.contact?.address?.city }}</span>
-                </ng-container>
+                }
                 <span class="w-px h-4 bg-gray-200"></span>
                 <span>{{ projects }} {{ projects === 1 ? 'project' : 'projects' }}</span>
                 <span class="w-px h-4 bg-gray-200"></span>
@@ -39,13 +39,12 @@
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 px-6 pb-6">
                     <app-field label="Client type" [value]="typeLabel"/>
-                    <ng-container *ngIf="client.clientType === ClientType.CORPORATE; else privateName">
+                    @if (client.clientType === ClientType.CORPORATE) {
                         <app-field class="lg:col-span-2" label="Company name" [value]="client.companyName"/>
-                    </ng-container>
-                    <ng-template #privateName>
+                    } @else {
                         <app-field label="First name" [value]="client.firstName"/>
                         <app-field label="Last name" [value]="client.lastName"/>
-                    </ng-template>
+                    }
                     <app-field label="Email" [value]="client.contact?.email"/>
                     <app-field label="Phone" [value]="client.contact?.telephone"/>
                     <app-field label="Address" [value]="address"/>
@@ -80,17 +79,29 @@
                 <ul class="list-none m-0 px-6 pb-6 flex flex-col gap-3 text-sm">
                     <li class="flex items-center gap-3">
                         <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-gray-100 text-gray-500"><i class="pi pi-envelope"></i></span>
-                        <a *ngIf="client.contact?.email; else notSet" [href]="'mailto:' + client.contact?.email"
-                           class="text-gray-800 no-underline hover:text-brand-500 truncate">{{ client.contact?.email }}</a>
+                        @if (client.contact?.email) {
+                            <a [href]="'mailto:' + client.contact?.email"
+                               class="text-gray-800 no-underline hover:text-brand-500 truncate">{{ client.contact?.email }}</a>
+                        } @else {
+                            <app-not-set/>
+                        }
                     </li>
                     <li class="flex items-center gap-3">
                         <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-gray-100 text-gray-500"><i class="pi pi-phone"></i></span>
-                        <a *ngIf="client.contact?.telephone; else notSet" [href]="'tel:' + client.contact?.telephone"
-                           class="text-gray-800 no-underline hover:text-brand-500">{{ client.contact?.telephone }}</a>
+                        @if (client.contact?.telephone) {
+                            <a [href]="'tel:' + client.contact?.telephone"
+                               class="text-gray-800 no-underline hover:text-brand-500">{{ client.contact?.telephone }}</a>
+                        } @else {
+                            <app-not-set/>
+                        }
                     </li>
                     <li class="flex items-center gap-3">
                         <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-gray-100 text-gray-500"><i class="pi pi-map-marker"></i></span>
-                        <span *ngIf="address; else notSet" class="text-gray-800">{{ address }}</span>
+                        @if (address) {
+                            <span class="text-gray-800">{{ address }}</span>
+                        } @else {
+                            <app-not-set/>
+                        }
                     </li>
                 </ul>
             </section>
@@ -98,12 +109,10 @@
     </div>
 </div>
 
-<ng-template #notSet><span class="text-gray-400">Not set</span></ng-template>
-
 <!-- Edit client -->
 <p-dialog [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onCancelEdit()">
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">Edit client</span>
             <span class="text-sm text-gray-500">Update the client's name, contact details and note.</span>
@@ -112,7 +121,7 @@
     <form [formGroup]="clientDetailsForm">
         <client-form-fields [form]="clientDetailsForm" [clientTypes]="clientTypes"/>
     </form>
-    <ng-template pTemplate="footer">
+    <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancelEdit()"/>
         <p-button label="Save changes" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
     </ng-template>

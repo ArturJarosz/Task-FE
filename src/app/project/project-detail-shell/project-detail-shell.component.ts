@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, Signal} from '@angular/core';
-import {ProjectState, ProjectStore} from "../state";
-import {Store} from "@ngrx/store";
+import {ProjectStore} from "../state";
 import {ArchitectStore} from "../../architect/state";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -41,7 +40,7 @@ export class ProjectDetailShellComponent implements OnInit {
     $installments: Signal<Installment[]> = computed(() => this.installmentStore.installmentProjectData().installments ?? []);
     $installmentsLoadFailed: Signal<boolean> = this.installmentStore.installmentsLoadFailed;
 
-    constructor(private route: ActivatedRoute, private projectStoreOld: Store<ProjectState>,
+    constructor(private route: ActivatedRoute,
                 private router: Router,
                 private confirmationService: ConfirmationService) {
         effect(() => {

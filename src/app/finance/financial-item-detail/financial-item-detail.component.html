@@ -84,7 +84,7 @@
 <!-- Edit dialog -->
 <p-dialog [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onCancelEdit()">
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">Edit {{ labels.item }}</span>
             <span class="text-sm text-gray-500">Change the {{ labels.item }} details, {{ labels.partner }} and payment.</span>
@@ -107,21 +107,21 @@
         </div>
         <!-- One toggle per column, each above the field it relates to -->
         <div class="flex items-center gap-3">
-            <p-toggleSwitch inputId="itemHasInvoice" formControlName="hasInvoice"/>
+            <p-toggleswitch inputId="itemHasInvoice" formControlName="hasInvoice"/>
             <label for="itemHasInvoice" class="text-sm font-medium text-gray-700">Has invoice</label>
         </div>
         <div class="flex items-center gap-3">
-            <p-toggleSwitch inputId="itemPaid" formControlName="paid"/>
+            <p-toggleswitch inputId="itemPaid" formControlName="paid"/>
             <label for="itemPaid" class="text-sm font-medium text-gray-700">Paid</label>
         </div>
         <div>
             <label for="itemValue" class="app-form-label">Value</label>
-            <p-inputNumber inputId="itemValue" formControlName="value" mode="currency" currency="PLN"
+            <p-inputnumber inputId="itemValue" formControlName="value" mode="currency" currency="PLN"
                            locale="pl-PL" [minFractionDigits]="2" [maxFractionDigits]="2" [fluid]="true"/>
         </div>
         <div>
             <label for="itemPaymentDate" class="app-form-label">Payment date</label>
-            <p-datePicker inputId="itemPaymentDate" formControlName="paymentDate" dateFormat="dd.mm.yy"
+            <p-datepicker inputId="itemPaymentDate" formControlName="paymentDate" dateFormat="dd.mm.yy"
                           [showIcon]="true" appendTo="body" [fluid]="true"/>
             <small class="block mt-1.5 text-xs text-gray-500">Available when the {{ labels.item }} is paid</small>
         </div>
@@ -130,7 +130,7 @@
             <textarea id="itemNote" formControlName="note" pTextarea rows="4" [autoResize]="true" class="w-full"></textarea>
         </div>
     </form>
-    <ng-template pTemplate="footer">
+    <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancelEdit()"/>
         <p-button label="Save changes" [disabled]="!dataNeedsUpdate || detailForm.invalid"
                   (onClick)="onSave()"/>
