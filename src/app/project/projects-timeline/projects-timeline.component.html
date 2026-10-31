@@ -1,0 +1,117 @@
+<!-- The legend is the first line of the body: the card header holds the view switch and the filters -->
+<ul class="list-none m-0 mb-4 px-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-gray-700" aria-label="Legend">
+    <li class="flex items-center gap-2"><span class="app-past-deadline w-4 h-2.5 rounded-sm" aria-hidden="true"></span>Past deadline</li>
+    @if (anyDateError) {
+        <li class="flex items-center gap-2"><span class="flex items-center justify-center w-3 h-3 text-error-600" aria-hidden="true"><i class="pi pi-exclamation-triangle text-[12px]"></i></span>Date error</li>
+    }
+</ul>
+
+<!-- Dates that can't be drawn (an end before the start): a warning at the start instead of a bar -->
+<ng-template #dateErrorMarker let-text let-left="left">
+    <span class="absolute top-1/2 z-20 flex items-center justify-center w-5 h-5 -ml-2.5 -translate-y-1/2 rounded-full bg-white text-error-600 cursor-default"
+          [style.left.%]="left" tabindex="0" role="img"
+          [attr.aria-label]="text" [pTooltip]="text" tooltipPosition="top" tooltipStyleClass="app-chart-tooltip"><i class="pi pi-exclamation-triangle text-[16px]" aria-hidden="true"></i></span>
+</ng-template>
+
+<!-- One row's bar, drawn like the bars of the project timeline tab. kind: 'contract' (grey, with a deadline) or 'project' (brand) -->
+<ng-template #bar let-span let-kind="kind" let-group="group" let-deadline="deadline">
+    <div class="relative h-9">
+        @if (span.dateError) {
+            <ng-container *ngTemplateOutlet="dateErrorMarker; context: {$implicit: span.dateError, left: span.left}"/>
+        } @else if (span.start) {
+            <!-- Tooltip: project and row, dates (always, "no end date" when missing), duration, the deadline if there is one, then the status -->
+            <ng-template #tip><div class="app-tooltip-title">{{ group.name }} · {{ kind === 'contract' ? 'Contract' : 'Project' }}</div><div class="flex items-center gap-1.5 tabular-nums"><span class="w-2.5 h-2.5 rounded-full" [class]="kind === 'contract' ? 'bg-gray-200' : 'bg-(--app-brand-500)'" aria-hidden="true"></span>{{ span.start | date:'dd.MM.yyyy' }} – {{ span.open || !span.end ? 'no end date' : (span.end | date:'dd.MM.yyyy') }}</div><div class="tabular-nums">{{ span.label }}</div>@if (deadline) {<div class="tabular-nums">Deadline {{ deadline | date:'dd.MM.yyyy' }}</div>}@if (kind === 'contract' ? group.contractStatusLabel : group.projectStatusLabel; as status) {<div>{{ kind === 'contract' ? 'Contract status' : 'Project status' }}: {{ status }}</div>}</ng-template>
+            <!-- overflow-clip, not hidden: it clips without being a scroll box, so the label can stick past the label column -->
+            <div class="absolute top-1.5 h-6 flex items-center overflow-clip rounded px-2.5 text-xs font-medium whitespace-nowrap"
+                 [class]="kind === 'contract' ? 'bg-gray-200 text-gray-800' : 'bg-(--app-brand-500) text-(--app-brand-contrast)'"
+                 [class.rounded-r-none]="!!span.toDeadline" [style.left.%]="span.left" [style.width.%]="span.width"
+                 [style.padding-left]="span.labelPad ? 'calc(' + span.labelPad + '% + 10px)' : null"
+                 [pTooltip]="tip" tooltipPosition="top" tooltipStyleClass="app-chart-tooltip">
+                @if (span.labelAt === 'inside') {
+                    <!-- Stays readable while the start of the bar is scrolled under the label column -->
+                    <span class="sticky truncate tabular-nums" [style.left.px]="labelColumnPx + 10">{{ span.label }}</span>
+                }
+            </div>
+            @if (span.pastDeadline) {
+                <!-- A 2px surface gap from the on-time part; the gap sits outside the stripes (box-content, moved 2px left) -->
+                <div class="app-past-deadline pointer-events-none absolute top-1.5 h-6 box-content rounded-r border-white"
+                     [class]="span.pastDeadline.whole ? 'rounded-l' : '-ml-0.5 border-l-2'"
+                     [style.left.%]="span.pastDeadline.left" [style.width.%]="span.pastDeadline.width" aria-hidden="true"></div>
+            }
+            @if (span.toDeadline) {
+                <!-- Ongoing: dashed on to its deadline -->
+                <div class="absolute top-1.5 h-6 rounded-r border-2 border-l-0 border-dashed border-gray-300"
+                     [style.left.%]="span.toDeadline.left" [style.width.%]="span.toDeadline.width" aria-hidden="true"></div>
+            }
+            @if (span.labelAt === 'after') {
+                <span class="absolute top-1/2 -translate-y-1/2 z-20 rounded bg-white px-1 text-xs font-medium whitespace-nowrap text-gray-700"
+                      [style.left]="span.labelLeft">{{ span.label }}</span>
+            } @else if (span.labelAt === 'before') {
+                <span class="absolute top-1/2 -translate-y-1/2 z-20 rounded bg-white px-1 text-xs font-medium whitespace-nowrap text-gray-700"
+                      [style.right]="scale.labelBefore(span.left)">{{ span.label }}</span>
+            }
+        } @else {
+            <!-- Sticky just past the label column, so it stays readable however far the chart is scrolled -->
+            <span class="sticky inline-flex h-9 items-center pl-2 text-xs text-gray-400" [style.left.px]="labelColumnPx">No start date yet</span>
+        }
+    </div>
+</ng-template>
+
+<!-- Inside the card padding, like the bar charts; it scrolls sideways within it -->
+<div #scroller class="isolate overflow-x-auto overflow-y-hidden mx-6 mb-2">
+    <div class="relative" [style.min-width.px]="scale.chartMinWidth + labelColumnPx">
+        <!-- Column lines behind the rows, and today above them but under the bars (no z-index, so the later rows paint
+             over it); both over the track column only -->
+        <div class="pointer-events-none absolute inset-y-0 right-0 -z-10" [style.left.px]="labelColumnPx" aria-hidden="true">
+            @for (tick of scale.ticks; track tick.left) {
+                <div class="absolute inset-y-0 border-l border-gray-100" [style.left.%]="tick.left"></div>
+            }
+        </div>
+        <div class="pointer-events-none absolute inset-y-0 right-0" [style.left.px]="labelColumnPx" aria-hidden="true">
+            @if (scale.todayLeft !== null) {
+                <!-- Starts in the header's today lane, under the 32px month row and 6px from the lane's top, where the label sits -->
+                <div class="absolute top-[38px] bottom-0 w-0.5 -translate-x-1/2 bg-today" [style.left.%]="scale.todayLeft">
+                    <span class="pointer-events-auto absolute top-0 flex h-6 items-center whitespace-nowrap rounded bg-today px-2.5 text-xs font-medium tabular-nums text-today-ink cursor-default" [class]="scale.todayLabelClass"
+                          pTooltip="Today" tooltipPosition="top" tooltipStyleClass="app-chart-tooltip">{{ today | date:'dd.MM' }}</span>
+                </div>
+            }
+        </div>
+
+        <!-- Months as "May'25", styled like chart axis labels, then the lane for the today label -->
+        <div class="flex">
+            <div class="sticky left-0 z-30 shrink-0 bg-white" [style.width.px]="labelColumnPx">
+                <div class="flex items-end h-8 pr-4 pb-1.5 text-xs text-gray-500">Project</div>
+            </div>
+            <div class="flex-1">
+                <div class="relative h-8">
+                    @for (tick of scale.ticks; track tick.left) {
+                        <div class="absolute inset-y-0 flex items-end pl-2 pb-1.5 text-xs text-gray-500 whitespace-nowrap" [style.left.%]="tick.left">{{ tick.label }}</div>
+                    }
+                </div>
+                @if (scale.todayLeft !== null) {
+                    <div class="h-9" aria-hidden="true"></div>
+                }
+            </div>
+        </div>
+
+        <!-- One group per project: its name and client over the Contract and Project rows; a line between groups -->
+        @for (group of groups; track group.id; let first = $first) {
+            <div class="flex" [class.border-t]="!first" [class.border-gray-200]="!first">
+                <div class="sticky left-0 z-30 flex shrink-0 gap-3 bg-white py-1 pr-4" [style.width.px]="labelColumnPx">
+                    <div class="flex min-w-0 flex-1 flex-col justify-center">
+                        <a [routerLink]="['/projects', group.id, 'timeline']"
+                           class="line-clamp-2 text-sm font-medium leading-tight text-gray-800 no-underline hover:text-brand-500">{{ group.name }}</a>
+                    </div>
+                    <div class="flex shrink-0 flex-col text-xs text-gray-500" aria-hidden="true">
+                        <span class="flex h-9 items-center">Contract</span>
+                        <span class="flex h-9 items-center">Project</span>
+                    </div>
+                </div>
+                <div class="flex-1 py-1">
+                    <ng-container *ngTemplateOutlet="bar; context: {$implicit: group.contract, kind: 'contract', group: group, deadline: group.contractDeadline}"/>
+                    <ng-container *ngTemplateOutlet="bar; context: {$implicit: group.work, kind: 'project', group: group}"/>
+                </div>
+            </div>
+        }
+    </div>
+</div>

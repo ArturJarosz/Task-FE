@@ -22,7 +22,7 @@
             <section class="app-card min-w-0">
                 <div class="app-card-header">
                     <h3 class="app-card-title">Cost details</h3>
-                    <p-button label="Edit" icon="pi pi-pencil" severity="secondary" [outlined]="true" [rounded]="true"
+                    <p-button label="Edit" icon="pi pi-pencil" severity="secondary" [outlined]="true"
                               (onClick)="onEdit()"/>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 px-6 pb-6">
@@ -30,7 +30,7 @@
                     <app-field label="Category" [value]="categoryLabel"/>
                     <div>
                         <span class="app-field-label">Value</span>
-                        <div class="app-field-value app-num">{{ (cost.value ?? 0) | currency:'PLN':'symbol':'1.2-2' }}</div>
+                        <div class="app-field-value tabular-nums">{{ (cost.value ?? 0) | currency:'PLN':'symbol':'1.2-2' }}</div>
                     </div>
                     <app-field label="Date" [value]="cost.date | date:'dd.MM.yyyy'"/>
                     <app-field class="sm:col-span-2 lg:col-span-3" label="Note" [value]="cost.note" emptyText="No note yet"/>
@@ -90,18 +90,24 @@
                       optionLabel="label" optionValue="id" appendTo="body" [fluid]="true"/>
         </div>
         <div>
-            <label for="costValue" class="app-form-label">Value</label>
-            <p-inputnumber inputId="costValue" formControlName="value" mode="currency" currency="PLN"
-                           locale="pl-PL" [minFractionDigits]="2" [maxFractionDigits]="2" [fluid]="true"/>
+            <label for="costValue" class="app-form-label">Value <span class="text-error-600">*</span></label>
+            <p-inputnumber inputId="costValue" formControlName="value" mode="decimal" locale="pl-PL"
+                           [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0" suffix=" zł" [fluid]="true"/>
+            @if (isFieldInvalid('value')) {
+                <small class="block mt-1.5 text-xs text-error-600">Enter a value greater than 0 zł</small>
+            }
         </div>
         <!-- One toggle per column, each above the field it relates to -->
-        <div class="flex items-center gap-3">
+        <div class="flex items-start gap-3">
             <p-toggleswitch inputId="costHasInvoice" formControlName="hasInvoice"/>
-            <label for="costHasInvoice" class="text-sm font-medium text-gray-700">Has invoice</label>
+            <label for="costHasInvoice" class="text-sm font-medium text-gray-700 cursor-pointer">Has invoice</label>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex items-start gap-3">
             <p-toggleswitch inputId="costPaid" formControlName="paid"/>
-            <label for="costPaid" class="text-sm font-medium text-gray-700">Paid</label>
+            <div>
+                <label for="costPaid" class="block text-sm font-medium text-gray-700 cursor-pointer">Paid</label>
+                <span class="block text-xs text-gray-500">Turn on to add the payment date</span>
+            </div>
         </div>
         <div>
             <label for="costDate" class="app-form-label">Date <span class="text-error-600">*</span></label>
@@ -109,10 +115,15 @@
                           [showIcon]="true" appendTo="body" [fluid]="true"/>
         </div>
         <div>
-            <label for="costPaymentDate" class="app-form-label">Payment date</label>
-            <p-datepicker inputId="costPaymentDate" formControlName="paymentDate" dateFormat="dd.mm.yy"
-                          [showIcon]="true" appendTo="body" [fluid]="true"/>
-            <small class="block mt-1.5 text-xs text-gray-500">Available when the cost is paid</small>
+            @if (costDetailsForm.controls.paid.value) {
+                <label for="costPaymentDate" class="app-form-label">Payment date <span class="text-error-600">*</span></label>
+                <p-datepicker inputId="costPaymentDate" formControlName="paymentDate" dateFormat="dd.mm.yy"
+                              [showIcon]="true" appendTo="body" [fluid]="true"
+                              (onClose)="costDetailsForm.controls.paymentDate.markAsTouched()"/>
+                @if (isPaymentDateMissing()) {
+                    <small class="block mt-1.5 text-xs text-error-600">Select the payment date</small>
+                }
+            }
         </div>
         <div class="sm:col-span-2">
             <label for="costNote" class="app-form-label">Note</label>

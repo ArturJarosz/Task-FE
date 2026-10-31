@@ -24,14 +24,14 @@
             <section class="app-card min-w-0">
                 <div class="app-card-header">
                     <h3 class="app-card-title">Installment details</h3>
-                    <p-button label="Edit" icon="pi pi-pencil" severity="secondary" [outlined]="true" [rounded]="true"
+                    <p-button label="Edit" icon="pi pi-pencil" severity="secondary" [outlined]="true"
                               (onClick)="onEdit()"/>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 px-6 pb-6">
                     <app-field label="Stage" [value]="installment.stageName"/>
                     <div>
                         <span class="app-field-label">Value</span>
-                        <div class="app-field-value app-num">{{ (installment.value ?? 0) | currency:'PLN':'symbol':'1.2-2' }}</div>
+                        <div class="app-field-value tabular-nums">{{ (installment.value ?? 0) | currency:'PLN':'symbol':'1.2-2' }}</div>
                     </div>
                     <app-field label="Invoice issued" [value]="installment.hasInvoice ? 'Yes' : 'No'"/>
                     <app-field label="Paid" [value]="installment.paid ? 'Yes' : 'No'"/>

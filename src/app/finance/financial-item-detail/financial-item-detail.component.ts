@@ -18,7 +18,7 @@ import {TooltipModule} from "primeng/tooltip";
 import {FinancialItemDetailForm, FinancialItemDetailFormProvider} from "./financial-item-detail-form-provider";
 import {EmptyStateComponent, FieldComponent, LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../shared";
 import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
-import {changedFields} from "../../shared/utils/form-utils";
+import {changedFields, isControlInvalid, isPaymentDateMissing} from "../../shared/utils/form-utils";
 
 // A supply or a contractor job: something a project buys from a partner (supplier or contractor).
 // The shells map their own model to and from this shape; partnerId is the supplierId or contractorId.
@@ -122,8 +122,11 @@ export class FinancialItemDetailComponent implements OnChanges {
     }
 
     isFieldInvalid(path: string): boolean {
-        const control = this.detailForm.get(path);
-        return !!control && control.invalid && (control.touched || control.dirty);
+        return isControlInvalid(this.detailForm, path);
+    }
+
+    isPaymentDateMissing(): boolean {
+        return isPaymentDateMissing(this.detailForm);
     }
 
     get dataNeedsUpdate(): boolean {
@@ -151,7 +154,7 @@ export class FinancialItemDetailComponent implements OnChanges {
             paid: value.paid,
             paymentDate: value.paid ? toTimeZoneString(value.paymentDate ?? undefined) : undefined,
             note: value.note,
-            partnerId: value.partnerId,
+            partnerId: value.partnerId ?? undefined,
             payable: this.item?.payable
         });
         this.showEditDialog = false;
@@ -178,7 +181,7 @@ export class FinancialItemDetailComponent implements OnChanges {
         }
         this.detailForm.reset({
             name: this.item.name ?? '',
-            partnerId: this.item.partnerId ?? 0,
+            partnerId: this.item.partnerId ?? null,
             value: this.item.value ?? 0,
             hasInvoice: this.item.hasInvoice ?? false,
             paid: this.item.paid ?? false,

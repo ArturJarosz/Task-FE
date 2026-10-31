@@ -316,6 +316,12 @@ body {
     @apply text-xs;
   }
 
+  /* Title of a tooltip with more lines under it (chart tooltips, field help): bold, then a line in the text colour at
+     25%, so it works on any tooltip surface and in both themes. Chart.js tooltips draw the same line (chart-tooltip.ts) */
+  .app-tooltip-title {
+    @apply m-0 mb-1.5 pb-1.5 font-semibold border-b border-current/25;
+  }
+
   /* Timeline: the stretch of a bar past its deadline, soft red and white stripes at 45° */
   .app-past-deadline {
     background: repeating-linear-gradient(45deg,

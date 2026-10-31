@@ -1,16 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
 import {CurrencyPipe, DatePipe, NgTemplateOutlet} from "@angular/common";
 import {RouterLink} from "@angular/router";
-import {
-    addDays,
-    addMonths,
-    differenceInCalendarDays,
-    differenceInCalendarMonths,
-    format,
-    parseISO,
-    startOfDay,
-    startOfMonth
-} from "date-fns";
+import {differenceInCalendarDays, format, startOfDay} from "date-fns";
 import {TagModule} from "primeng/tag";
 import {TooltipModule} from "primeng/tooltip";
 import {ButtonModule} from "primeng/button";
@@ -21,56 +12,27 @@ import {ConfigurationEntry, StageStatus} from "../../generated/models";
 import {EmptyStateComponent, KpiCardComponent, NotSetComponent} from "../../shared";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {updateAtMidnight} from "../../shared/utils/date-utils";
+import {
+    dayCount,
+    emptySpan,
+    END_BEFORE_START,
+    endsBeforeStart,
+    isDate,
+    LabelSpot,
+    MIN_CHART_WIDTH_PX,
+    relativeDays,
+    spanOf,
+    TimelineScale,
+    TimelineSpan,
+    TimelineStretch,
+    TimelineTick,
+    toDay
+} from "../timeline/timeline-scale";
 
-// Where a bar's label goes: inside it, or next to it when the bar is too short to hold it
-export type LabelPlacement = 'inside' | 'after' | 'before';
+export type {LabelPlacement, LabelSpot, TimelineSpan, TimelineStretch, TimelineTick} from "../timeline/timeline-scale";
 
-// Where a bar's label goes; left: CSS left edge when it is after the bar; pad: percent of the chart width to shift it
-// right inside the bar
-export interface LabelSpot {
-    at: LabelPlacement;
-    left: string;
-    pad: number;
-}
 // paid; due: not paid and its payment date is today or later; overdue: not paid and its payment date has passed
 export type PaymentState = 'paid' | 'due' | 'overdue';
-
-export interface TimelineTick {
-    // Month and short year, "May'25"
-    label: string;
-    left: number;
-}
-
-// A bar from start to end. Started without an end it is open: it runs to today, then dashed on to its deadline if
-// that is still ahead
-export interface TimelineSpan {
-    start?: Date;
-    end?: Date;
-    open: boolean;
-    days: number;
-    left: number;
-    width: number;
-    label: string;
-    labelAt: LabelPlacement;
-    // Left edge of a label placed after the bar (CSS length)
-    labelLeft: string;
-    // Shift of a label inside the bar, past a marker on it (percent of the chart width)
-    labelPad: number;
-    // Dates that can't be drawn (an end before the start): flagged on the row instead of a bar
-    dateError?: string;
-    // The stretch of the bar past its deadline, striped
-    pastDeadline?: TimelineStretch;
-    // For an open bar, the dashed stretch from today to a deadline still ahead
-    toDeadline?: TimelineStretch;
-}
-
-// Part of a row, in percent of the chart width
-export interface TimelineStretch {
-    left: number;
-    width: number;
-    // Starts at the bar start, so both ends are rounded
-    whole: boolean;
-}
 
 // An installment's payment date, drawn as an 18px circle on the row of its stage
 export interface TimelinePayment {
@@ -111,19 +73,6 @@ export interface TimelineStage {
     payments: TimelinePayment[];
 }
 
-// Width of one column of the chart, so a long project scrolls sideways instead of squeezing its labels
-const MONTH_WIDTH_PX = 96;
-const MIN_CHART_WIDTH_PX = 720;
-// Rough width of one character of a 14px bar label
-const LABEL_CHAR_PX = 7;
-// Gap between a payment marker and a label placed just past it
-const MARKER_GAP_PX = 18;
-// Half the width of an 18px payment marker
-const MARKER_RADIUS_PX = 9;
-// Days of room before the first date and after the last one on the chart (about a marker's radius at 96px a month)
-const EDGE_ROOM_DAYS = 4;
-
-const END_BEFORE_START = 'The end date is before the start date';
 const DONE_WITHOUT_END = 'Done, but the stage has no end date';
 
 @Component({
@@ -162,6 +111,7 @@ export class ProjectTimelineComponent implements OnChanges {
     durationMonths: number = 0;
 
     // Chart range, snapped to whole months around every date on the chart
+    scale: TimelineScale = new TimelineScale(this.today);
     rangeStart?: Date;
     rangeEnd?: Date;
     chartMinWidth: number = MIN_CHART_WIDTH_PX;
@@ -208,19 +158,13 @@ export class ProjectTimelineComponent implements OnChanges {
         let contractStart = toDay(contract?.startDate);
         let contractEnd = toDay(contract?.endDate);
         // An end before the start is a data error: flagged, never drawn as an open bar
-        this.contract = {
-            ...emptySpan(), start: contractStart, end: contractEnd, open: !!contractStart && !contractEnd,
-            dateError: endsBeforeStart(contractStart, contractEnd) ? END_BEFORE_START : undefined
-        };
+        this.contract = spanOf(contractStart, contractEnd);
 
         this.start = toDay(this.project.startDate);
         this.end = toDay(this.project.endDate);
         this.endBeforeStart = endsBeforeStart(this.start, this.end);
         this.openEnded = !!this.start && !this.end;
-        this.work = {
-            ...emptySpan(), start: this.start, end: this.end, open: this.openEnded,
-            dateError: this.endBeforeStart ? END_BEFORE_START : undefined
-        };
+        this.work = spanOf(this.start, this.end);
         this.durationDays = this.start && this.end && !this.endBeforeStart ? differenceInCalendarDays(this.end, this.start) + 1 : 0;
         this.durationMonths = this.durationDays > 0 ? Math.max(Math.round(this.durationDays / 30.44), 1) : 0;
     }
@@ -233,41 +177,17 @@ export class ProjectTimelineComponent implements OnChanges {
             .filter(isDate);
         // An open bar reaches today, so today has to be on the chart
         let anyOpen = this.openEnded || this.contract.open || stages.some(stage => isOpenStage(stage, this.today));
-        if (anyOpen) {
-            dates.push(this.today);
-        }
-        if (dates.length === 0) {
-            this.rangeStart = undefined;
-            this.rangeEnd = undefined;
-            this.ticks = [];
-            return;
-        }
-        // A few days of room on both sides, so a marker on the first or last day isn't cut in half by the edge
-        let first = addDays(earliest(dates)!, -EDGE_ROOM_DAYS);
-        let last = addDays(latest(dates)!, EDGE_ROOM_DAYS);
-        // Room after the last date for the "Today" label when an open bar ends today
-        if (anyOpen) {
-            last = addDays(last, 14);
-        }
-        this.rangeStart = startOfMonth(first);
-        this.rangeEnd = addMonths(startOfMonth(last), 1);
-
-        this.ticks = [];
-        let tick = this.rangeStart;
-        while (tick < this.rangeEnd) {
-            this.ticks.push({label: format(tick, "MMM''yy"), left: this.position(tick)});
-            tick = addMonths(tick, 1);
-        }
-        let months = differenceInCalendarMonths(this.rangeEnd, this.rangeStart);
-        this.chartMinWidth = Math.max(months * MONTH_WIDTH_PX, MIN_CHART_WIDTH_PX);
+        this.scale = TimelineScale.around(dates, anyOpen, this.today);
+        this.rangeStart = this.scale.rangeStart;
+        this.rangeEnd = this.scale.rangeEnd;
+        this.ticks = this.scale.ticks;
+        this.chartMinWidth = this.scale.chartMinWidth;
+        this.todayLeft = this.scale.todayLeft;
+        this.todayLabelClass = this.scale.todayLabelClass;
     }
 
     resolvePositions(): void {
         this.contract = this.placeSpan(this.contract, this.contractDeadline);
-        this.todayLeft = this.rangeStart && this.rangeEnd && this.today >= this.rangeStart && this.today < this.rangeEnd
-            ? this.position(this.today) : null;
-        this.todayLabelClass = this.todayLeft === null || (this.todayLeft > 6 && this.todayLeft < 94) ? 'left-1/2 -translate-x-1/2'
-            : this.todayLeft <= 6 ? '-left-0.5' : '-right-0.5';
 
         let stages = this.project.stages ?? [];
         let stageIds = new Set(stages.map(stage => stage.id));
@@ -339,107 +259,37 @@ export class ProjectTimelineComponent implements OnChanges {
         return date ? relativeDays(date, this.today) : '';
     }
 
-    // An open span runs to today, or one day if it hasn't started yet
+    // The bar maths lives in TimelineScale, shared with the projects timeline view
     barEnd(span: TimelineSpan): Date | undefined {
-        return span.start ? span.end ?? (span.start > this.today ? span.start : this.today) : undefined;
+        return this.scale.barEnd(span);
     }
 
-    // From the day after the deadline (or the bar start, if later) to the bar end
     pastDeadline(start?: Date, end?: Date, deadline?: Date): TimelineStretch | undefined {
-        if (!start || !end || !deadline || end <= deadline) {
-            return undefined;
-        }
-        let from = addDays(deadline, 1) > start ? addDays(deadline, 1) : start;
-        return {left: this.position(from), width: this.span(from, end), whole: from.getTime() === start.getTime()};
+        return this.scale.pastDeadline(start, end, deadline);
     }
 
-    // An open bar runs to today (or is one day long before it starts); from the day after it to its deadline, if that
-    // is still ahead
     toDeadline(open: boolean, barEnd: Date, deadline?: Date): TimelineStretch | undefined {
-        if (!open || !deadline || deadline <= barEnd) {
-            return undefined;
-        }
-        let from = addDays(barEnd, 1);
-        return {left: this.position(from), width: this.span(from, deadline), whole: false};
+        return this.scale.toDeadline(open, barEnd, deadline);
     }
 
-    // Markers are the positions (in percent) of the payment markers on the bar's row
     placeSpan(span: TimelineSpan, deadline?: Date, markers: number[] = []): TimelineSpan {
-        if (!span.start || span.dateError) {
-            // A date error is flagged at the start
-            return {...span, days: 0, left: span.start ? this.position(span.start) : 0, width: 0};
-        }
-        let barEnd = this.barEnd(span)!;
-        let notStarted = span.open && span.start > this.today;
-        let days = notStarted ? 0 : differenceInCalendarDays(barEnd, span.start) + 1;
-        let left = this.position(span.start);
-        let width = this.span(span.start, barEnd);
-        let pastDeadline = this.pastDeadline(span.start, barEnd, deadline);
-        let toDeadline = this.toDeadline(span.open, barEnd, deadline);
-        // The dates are in the bar's tooltip, so the bar only says how long it is, or when it starts
-        let label = notStarted ? `Starts ${relativeDays(span.start, this.today).toLowerCase()}` : `${dayCount(days)}${span.open ? ' so far' : ''}`;
-        let placement = this.placeLabel(left, width, label, toDeadline?.width ?? 0, markers);
-        return {...span, days, left, width, label, labelAt: placement.at, labelLeft: placement.left, labelPad: placement.pad, pastDeadline, toDeadline};
+        return this.scale.placeSpan(span, deadline, markers);
     }
 
-    // Inside the bar when it fits, shifted right past any marker that would cover it (pad, in px). Otherwise next
-    // to it, on a stretch of the row free of its markers (positions in percent): right after the bar (past an open
-    // bar's dashed stretch to its deadline, tail in percent), else before it, else just past a marker after the bar.
-    // The chart is at least chartMinWidth wide, so this errs on the side of moving the label out.
     placeLabel(left: number, width: number, label: string, tail: number = 0, markers: number[] = []): LabelSpot {
-        let pxPerPercent = this.chartMinWidth / 100;
-        let needed = label.length * LABEL_CHAR_PX + 24;
-        let neededPercent = needed / pxPerPercent;
-        let gapPercent = MARKER_GAP_PX / pxPerPercent;
-        // A marker reaches its radius to either side; the gap is wider, so each step past a marker moves forward
-        let radiusPercent = MARKER_RADIUS_PX / pxPerPercent;
-        let blocked = (from: number, to: number) => markers.filter(marker => marker >= from - radiusPercent && marker <= to + radiusPercent);
-        let free = (from: number, to: number) => from >= 0 && to <= 100 && blocked(from, to).length === 0;
-        if (width * pxPerPercent >= needed) {
-            let insideStart = left;
-            let blocking = blocked(insideStart, insideStart + neededPercent);
-            while (blocking.length > 0 && insideStart + neededPercent <= left + width) {
-                insideStart = Math.max(...blocking) + gapPercent;
-                blocking = blocked(insideStart, insideStart + neededPercent);
-            }
-            if (insideStart + neededPercent <= left + width) {
-                // In percent, so the shift grows with the chart when it is wider than chartMinWidth
-                return {at: 'inside', left: '', pad: insideStart - left};
-            }
-        }
-        let afterBar = left + width + tail + 8 / pxPerPercent;
-        if (free(afterBar, afterBar + neededPercent)) {
-            return {at: 'after', left: `calc(${left + width + tail}% + 8px)`, pad: 0};
-        }
-        if (free(left - 8 / pxPerPercent - neededPercent, left + 1)) {
-            return {at: 'before', left: '', pad: 0};
-        }
-        let pastMarker = markers
-            .filter(marker => marker >= left + width)
-            .sort((a, b) => a - b)
-            .find(marker => free(marker + gapPercent, marker + gapPercent + neededPercent));
-        return pastMarker === undefined ? {at: 'inside', left: '', pad: 0} : {at: 'after', left: `calc(${pastMarker}% + ${MARKER_GAP_PX}px)`, pad: 0};
+        return this.scale.placeLabel(left, width, label, tail, markers);
     }
 
-    // Right edge of a label placed before a bar
     labelBefore(left: number): string {
-        return `calc(${100 - left}% + 8px)`;
+        return this.scale.labelBefore(left);
     }
 
-    // Position of a day on the chart, in percent of its width
     position(date: Date): number {
-        if (!this.rangeStart || !this.rangeEnd) {
-            return 0;
-        }
-        return differenceInCalendarDays(date, this.rangeStart) / differenceInCalendarDays(this.rangeEnd, this.rangeStart) * 100;
+        return this.scale.position(date);
     }
 
-    // Width of a bar from the first to the last day, both included
     span(start: Date, end: Date): number {
-        if (!this.rangeStart || !this.rangeEnd) {
-            return 0;
-        }
-        return Math.max(differenceInCalendarDays(end, start) + 1, 1) / differenceInCalendarDays(this.rangeEnd, this.rangeStart) * 100;
+        return this.scale.span(start, end);
     }
 
     // The project's installments, plus any a stage carries that the list doesn't have yet
@@ -468,18 +318,10 @@ const PAYMENT_LABEL: Record<PaymentState, string> = {
     overdue: 'Overdue'
 };
 
-function emptySpan(): TimelineSpan {
-    return {open: false, days: 0, left: 0, width: 0, label: '', labelAt: 'inside', labelLeft: '', labelPad: 0};
-}
-
 function isOpenStage(stage: Stage, today: Date): boolean {
     let start = toDay(stage.startDate);
     return !!start && start <= today && !stage.endDate
         && stage.status !== StageStatus.DONE && stage.status !== StageStatus.REJECTED;
-}
-
-function endsBeforeStart(start?: Date, end?: Date): boolean {
-    return !!start && !!end && end < start;
 }
 
 // For a stage with a start but no bar: when it starts, or that it has no end
@@ -487,38 +329,3 @@ function stageNote(start: Date, today: Date): string {
     return start > today ? `Starts ${format(start, 'dd.MM.yyyy')}` : `From ${format(start, 'dd.MM.yyyy')}, no end date`;
 }
 
-function isDate(date: Date | undefined): date is Date {
-    return !!date;
-}
-
-function earliest(dates: Date[]): Date | undefined {
-    return dates.length ? new Date(Math.min(...dates.map(date => date.getTime()))) : undefined;
-}
-
-function latest(dates: Date[]): Date | undefined {
-    return dates.length ? new Date(Math.max(...dates.map(date => date.getTime()))) : undefined;
-}
-
-// parseISO reads a date-only "yyyy-MM-dd" as local midnight (new Date() reads it as UTC, a day early west of UTC)
-function toDay(value?: string): Date | undefined {
-    return value ? startOfDay(parseISO(value)) : undefined;
-}
-
-// "1 day", "12 days"
-function dayCount(days: number): string {
-    return days === 1 ? '1 day' : `${days} days`;
-}
-
-function relativeDays(date: Date, today: Date): string {
-    let days = differenceInCalendarDays(date, today);
-    if (days === 0) {
-        return 'Today';
-    }
-    if (days === 1) {
-        return 'Tomorrow';
-    }
-    if (days === -1) {
-        return 'Yesterday';
-    }
-    return days > 0 ? `In ${days} days` : `${-days} days ago`;
-}

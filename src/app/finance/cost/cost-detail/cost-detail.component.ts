@@ -18,7 +18,7 @@ import {ConfigurationEntry} from "../../../generated/models/configuration-entry"
 import {FieldComponent, LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../../shared";
 import {resolveLabel} from "../../../shared/utils/label-utils";
 import {toDateIfExists, toTimeZoneString} from "../../../shared/utils/date-utils";
-import {changedFields} from "../../../shared/utils/form-utils";
+import {changedFields, isControlInvalid, isPaymentDateMissing} from "../../../shared/utils/form-utils";
 
 type CostFormValue = ReturnType<FormGroup<CostForm>['getRawValue']>;
 
@@ -86,8 +86,11 @@ export class CostDetailComponent implements OnInit, OnChanges {
     }
 
     isFieldInvalid(path: string): boolean {
-        const control = this.costDetailsForm.get(path);
-        return !!control && control.invalid && (control.touched || control.dirty);
+        return isControlInvalid(this.costDetailsForm, path);
+    }
+
+    isPaymentDateMissing(): boolean {
+        return isPaymentDateMissing(this.costDetailsForm);
     }
 
     get dataNeedsUpdate(): boolean {

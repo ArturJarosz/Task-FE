@@ -142,7 +142,7 @@
                                 <ng-container *ngTemplateOutlet="dateErrorMarker; context: {$implicit: contract.dateError, left: contract.left}"/>
                             } @else if (contract.start) {
                                 <!-- Tooltip: name, dates (always, "no end date" when missing), duration, then the deadline if there is one -->
-                                <ng-template #contractTip><div class="font-semibold">Contract</div><div class="flex items-center gap-1.5 tabular-nums"><span class="w-2.5 h-2.5 rounded-full bg-gray-200" aria-hidden="true"></span>{{ contract.start | date:'dd.MM.yyyy' }} – {{ contract.open || !contract.end ? 'no end date' : (contract.end | date:'dd.MM.yyyy') }}</div><div class="tabular-nums">{{ contract.label }}</div>@if (contractDeadline) {<div class="tabular-nums">Deadline {{ contractDeadline | date:'dd.MM.yyyy' }}</div>}</ng-template>
+                                <ng-template #contractTip><div class="app-tooltip-title">Contract</div><div class="flex items-center gap-1.5 tabular-nums"><span class="w-2.5 h-2.5 rounded-full bg-gray-200" aria-hidden="true"></span>{{ contract.start | date:'dd.MM.yyyy' }} – {{ contract.open || !contract.end ? 'no end date' : (contract.end | date:'dd.MM.yyyy') }}</div><div class="tabular-nums">{{ contract.label }}</div>@if (contractDeadline) {<div class="tabular-nums">Deadline {{ contractDeadline | date:'dd.MM.yyyy' }}</div>}</ng-template>
                                 <div class="absolute top-2.5 h-6 flex items-center overflow-hidden rounded px-2.5 text-xs font-medium whitespace-nowrap bg-gray-200 text-gray-800"
                                      [class.rounded-r-none]="!!contract.toDeadline" [style.left.%]="contract.left" [style.width.%]="contract.width"
                                      [style.padding-left]="contract.labelPad ? 'calc(' + contract.labelPad + '% + 10px)' : null"
@@ -186,7 +186,7 @@
                                 <ng-container *ngTemplateOutlet="dateErrorMarker; context: {$implicit: work.dateError, left: work.left}"/>
                             } @else if (work.start) {
                                 <!-- Tooltip: name, then dates (always, "no end date" when missing), then duration -->
-                                <ng-template #workTip><div class="font-semibold">Project</div><div class="flex items-center gap-1.5 tabular-nums"><span class="w-2.5 h-2.5 rounded-full bg-(--app-brand-500)" aria-hidden="true"></span>{{ work.start | date:'dd.MM.yyyy' }} – {{ work.open || !work.end ? 'no end date' : (work.end | date:'dd.MM.yyyy') }}</div><div class="tabular-nums">{{ work.label }}</div></ng-template>
+                                <ng-template #workTip><div class="app-tooltip-title">Project</div><div class="flex items-center gap-1.5 tabular-nums"><span class="w-2.5 h-2.5 rounded-full bg-(--app-brand-500)" aria-hidden="true"></span>{{ work.start | date:'dd.MM.yyyy' }} – {{ work.open || !work.end ? 'no end date' : (work.end | date:'dd.MM.yyyy') }}</div><div class="tabular-nums">{{ work.label }}</div></ng-template>
                                 <div class="absolute top-2.5 h-6 flex items-center overflow-hidden rounded px-2.5 text-xs font-medium whitespace-nowrap bg-(--app-brand-500) text-(--app-brand-contrast)"
                                      [style.left.%]="work.left" [style.width.%]="work.width"
                                      [style.padding-left]="work.labelPad ? 'calc(' + work.labelPad + '% + 10px)' : null"
@@ -221,7 +221,7 @@
                             <div class="relative flex-1 h-11">
                                 @if (stage.start && stage.end) {
                                     <!-- Tooltip: name, dates (always, "no end date" when missing), duration, then the deadline if there is one -->
-                                    <ng-template #stageTip><div class="font-semibold">{{ stage.name }}</div><div class="flex items-center gap-1.5 tabular-nums"><span class="w-2.5 h-2.5 rounded-full" [class]="stage.barClass" aria-hidden="true"></span>{{ stage.start | date:'dd.MM.yyyy' }} – {{ stage.open || !stage.end ? 'no end date' : (stage.end | date:'dd.MM.yyyy') }}</div><div class="tabular-nums">{{ stage.label }}</div>@if (stage.deadline) {<div class="tabular-nums">Deadline {{ stage.deadline | date:'dd.MM.yyyy' }}</div>}</ng-template>
+                                    <ng-template #stageTip><div class="app-tooltip-title">{{ stage.name }}</div><div class="flex items-center gap-1.5 tabular-nums"><span class="w-2.5 h-2.5 rounded-full" [class]="stage.barClass" aria-hidden="true"></span>{{ stage.start | date:'dd.MM.yyyy' }} – {{ stage.open || !stage.end ? 'no end date' : (stage.end | date:'dd.MM.yyyy') }}</div><div class="tabular-nums">{{ stage.label }}</div>@if (stage.deadline) {<div class="tabular-nums">Deadline {{ stage.deadline | date:'dd.MM.yyyy' }}</div>}</ng-template>
                                     <div class="absolute top-2.5 h-6 rounded"
                                          [class]="stage.barClass" [class.rounded-r-none]="!!stage.toDeadline" [style.left.%]="stage.left" [style.width.%]="stage.width"
                                          [pTooltip]="stageTip" tooltipPosition="top" tooltipStyleClass="app-chart-tooltip"></div>
