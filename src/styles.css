@@ -304,6 +304,18 @@ body {
     @apply text-right tabular-nums whitespace-nowrap;
   }
 
+  /* Tooltip of a chart drawn in HTML (tooltipStyleClass="app-chart-tooltip"): the same surface as the Chart.js
+     tooltips from barChartOptions(). gray-800 and white flip in dark mode, so it stays dark on light and light on dark */
+  .app-chart-tooltip {
+    --p-tooltip-background: var(--color-gray-800);
+    --p-tooltip-color: var(--color-white);
+    --p-tooltip-padding: 0.75rem;
+    --p-tooltip-border-radius: 0.5rem;
+    --p-tooltip-shadow: none;
+    --p-tooltip-max-width: 20rem;
+    @apply text-xs;
+  }
+
   /* Timeline: the stretch of a bar past its deadline, soft red and white stripes at 45° */
   .app-past-deadline {
     background: repeating-linear-gradient(45deg,

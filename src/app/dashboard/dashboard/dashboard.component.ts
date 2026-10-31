@@ -15,7 +15,15 @@ import {PeriodType} from "../../generated/models/period-type";
 import {EmptyStateComponent, KpiCardComponent, PageCrumb, PageHeaderComponent, NotSetComponent} from "../../shared";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {statusSeverity} from "../../shared/status-severity";
-import {barChartOptions, cssColor, periodLabel, rebuildOnThemeChange} from "../../shared/utils/chart-utils";
+import {
+    barChartOptions,
+    cssColor,
+    currentPeriodIndex,
+    expenseAmount,
+    periodLabel,
+    rebuildOnThemeChange
+} from "../../shared/utils/chart-utils";
+import {updateAtMidnight} from "../../shared/utils/date-utils";
 import {eventDay, eventMonth, eventWhen} from "../../shared/utils/event-date-utils";
 import {isActiveProject} from "../../shared/utils/project-status-utils";
 import {
@@ -164,6 +172,8 @@ export class DashboardComponent implements OnChanges {
 
     chartData: any = {};
     chartOptions: any = {};
+    // Index of the period that contains today (-1 when it isn't in the report); its x-axis label is highlighted
+    currentPeriod: number = -1;
 
     // Row the "Add widget" dialog adds to; the dialog is open while it is set
     addWidgetRow: number | null = null;
@@ -177,9 +187,11 @@ export class DashboardComponent implements OnChanges {
 
     constructor() {
         rebuildOnThemeChange(() => {
-            this.chartOptions = barChartOptions(false);
+            this.chartOptions = barChartOptions(false, () => this.currentPeriod);
             this.buildChartData();
         });
+        // A new day may start a new period; new chart data makes the chart redraw its labels
+        updateAtMidnight(() => this.buildChartData());
     }
 
     ngOnChanges({report, projects, activeProjectStatuses, upcomingEvents, draftLayout}: SimpleChanges): void {
@@ -497,14 +509,15 @@ export class DashboardComponent implements OnChanges {
 
     private periodTotal(period: FinancialReportPeriod, group: 'income' | 'expense'): number {
         const {total, ...categories} = period[group] ?? {};
-        // Expenses may come back negative; the chart and KPIs show both as positive amounts
         const gross = total?.grossValue
             ?? Object.values(categories).reduce((sum, data) => sum + (data?.grossValue ?? 0), 0);
-        return Math.abs(gross);
+        // Expenses may come back negative; the chart and KPIs show them as positive amounts, like the financial report
+        return group === 'expense' ? expenseAmount(gross) : gross;
     }
 
     private buildChartData(): void {
         const periods = this.report?.periods ?? [];
+        this.currentPeriod = currentPeriodIndex(periods);
         const dataset = (label: string, colorVar: string, group: 'income' | 'expense') => {
             const color = cssColor(colorVar);
             return {
@@ -513,7 +526,7 @@ export class DashboardComponent implements OnChanges {
                 backgroundColor: color,
                 hoverBackgroundColor: color,
                 data: periods.map(period => this.periodTotal(period, group)),
-                maxBarThickness: 20,
+                maxBarThickness: 24,
                 borderRadius: {topLeft: 4, topRight: 4},
                 borderSkipped: false,
             };
