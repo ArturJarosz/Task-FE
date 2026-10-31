@@ -49,12 +49,12 @@
                 <div>
                     <h2 class="app-card-title">Income and expenses</h2>
                     <p class="app-card-subtitle m-0">
-                        {{ startDate | date:'dd.MM.yyyy' }} – {{ endDate | date:'dd.MM.yyyy' }} · income above the line, expenses below
+                        {{ startDate | date:'dd.MM.yyyy' }} – {{ endDate | date:'dd.MM.yyyy' }} · income next to expenses for each period
                     </p>
                 </div>
-                <ul class="list-none m-0 p-0 flex flex-wrap items-center gap-x-5 gap-y-2" aria-label="Legend">
+                <ul class="list-none m-0 p-0 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-gray-700" aria-label="Legend">
                     @for (item of legendItems; track item.label) {
-                        <li class="flex items-center gap-2 text-sm text-gray-700">
+                        <li class="flex items-center gap-2">
                             <span class="w-2.5 h-2.5 rounded-full" [ngClass]="item.dotClass" aria-hidden="true"></span>
                             {{ item.label }}
                         </li>
@@ -64,13 +64,10 @@
             <div class="px-6 pb-6">
                 @if (hasData) {
                     <p-chart type="bar" [data]="chartData" [options]="chartOptions" height="20rem"
-                             ariaLabel="Income and expenses per period, as a stacked bar chart. The same figures are in the summary table."/>
+                             ariaLabel="Income and expenses per period, as stacked income bars next to expense bars. The same figures are in the summary table."/>
                 } @else {
-                    <div class="flex flex-col items-center text-center gap-2 py-10">
-                        <div class="flex items-center justify-center w-14 h-14 rounded-full bg-gray-100 text-gray-500"><i class="pi pi-chart-bar text-xl"></i></div>
-                        <h3 class="m-0 mt-2 text-base font-semibold text-gray-800">No data for this range</h3>
-                        <p class="m-0 text-sm text-gray-500">Pick a wider date range to see income and expenses.</p>
-                    </div>
+                    <app-empty-state icon="pi pi-chart-bar" title="No data for this range"
+                                     text="Pick a wider date range to see income and expenses."/>
                 }
             </div>
         </section>

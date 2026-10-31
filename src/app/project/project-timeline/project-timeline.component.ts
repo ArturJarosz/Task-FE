@@ -1,15 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    DestroyRef,
-    EventEmitter,
-    inject,
-    Input,
-    OnChanges,
-    OnInit,
-    Output
-} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
 import {CurrencyPipe, DatePipe, NgTemplateOutlet} from "@angular/common";
 import {RouterLink} from "@angular/router";
 import {
@@ -31,6 +20,7 @@ import {Stage} from "../../generated/models/stage";
 import {ConfigurationEntry, StageStatus} from "../../generated/models";
 import {EmptyStateComponent, KpiCardComponent, NotSetComponent} from "../../shared";
 import {resolveLabel} from "../../shared/utils/label-utils";
+import {updateAtMidnight} from "../../shared/utils/date-utils";
 
 // Where a bar's label goes: inside it, or next to it when the bar is too short to hold it
 export type LabelPlacement = 'inside' | 'after' | 'before';
@@ -143,7 +133,7 @@ const DONE_WITHOUT_END = 'Done, but the stage has no end date';
     standalone: true,
     imports: [KpiCardComponent, EmptyStateComponent, TagModule, TooltipModule, ButtonModule, RouterLink, DatePipe, CurrencyPipe, NgTemplateOutlet, NotSetComponent]
 })
-export class ProjectTimelineComponent implements OnInit, OnChanges {
+export class ProjectTimelineComponent implements OnChanges {
     @Input()
     project!: Project;
     @Input()
@@ -154,10 +144,6 @@ export class ProjectTimelineComponent implements OnInit, OnChanges {
     installmentsLoadFailed: boolean = false;
     @Output()
     reloadInstallments: EventEmitter<void> = new EventEmitter<void>();
-
-    private readonly changeDetector = inject(ChangeDetectorRef);
-    private readonly destroyRef = inject(DestroyRef);
-    private midnightTimer?: ReturnType<typeof setTimeout>;
 
     today: Date = startOfDay(new Date());
 
@@ -195,9 +181,9 @@ export class ProjectTimelineComponent implements OnInit, OnChanges {
     installmentsCount: number = 0;
     daysToDeadline: number | null = null;
 
-    ngOnInit(): void {
-        this.scheduleMidnightRefresh();
-        this.destroyRef.onDestroy(() => clearTimeout(this.midnightTimer));
+    constructor() {
+        // Today moves at midnight: redraw then, so the Today line, overdue payments and relative days stay right
+        updateAtMidnight(() => this.refresh());
     }
 
     ngOnChanges(): void {
@@ -464,16 +450,6 @@ export class ProjectTimelineComponent implements OnInit, OnChanges {
             .filter(stage => stage.installment && !ids.has(stage.installment.id))
             .map(stage => ({...stage.installment!, stageId: stage.installment!.stageId ?? stage.id}));
         return [...installments, ...fromStages];
-    }
-
-    // Today moves at midnight: redraw then, so the Today line, overdue payments and relative days stay right
-    private scheduleMidnightRefresh(): void {
-        let untilMidnight = addDays(startOfDay(new Date()), 1).getTime() - Date.now();
-        this.midnightTimer = setTimeout(() => {
-            this.refresh();
-            this.changeDetector.markForCheck();
-            this.scheduleMidnightRefresh();
-        }, untilMidnight + 1000);
     }
 
     private toPayment(installment: Installment): TimelinePayment {

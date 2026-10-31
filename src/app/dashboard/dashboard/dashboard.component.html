@@ -187,15 +187,16 @@
                         </div>
                     </div>
                     <div class="px-6 pb-6">
-                        <ul class="list-none m-0 p-0 mb-4 flex flex-wrap items-center gap-x-5 gap-y-2" aria-label="Legend">
-                            <li class="flex items-center gap-2 text-sm text-gray-700">
+                        <!-- The legend sits here, not in the header, because the header holds the period switch -->
+                        <ul class="list-none m-0 p-0 mb-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-gray-700" aria-label="Legend">
+                            <li class="flex items-center gap-2">
                                 <span class="w-2.5 h-2.5 rounded-full bg-chart-1" aria-hidden="true"></span>Income
                             </li>
-                            <li class="flex items-center gap-2 text-sm text-gray-700">
+                            <li class="flex items-center gap-2">
                                 <span class="w-2.5 h-2.5 rounded-full bg-chart-5" aria-hidden="true"></span>Expenses
                             </li>
                             @if (reportLoading && report) {
-                                <li class="flex items-center gap-2 text-sm text-gray-500">
+                                <li class="flex items-center gap-2 text-gray-500">
                                     <i class="pi pi-spin pi-spinner" aria-hidden="true"></i> Updating…
                                 </li>
                             }
