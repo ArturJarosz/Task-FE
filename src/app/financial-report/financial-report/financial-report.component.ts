@@ -4,14 +4,23 @@ import {PeriodType} from "../../generated/models/period-type";
 import {FinancialReportPeriod} from "../../generated/models/financial-report-period";
 import {FinancialReportCategoryGroup} from "../../generated/models/financial-report-category-group";
 import {FinancialPartialData} from "../../generated/models/financial-partial-data";
-import {LoadErrorComponent, KpiCardComponent, PageCrumb, PageHeaderComponent} from "../../shared";
+import {EmptyStateComponent, LoadErrorComponent, KpiCardComponent, PageCrumb, PageHeaderComponent} from "../../shared";
 import {DatePickerModule} from "primeng/datepicker";
 import {ChartModule} from "primeng/chart";
 import {TableModule} from "primeng/table";
 import {SkeletonModule} from "primeng/skeleton";
 import {FormsModule} from "@angular/forms";
 import {NgClass, CurrencyPipe, DatePipe} from "@angular/common";
-import {barChartOptions, cssColor, periodLabel, rebuildOnThemeChange} from "../../shared/utils/chart-utils";
+import {
+    barChartOptions,
+    cssColor,
+    currentPeriodIndex,
+    expenseAmount,
+    periodLabel,
+    rebuildOnThemeChange,
+    stackedSegmentShapes
+} from "../../shared/utils/chart-utils";
+import {updateAtMidnight} from "../../shared/utils/date-utils";
 
 type ValueType = 'gross' | 'net';
 
@@ -54,7 +63,7 @@ const EXPENSE_CATEGORIES: CategoryDef[] = [
     styleUrl: './financial-report.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [PageHeaderComponent, LoadErrorComponent, KpiCardComponent, DatePickerModule, ChartModule, TableModule, SkeletonModule, FormsModule, NgClass, CurrencyPipe, DatePipe]
+    imports: [PageHeaderComponent, LoadErrorComponent, EmptyStateComponent, KpiCardComponent, DatePickerModule, ChartModule, TableModule, SkeletonModule, FormsModule, NgClass, CurrencyPipe, DatePipe]
 })
 export class FinancialReportComponent implements OnInit, OnChanges {
     @Input()
@@ -92,6 +101,8 @@ export class FinancialReportComponent implements OnInit, OnChanges {
     selectedRange: Date[] = [];
     selectedValueType: ValueType = 'gross';
     periods: FinancialReportPeriod[] = [];
+    // Index of the period that contains today (-1 when it isn't in the range); its x-axis label is highlighted
+    currentPeriod: number = -1;
 
     chartData: any = {};
     chartOptions: any = {};
@@ -99,9 +110,11 @@ export class FinancialReportComponent implements OnInit, OnChanges {
 
     constructor() {
         rebuildOnThemeChange(() => {
-            this.chartOptions = barChartOptions(true);
+            this.chartOptions = barChartOptions(true, () => this.currentPeriod);
             this.buildChartData();
         });
+        // A new day may start a new period; new chart data makes the chart redraw its labels
+        updateAtMidnight(() => this.buildChartData());
     }
 
     ngOnInit(): void {
@@ -146,48 +159,43 @@ export class FinancialReportComponent implements OnInit, OnChanges {
     }
 
     private buildChartData(): void {
+        this.currentPeriod = currentPeriodIndex(this.periods);
         const valueField = this.selectedValueType === 'gross' ? 'grossValue' : 'netValue';
         const surface = cssColor('--color-white') || 'white';
         const valueOf = (group: FinancialReportCategoryGroup | undefined, key: keyof FinancialReportCategoryGroup) =>
             ((group?.[key] as FinancialPartialData | undefined)?.[valueField]) || 0;
 
-        // Round only the outermost non-zero segment of each stack, 4px at the data end
-        const topIncome = this.periods.map(period => {
-            for (let i = INCOME_CATEGORIES.length - 1; i >= 0; i--) {
-                if (valueOf(period.income, INCOME_CATEGORIES[i].key)) return i;
-            }
-            return -1;
-        });
-
-        const dataset = (category: CategoryDef, index: number, stack: 'income' | 'expense') => {
-            const color = cssColor(category.colorVar);
-            return {
-                type: 'bar',
-                label: category.label,
-                backgroundColor: color,
-                hoverBackgroundColor: color,
-                // 2px surface gap between stacked segments
-                borderColor: surface,
-                borderWidth: {top: 2, bottom: 0, left: 0, right: 0},
-                data: this.periods.map(period => {
-                    const value = valueOf(stack === 'income' ? period.income : period.expense, category.key);
-                    return value === 0 ? null : (stack === 'income' ? value : -Math.abs(value));
-                }),
-                stack,
-                maxBarThickness: 28,
-                borderSkipped: false,
-                borderRadius: (ctx: any) => stack === 'income'
-                    ? (topIncome[ctx.dataIndex] === index ? {topLeft: 4, topRight: 4} : 0)
-                    : {bottomLeft: 4, bottomRight: 4},
-            };
-        };
+        // Two stacks per period, side by side like the dashboard chart: income and expenses, both up from zero
+        const series = [
+            ...INCOME_CATEGORIES.map(category => ({
+                category, stack: 'income',
+                values: this.periods.map(period => valueOf(period.income, category.key))
+            })),
+            ...EXPENSE_CATEGORIES.map(category => ({
+                category, stack: 'expense',
+                values: this.periods.map(period => expenseAmount(valueOf(period.expense, category.key)))
+            })),
+        ];
+        const shapes = stackedSegmentShapes(series);
 
         this.chartData = {
             labels: this.periods.map(period => periodLabel(period.startDate, this.periodType, true)),
-            datasets: [
-                ...INCOME_CATEGORIES.map((category, i) => dataset(category, i, 'income')),
-                ...EXPENSE_CATEGORIES.map((category, i) => dataset(category, i, 'expense')),
-            ]
+            datasets: series.map(({category, stack, values}, index) => {
+                const color = cssColor(category.colorVar);
+                return {
+                    type: 'bar',
+                    label: category.label,
+                    backgroundColor: color,
+                    hoverBackgroundColor: color,
+                    // The gaps between segments are borders in the surface colour
+                    borderColor: surface,
+                    ...shapes[index],
+                    data: values.map(value => value === 0 ? null : value),
+                    stack,
+                    maxBarThickness: 24,
+                    borderSkipped: false,
+                };
+            })
         };
     }
 
