@@ -189,8 +189,6 @@ export type { AddGoogleCalendarShare$Params as AddGoogleCalendarShare$Params } f
 export { addGoogleCalendarShare as addGoogleCalendarShare } from './fn/calendar/add-google-calendar-share';
 export type { RemoveGoogleCalendarShare$Params as RemoveGoogleCalendarShare$Params } from './fn/calendar/remove-google-calendar-share';
 export { removeGoogleCalendarShare as removeGoogleCalendarShare } from './fn/calendar/remove-google-calendar-share';
-export type { CreateUser$Params as CreateUser$Params } from './fn/user/create-user';
-export { createUser as createUser } from './fn/user/create-user';
 export type { GetCurrentUser$Params as GetCurrentUser$Params } from './fn/user/get-current-user';
 export { getCurrentUser as getCurrentUser } from './fn/user/get-current-user';
 export type { GetCurrentUserConfigurations$Params as GetCurrentUserConfigurations$Params } from './fn/user/get-current-user-configurations';
