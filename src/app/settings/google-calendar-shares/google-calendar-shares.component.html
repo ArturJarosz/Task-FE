@@ -27,7 +27,7 @@
                     <div class="flex items-center gap-3 shrink-0">
                         <p-tag [value]="roleLabel(share.role)" [severity]="statusSeverity(share.role)"/>
                         @if (canRevoke(share)) {
-                            <p-button label="Revoke" icon="pi pi-times" severity="secondary" [text]="true" size="small"
+                            <p-button label="Revoke" icon="pi pi-times" severity="secondary" [text]="true"
                                       [loading]="revoking === share.email" [disabled]="!!revoking"
                                       [ariaLabel]="'Revoke access for ' + share.email" (onClick)="revoke.emit(share)"/>
                         } @else {

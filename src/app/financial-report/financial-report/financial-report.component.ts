@@ -13,6 +13,7 @@ import {FormsModule} from "@angular/forms";
 import {NgClass, CurrencyPipe, DatePipe} from "@angular/common";
 import {
     barChartOptions,
+    closeBarSpacing,
     cssColor,
     currentPeriodIndex,
     expenseAmount,
@@ -192,7 +193,8 @@ export class FinancialReportComponent implements OnInit, OnChanges {
                     ...shapes[index],
                     data: values.map(value => value === 0 ? null : value),
                     stack,
-                    maxBarThickness: 24,
+                    // Income and expenses of a period sit close together
+                    ...closeBarSpacing(2, 24, 6),
                     borderSkipped: false,
                 };
             })

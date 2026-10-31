@@ -3,44 +3,97 @@
 <div class="flex flex-col gap-6">
     <!-- KPIs -->
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-        <app-kpi-card icon="pi pi-folder" label="Projects">{{ $kpis().total }}</app-kpi-card>
-        <app-kpi-card icon="pi pi-play-circle" label="Active">{{ $kpis().active }}</app-kpi-card>
-        <app-kpi-card icon="pi pi-check-circle" label="Finished">{{ $kpis().finished }}</app-kpi-card>
-        <app-kpi-card icon="pi pi-wallet" label="Contract value">{{ $kpis().value | currency:'PLN':'symbol':'1.0-0' }}</app-kpi-card>
+        <app-kpi-card icon="pi pi-folder" label="Projects" [loading]="$loading()" [loadFailed]="$loadFailed()">{{ $kpis().total }}</app-kpi-card>
+        <app-kpi-card icon="pi pi-play-circle" label="Active" [loading]="$loading()" [loadFailed]="$loadFailed()">{{ $kpis().active }}</app-kpi-card>
+        <app-kpi-card icon="pi pi-check-circle" label="Finished" [loading]="$loading()" [loadFailed]="$loadFailed()">{{ $kpis().finished }}</app-kpi-card>
+        <app-kpi-card icon="pi pi-wallet" label="Contract value" [loading]="$loading()" [loadFailed]="$loadFailed()">{{ $kpis().value | currency:'PLN':'symbol':'1.0-0' }}</app-kpi-card>
     </div>
 
-    <!-- Table card -->
+    <!-- Projects card: the table or the timeline, with the same filters -->
     <section class="app-card overflow-hidden">
         <div class="app-card-header">
             <div>
-                <h2 class="app-card-title">All projects</h2>
-                <p class="app-card-subtitle m-0">{{ $kpis().total }} {{ $kpis().total === 1 ? 'project' : 'projects' }}</p>
+                @if ($view() === 'timeline') {
+                    <h2 class="app-card-title">Projects timeline</h2>
+                    <p class="app-card-subtitle m-0">Contract and project of each project by month</p>
+                } @else {
+                    <h2 class="app-card-title">All projects</h2>
+                    <p class="app-card-subtitle m-0">{{ $filteredProjects().length }} {{ $filteredProjects().length === 1 ? 'project' : 'projects' }}</p>
+                }
             </div>
             <div class="flex flex-wrap items-center gap-3">
+                <div class="app-seg" role="group" aria-label="View">
+                    <button type="button" class="app-seg-item gap-2"
+                            [class.active]="$view() === 'table'" [attr.aria-pressed]="$view() === 'table'"
+                            (click)="onSelectView('table')"><i class="pi pi-list" aria-hidden="true"></i>Table</button>
+                    <button type="button" class="app-seg-item gap-2"
+                            [class.active]="$view() === 'timeline'" [attr.aria-pressed]="$view() === 'timeline'"
+                            (click)="onSelectView('timeline')"><i class="pi pi-align-left" aria-hidden="true"></i>Timeline</button>
+                </div>
                 <div class="app-seg" role="group" aria-label="Filter by status">
                     @for (segment of $segments(); track segment.key) {
                         <button type="button" class="app-seg-item gap-2"
                                 [class.active]="segment.key === $segmentKey()" [attr.aria-pressed]="segment.key === $segmentKey()"
                                 (click)="onSelectSegment(segment.key)">
                             {{ segment.label }}
-                            <span class="text-xs text-gray-400 tabular-nums">{{ $segmentCounts()[segment.key] }}</span>
+                            <!-- Room for two digits, so the header doesn't shift as filters change the counts -->
+                            <span class="min-w-[2ch] text-xs text-gray-400 tabular-nums">{{ $segmentCounts()[segment.key] }}</span>
                         </button>
                     }
                 </div>
+                <project-filter [filter]="$filter()" [clients]="$clients()" [architects]="$architects()"
+                                [projectTypes]="$projectTypes()" [contractStatuses]="$contractStatuses()"
+                                (filterChange)="onFilterChange($event)"/>
                 <p-button label="New project" icon="pi pi-plus" (onClick)="onClick()"/>
             </div>
         </div>
 
-        <project-list [projects]="$pagedProjects()"
-                      [projectTypes]="$projectTypes()"
-                      [projectStatuses]="$projectStatuses()"
-                      [emptyTitle]="$emptyTitle()"
-                      [emptyText]="$emptyText()"
-                      (deleteProjectEvent)="onDeleteProject($event)">
-        </project-list>
+        @if ($filtersOn()) {
+            <div class="flex flex-wrap items-center gap-2 px-6 pb-4 -mt-1" aria-label="Filters on">
+                @for (chip of $filterChips(); track chip.key) {
+                    <p-chip [label]="chip.label" [removable]="true" (onRemove)="onRemoveFilter(chip.key)"/>
+                }
+                <p-button label="Clear filters" [text]="true" severity="secondary" (onClick)="onClearFilters()"/>
+            </div>
+        }
 
-        <app-table-footer [total]="$filteredProjects().length" [page]="$page()" [pageSize]="pageSize"
-                           (pageChange)="$page.set($event)"/>
+        @if ($loadFailed()) {
+            <app-empty-state icon="pi pi-exclamation-triangle" title="Couldn't load projects"
+                             text="Check your connection and try again.">
+                <p-button label="Try again" severity="secondary" [outlined]="true" (onClick)="onReloadProjects()"/>
+            </app-empty-state>
+        } @else if ($loading()) {
+            <div class="flex flex-col gap-3 px-6 pb-6" aria-busy="true" aria-label="Loading projects">
+                @for (row of [1, 2, 3, 4]; track row) {
+                    <p-skeleton height="3.5rem"/>
+                }
+            </div>
+        } @else if ($view() === 'timeline') {
+            @if ($filteredProjects().length) {
+                <projects-timeline [projects]="$pagedTimelineProjects()"
+                                   [projectStatuses]="$projectStatuses()"
+                                   [contractStatuses]="$contractStatuses()"/>
+            } @else {
+                <app-empty-state icon="pi pi-align-left" [title]="$emptyTitle()" [text]="$emptyText()">
+                    @if ($filtersOn()) {
+                        <p-button label="Clear filters" severity="secondary" [outlined]="true" (onClick)="onClearFilters()"/>
+                    }
+                </app-empty-state>
+            }
+        } @else {
+            <project-list [projects]="$pagedProjects()"
+                          [projectTypes]="$projectTypes()"
+                          [projectStatuses]="$projectStatuses()"
+                          [emptyTitle]="$emptyTitle()"
+                          [emptyText]="$emptyText()"
+                          (deleteProjectEvent)="onDeleteProject($event)">
+            </project-list>
+        }
+
+        @if (!$loadFailed() && !$loading()) {
+            <app-table-footer [total]="$filteredProjects().length" [page]="$page()" [pageSize]="pageSize"
+                              (pageChange)="$page.set($event)"/>
+        }
     </section>
 </div>
 

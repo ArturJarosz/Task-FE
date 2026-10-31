@@ -1,6 +1,6 @@
 import {format} from "date-fns-tz";
 import {addDays, startOfDay} from "date-fns";
-import {ChangeDetectorRef, DestroyRef, inject} from "@angular/core";
+import {ChangeDetectorRef, DestroyRef, inject, NgZone} from "@angular/core";
 
 // Runs `update` once a new day has started, while the component lives, then marks it for check, so a view that shows
 // today (a Today line, the current period) stays right in a tab left open. A timer fires just after midnight, but
@@ -8,6 +8,7 @@ import {ChangeDetectorRef, DestroyRef, inject} from "@angular/core";
 // a constructor (it needs the component's injection context).
 export function updateAtMidnight(update: () => void): void {
     const changeDetector = inject(ChangeDetectorRef);
+    const zone = inject(NgZone);
     let day = startOfDay(new Date()).getTime();
     let timer: ReturnType<typeof setTimeout> | undefined;
     const check = () => {
@@ -15,10 +16,13 @@ export function updateAtMidnight(update: () => void): void {
         const today = startOfDay(new Date());
         if (today.getTime() !== day) {
             day = today.getTime();
-            update();
-            changeDetector.markForCheck();
+            zone.run(() => {
+                update();
+                changeDetector.markForCheck();
+            });
         }
-        timer = setTimeout(check, addDays(today, 1).getTime() - Date.now() + 1000);
+        // Outside Angular: a timer pending for a day would keep the app from ever being stable (whenStable, hydration)
+        timer = zone.runOutsideAngular(() => setTimeout(check, addDays(today, 1).getTime() - Date.now() + 1000));
     };
     const onVisibilityChange = () => {
         if (document.visibilityState === 'visible') {

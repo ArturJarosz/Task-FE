@@ -94,6 +94,21 @@ export function stackedSegmentShapes(series: StackedSeries[]): { borderWidth: (c
     });
 }
 
+// Bar widths that keep the bars of one period `gap` px apart. Chart.js spreads a period's bars across 80% of its width,
+// so with bars capped at `maxBarWidth` (maxBarThickness) wide periods leave them far apart. This narrows the share of
+// the period they take to just fit, and keeps the gap in proportion when the bars are narrower than the cap
+export function closeBarSpacing(barsPerPeriod: number, maxBarWidth: number, gap: number) {
+    return {
+        maxBarThickness: maxBarWidth,
+        barPercentage: maxBarWidth / (maxBarWidth + gap),
+        categoryPercentage: (ctx: any) => {
+            const scale = ctx.chart.scales.x;
+            const periodWidth = scale.width / Math.max(ctx.chart.data.labels?.length ?? 1, 1);
+            return Math.min(0.8, barsPerPeriod * (maxBarWidth + gap) / periodWidth);
+        }
+    };
+}
+
 // Bar chart options in the app theme. `currentIndex` is read on every draw: the x-axis label at that index is in the
 // today colour, like the timeline's Today label
 export function barChartOptions(stacked: boolean, currentIndex: () => number = () => -1): any {
