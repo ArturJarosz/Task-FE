@@ -12,6 +12,7 @@ import {TooltipModule} from "primeng/tooltip";
 import {CurrencyPipe} from "@angular/common";
 import {EmptyStateComponent, NotSetComponent} from "../../shared";
 import {statusSeverity} from "../../shared/status-severity";
+import {architectName, clientName} from "../project-filter/project-filter";
 
 const NOT_FOUND_INITIAL = '?';
 
@@ -52,13 +53,7 @@ export class ProjectListComponent {
     }
 
     getClientName(client?: Client): string {
-        if (!client) {
-            return '';
-        }
-        if (client.clientType === ClientType.CORPORATE) {
-            return client.companyName ?? '';
-        }
-        return `${client.firstName} ${client.lastName}`;
+        return clientName(client);
     }
 
     getClientKind(client?: Client): string {
@@ -75,10 +70,7 @@ export class ProjectListComponent {
     }
 
     getArchitectName(architect?: Architect): string {
-        if (architect?.firstName && architect?.lastName) {
-            return `${architect.firstName} ${architect.lastName}`;
-        }
-        return '';
+        return architectName(architect);
     }
 
     openRowMenu($event: MouseEvent, project: Project, menu: Menu) {

@@ -1,0 +1,57 @@
+<!-- As wide as "Filter · 9", so the controls before it don't move when a filter goes on -->
+<p-button [label]="buttonLabel" icon="pi pi-filter" severity="secondary" [outlined]="true" styleClass="min-w-30 tabular-nums"
+          aria-haspopup="dialog" (onClick)="popover.toggle($event)"/>
+
+<p-popover #popover appendTo="body" styleClass="w-[min(560px,calc(100vw-2rem))]">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4 p-2">
+        <div>
+            <label for="projectFilterSearch" class="app-form-label">Search</label>
+            <p-iconfield>
+                <p-inputicon styleClass="pi pi-search"/>
+                <input id="projectFilterSearch" type="text" pInputText class="w-full" placeholder="Project name"
+                       [ngModel]="filter.search" (ngModelChange)="set('search', $event)"/>
+            </p-iconfield>
+        </div>
+        <div>
+            <label for="projectFilterPeriod" class="app-form-label">Period</label>
+            <p-datepicker inputId="projectFilterPeriod" selectionMode="range" view="month" dateFormat="mm.yy"
+                          [ngModel]="filter.period" (ngModelChange)="set('period', $event)"
+                          [showIcon]="true" [showOnFocus]="false" [showClear]="true" [readonlyInput]="true" placeholder="Any time"
+                          appendTo="body" [fluid]="true"/>
+        </div>
+        <div>
+            <label for="projectFilterClient" class="app-form-label">Client</label>
+            <p-select inputId="projectFilterClient" [options]="clients" optionLabel="label" optionValue="id"
+                      [ngModel]="filter.clientId" (ngModelChange)="set('clientId', $event ?? null)"
+                      [filter]="true" filterBy="label" [showClear]="true" placeholder="Any client"
+                      appendTo="body" [fluid]="true"/>
+        </div>
+        <div>
+            <label for="projectFilterArchitect" class="app-form-label">Architect</label>
+            <p-select inputId="projectFilterArchitect" [options]="architects" optionLabel="label" optionValue="id"
+                      [ngModel]="filter.architectId" (ngModelChange)="set('architectId', $event ?? null)"
+                      [filter]="true" filterBy="label" [showClear]="true" placeholder="Any architect"
+                      appendTo="body" [fluid]="true"/>
+        </div>
+        <div>
+            <label for="projectFilterType" class="app-form-label">Project type</label>
+            <p-multiselect inputId="projectFilterType" [options]="projectTypes ?? []" optionLabel="label" optionValue="id"
+                           [ngModel]="filter.types" (ngModelChange)="set('types', $event ?? [])"
+                           [showToggleAll]="false" placeholder="Any type" appendTo="body" [fluid]="true"/>
+        </div>
+        <div>
+            <label for="projectFilterContractStatus" class="app-form-label">Contract status</label>
+            <p-multiselect inputId="projectFilterContractStatus" [options]="contractStatuses ?? []" optionLabel="label" optionValue="id"
+                           [ngModel]="filter.contractStatuses" (ngModelChange)="set('contractStatuses', $event ?? [])"
+                           [showToggleAll]="false" placeholder="Any status" appendTo="body" [fluid]="true"/>
+        </div>
+        <div class="flex items-center gap-3">
+            <p-toggleswitch inputId="projectFilterPastDeadline"
+                            [ngModel]="filter.pastDeadlineOnly" (ngModelChange)="set('pastDeadlineOnly', $event)"/>
+            <label for="projectFilterPastDeadline" class="text-sm font-medium text-gray-700">Past deadline only</label>
+        </div>
+        <div class="flex items-center sm:justify-end">
+            <p-button label="Clear filters" [text]="true" severity="secondary" [disabled]="activeCount === 0" (onClick)="clear()"/>
+        </div>
+    </div>
+</p-popover>

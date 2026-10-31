@@ -7,7 +7,7 @@
             <p-button label="Save layout" [loading]="layoutSaving" (onClick)="editSave.emit()"/>
         </div>
     } @else {
-        <p-button icon="pi pi-sliders-h" severity="secondary" [outlined]="true" [rounded]="true"
+        <p-button icon="pi pi-sliders-h" severity="secondary" [outlined]="true"
                   ariaLabel="Customize dashboard" pTooltip="Customize dashboard" tooltipPosition="left"
                   [disabled]="layoutLoading" (onClick)="editStart.emit()"/>
     }
