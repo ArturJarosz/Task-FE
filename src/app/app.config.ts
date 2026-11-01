@@ -38,6 +38,7 @@ import {GoogleCalendarShareRestService, GoogleCalendarShareRestServiceImpl} from
 import {ProjectTypeRestService, ProjectTypeRestServiceImpl} from './settings/rest/project-type-rest.service';
 import {ContractorCategoryRestService, ContractorCategoryRestServiceImpl} from './settings/rest/contractor-category-rest.service';
 import {SupplierCategoryRestService, SupplierCategoryRestServiceImpl} from './settings/rest/supplier-category-rest.service';
+import {CostCategoryRestService, CostCategoryRestServiceImpl} from './settings/rest/cost-category-rest.service';
 
 registerLocaleData(localePl); // money as "50 000,00 zł", dates as "15.10.2026"
 
@@ -93,5 +94,6 @@ export const appConfig: ApplicationConfig = {
         {provide: ProjectTypeRestService, useClass: ProjectTypeRestServiceImpl},
         {provide: ContractorCategoryRestService, useClass: ContractorCategoryRestServiceImpl},
         {provide: SupplierCategoryRestService, useClass: SupplierCategoryRestServiceImpl},
+        {provide: CostCategoryRestService, useClass: CostCategoryRestServiceImpl},
     ]
 };

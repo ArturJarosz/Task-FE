@@ -31,6 +31,11 @@ export const SETTINGS_SECTION_GROUPS: SettingsSectionGroup[] = [
         ]
     },
     {
+        label: 'Finance', sections: [
+            {key: 'cost-categories', label: 'Cost categories', icon: 'pi pi-wallet', showsSystemParameters: false},
+        ]
+    },
+    {
         label: 'Integrations', sections: [
             {key: 'google-calendar', label: 'Google Calendar', icon: 'pi pi-calendar', showsSystemParameters: true},
         ]

@@ -1,7 +1,6 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {CostDetailComponent} from './cost-detail.component';
 import {Cost} from '../../../generated/models/cost';
-import {CostCategory} from '../../../generated/models/cost-category';
 import {ConfigurationEntry} from '../../../generated/models/configuration-entry';
 import {provideTestDependencies} from '../../../../testing/test-providers';
 
@@ -9,7 +8,7 @@ const MOCK_COST: Cost = {
     id: 1,
     name: 'Test Cost',
     date: '2025-03-15',
-    category: CostCategory.FUEL,
+    categoryId: 100,
     value: 150.50,
     note: 'Test note',
     hasInvoice: true,
@@ -18,8 +17,8 @@ const MOCK_COST: Cost = {
 };
 
 const MOCK_COST_CATEGORIES: ConfigurationEntry[] = [
-    {id: CostCategory.FUEL, label: 'Fuel'},
-    {id: CostCategory.MISTAKE, label: 'Mistake'}
+    {id: '100', label: 'Fuel'},
+    {id: '101', label: 'Mistake'}
 ];
 
 describe('CostDetailComponent', () => {
@@ -49,7 +48,7 @@ describe('CostDetailComponent', () => {
         fixture.detectChanges();
 
         expect(component.costDetailsForm.value.name).toBe('Test Cost');
-        expect(component.costDetailsForm.value.category).toBe(CostCategory.FUEL);
+        expect(component.costDetailsForm.value.category).toBe('100');
         expect(component.costDetailsForm.value.value).toBe(150.50);
         expect(component.costDetailsForm.value.note).toBe('Test note');
         expect(component.categoryLabel).toBe('Fuel');
@@ -96,7 +95,7 @@ describe('CostDetailComponent', () => {
 
             const emitted: Cost = (component.updateCostEvent.emit as jasmine.Spy).calls.first().args[0];
             expect(emitted.name).toBe('Test Cost');
-            expect(emitted.category).toBe(CostCategory.FUEL);
+            expect(emitted.categoryId).toBe(100);
             expect(emitted.value).toBe(150.50);
             expect(emitted.note).toBe('Test note');
             expect(emitted.payable).toBe(true);

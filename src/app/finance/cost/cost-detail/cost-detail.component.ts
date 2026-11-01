@@ -13,7 +13,6 @@ import {Textarea} from "primeng/textarea";
 import {ToggleSwitchModule} from "primeng/toggleswitch";
 import {CostDetailFormProvider, CostForm} from "./cost-detail-form-provider";
 import {Cost} from "../../../generated/models/cost";
-import {CostCategory} from "../../../generated/models/cost-category";
 import {ConfigurationEntry} from "../../../generated/models/configuration-entry";
 import {FieldComponent, LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../../shared";
 import {resolveLabel} from "../../../shared/utils/label-utils";
@@ -74,7 +73,7 @@ export class CostDetailComponent implements OnInit, OnChanges {
             this.resetForm();
         }
         if (this.cost) {
-            this.categoryLabel = resolveLabel(this.cost.category, this.costCategories ?? []);
+            this.categoryLabel = resolveLabel(this.cost.categoryId, this.costCategories ?? []);
         }
         this.crumbs = [
             {label: 'Home', route: ['/home']},
@@ -111,7 +110,7 @@ export class CostDetailComponent implements OnInit, OnChanges {
         const value = this.costDetailsForm.getRawValue();
         this.updateCostEvent.emit({
             name: value.name,
-            category: value.category,
+            categoryId: Number(value.category),
             note: value.note ?? undefined,
             paid: value.paid,
             value: value.value,
@@ -141,7 +140,7 @@ export class CostDetailComponent implements OnInit, OnChanges {
             id: this.cost.id ?? 0,
             name: this.cost.name ?? '',
             date: toDateIfExists(this.cost.date) ?? new Date(),
-            category: this.cost.category ?? CostCategory.FUEL,
+            category: this.cost.categoryId != null ? String(this.cost.categoryId) : '',
             value: this.cost.value ?? 0,
             note: this.cost.note ?? '',
             hasInvoice: this.cost.hasInvoice ?? false,

@@ -1,6 +1,5 @@
 import {Injectable} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
-import {CostCategory} from "../../../generated/models/cost-category";
 import {paymentDateRequiredWhenPaid} from "../../../shared/utils/form-utils";
 
 @Injectable({
@@ -15,7 +14,8 @@ export class CostDetailFormProvider {
             id: this.formBuilder.nonNullable.control<number>(0, [Validators.required]),
             name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
             date: this.formBuilder.nonNullable.control<Date>(new Date(), [Validators.required]),
-            category: this.formBuilder.nonNullable.control<CostCategory>(CostCategory.FUEL, [Validators.required]),
+            // id of the cost category as a string, the way configuration entries hold it
+            category: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
             value: this.formBuilder.nonNullable.control<number>(0, [Validators.required, Validators.min(0.01)]),
             note: this.formBuilder.control<string>(''),
             hasInvoice: this.formBuilder.nonNullable.control<boolean>(true, [Validators.required]),
@@ -30,7 +30,7 @@ export interface CostForm {
     id: FormControl<number>,
     name: FormControl<string>,
     date: FormControl<Date>,
-    category: FormControl<CostCategory>,
+    category: FormControl<string>,
     value: FormControl<number>,
     note: FormControl<string | null>,
     hasInvoice: FormControl<boolean>,

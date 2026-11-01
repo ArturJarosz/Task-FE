@@ -44,8 +44,10 @@ export class CostListComponent implements OnChanges {
         }
     }
 
-    getCostCategoryLabel(category: string): string {
-        return resolveLabel(category, this.costCategories);
+    // Empty until the configuration has the category, never the bare id
+    getCostCategoryLabel(categoryId: number | undefined): string {
+        let known = this.costCategories?.some(category => category.id === String(categoryId));
+        return known ? resolveLabel(categoryId, this.costCategories) : '';
     }
 
     private fillFormData(): void {

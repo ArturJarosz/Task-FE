@@ -77,7 +77,7 @@ export class AddCostComponent implements OnInit, AbstractAddEditComponent {
         const value = this.addCostForm.getRawValue();
         return {
             name: value.name,
-            category: value.category,
+            categoryId: Number(value.category),
             date: toTimeZoneString(value.date),
             value: value.value ?? 0,
             hasInvoice: value.hasInvoice,
