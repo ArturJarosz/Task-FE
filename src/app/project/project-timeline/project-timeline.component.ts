@@ -12,6 +12,7 @@ import {ConfigurationEntry, StageStatus} from "../../generated/models";
 import {EmptyStateComponent, KpiCardComponent, NotSetComponent} from "../../shared";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {updateAtMidnight} from "../../shared/utils/date-utils";
+import {isDeposit} from "../../finance/installment/installment-utils";
 import {
     dayCount,
     emptySpan,
@@ -34,9 +35,11 @@ export type {LabelPlacement, LabelSpot, TimelineSpan, TimelineStretch, TimelineT
 // paid; due: not paid and its payment date is today or later; overdue: not paid and its payment date has passed
 export type PaymentState = 'paid' | 'due' | 'overdue';
 
-// An installment's payment date, drawn as an 18px circle on the row of its stage
+// An installment's payment date, drawn as an 18px circle on the row of its stage (the deposit's on the contract row)
 export interface TimelinePayment {
     id?: number;
+    // "Deposit" or "Installment", the tooltip title
+    name: string;
     date: Date;
     value?: number;
     paid: boolean;
@@ -121,6 +124,8 @@ export class ProjectTimelineComponent implements OnChanges {
     todayLabelClass: string = 'left-1/2 -translate-x-1/2';
 
     stages: TimelineStage[] = [];
+    // The deposit is for the whole project under the contract, not a stage, so it goes on the contract row
+    contractPayments: TimelinePayment[] = [];
     // Payments whose stage isn't on the project; they go on the project row
     otherPayments: TimelinePayment[] = [];
 
@@ -187,15 +192,18 @@ export class ProjectTimelineComponent implements OnChanges {
     }
 
     resolvePositions(): void {
-        this.contract = this.placeSpan(this.contract, this.contractDeadline);
-
         let stages = this.project.stages ?? [];
         let stageIds = new Set(stages.map(stage => stage.id));
         let payments = this.allInstallments()
             .filter(installment => !!installment.paymentDate)
             .map(installment => ({installment, payment: this.toPayment(installment)}));
+        this.contractPayments = payments
+            .filter(({installment}) => isDeposit(installment))
+            .map(({payment}) => payment);
+        this.contract = this.placeSpan(this.contract, this.contractDeadline,
+            this.contractPayments.map(payment => payment.left));
         this.otherPayments = payments
-            .filter(({installment}) => !stageIds.has(installment.stageId))
+            .filter(({installment}) => !isDeposit(installment) && !stageIds.has(installment.stageId))
             .map(({payment}) => payment);
         this.work = this.placeSpan(this.work, undefined, this.otherPayments.map(payment => payment.left));
 
@@ -306,7 +314,8 @@ export class ProjectTimelineComponent implements OnChanges {
         let date = toDay(installment.paymentDate)!;
         let state: PaymentState = installment.paid ? 'paid' : date < this.today ? 'overdue' : 'due';
         return {
-            id: installment.id, date: date, value: installment.value, paid: !!installment.paid, state: state,
+            id: installment.id, name: isDeposit(installment) ? 'Deposit' : 'Installment', date: date,
+            value: installment.value, paid: !!installment.paid, state: state,
             stateLabel: PAYMENT_LABEL[state], left: this.position(date)
         };
     }
