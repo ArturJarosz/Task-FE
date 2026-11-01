@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProjectDetailComponent } from './project-detail.component';
 import {provideTestDependencies} from '../../../testing/test-providers';
-import {ContractStatus, Project, ProjectStatus, ProjectType} from '../../generated/models';
+import {ContractStatus, Project, ProjectStatus} from '../../generated/models';
 
 describe('ProjectDetailComponent', () => {
   let component: ProjectDetailComponent;
@@ -30,7 +30,7 @@ describe('ProjectDetailComponent edit forms', () => {
   const project: Project = {
     id: 1,
     name: 'Lublin 01',
-    type: ProjectType.ARCHITECTURE_HOUSE,
+    typeId: 1,
     status: ProjectStatus.IN_PROGRESS,
     startDate: '2026-01-10',
     endDate: '2026-12-20',

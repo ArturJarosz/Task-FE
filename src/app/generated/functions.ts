@@ -153,6 +153,16 @@ export type { DeleteSupervisionVisit$Params as DeleteSupervisionVisit$Params } f
 export { deleteSupervisionVisit as deleteSupervisionVisit } from './fn/supervision/delete-supervision-visit';
 export type { GetProjectSupervision$Params as GetProjectSupervision$Params } from './fn/supervision/get-project-supervision';
 export { getProjectSupervision as getProjectSupervision } from './fn/supervision/get-project-supervision';
+export type { GetProjectTypes$Params as GetProjectTypes$Params } from './fn/project-type/get-project-types';
+export { getProjectTypes as getProjectTypes } from './fn/project-type/get-project-types';
+export type { CreateProjectType$Params as CreateProjectType$Params } from './fn/project-type/create-project-type';
+export { createProjectType as createProjectType } from './fn/project-type/create-project-type';
+export type { GetProjectType$Params as GetProjectType$Params } from './fn/project-type/get-project-type';
+export { getProjectType as getProjectType } from './fn/project-type/get-project-type';
+export type { UpdateProjectType$Params as UpdateProjectType$Params } from './fn/project-type/update-project-type';
+export { updateProjectType as updateProjectType } from './fn/project-type/update-project-type';
+export type { DeleteProjectType$Params as DeleteProjectType$Params } from './fn/project-type/delete-project-type';
+export { deleteProjectType as deleteProjectType } from './fn/project-type/delete-project-type';
 export type { GetSuppliers$Params as GetSuppliers$Params } from './fn/supplier/get-suppliers';
 export { getSuppliers as getSuppliers } from './fn/supplier/get-suppliers';
 export type { CreateSupplier$Params as CreateSupplier$Params } from './fn/supplier/create-supplier';

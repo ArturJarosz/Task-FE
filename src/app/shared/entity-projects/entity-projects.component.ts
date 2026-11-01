@@ -30,8 +30,8 @@ export class EntityProjectsComponent {
 
     protected readonly statusSeverity = statusSeverity;
 
-    getTypeLabel(type: string): string {
-        return resolveLabel(type, this.projectTypes);
+    getTypeLabel(typeId?: number): string {
+        return resolveLabel(typeId, this.projectTypes);
     }
 
     getStatusLabel(status: string): string {

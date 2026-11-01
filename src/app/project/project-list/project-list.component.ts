@@ -44,8 +44,8 @@ export class ProjectListComponent {
     constructor(private router: Router) {
     }
 
-    getProjectTypeLabel(type: string): string {
-        return resolveLabel(type, this.projectTypes);
+    getProjectTypeLabel(typeId?: number): string {
+        return resolveLabel(typeId, this.projectTypes);
     }
 
     getProjectStatusLabel(type: string): string {

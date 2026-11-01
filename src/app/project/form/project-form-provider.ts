@@ -2,9 +2,6 @@ import {Injectable} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ProjectStatus} from "../../generated/models/project-status";
 import {ContractStatus} from "../../generated/models/contract-status";
-import {ProjectType} from "../../generated/models/project-type";
-
-const DEFAULT_PROJECT_TYPE = ProjectType.ARCHITECTURE_HOUSE;
 
 @Injectable({
     providedIn: 'root'
@@ -20,7 +17,8 @@ export class ProjectFormProvider {
             name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
             architectId: this.formBuilder.nonNullable.control<number>(0, [Validators.required]),
             clientId: this.formBuilder.nonNullable.control<number>(0, [Validators.required]),
-            type: this.formBuilder.nonNullable.control<ProjectType>(DEFAULT_PROJECT_TYPE, [Validators.required]),
+            // id of the project type as a string, the way configuration entries hold it
+            type: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
             status: this.formBuilder.nonNullable.control<ProjectStatus>(ProjectStatus.TO_DO, [Validators.required]),
             note: this.formBuilder.control<string>(''),
             startDate: this.formBuilder.nonNullable.control<Date>(new Date('')),
@@ -68,7 +66,7 @@ export interface ProjectCreateForm {
     name: FormControl<string>,
     architectId: FormControl<number>,
     clientId: FormControl<number>,
-    type: FormControl<ProjectType>,
+    type: FormControl<string>,
     contract: FormGroup<ProjectContractForm>,
     status: FormControl<ProjectStatus>,
     note: FormControl<string | null>,

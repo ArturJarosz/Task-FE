@@ -87,6 +87,25 @@ describe('SettingsShellComponent', () => {
         expect(names).toEqual(['Vat tax']);
     });
 
+    it('should list project types and block deleting a type used by projects', async () => {
+        httpTesting.expectOne(request => request.url.endsWith('/system-parameters')).flush([]);
+        await harness.navigateByUrl('/settings/project-types', SettingsShellComponent);
+        httpTesting.expectOne(request => request.url.endsWith('/project-types')).flush([
+            {id: 100, name: 'Concept', numberOfProjects: 0},
+            {id: 101, name: 'Interior house', numberOfProjects: 3}
+        ]);
+        harness.detectChanges();
+
+        let element = harness.routeNativeElement!;
+        expect(element.querySelector('nav .app-nav-item.active')?.textContent).toContain('Project types');
+        let rows = Array.from(element.querySelectorAll('[aria-label="Project types"] [role="row"]')).slice(1);
+        expect(rows.map(row => row.querySelector('[role="cell"]')?.textContent?.trim())).toEqual(['Concept', 'Interior house']);
+        expect(rows[1].textContent).toContain('3 projects');
+        let deleteButton = (row: Element) => row.querySelector('p-button[icon="pi pi-trash"] button') as HTMLButtonElement;
+        expect(deleteButton(rows[0]).disabled).toBeFalse();
+        expect(deleteButton(rows[1]).disabled).toBeTrue();
+    });
+
     it('should show the Google Calendar section with its connection status', async () => {
         httpTesting.expectOne(request => request.url.endsWith('/system-parameters')).flush([]);
         await harness.navigateByUrl('/settings/google-calendar', SettingsShellComponent);

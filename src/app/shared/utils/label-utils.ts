@@ -1,13 +1,15 @@
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 
-export function resolveLabel(id: string | undefined, entries: ConfigurationEntry[] | null): string {
-    if (!id) {
+// Entry ids are strings; numeric ids (such as project type ids) are matched by their string form
+export function resolveLabel(id: string | number | null | undefined, entries: ConfigurationEntry[] | null): string {
+    if (id == null || id === '') {
         return '';
     }
+    let key = String(id);
     if (!entries) {
-        return id;
+        return key;
     }
 
-    let maybeLabel = entries.find(element => element.id === id)?.label;
-    return maybeLabel ? maybeLabel : id;
+    let maybeLabel = entries.find(element => element.id === key)?.label;
+    return maybeLabel ? maybeLabel : key;
 }

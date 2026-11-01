@@ -6,7 +6,6 @@ import { Client } from '../models/client';
 import { Contract } from '../models/contract';
 import { Cost } from '../models/cost';
 import { ProjectStatus } from '../models/project-status';
-import { ProjectType } from '../models/project-type';
 import { Stage } from '../models/stage';
 import { Supervision } from '../models/supervision';
 export interface Project {
@@ -27,5 +26,5 @@ export interface Project {
   startDate?: string;
   status?: ProjectStatus;
   supervision?: Supervision;
-  type?: ProjectType;
+  typeId?: number;
 }
