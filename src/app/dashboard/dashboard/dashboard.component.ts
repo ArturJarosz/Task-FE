@@ -425,8 +425,8 @@ export class DashboardComponent implements OnChanges {
         }
     }
 
-    getProjectTypeLabel(type?: string): string {
-        return resolveLabel(type, this.projectTypes);
+    getProjectTypeLabel(typeId?: number): string {
+        return resolveLabel(typeId, this.projectTypes);
     }
 
     getProjectStatusLabel(status?: string): string {

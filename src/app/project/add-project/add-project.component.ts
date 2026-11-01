@@ -141,7 +141,7 @@ export class AddProjectComponent implements OnInit, OnChanges {
         let project: ProjectCreate;
         project = {
             name: this.addProjectForm.get('name')?.value,
-            type: this.addProjectForm.get('type')?.value,
+            typeId: Number(this.addProjectForm.get('type')?.value),
             clientId: this.addProjectForm.get('clientId')?.value,
             architectId: this.addProjectForm.get('architectId')?.value,
             offerValue: this.addProjectForm.get('offerValue')?.value,
