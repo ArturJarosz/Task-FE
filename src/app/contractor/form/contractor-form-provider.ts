@@ -1,8 +1,5 @@
-import {ContractorCategory} from "../../generated/models";
 import {Injectable} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
-
-const DEFAULT_TYPE = ContractorCategory.GENERAL;
 
 @Injectable({
     providedIn: 'root'
@@ -13,7 +10,8 @@ export class ContractorFormProvider {
 
     public getSupplierFormGroup(): FormGroup<ContractorForm> {
         return this.formBuilder.nonNullable.group<ContractorForm>({
-            category: this.formBuilder.nonNullable.control<ContractorCategory>(DEFAULT_TYPE, [Validators.required]),
+            // id of the contractor category as a string, the way configuration entries hold it
+            category: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
             email: this.formBuilder.control<string>(''),
             name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
             note: this.formBuilder.control<string>(''),
@@ -23,7 +21,7 @@ export class ContractorFormProvider {
 }
 
 export interface ContractorForm {
-    category: FormControl<ContractorCategory>;
+    category: FormControl<string>;
     email: FormControl<string | null>;
     name: FormControl<string>;
     note: FormControl<string | null>;

@@ -66,7 +66,7 @@ export class AddContractorComponent implements OnInit, OnChanges {
         let contractor: Contractor;
         contractor = {
             name: this.addContractorForm.get('name')?.value,
-            category: this.addContractorForm.get('category')?.value,
+            categoryId: Number(this.addContractorForm.get('category')?.value),
             email: this.addContractorForm.get('email')?.value,
             telephone: this.addContractorForm.get('telephone')?.value,
             note: this.addContractorForm.get('note')?.value

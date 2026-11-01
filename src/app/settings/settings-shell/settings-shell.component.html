@@ -45,27 +45,6 @@
                                      (retry)="onRetry()"/>
             </section>
         }
-        @case ('project-types') {
-            <section class="app-card overflow-hidden min-w-0">
-                <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
-                    <div>
-                        <h2 class="m-0 text-base font-semibold text-gray-800">Project types</h2>
-                        <p class="m-0 text-xs text-gray-500">Kinds of projects to choose from; a type used by a project can't be deleted</p>
-                    </div>
-                    @if (projectTypeStore.projectTypes().length) {
-                        <p-button label="New project type" icon="pi pi-plus" (onClick)="onAddProjectType()"/>
-                    }
-                </div>
-                <project-type-list [projectTypes]="projectTypeStore.projectTypes()"
-                                   [loading]="!projectTypeStore.projectTypesLoaded() && !projectTypeStore.projectTypesLoadFailed()"
-                                   [loadFailed]="projectTypeStore.projectTypesLoadFailed()"
-                                   [deleting]="projectTypeStore.projectTypeDeleting()"
-                                   (add)="onAddProjectType()"
-                                   (rename)="onRenameProjectType($event)"
-                                   (delete)="onDeleteProjectType($event)"
-                                   (retry)="projectTypeStore.loadProjectTypes()"/>
-            </section>
-        }
         @case ('google-calendar') {
             <section class="app-card overflow-hidden min-w-0">
                 <div class="px-5 py-4">
@@ -95,12 +74,38 @@
             </section>
         }
     }
+
+    <!-- Lists of named entries (project types, contractor and supplier categories) share one layout -->
+    @if ($namedEntrySection(); as section) {
+        <section class="app-card overflow-hidden min-w-0">
+            <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
+                <div>
+                    <h2 class="m-0 text-base font-semibold text-gray-800">{{ section.texts.title }}</h2>
+                    <p class="m-0 text-xs text-gray-500">{{ section.texts.description }}</p>
+                </div>
+                @if (section.$entries().length) {
+                    <p-button [label]="'New ' + section.texts.singular" icon="pi pi-plus" (onClick)="onAddEntry()"/>
+                }
+            </div>
+            <named-entry-list [texts]="section.texts"
+                              [entries]="section.$entries()"
+                              [loading]="section.$loading()"
+                              [loadFailed]="section.$loadFailed()"
+                              [deleting]="section.$deleting()"
+                              (add)="onAddEntry()"
+                              (rename)="onRenameEntry($event)"
+                              (delete)="onDeleteEntry($event)"
+                              (retry)="section.load()"/>
+        </section>
+    }
 </div>
 
 <edit-system-parameter [systemParameter]="$editedParameter()" (save)="onSave($event)" (closed)="onEditClosed()"/>
 
-<edit-project-type [projectType]="$editedProjectType()" [projectTypes]="projectTypeStore.projectTypes()"
-                   [saving]="projectTypeStore.projectTypeSaving()"
-                   (save)="onSaveProjectType($event)" (closed)="onProjectTypeEditClosed()"/>
+@if ($namedEntrySection(); as section) {
+    <edit-named-entry [texts]="section.texts" [entry]="$editedEntry()" [entries]="section.$entries()"
+                      [saving]="section.$saving()"
+                      (save)="onSaveEntry($event)" (closed)="onEntryEditClosed()"/>
+}
 
 <p-confirmdialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>

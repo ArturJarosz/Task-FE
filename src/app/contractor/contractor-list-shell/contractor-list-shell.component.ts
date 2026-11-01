@@ -46,7 +46,7 @@ export class ContractorListShellComponent implements OnInit {
     readonly $rows = computed<PartnerRow[]>(() => (this.$contractors() ?? []).map(item => ({
         id: item.id!,
         name: item.name ?? '',
-        category: resolveLabel(item.category, this.$contractorTypes()),
+        category: resolveLabel(item.categoryId, this.$contractorTypes()),
         email: item.email,
         telephone: item.telephone,
         count: item.numberOfContractorJobs ?? 0,

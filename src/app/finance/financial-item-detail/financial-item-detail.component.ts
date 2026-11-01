@@ -19,6 +19,7 @@ import {FinancialItemDetailForm, FinancialItemDetailFormProvider} from "./financ
 import {EmptyStateComponent, FieldComponent, LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../shared";
 import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
 import {changedFields, isControlInvalid, isPaymentDateMissing} from "../../shared/utils/form-utils";
+import {capitalize} from "../../shared/utils/label-utils";
 
 // A supply or a contractor job: something a project buys from a partner (supplier or contractor).
 // The shells map their own model to and from this shape; partnerId is the supplierId or contractorId.
@@ -46,8 +47,6 @@ export interface FinancialItemLabels {
 type FinancialItemFormValue = ReturnType<FormGroup<FinancialItemDetailForm>['getRawValue']>;
 
 const DATA_FIELDS: (keyof FinancialItemFormValue)[] = ['name', 'partnerId', 'value', 'hasInvoice', 'paid', 'paymentDate', 'note'];
-
-const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
 
 @Component({
     selector: 'financial-item-detail',

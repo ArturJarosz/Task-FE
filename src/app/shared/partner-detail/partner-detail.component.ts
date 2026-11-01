@@ -10,7 +10,7 @@ import {TooltipModule} from "primeng/tooltip";
 import {MenuItem} from "primeng/api";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {FinancialPartialData} from "../../generated/models/financial-partial-data";
-import {resolveLabel} from "../utils/label-utils";
+import {capitalize, resolveLabel} from "../utils/label-utils";
 import {PageCrumb, PageHeaderComponent} from "../page-header/page-header.component";
 import {FieldComponent} from "../field/field.component";
 import {EmptyStateComponent} from "../empty-state/empty-state.component";
@@ -28,7 +28,7 @@ import {YesNoMarkComponent} from "../yes-no-mark/yes-no-mark.component";
 export interface Partner {
     id?: number;
     name?: string;
-    category?: string;
+    categoryId?: number;
     email?: string;
     telephone?: string;
     note?: string;
@@ -106,12 +106,12 @@ export class PartnerDetailComponent implements OnChanges {
     }
 
     get entityTitle(): string {
-        return this.entityLabel.charAt(0).toUpperCase() + this.entityLabel.slice(1);
+        return capitalize(this.entityLabel);
     }
 
     ngOnChanges(changes: SimpleChanges): void {
         let name = this.partner.name ?? '';
-        this.categoryLabel = resolveLabel(this.partner.category, this.categories);
+        this.categoryLabel = resolveLabel(this.partner.categoryId, this.categories);
         this.initials = name.trim().split(/\s+/).slice(0, 2).map(word => word.charAt(0)).join('').toUpperCase() || '?';
         this.crumbs = [
             {label: 'Home', route: ['/home']},
@@ -130,6 +130,7 @@ export class PartnerDetailComponent implements OnChanges {
     private createForm(): FormGroup {
         return this.formBuilder.group({
             name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
+            // id of the category as a string, the way configuration entries hold it
             category: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
             email: this.formBuilder.control<string>(''),
             telephone: this.formBuilder.control<string>(''),
@@ -163,7 +164,7 @@ export class PartnerDetailComponent implements OnChanges {
         this.form = this.createForm();
         this.form.patchValue({
             name: this.partner.name,
-            category: this.partner.category,
+            category: this.partner.categoryId != null ? String(this.partner.categoryId) : '',
             email: this.partner.email,
             telephone: this.partner.telephone,
             note: this.partner.note,
@@ -190,7 +191,7 @@ export class PartnerDetailComponent implements OnChanges {
         this.showEditDialog = false;
         this.updateEvent.emit({
             name: value.name,
-            category: value.category,
+            categoryId: Number(value.category),
             email: value.email,
             telephone: value.telephone,
             note: value.note,

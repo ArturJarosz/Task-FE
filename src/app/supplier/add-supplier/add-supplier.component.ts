@@ -65,7 +65,7 @@ export class AddSupplierComponent implements OnInit {
         let supplier: Supplier;
         supplier = {
             name: this.addSupplierForm.get('name')?.value,
-            category: this.addSupplierForm.get('category')?.value,
+            categoryId: Number(this.addSupplierForm.get('category')?.value),
             email: this.addSupplierForm.get('email')?.value,
             telephone: this.addSupplierForm.get('telephone')?.value,
             note: this.addSupplierForm.get('note')?.value

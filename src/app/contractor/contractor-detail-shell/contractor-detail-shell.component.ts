@@ -4,7 +4,6 @@ import {ProjectStore} from "../../project/state";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {Contractor} from "../../generated/models/contractor";
 import {ContractorContractorJobsData} from "../../generated/models/contractor-contractor-jobs-data";
-import {ContractorCategory} from "../../generated/models/contractor-category";
 import {Project} from "../../generated/models/project";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -83,7 +82,7 @@ export class ContractorDetailShellComponent implements OnInit {
     onUpdate($event: Partner) {
         let contractor: Contractor = {
             name: $event.name,
-            category: $event.category as ContractorCategory,
+            categoryId: $event.categoryId,
             email: $event.email,
             telephone: $event.telephone,
             note: $event.note,

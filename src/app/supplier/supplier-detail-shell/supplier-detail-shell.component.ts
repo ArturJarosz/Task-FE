@@ -4,7 +4,6 @@ import {ProjectStore} from "../../project/state";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {Supplier} from "../../generated/models/supplier";
 import {SupplierSuppliesData} from "../../generated/models/supplier-supplies-data";
-import {SupplierCategory} from "../../generated/models/supplier-category";
 import {Project} from "../../generated/models/project";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -83,7 +82,7 @@ export class SupplierDetailShellComponent implements OnInit {
     onUpdate($event: Partner) {
         let supplier: Supplier = {
             name: $event.name,
-            category: $event.category as SupplierCategory,
+            categoryId: $event.categoryId,
             email: $event.email,
             telephone: $event.telephone,
             note: $event.note,

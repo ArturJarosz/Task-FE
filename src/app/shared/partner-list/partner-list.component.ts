@@ -7,6 +7,7 @@ import {TooltipModule} from "primeng/tooltip";
 import {MenuItem} from "primeng/api";
 import {EmptyStateComponent} from "../empty-state/empty-state.component";
 import {NotSetComponent} from "../not-set/not-set.component";
+import {capitalize} from "../utils/label-utils";
 
 // A business partner row: contractors and suppliers share the same shape
 export interface PartnerRow {
@@ -54,7 +55,7 @@ export class PartnerListComponent {
     }
 
     get entityTitle(): string {
-        return this.entityLabel.charAt(0).toUpperCase() + this.entityLabel.slice(1);
+        return capitalize(this.entityLabel);
     }
 
     getInitials(name: string): string {
