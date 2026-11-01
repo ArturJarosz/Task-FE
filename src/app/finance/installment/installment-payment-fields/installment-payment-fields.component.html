@@ -1,0 +1,33 @@
+<div [formGroup]="form" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+    <div class="flex items-start gap-3">
+        <p-toggleswitch [inputId]="idPrefix + 'HasInvoice'" formControlName="hasInvoice"/>
+        <label [for]="idPrefix + 'HasInvoice'" class="text-sm font-medium text-gray-700 cursor-pointer">Invoice issued</label>
+    </div>
+    <div class="flex items-start gap-3">
+        <p-toggleswitch [inputId]="idPrefix + 'Paid'" formControlName="paid" (onChange)="paidChange.emit($event.checked)"/>
+        <div>
+            <label [for]="idPrefix + 'Paid'" class="block text-sm font-medium text-gray-700 cursor-pointer">Paid</label>
+            <span class="block text-xs text-gray-500">Turn on to add the payment date</span>
+        </div>
+    </div>
+    <div>
+        <label [for]="idPrefix + 'Value'" class="app-form-label">{{ valueLabel }} <span class="text-error-600">*</span></label>
+        <p-inputnumber [inputId]="idPrefix + 'Value'" formControlName="value" mode="decimal" locale="pl-PL"
+                       [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0" suffix=" zł" [fluid]="true"
+                       (onBlur)="form.controls.value.markAsTouched()"/>
+        @if (isFieldInvalid('value')) {
+            <small class="block mt-1.5 text-xs text-error-600">Enter a value greater than 0 zł</small>
+        }
+    </div>
+    <div>
+        @if (form.controls.paid.value) {
+            <label [for]="idPrefix + 'PaymentDate'" class="app-form-label">Payment date <span class="text-error-600">*</span></label>
+            <p-datepicker [inputId]="idPrefix + 'PaymentDate'" formControlName="paymentDate" dateFormat="dd.mm.yy"
+                          [maxDate]="maxPaymentDate" [showIcon]="true" appendTo="body" [fluid]="true"
+                          (onClose)="form.controls.paymentDate.markAsTouched()"/>
+            @if (isPaymentDateMissing()) {
+                <small class="block mt-1.5 text-xs text-error-600">Select the payment date</small>
+            }
+        }
+    </div>
+</div>

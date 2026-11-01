@@ -15,6 +15,7 @@ import {Installment} from "../../../generated/models/installment";
 import {InstallmentForm, InstallmentFormProvider} from "../form/installment-form-provider";
 import {InstallmentSave} from "../state/installment.state";
 import {EmptyStateComponent, FieldComponent, LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../../shared";
+import {installmentName, isDeposit} from "../installment-utils";
 import {toDateIfExists, toTimeZoneString} from "../../../shared/utils/date-utils";
 import {changedFields, isControlInvalid, isPaymentDateMissing, paymentDateRequiredWhenPaid} from "../../../shared/utils/form-utils";
 
@@ -55,6 +56,8 @@ export class InstallmentDetailComponent implements OnChanges {
     readonly latestPaymentDate = endOfToday();
 
     crumbs: PageCrumb[] = [];
+    name: string = '';
+    deposit: boolean = false;
 
     constructor(private formProvider: InstallmentFormProvider) {
         this.detailForm = this.formProvider.getInstallmentForm();
@@ -68,12 +71,14 @@ export class InstallmentDetailComponent implements OnChanges {
         if (changes['installment'] && this.installment) {
             this.resetForm();
         }
+        this.name = installmentName(this.installment);
+        this.deposit = isDeposit(this.installment);
         this.crumbs = [
             {label: 'Home', route: ['/home']},
             {label: 'Projects', route: ['/projects']},
             {label: this.projectName || 'Project', route: ['/projects', this.projectId]},
             {label: 'Finance', route: ['/projects', this.projectId, 'finance']},
-            {label: this.installment?.stageName ?? 'Installment'},
+            {label: this.installment ? this.name : 'Installment'},
         ];
     }
 

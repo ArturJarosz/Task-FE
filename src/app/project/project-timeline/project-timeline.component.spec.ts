@@ -4,7 +4,7 @@ import {addDays, format, startOfDay} from "date-fns";
 import {ProjectTimelineComponent} from './project-timeline.component';
 import {provideTestDependencies} from '../../../testing/test-providers';
 import {Project} from "../../generated/models/project";
-import {StageStatus} from "../../generated/models";
+import {InstallmentType, StageStatus} from "../../generated/models";
 
 function day(offset: number): string {
     return format(addDays(startOfDay(new Date()), offset), 'yyyy-MM-dd');
@@ -116,6 +116,19 @@ describe('ProjectTimelineComponent', () => {
         fixture.componentRef.setInput('installments', [{id: 9, stageId: 99, paymentDate: day(5), paid: false, value: 100}]);
         fixture.detectChanges();
         expect(component.otherPayments.map(payment => payment.id)).toEqual([9]);
+    });
+
+    it('puts the deposit on the contract row, named "Deposit"', () => {
+        fixture.componentRef.setInput('installments', [
+            {id: 7, type: InstallmentType.DEPOSIT, paymentDate: day(-20), paid: true, value: 3000}
+        ]);
+        fixture.detectChanges();
+
+        expect(component.contractPayments.map(payment => payment.id)).toEqual([7]);
+        expect(component.otherPayments).toEqual([]);
+        expect(component.contractPayments[0].name).toBe('Deposit');
+        let tips = [...fixture.nativeElement.querySelectorAll('[role=img]')].map((marker: HTMLElement) => marker.getAttribute('aria-label')!);
+        expect(tips.some(tip => tip.startsWith('Deposit · '))).toBeTrue();
     });
 
     it('does not list dates under the stage names', () => {

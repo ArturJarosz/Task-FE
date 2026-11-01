@@ -5,6 +5,7 @@ import { FinancialPartialData } from '../models/financial-partial-data';
 import { Installment } from '../models/installment';
 export interface InstallmentProjectData {
   financialData?: FinancialPartialData;
+  hasDeposit?: boolean;
   installments?: Array<Installment>;
   stagesWithoutInstallment?: Array<number>;
 }

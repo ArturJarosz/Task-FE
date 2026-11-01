@@ -9,15 +9,18 @@ import {
     SimpleChanges
 } from '@angular/core';
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
+import {startOfToday} from "date-fns";
 import {ProjectContractForm, ProjectCreateForm, ProjectFormProvider} from "../form/project-form-provider";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {Architect} from "../../generated/models/architect";
 import {Project} from "../../generated/models/project";
 import {Installment} from "../../generated/models/installment";
-import {ConfigurationEntry, Contract, ContractStatus, ProjectStatus} from "../../generated/models";
+import {ConfigurationEntry, Contract, ContractStatus, InstallmentType, ProjectStatus} from "../../generated/models";
 import {ContractStore} from "../contract-status/state/contract.store";
 import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
 import {changedFields} from "../../shared/utils/form-utils";
+import {InstallmentForm, InstallmentFormProvider} from "../../finance/installment/form/installment-form-provider";
+import {InstallmentPaymentFieldsComponent} from "../../finance/installment/installment-payment-fields/installment-payment-fields.component";
 import {FieldComponent, LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../shared";
 import {statusSeverity} from "../../shared/status-severity";
 import {StageListShellComponent} from "../../stage/stage-list-shell/stage-list-shell.component";
@@ -58,7 +61,7 @@ const GAUGE_ARC_LENGTH = Math.PI * 80;
     styleUrls: ['./project-detail.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [LoadErrorComponent, FieldComponent, PageHeaderComponent, StageListShellComponent, ProjectTimelineComponent, ProjectFinancialDetailShellComponent, SelectModule, DatePickerModule, ButtonModule, InputTextModule, Textarea, TagModule, DialogModule, MenuModule, SkeletonModule, ReactiveFormsModule, RouterLink, RouterLinkActive, CurrencyPipe, DatePipe, TooltipModule]
+    imports: [LoadErrorComponent, FieldComponent, PageHeaderComponent, StageListShellComponent, ProjectTimelineComponent, ProjectFinancialDetailShellComponent, SelectModule, DatePickerModule, ButtonModule, InputTextModule, Textarea, TagModule, DialogModule, MenuModule, SkeletonModule, ReactiveFormsModule, RouterLink, RouterLinkActive, CurrencyPipe, DatePipe, TooltipModule, InstallmentPaymentFieldsComponent]
 })
 export class ProjectDetailComponent implements OnChanges {
     @Input()
@@ -79,6 +82,9 @@ export class ProjectDetailComponent implements OnChanges {
     installments: Installment[] | null = [];
     @Input()
     installmentsLoadFailed: boolean = false;
+    // Null while the installments are loading or failed to load
+    @Input()
+    hasDeposit: boolean | null = null;
     @Input()
     view: ProjectDetailView = 'overview';
     @Output()
@@ -91,6 +97,7 @@ export class ProjectDetailComponent implements OnChanges {
     removeProjectEvent: EventEmitter<void> = new EventEmitter<void>();
 
     readonly contractStore = inject(ContractStore)
+    private readonly installmentFormProvider = inject(InstallmentFormProvider);
     protected readonly statusSeverity = statusSeverity;
 
     projectDetailsForm!: FormGroup<ProjectCreateForm>;
@@ -117,6 +124,11 @@ export class ProjectDetailComponent implements OnChanges {
     formInitialized: boolean = false;
 
     showContractDialog: boolean = false;
+    // The deposit, required to sign the contract in the dialog
+    depositForm: FormGroup<InstallmentForm> = this.createDepositForm();
+    // The backend refuses payment dates in the future. Set when the dialog opens, so a page left open overnight
+    // still allows today
+    latestPaymentDate: Date = startOfToday();
     showProjectDialog: boolean = false;
 
     readonly actions: MenuItem[] = [
@@ -291,7 +303,30 @@ export class ProjectDetailComponent implements OnChanges {
 
     onEditContract(): void {
         this.resetForm();
+        this.depositForm = this.createDepositForm();
+        this.latestPaymentDate = startOfToday();
         this.showContractDialog = true;
+    }
+
+    // Signing in this dialog needs the deposit, unless the project already has one (a reopened contract). While that
+    // is not known, the deposit is asked for: the backend refuses signing without one
+    get depositRequired(): boolean {
+        return this.hasDeposit !== true && this.project?.contract?.status !== ContractStatus.SIGNED
+            && this.projectDetailsForm.get('contract.status')?.value === ContractStatus.SIGNED;
+    }
+
+    get canSaveContract(): boolean {
+        return this.shouldUpdateContract() && (!this.depositRequired || this.depositForm.valid);
+    }
+
+    // A deposit is usually paid on the day the contract is signed
+    onDepositPaidChange(paid: boolean): void {
+        if (!paid || this.depositForm.controls.paymentDate.value) {
+            return;
+        }
+        const signingDate: Date | undefined = this.projectDetailsForm.get('contract.signingDate')?.value;
+        const signed = signingDate && !isNaN(signingDate.getTime()) && signingDate <= this.latestPaymentDate;
+        this.depositForm.controls.paymentDate.setValue(signed ? signingDate : startOfToday());
     }
 
     onEditProject(): void {
@@ -306,7 +341,7 @@ export class ProjectDetailComponent implements OnChanges {
     }
 
     onContractUpdate(): void {
-        let contract = this.createContract();
+        let contract: Contract = {...this.createContract(), deposit: this.depositRequired ? this.createDeposit() : undefined};
         this.contractStore.changeStatus({contract: contract});
         this.showContractDialog = false;
     }
@@ -331,6 +366,18 @@ export class ProjectDetailComponent implements OnChanges {
         };
     }
 
+    createDeposit(): Installment {
+        const value = this.depositForm.getRawValue();
+        return {
+            type: InstallmentType.DEPOSIT,
+            value: value.value,
+            hasInvoice: value.hasInvoice,
+            paid: value.paid,
+            // A payment date only makes sense once the deposit is paid
+            paymentDate: value.paid && value.paymentDate ? toTimeZoneString(value.paymentDate) : undefined,
+        };
+    }
+
     createProject(): Project {
         let project: Project;
         project = {
@@ -342,6 +389,13 @@ export class ProjectDetailComponent implements OnChanges {
             note: this.projectDetailsForm.value.note!
         }
         return project;
+    }
+
+    private createDepositForm(): FormGroup<InstallmentForm> {
+        const form = this.installmentFormProvider.getNewInstallmentForm();
+        // Empty, so turning Paid on dates the deposit on the signing day
+        form.controls.paymentDate.setValue(null);
+        return form;
     }
 
     get projectIcon(): string {

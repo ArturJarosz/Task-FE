@@ -1,13 +1,14 @@
 import {Installment} from "../../../generated/models/installment";
-import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
+import {patchState, signalStore, withComputed, withMethods, withState} from "@ngrx/signals";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
 import {catchError, EMPTY, Observable, of, pipe, switchMap, tap} from "rxjs";
-import {inject} from "@angular/core";
+import {computed, inject} from "@angular/core";
 import {InstallmentRestService} from "../rest/installment-rest.service";
 import {InstallmentProjectData} from "../../../generated/models/installment-project-data";
 import {FinancialDataStore} from "../../project-financial-summary/state/financial-data.state";
 import {MessageService} from "primeng/api";
 import {MessageSeverity} from "../../../shared";
+import {installmentName, isDeposit} from "../installment-utils";
 
 // One save from the installment page: the changed data, the payment date of an installment just marked paid, or both
 export interface InstallmentSave {
@@ -42,6 +43,12 @@ export const initialState: InstallmentState = {
 export const InstallmentStore = signalStore(
     {providedIn: 'root'},
     withState(initialState),
+    withComputed(({installmentProjectData, installmentsNeedRefresh, installmentsLoadFailed}) => ({
+        // Null while the project's installments are loading or failed to load: a deposit can't be offered then, as
+        // the project may already have one
+        hasDeposit: computed<boolean | null>(() => installmentsNeedRefresh() || installmentsLoadFailed()
+            ? null : !!installmentProjectData().hasDeposit)
+    })),
     withMethods((store, installmentRestService = inject(InstallmentRestService),
                  financialDataStore = inject(FinancialDataStore), messageService = inject(MessageService)) => ({
         setInstallmentId(installmentId: number) {
@@ -87,6 +94,7 @@ export const InstallmentStore = signalStore(
                 })
             )
         ),
+        // A stage installment; the deposit is added when the contract is signed
         createInstallment: rxMethod<{ installment: Installment }>(
             pipe(
                 switchMap(({installment}) => {
@@ -156,10 +164,10 @@ export const InstallmentStore = signalStore(
                             financialDataStore.setProjectFinancialDataNeedsUpdate();
                             messageService.add({
                                 severity: MessageSeverity.SUCCESS,
-                                summary: paymentDate ? 'Installment paid' : 'Installment updated',
+                                summary: `${isDeposit(saved) ? 'Deposit' : 'Installment'} ${paymentDate ? 'paid' : 'updated'}`,
                                 detail: paymentDate
-                                    ? `Installment for stage ${saved.stageName} is marked as paid.`
-                                    : `Installment for stage ${saved.stageName} was successfully updated.`,
+                                    ? `${describe(saved)} is marked as paid.`
+                                    : `${describe(saved)} was successfully updated.`,
                             });
                         }),
                         // The REST service already shows the error toast. The update may have gone through before
@@ -174,3 +182,8 @@ export const InstallmentStore = signalStore(
         )
     }))
 )
+
+// "The deposit", or the installment of its stage, to start a sentence
+function describe(installment: Installment): string {
+    return isDeposit(installment) ? 'The deposit' : `Installment for stage ${installmentName(installment)}`;
+}
