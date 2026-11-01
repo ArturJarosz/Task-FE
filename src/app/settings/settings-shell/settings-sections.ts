@@ -25,6 +25,12 @@ export const SETTINGS_SECTION_GROUPS: SettingsSectionGroup[] = [
         ]
     },
     {
+        label: 'Partners', sections: [
+            {key: 'contractor-categories', label: 'Contractor categories', icon: 'pi pi-wrench', showsSystemParameters: false},
+            {key: 'supplier-categories', label: 'Supplier categories', icon: 'pi pi-truck', showsSystemParameters: false},
+        ]
+    },
+    {
         label: 'Integrations', sections: [
             {key: 'google-calendar', label: 'Google Calendar', icon: 'pi pi-calendar', showsSystemParameters: true},
         ]

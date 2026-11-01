@@ -32,6 +32,8 @@ import {SystemParameterRestService, SystemParameterRestServiceImpl} from '../app
 import {GoogleCalendarConnectionRestService, GoogleCalendarConnectionRestServiceImpl} from '../app/settings/rest/google-calendar-connection-rest.service';
 import {GoogleCalendarShareRestService, GoogleCalendarShareRestServiceImpl} from '../app/settings/rest/google-calendar-share-rest.service';
 import {ProjectTypeRestService, ProjectTypeRestServiceImpl} from '../app/settings/rest/project-type-rest.service';
+import {ContractorCategoryRestService, ContractorCategoryRestServiceImpl} from '../app/settings/rest/contractor-category-rest.service';
+import {SupplierCategoryRestService, SupplierCategoryRestServiceImpl} from '../app/settings/rest/supplier-category-rest.service';
 
 registerLocaleData(localePl);
 
@@ -78,5 +80,7 @@ export function provideTestDependencies(): (Provider | EnvironmentProviders)[] {
         {provide: GoogleCalendarConnectionRestService, useClass: GoogleCalendarConnectionRestServiceImpl},
         {provide: GoogleCalendarShareRestService, useClass: GoogleCalendarShareRestServiceImpl},
         {provide: ProjectTypeRestService, useClass: ProjectTypeRestServiceImpl},
+        {provide: ContractorCategoryRestService, useClass: ContractorCategoryRestServiceImpl},
+        {provide: SupplierCategoryRestService, useClass: SupplierCategoryRestServiceImpl},
     ];
 }
