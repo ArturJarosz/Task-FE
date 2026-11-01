@@ -39,6 +39,8 @@ export class ProjectDetailShellComponent implements OnInit {
     $stageStatuses: Signal<ConfigurationEntry[]> = this.configurationStore.configuration!.stageStatuses;
     $installments: Signal<Installment[]> = computed(() => this.installmentStore.installmentProjectData().installments ?? []);
     $installmentsLoadFailed: Signal<boolean> = this.installmentStore.installmentsLoadFailed;
+    $installmentsNeedRefresh: Signal<boolean> = this.installmentStore.installmentsNeedRefresh;
+    $hasDeposit: Signal<boolean | null> = this.installmentStore.hasDeposit;
 
     constructor(private route: ActivatedRoute,
                 private router: Router,
@@ -46,6 +48,13 @@ export class ProjectDetailShellComponent implements OnInit {
         effect(() => {
             if (this.$projectNeedsRefresh()) {
                 this.projectStore.loadProject({});
+            }
+        })
+        // Loads the installments when the project is opened, and again after a change such as a deposit added from
+        // the contract dialog
+        effect(() => {
+            if (this.$installmentsNeedRefresh()) {
+                this.installmentStore.loadProjectInstallments({});
             }
         })
     }
@@ -56,8 +65,8 @@ export class ProjectDetailShellComponent implements OnInit {
         this.view = this.route.snapshot.data['view'] ?? 'overview';
         this.projectStore.setProjectId(this.projectId);
         this.projectStore.loadProject({});
+        // The effect above loads them once the project is set
         this.installmentStore.setProjectId(this.projectId);
-        this.installmentStore.loadProjectInstallments({});
 
         this.configurationStore.loadConfiguration({});
         this.architectStore.loadArchitects({});

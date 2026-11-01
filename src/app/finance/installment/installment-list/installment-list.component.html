@@ -1,9 +1,9 @@
 <finance-component-summary [financeComponentDataForm]="installmentsDetailForm">
     <div wrapper-list>
-        <p-table [value]="installmentProjectData.installments ?? []" [tableStyle]="{'min-width': '40rem'}">
+        <p-table [value]="installments" [tableStyle]="{'min-width': '40rem'}">
             <ng-template #header>
                 <tr>
-                    <th>Stage</th>
+                    <th>For</th>
                     <th>Payment date</th>
                     <th class="app-num">Value</th>
                     <th class="w-24 text-center">Invoice</th>
@@ -12,7 +12,9 @@
             </ng-template>
             <ng-template #body let-installment>
                 <tr [routerLink]="['/projects', projectId, 'installments', installment.id]" class="cursor-pointer">
-                    <td class="font-medium text-gray-800">{{ installment.stageName }}</td>
+                    <td>
+                        <span class="font-medium text-gray-800">{{ isDeposit(installment) ? 'Deposit' : installment.stageName }}</span>
+                    </td>
                     <td>
                         @if (installment.paymentDate) {
                             <span>{{ installment.paymentDate | date:'dd.MM.yyyy' }}</span>
@@ -28,7 +30,7 @@
             <ng-template #emptymessage>
                 <tr>
                     <td [attr.colspan]="5" class="p-0">
-                        <app-empty-state icon="pi pi-credit-card" title="No installments yet" text="Add one installment per stage to track client payments."/>
+                        <app-empty-state icon="pi pi-credit-card" title="No installments yet" text="Add the deposit and one installment per stage to track client payments."/>
                     </td>
                 </tr>
             </ng-template>

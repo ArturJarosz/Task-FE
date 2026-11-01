@@ -68,7 +68,7 @@
         @if (rangeStart) {
             <!-- An installment's payment date: a tick in a green circle when paid, an empty grey circle while due, a clock in a red circle once overdue -->
             <ng-template #paymentMarker let-payment>
-                @let paymentText = 'Installment · ' + (payment.date | date:'dd.MM.yyyy') + ' · ' + (payment.value | currency:'PLN':'symbol':'1.2-2') + ' · ' + payment.stateLabel;
+                @let paymentText = payment.name + ' · ' + (payment.date | date:'dd.MM.yyyy') + ' · ' + (payment.value | currency:'PLN':'symbol':'1.2-2') + ' · ' + payment.stateLabel;
                 <span class="absolute top-1/2 z-20 w-[18px] h-[18px] -ml-[9px] -translate-y-1/2 cursor-default"
                       [style.left.%]="payment.left" tabindex="0" role="img"
                       [attr.aria-label]="paymentText" [pTooltip]="paymentText" tooltipPosition="top" tooltipStyleClass="app-chart-tooltip"><svg class="block" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
@@ -172,6 +172,9 @@
                                 }
                             } @else {
                                 <span class="absolute top-1/2 -translate-y-1/2 left-2 text-xs text-gray-400">No start date yet</span>
+                            }
+                            @for (payment of contractPayments; track $index) {
+                                <ng-container *ngTemplateOutlet="paymentMarker; context: {$implicit: payment}"/>
                             }
                         </div>
                     </div>

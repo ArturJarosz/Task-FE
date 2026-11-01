@@ -11,6 +11,8 @@ import {TableModule} from "primeng/table";
 import {RouterLink} from "@angular/router";
 import {CurrencyPipe, DatePipe} from "@angular/common";
 import {EmptyStateComponent, NotSetComponent, YesNoMarkComponent} from "../../../shared";
+import {Installment} from "../../../generated/models/installment";
+import {isDeposit} from "../installment-utils";
 
 @Component({
     selector: 'installment-list',
@@ -26,6 +28,9 @@ export class InstallmentListComponent implements OnChanges {
     projectId: number = 0;
 
     installmentsDetailForm!: FormGroup<FinanceObjectSummaryForm>;
+    // The deposit first, as it is paid before any stage
+    installments: Installment[] = [];
+    protected readonly isDeposit = isDeposit;
 
     constructor(private formProvider: ProjectFinancialSummaryFormProvider) {
     }
@@ -33,6 +38,8 @@ export class InstallmentListComponent implements OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         this.installmentsDetailForm = this.formProvider.getFinanceObjectSummaryForm();
         if (changes['installmentProjectData'] && this.installmentProjectData) {
+            const installments = this.installmentProjectData.installments ?? [];
+            this.installments = [...installments.filter(isDeposit), ...installments.filter(installment => !isDeposit(installment))];
             this.fillFormData();
         }
     }

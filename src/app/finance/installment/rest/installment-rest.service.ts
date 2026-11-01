@@ -44,7 +44,7 @@ export class InstallmentRestServiceImpl extends AbstractRestService implements I
         return this.httpClient.put<Installment>(
             `${this.projectsUrl}/${projectId}/installments/${installmentId}`, installment)
             .pipe(catchError(error => this.handleError(error, this.messageService,
-                `Error updating installment with id: ${installmentId} for stage: ${installment.stageName}`)));
+                `Error updating installment with id: ${installmentId}`)));
     }
 
     // An update never changes the paid flag; marking an installment paid is this separate call

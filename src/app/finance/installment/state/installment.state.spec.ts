@@ -3,6 +3,7 @@ import {HttpTestingController} from '@angular/common/http/testing';
 
 import {InstallmentStore} from './installment.state';
 import {provideTestDependencies} from '../../../../testing/test-providers';
+import {InstallmentType} from '../../../generated/models';
 
 describe('InstallmentStore', () => {
     let store: InstanceType<typeof InstallmentStore>;
@@ -40,6 +41,29 @@ describe('InstallmentStore', () => {
         expect(store.installmentsLoadFailed()).toBeFalse();
         httpTesting.expectOne(request => request.url.endsWith('/projects/3/installments-data')).flush({installments: []});
         expect(store.installmentsLoadFailed()).toBeFalse();
+    });
+
+    it('should know whether the project has a deposit only once its installments are loaded', () => {
+        store.setProjectId(1);
+        expect(store.hasDeposit()).toBeNull();
+
+        store.loadProjectInstallments({});
+        httpTesting.expectOne(request => request.url.endsWith('/projects/1/installments-data')).flush({hasDeposit: true});
+        expect(store.hasDeposit()).toBeTrue();
+
+        store.setProjectId(2);
+        store.loadProjectInstallments({});
+        httpTesting.expectOne(request => request.url.endsWith('/projects/2/installments-data'))
+            .flush('Server error', {status: 500, statusText: 'Server Error'});
+        expect(store.hasDeposit()).toBeNull();
+    });
+
+    it('should create a stage installment through its stage', () => {
+        store.setProjectId(1);
+        store.createInstallment({installment: {type: InstallmentType.STAGE, stageId: 10, value: 1000}});
+
+        httpTesting.expectOne(request => request.method === 'POST' && request.url.endsWith('/projects/1/stages/10/installments'))
+            .flush({id: 8, stageId: 10, value: 1000});
     });
 
     describe('saving an installment', () => {

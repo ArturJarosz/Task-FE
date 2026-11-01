@@ -2,26 +2,25 @@ import {ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnChang
 import {InstallmentStore} from "../state/installment.state";
 import {AbstractAddEditComponent} from "../../../shared";
 import {Stage} from "../../../generated/models/stage";
-import {FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {InstallmentForm, InstallmentFormProvider} from "../form/installment-form-provider";
 import {Installment} from "../../../generated/models/installment";
+import {InstallmentType} from "../../../generated/models/installment-type";
 import {toTimeZoneString} from "../../../shared/utils/date-utils";
-import {isControlInvalid, isPaymentDateMissing, paymentDateRequiredWhenPaid} from "../../../shared/utils/form-utils";
+import {InstallmentPaymentFieldsComponent} from "../installment-payment-fields/installment-payment-fields.component";
 import {DialogModule} from "primeng/dialog";
 import {SelectModule} from "primeng/select";
-import {InputNumberModule} from "primeng/inputnumber";
-import {ToggleSwitchModule} from "primeng/toggleswitch";
-import {DatePickerModule} from "primeng/datepicker";
 import {Textarea} from "primeng/textarea";
 import {ButtonModule} from "primeng/button";
 
+// Adds the installment of a stage. The deposit is added when the contract is signed
 @Component({
     selector: 'add-installment',
     templateUrl: './add-installment.component.html',
     styleUrl: './add-installment.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [DialogModule, SelectModule, InputNumberModule, ToggleSwitchModule, DatePickerModule, Textarea, ButtonModule, ReactiveFormsModule]
+    imports: [DialogModule, SelectModule, Textarea, ButtonModule, ReactiveFormsModule, InstallmentPaymentFieldsComponent]
 })
 export class AddInstallmentComponent implements OnInit, AbstractAddEditComponent, OnChanges {
     @Input()
@@ -68,14 +67,6 @@ export class AddInstallmentComponent implements OnInit, AbstractAddEditComponent
         this.installmentStore.createInstallment({installment: this.createInstallment()});
     }
 
-    isFieldInvalid(path: string): boolean {
-        return isControlInvalid(this.addInstallmentForm, path);
-    }
-
-    isPaymentDateMissing(): boolean {
-        return isPaymentDateMissing(this.addInstallmentForm);
-    }
-
     isSaveEnabled(): boolean {
         return this.addInstallmentForm.valid && this.isAvailableStage(this.addInstallmentForm.controls.stageId.value);
     }
@@ -83,6 +74,7 @@ export class AddInstallmentComponent implements OnInit, AbstractAddEditComponent
     private createInstallment(): Installment {
         const value = this.addInstallmentForm.getRawValue();
         return {
+            type: InstallmentType.STAGE,
             value: value.value,
             stageId: value.stageId,
             hasInvoice: value.hasInvoice,
@@ -94,11 +86,7 @@ export class AddInstallmentComponent implements OnInit, AbstractAddEditComponent
     }
 
     private resetFields(): void {
-        this.addInstallmentForm = this.addInstallmentFormProvider.getInstallmentForm();
-        // The provider is shared with the installment detail page, so the add-only rules are added here
-        this.addInstallmentForm.controls.value.addValidators(Validators.min(0.01));
-        this.addInstallmentForm.addValidators(paymentDateRequiredWhenPaid);
-        this.addInstallmentForm.updateValueAndValidity();
+        this.addInstallmentForm = this.addInstallmentFormProvider.getNewInstallmentForm();
         this.prefillStage();
     }
 

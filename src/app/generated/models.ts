@@ -38,6 +38,7 @@ export { GoogleCalendarConnectionStatus } from './models/google-calendar-connect
 export type { Installment } from './models/installment';
 export type { InstallmentProjectData } from './models/installment-project-data';
 export type { Installments } from './models/installments';
+export { InstallmentType } from './models/installment-type';
 export { PeriodType } from './models/period-type';
 export type { Project } from './models/project';
 export type { ProjectCreate } from './models/project-create';

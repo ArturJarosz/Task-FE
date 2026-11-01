@@ -213,9 +213,17 @@
             </div>
         </div>
     </form>
+    @if (depositRequired) {
+        <!-- Signing needs the deposit, paid on signing -->
+        <div class="flex flex-col gap-5 mt-6 pt-6 border-t border-gray-200">
+            <h4 class="m-0 text-sm font-semibold text-gray-800">Deposit</h4>
+            <app-installment-payment-fields [form]="depositForm" idPrefix="contractDeposit" valueLabel="Deposit value"
+                                            [maxPaymentDate]="latestPaymentDate" (paidChange)="onDepositPaidChange($event)"/>
+        </div>
+    }
     <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancelEdit()"/>
-        <p-button label="Save changes" [disabled]="!shouldUpdateContract()" (onClick)="onContractUpdate()"/>
+        <p-button label="Save changes" [disabled]="!canSaveContract" (onClick)="onContractUpdate()"/>
     </ng-template>
 </p-dialog>
 

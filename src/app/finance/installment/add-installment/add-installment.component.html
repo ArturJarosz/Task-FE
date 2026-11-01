@@ -18,36 +18,7 @@
                 <small class="block mt-1.5 text-xs text-gray-500">Only stages without an installment are listed</small>
             }
         </div>
-        <div class="flex items-start gap-3">
-            <p-toggleswitch inputId="addInstallmentHasInvoice" formControlName="hasInvoice"/>
-            <label for="addInstallmentHasInvoice" class="text-sm font-medium text-gray-700 cursor-pointer">Invoice issued</label>
-        </div>
-        <div class="flex items-start gap-3">
-            <p-toggleswitch inputId="addInstallmentPaid" formControlName="paid"/>
-            <div>
-                <label for="addInstallmentPaid" class="block text-sm font-medium text-gray-700 cursor-pointer">Paid</label>
-                <span class="block text-xs text-gray-500">Turn on to add the payment date</span>
-            </div>
-        </div>
-        <div>
-            <label for="addInstallmentValue" class="app-form-label">Value <span class="text-error-600">*</span></label>
-            <p-inputnumber inputId="addInstallmentValue" formControlName="value" mode="decimal" locale="pl-PL"
-                           [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0" suffix=" zł" [fluid]="true"/>
-            @if (isFieldInvalid('value')) {
-                <small class="block mt-1.5 text-xs text-error-600">Enter a value greater than 0 zł</small>
-            }
-        </div>
-        <div>
-            @if (addInstallmentForm.controls.paid.value) {
-                <label for="addInstallmentPaymentDate" class="app-form-label">Payment date <span class="text-error-600">*</span></label>
-                <p-datepicker inputId="addInstallmentPaymentDate" formControlName="paymentDate" dateFormat="dd.mm.yy"
-                              [showIcon]="true" appendTo="body" [fluid]="true"
-                              (onClose)="addInstallmentForm.controls.paymentDate.markAsTouched()"/>
-                @if (isPaymentDateMissing()) {
-                    <small class="block mt-1.5 text-xs text-error-600">Select the payment date</small>
-                }
-            }
-        </div>
+        <app-installment-payment-fields class="sm:col-span-2" [form]="addInstallmentForm" idPrefix="addInstallment"/>
         <div class="sm:col-span-2">
             <label for="addInstallmentNote" class="app-form-label">Note</label>
             <textarea id="addInstallmentNote" formControlName="note" pTextarea rows="3" [autoResize]="true" class="w-full"></textarea>
