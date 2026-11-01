@@ -3,7 +3,7 @@ import {addDays, format, startOfDay} from "date-fns";
 
 import {ProjectsTimelineComponent} from './projects-timeline.component';
 import {provideTestDependencies} from '../../../testing/test-providers';
-import {ClientType, ContractStatus, Project, ProjectStatus, ProjectType} from "../../generated/models";
+import {ClientType, ContractStatus, Project, ProjectStatus} from "../../generated/models";
 
 function day(offset: number): string {
     return format(addDays(startOfDay(new Date()), offset), 'yyyy-MM-dd');
@@ -15,13 +15,13 @@ describe('ProjectsTimelineComponent', () => {
 
     const projects: Project[] = [
         {
-            id: 1, name: 'Lublin 01', type: ProjectType.INTERIOR_HOUSE, status: ProjectStatus.IN_PROGRESS,
+            id: 1, name: 'Lublin 01', typeId: 4, status: ProjectStatus.IN_PROGRESS,
             client: {id: 7, clientType: ClientType.PRIVATE, firstName: 'Jan', lastName: 'Kowalski'},
             startDate: day(-30), endDate: day(69),
             contract: {startDate: day(-40), deadline: day(-5), status: ContractStatus.SIGNED}
         },
         {
-            id: 2, name: 'Gdańsk house', type: ProjectType.ARCHITECTURE_HOUSE,
+            id: 2, name: 'Gdańsk house', typeId: 1,
             contract: {startDate: day(100), endDate: day(90), status: ContractStatus.OFFER}
         },
         {id: 3, name: 'No dates'}

@@ -164,7 +164,7 @@ export class ProjectDetailComponent implements OnChanges {
         this.projectDetailsForm.patchValue({
             id: this.project.id,
             name: this.project.name,
-            type: this.project.type,
+            type: this.project.typeId != null ? String(this.project.typeId) : '',
             architectId: this.project.architect!.id,
             clientId: this.project.client!.id,
             status: this.project.status,
@@ -195,8 +195,8 @@ export class ProjectDetailComponent implements OnChanges {
             this.resolvedContractStatusLabel = resolveLabel(this.project.contract.status.toString(),
                 this.contractStatuses!);
         }
-        if (this.projectTypes && this.projectTypes.length > 0 && this.project?.type) {
-            this.resolvedProjectTypeLabel = resolveLabel(this.project.type.toString(), this.projectTypes!)
+        if (this.projectTypes && this.projectTypes.length > 0 && this.project?.typeId != null) {
+            this.resolvedProjectTypeLabel = resolveLabel(this.project.typeId, this.projectTypes!)
         }
 
         this.architectName = `${this.project?.architect!.firstName} ${this.project?.architect!.lastName}`;
@@ -335,7 +335,9 @@ export class ProjectDetailComponent implements OnChanges {
         let project: Project;
         project = {
             name: this.projectDetailsForm.value.name,
-            type: this.projectDetailsForm.value.type,
+            // the type is always sent (the current one when unchanged); an empty one goes as missing, which the
+            // backend rejects, instead of as id 0
+            typeId: this.projectDetailsForm.value.type ? Number(this.projectDetailsForm.value.type) : undefined,
             architect: {...this.project?.architect!, id: this.projectDetailsForm.value.architectId},
             note: this.projectDetailsForm.value.note!
         }
@@ -343,7 +345,8 @@ export class ProjectDetailComponent implements OnChanges {
     }
 
     get projectIcon(): string {
-        return this.project?.type?.toString().endsWith('HOUSE') ? 'pi pi-home' : 'pi pi-building';
+        // project types are named by users, so the icon follows the name
+        return this.resolvedProjectTypeLabel?.toLowerCase().includes('house') ? 'pi pi-home' : 'pi pi-building';
     }
 
     get gaugeOffset(): number {

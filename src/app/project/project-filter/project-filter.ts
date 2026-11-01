@@ -1,5 +1,5 @@
 import {endOfMonth, format, startOfMonth} from "date-fns";
-import {Architect, Client, ClientType, ConfigurationEntry, Contract, ContractStatus, Project, ProjectType} from "../../generated/models";
+import {Architect, Client, ClientType, ConfigurationEntry, Contract, ContractStatus, Project} from "../../generated/models";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {earliest, isDate, latest, spanOf, TimelineScale, toDay} from "../timeline/timeline-scale";
 
@@ -8,7 +8,8 @@ export interface ProjectFilter {
     search: string;
     clientId: number | null;
     architectId: number | null;
-    types: ProjectType[];
+    // ids of project types, as in the configuration entries
+    types: string[];
     contractStatuses: ContractStatus[];
     // Months picked in the period range: [first, last]; the last is null while only one month is picked
     period: (Date | null)[] | null;
@@ -128,7 +129,7 @@ export function matchesFilter(project: Project, filter: ProjectFilter, today: Da
     if (filter.architectId != null && project.architect?.id !== filter.architectId) {
         return false;
     }
-    if (filter.types.length && (!project.type || !filter.types.includes(project.type))) {
+    if (filter.types.length && (project.typeId == null || !filter.types.includes(String(project.typeId)))) {
         return false;
     }
     let contractStatus = project.contract?.status;
