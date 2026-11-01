@@ -20,6 +20,11 @@ export const SETTINGS_SECTION_GROUPS: SettingsSectionGroup[] = [
         ]
     },
     {
+        label: 'Projects', sections: [
+            {key: 'project-types', label: 'Project types', icon: 'pi pi-tags', showsSystemParameters: false},
+        ]
+    },
+    {
         label: 'Integrations', sections: [
             {key: 'google-calendar', label: 'Google Calendar', icon: 'pi pi-calendar', showsSystemParameters: true},
         ]

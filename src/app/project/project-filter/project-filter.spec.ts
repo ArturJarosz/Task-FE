@@ -1,5 +1,5 @@
 import {addDays, format, startOfDay} from "date-fns";
-import {ClientType, ContractStatus, Project, ProjectType} from "../../generated/models";
+import {ClientType, ContractStatus, Project} from "../../generated/models";
 import {
     activeFilters,
     contractPastDeadline,
@@ -20,14 +20,14 @@ function day(offset: number): string {
 
 describe('project filter', () => {
     const lublin: Project = {
-        id: 1, name: 'Lublin 01', type: ProjectType.INTERIOR_HOUSE,
+        id: 1, name: 'Lublin 01', typeId: 4,
         client: {id: 7, clientType: ClientType.PRIVATE, firstName: 'Jan', lastName: 'Kowalski'},
         architect: {id: 3, firstName: 'Anna', lastName: 'Nowak'},
         startDate: day(-30),
         contract: {startDate: day(-40), deadline: day(-5), status: ContractStatus.SIGNED}
     };
     const gdansk: Project = {
-        id: 2, name: 'Gdańsk house', type: ProjectType.ARCHITECTURE_HOUSE,
+        id: 2, name: 'Gdańsk house', typeId: 1,
         client: {id: 8, clientType: ClientType.CORPORATE, companyName: 'Firma ABC'},
         contract: {startDate: day(100), endDate: day(200), deadline: day(210), status: ContractStatus.OFFER}
     };
@@ -48,8 +48,8 @@ describe('project filter', () => {
         expect(matchesFilter(lublin, {...EMPTY_FILTER, clientId: 7}, today)).toBeTrue();
         expect(matchesFilter(gdansk, {...EMPTY_FILTER, clientId: 7}, today)).toBeFalse();
         expect(matchesFilter(gdansk, {...EMPTY_FILTER, architectId: 3}, today)).toBeFalse();
-        expect(matchesFilter(gdansk, {...EMPTY_FILTER, types: [ProjectType.ARCHITECTURE_HOUSE]}, today)).toBeTrue();
-        expect(matchesFilter(undated, {...EMPTY_FILTER, types: [ProjectType.CONCEPT]}, today)).toBeFalse();
+        expect(matchesFilter(gdansk, {...EMPTY_FILTER, types: ['1']}, today)).toBeTrue();
+        expect(matchesFilter(undated, {...EMPTY_FILTER, types: ['2']}, today)).toBeFalse();
         expect(matchesFilter(lublin, {...EMPTY_FILTER, contractStatuses: [ContractStatus.OFFER]}, today)).toBeFalse();
     });
 

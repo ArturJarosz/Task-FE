@@ -35,6 +35,7 @@ import {CalendarRestService, CalendarRestServiceImpl} from './calendar/rest/cale
 import {SystemParameterRestService, SystemParameterRestServiceImpl} from './settings/rest/system-parameter-rest.service';
 import {GoogleCalendarConnectionRestService, GoogleCalendarConnectionRestServiceImpl} from './settings/rest/google-calendar-connection-rest.service';
 import {GoogleCalendarShareRestService, GoogleCalendarShareRestServiceImpl} from './settings/rest/google-calendar-share-rest.service';
+import {ProjectTypeRestService, ProjectTypeRestServiceImpl} from './settings/rest/project-type-rest.service';
 
 registerLocaleData(localePl); // money as "50 000,00 zł", dates as "15.10.2026"
 
@@ -87,5 +88,6 @@ export const appConfig: ApplicationConfig = {
         {provide: SystemParameterRestService, useClass: SystemParameterRestServiceImpl},
         {provide: GoogleCalendarConnectionRestService, useClass: GoogleCalendarConnectionRestServiceImpl},
         {provide: GoogleCalendarShareRestService, useClass: GoogleCalendarShareRestServiceImpl},
+        {provide: ProjectTypeRestService, useClass: ProjectTypeRestServiceImpl},
     ]
 };

@@ -109,7 +109,7 @@ export const ProjectStore = signalStore(
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
                                     summary: `Project created.`,
-                                    detail: `New project: '${project.name}' of type: ${project.type} was created.`
+                                    detail: `New project: '${project.name}' was created.`
                                 });
                             }),
                             catchError(() => EMPTY)

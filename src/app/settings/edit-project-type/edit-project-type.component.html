@@ -1,0 +1,28 @@
+<p-dialog [visible]="visible" (visibleChange)="!$event && onHide()" [modal]="true" appendTo="body" [draggable]="false"
+          [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}">
+    <ng-template #header>
+        <div class="flex flex-col gap-1">
+            <span class="p-dialog-title">{{ isNew ? 'New project type' : 'Rename ' + projectType?.name }}</span>
+            <span class="text-sm text-gray-500">
+                {{ isNew ? 'It can be chosen for new and existing projects.' : 'Projects of this type show the new name.' }}
+            </span>
+        </div>
+    </ng-template>
+    <!-- No form directive here, so Enter would submit natively and reload the page -->
+    <form (submit)="$event.preventDefault(); onSave()">
+        <label for="projectTypeName" class="app-form-label">Name <span class="text-error-600">*</span></label>
+        <input id="projectTypeName" type="text" [formControl]="name" pInputText class="w-full"
+               placeholder="e.g. Interior office" [attr.maxlength]="maxLength" (blur)="name.markAsDirty()"
+               aria-describedby="projectTypeNameHint" [attr.aria-invalid]="(name.invalid && name.dirty) || nameTaken"/>
+        @if (nameTaken) {
+            <small id="projectTypeNameHint" class="block mt-1.5 text-xs text-error-600">A project type with this name already exists</small>
+        } @else if (name.invalid && name.dirty) {
+            <small id="projectTypeNameHint" class="block mt-1.5 text-xs text-error-600">Enter a name</small>
+        }
+    </form>
+    <ng-template #footer>
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onHide()"/>
+        <p-button [label]="isNew ? 'Create project type' : 'Save changes'" [disabled]="!canSave" [loading]="saving"
+                  (onClick)="onSave()"/>
+    </ng-template>
+</p-dialog>

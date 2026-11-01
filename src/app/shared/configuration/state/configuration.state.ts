@@ -38,8 +38,8 @@ export const ConfigurationStore = signalStore(
     {providedIn: 'root'},
     withState(initialState),
     withMethods((store, configurationRestService = inject(ConfigurationRestService),
-                 messageService = inject(MessageService)) => ({
-        loadConfiguration: rxMethod<{}>(
+                 messageService = inject(MessageService)) => {
+        const loadConfiguration = rxMethod<{}>(
             pipe(
                 tap(() => patchState(store, {configurationLoadFailed: false})),
                 switchMap(() => {
@@ -58,8 +58,16 @@ export const ConfigurationStore = signalStore(
                     return of({})
                 })
             )
-        )
-    }))
+        );
+        return {
+            loadConfiguration: loadConfiguration,
+            // After a configurable entry (such as a project type) changed: the next page that loads the
+            // configuration fetches it again
+            markConfigurationStale(): void {
+                patchState(store, {needRefresh: true});
+            }
+        };
+    })
 )
 
 

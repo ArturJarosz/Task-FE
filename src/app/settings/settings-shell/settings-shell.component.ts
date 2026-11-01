@@ -6,7 +6,7 @@ import {ConfirmationService} from "primeng/api";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {PageCrumb, PageHeaderComponent} from "../../shared";
 import {SystemParameter} from "../../generated/models/system-parameter";
-import {GoogleCalendarSettingsStore, SystemParameterStore} from "../state";
+import {GoogleCalendarSettingsStore, ProjectTypeStore, SystemParameterStore} from "../state";
 import {EditSystemParameterComponent} from "../edit-system-parameter/edit-system-parameter.component";
 import {SystemParameterListComponent} from "../system-parameter-list/system-parameter-list.component";
 import {AppearanceSettingsComponent} from "../appearance-settings/appearance-settings.component";
@@ -17,6 +17,10 @@ import {GoogleCalendarConnectionStatus} from "../../generated/models/google-cale
 import {GOOGLE_CALENDAR_PARAMETERS, toGoogleCalendarParameters} from "../google-calendar-parameters";
 import {THEME_COLOR_PARAMETER} from "../../theme/theme-colors";
 import {SETTINGS_SECTION_GROUPS, SETTINGS_SECTIONS} from "./settings-sections";
+import {ProjectTypeListComponent} from "../project-type-list/project-type-list.component";
+import {EditProjectTypeComponent} from "../edit-project-type/edit-project-type.component";
+import {ProjectType} from "../../generated/models/project-type";
+import {ButtonModule} from "primeng/button";
 
 @Component({
     selector: 'settings-shell',
@@ -25,11 +29,12 @@ import {SETTINGS_SECTION_GROUPS, SETTINGS_SECTIONS} from "./settings-sections";
     standalone: true,
     imports: [PageHeaderComponent, SystemParameterListComponent, EditSystemParameterComponent,
         AppearanceSettingsComponent, GoogleCalendarSettingsComponent, GoogleCalendarSharesComponent, ConfirmDialogModule,
-        RouterLink, RouterLinkActive]
+        RouterLink, RouterLinkActive, ProjectTypeListComponent, EditProjectTypeComponent, ButtonModule]
 })
 export class SettingsShellComponent {
     readonly systemParameterStore = inject(SystemParameterStore);
     readonly googleCalendarSettingsStore = inject(GoogleCalendarSettingsStore);
+    readonly projectTypeStore = inject(ProjectTypeStore);
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
     private readonly confirmationService = inject(ConfirmationService);
@@ -55,6 +60,8 @@ export class SettingsShellComponent {
     readonly $loading = this.systemParameterStore.systemParametersNeedRefresh;
     readonly $loadFailed = this.systemParameterStore.systemParametersLoadFailed;
     readonly $editedParameter = signal<SystemParameter | null>(null);
+    // A project type without an id is a new one
+    readonly $editedProjectType = signal<ProjectType | null>(null);
 
     readonly $googleCalendarParameters = computed(() =>
         toGoogleCalendarParameters(this.systemParameterStore.systemParameters()));
@@ -73,6 +80,12 @@ export class SettingsShellComponent {
                     this.systemParameterStore.setSystemParametersNeedRefresh();
                     this.systemParameterStore.loadSystemParameters({});
                 });
+            }
+        });
+        effect(() => {
+            if (this.$section()?.key === 'project-types') {
+                // Every visit: the number of projects of each type changes as projects are added
+                untracked(() => this.projectTypeStore.loadProjectTypes());
             }
         });
         effect(() => {
@@ -98,6 +111,39 @@ export class SettingsShellComponent {
 
     onEditClosed(): void {
         this.$editedParameter.set(null);
+    }
+
+    onAddProjectType(): void {
+        this.$editedProjectType.set({name: ''});
+    }
+
+    onRenameProjectType(projectType: ProjectType): void {
+        this.$editedProjectType.set(projectType);
+    }
+
+    onSaveProjectType(projectType: ProjectType): void {
+        this.projectTypeStore.saveProjectType({projectType, afterSave: () => this.$editedProjectType.set(null)});
+    }
+
+    onProjectTypeEditClosed(): void {
+        this.$editedProjectType.set(null);
+    }
+
+    onDeleteProjectType(projectType: ProjectType): void {
+        this.confirmationService.confirm({
+            header: 'Delete project type',
+            message: `Delete ${projectType.name}? This can't be undone.`,
+            icon: 'pi pi-exclamation-triangle',
+            acceptButtonProps: {label: 'Delete', severity: 'danger'},
+            rejectButtonProps: {label: 'Cancel', severity: 'secondary', outlined: true},
+            accept: () => {
+                this.projectTypeStore.deleteProjectType(projectType);
+                this.confirmationService.close();
+            },
+            reject: () => {
+                this.confirmationService.close();
+            }
+        });
     }
 
     onGoogleCalendarSave(systemParameters: SystemParameter[]): void {
