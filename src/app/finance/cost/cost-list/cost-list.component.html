@@ -13,7 +13,7 @@
             <ng-template #body let-cost>
                 <tr [routerLink]="['/projects', projectId, 'costs', cost.id]" class="cursor-pointer">
                     <td class="font-medium text-gray-800">{{ cost.name }}</td>
-                    <td>{{ getCostCategoryLabel(cost.category) }}</td>
+                    <td>{{ getCostCategoryLabel(cost.categoryId) }}</td>
                     <td>{{ cost.date | date:'dd.MM.yyyy' }}</td>
                     <td class="app-num">{{ cost.value | currency:'PLN':'symbol':'1.2-2' }}</td>
                     <td class="w-24 text-center"><app-yes-no-mark [value]="cost.hasInvoice" label="Invoice"/></td>
@@ -22,7 +22,7 @@
             <ng-template #emptymessage>
                 <tr>
                     <td [attr.colspan]="5" class="p-0">
-                        <app-empty-state icon="pi pi-shopping-cart" title="No costs yet" text="Add fuel, mistakes and other costs of this project."/>
+                        <app-empty-state icon="pi pi-shopping-cart" title="No costs yet" text="Add the costs of this project, such as travel or corrections."/>
                     </td>
                 </tr>
             </ng-template>

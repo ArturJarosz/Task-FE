@@ -73,6 +73,16 @@ export type { DeleteContractorJob$Params as DeleteContractorJob$Params } from '.
 export { deleteContractorJob as deleteContractorJob } from './fn/contractor-job/delete-contractor-job';
 export type { GetProjectContractorJobsData$Params as GetProjectContractorJobsData$Params } from './fn/contractor-job/get-project-contractor-jobs-data';
 export { getProjectContractorJobsData as getProjectContractorJobsData } from './fn/contractor-job/get-project-contractor-jobs-data';
+export type { GetCostCategories$Params as GetCostCategories$Params } from './fn/cost-category/get-cost-categories';
+export { getCostCategories as getCostCategories } from './fn/cost-category/get-cost-categories';
+export type { CreateCostCategory$Params as CreateCostCategory$Params } from './fn/cost-category/create-cost-category';
+export { createCostCategory as createCostCategory } from './fn/cost-category/create-cost-category';
+export type { GetCostCategory$Params as GetCostCategory$Params } from './fn/cost-category/get-cost-category';
+export { getCostCategory as getCostCategory } from './fn/cost-category/get-cost-category';
+export type { UpdateCostCategory$Params as UpdateCostCategory$Params } from './fn/cost-category/update-cost-category';
+export { updateCostCategory as updateCostCategory } from './fn/cost-category/update-cost-category';
+export type { DeleteCostCategory$Params as DeleteCostCategory$Params } from './fn/cost-category/delete-cost-category';
+export { deleteCostCategory as deleteCostCategory } from './fn/cost-category/delete-cost-category';
 export type { GetCostsForProject$Params as GetCostsForProject$Params } from './fn/cost/get-costs-for-project';
 export { getCostsForProject as getCostsForProject } from './fn/cost/get-costs-for-project';
 export type { CreateCost$Params as CreateCost$Params } from './fn/cost/create-cost';

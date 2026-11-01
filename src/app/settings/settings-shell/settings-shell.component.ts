@@ -8,6 +8,7 @@ import {PageCrumb, PageHeaderComponent} from "../../shared";
 import {SystemParameter} from "../../generated/models/system-parameter";
 import {
     ContractorCategoryStore,
+    CostCategoryStore,
     GoogleCalendarSettingsStore,
     ProjectTypeStore,
     SupplierCategoryStore,
@@ -27,6 +28,7 @@ import {NamedEntryListComponent} from "../named-entry-list/named-entry-list.comp
 import {EditNamedEntryComponent} from "../edit-named-entry/edit-named-entry.component";
 import {
     CONTRACTOR_CATEGORY_TEXTS,
+    COST_CATEGORY_TEXTS,
     NamedEntry,
     NamedEntryTexts,
     PROJECT_TYPE_TEXTS,
@@ -63,6 +65,7 @@ export class SettingsShellComponent {
     private readonly projectTypeStore = inject(ProjectTypeStore);
     private readonly contractorCategoryStore = inject(ContractorCategoryStore);
     private readonly supplierCategoryStore = inject(SupplierCategoryStore);
+    private readonly costCategoryStore = inject(CostCategoryStore);
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
     private readonly confirmationService = inject(ConfirmationService);
@@ -133,6 +136,19 @@ export class SettingsShellComponent {
             save: (entry, afterSave) =>
                 this.supplierCategoryStore.saveSupplierCategory({supplierCategory: entry, afterSave}),
             delete: entry => this.supplierCategoryStore.deleteSupplierCategory(entry),
+        },
+        'cost-categories': {
+            texts: COST_CATEGORY_TEXTS,
+            $entries: computed(() => this.costCategoryStore.costCategories()
+                .map(category => ({id: category.id, name: category.name, usageCount: category.numberOfCosts}))),
+            $loading: computed(() => !this.costCategoryStore.costCategoriesLoaded()
+                && !this.costCategoryStore.costCategoriesLoadFailed()),
+            $loadFailed: this.costCategoryStore.costCategoriesLoadFailed,
+            $saving: this.costCategoryStore.costCategorySaving,
+            $deleting: this.costCategoryStore.costCategoryDeleting,
+            load: () => this.costCategoryStore.loadCostCategories(),
+            save: (entry, afterSave) => this.costCategoryStore.saveCostCategory({costCategory: entry, afterSave}),
+            delete: entry => this.costCategoryStore.deleteCostCategory(entry),
         },
     };
     readonly $namedEntrySection = computed(() => this.namedEntrySections[this.$section()?.key ?? '']);

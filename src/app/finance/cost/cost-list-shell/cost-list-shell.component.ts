@@ -39,6 +39,8 @@ export class CostListShellComponent implements OnInit{
     }
 
     ngOnInit(): void {
+        // Category labels come from the configuration, which a category change in Settings marks stale
+        this.configurationStore.loadConfiguration({});
         this.costStore.setProjectId(this.projectId);
         this.costStore.loadCostsProjectData({});
     }
