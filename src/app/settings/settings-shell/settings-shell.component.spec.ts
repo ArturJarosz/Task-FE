@@ -138,6 +138,26 @@ describe('SettingsShellComponent', () => {
         expect(element.textContent).toContain('New supplier category');
     });
 
+    it('should list cost categories and block deleting a category used by costs', async () => {
+        httpTesting.expectOne(request => request.url.endsWith('/system-parameters')).flush([]);
+        await harness.navigateByUrl('/settings/cost-categories', SettingsShellComponent);
+        httpTesting.expectOne(request => request.url.endsWith('/cost-categories')).flush([
+            {id: 100, name: 'Fuel', numberOfCosts: 3},
+            {id: 101, name: 'Parking', numberOfCosts: 0}
+        ]);
+        harness.detectChanges();
+
+        let element = harness.routeNativeElement!;
+        expect(element.querySelector('nav .app-nav-item.active')?.textContent).toContain('Cost categories');
+        expect(element.textContent).toContain('New cost category');
+        let rows = Array.from(element.querySelectorAll('[aria-label="Cost categories"] [role="row"]'));
+        expect(rows[0].textContent).toContain('Costs');
+        expect(rows[1].textContent).toContain('3 costs');
+        let deleteButton = (row: Element) => row.querySelector('p-button[icon="pi pi-trash"] button') as HTMLButtonElement;
+        expect(deleteButton(rows[1]).disabled).toBeTrue();
+        expect(deleteButton(rows[2]).disabled).toBeFalse();
+    });
+
     it('should show the Google Calendar section with its connection status', async () => {
         httpTesting.expectOne(request => request.url.endsWith('/system-parameters')).flush([]);
         await harness.navigateByUrl('/settings/google-calendar', SettingsShellComponent);

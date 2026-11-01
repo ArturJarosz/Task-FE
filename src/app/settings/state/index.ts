@@ -3,3 +3,4 @@ export * from './google-calendar-settings.state';
 export * from './project-type.state';
 export * from './contractor-category.state';
 export * from './supplier-category.state';
+export * from './cost-category.state';

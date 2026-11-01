@@ -17,7 +17,7 @@
         <div>
             <label for="addCostCategory" class="app-form-label">Category <span class="text-error-600">*</span></label>
             <p-select inputId="addCostCategory" formControlName="category" [options]="$costCategories()"
-                      optionLabel="label" optionValue="id" appendTo="body" [fluid]="true"/>
+                      optionLabel="label" optionValue="id" placeholder="Select a category" appendTo="body" [fluid]="true"/>
         </div>
         <div>
             <label for="addCostValue" class="app-form-label">Value <span class="text-error-600">*</span></label>

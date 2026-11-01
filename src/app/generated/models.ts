@@ -26,7 +26,8 @@ export type { ContractorJobProjectData } from './models/contractor-job-project-d
 export type { Contractors } from './models/contractors';
 export { ContractStatus } from './models/contract-status';
 export type { Cost } from './models/cost';
-export { CostCategory } from './models/cost-category';
+export type { CostCategories } from './models/cost-categories';
+export type { CostCategory } from './models/cost-category';
 export type { CostProjectData } from './models/cost-project-data';
 export type { Costs } from './models/costs';
 export type { EntityProjectsSummary } from './models/entity-projects-summary';
