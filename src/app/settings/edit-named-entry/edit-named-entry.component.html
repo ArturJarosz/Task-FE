@@ -1,0 +1,26 @@
+<p-dialog [visible]="visible" (visibleChange)="!$event && onHide()" [modal]="true" appendTo="body" [draggable]="false"
+          [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}">
+    <ng-template #header>
+        <div class="flex flex-col gap-1">
+            <span class="p-dialog-title">{{ isNew ? 'New ' + texts.singular : 'Rename ' + entry?.name }}</span>
+            <span class="text-sm text-gray-500">{{ isNew ? texts.newHint : texts.renameHint }}</span>
+        </div>
+    </ng-template>
+    <!-- No form directive here, so Enter would submit natively and reload the page -->
+    <form (submit)="$event.preventDefault(); onSave()">
+        <label for="namedEntryName" class="app-form-label">Name <span class="text-error-600">*</span></label>
+        <input id="namedEntryName" type="text" [formControl]="name" pInputText class="w-full"
+               [placeholder]="texts.placeholder" [attr.maxlength]="maxLength" (blur)="name.markAsDirty()"
+               aria-describedby="namedEntryNameHint" [attr.aria-invalid]="(name.invalid && name.dirty) || nameTaken"/>
+        @if (nameTaken) {
+            <small id="namedEntryNameHint" class="block mt-1.5 text-xs text-error-600">A {{ texts.singular }} with this name already exists</small>
+        } @else if (name.invalid && name.dirty) {
+            <small id="namedEntryNameHint" class="block mt-1.5 text-xs text-error-600">Enter a name</small>
+        }
+    </form>
+    <ng-template #footer>
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onHide()"/>
+        <p-button [label]="isNew ? 'Create ' + texts.singular : 'Save changes'" [disabled]="!canSave" [loading]="saving"
+                  (onClick)="onSave()"/>
+    </ng-template>
+</p-dialog>

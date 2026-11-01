@@ -106,6 +106,38 @@ describe('SettingsShellComponent', () => {
         expect(deleteButton(rows[1]).disabled).toBeTrue();
     });
 
+    it('should list contractor categories and block deleting a category used by contractors', async () => {
+        httpTesting.expectOne(request => request.url.endsWith('/system-parameters')).flush([]);
+        await harness.navigateByUrl('/settings/contractor-categories', SettingsShellComponent);
+        httpTesting.expectOne(request => request.url.endsWith('/contractor-categories')).flush([
+            {id: 100, name: 'Electrician', numberOfContractors: 1},
+            {id: 101, name: 'Roofer', numberOfContractors: 0}
+        ]);
+        harness.detectChanges();
+
+        let element = harness.routeNativeElement!;
+        expect(element.querySelector('nav .app-nav-item.active')?.textContent).toContain('Contractor categories');
+        expect(element.textContent).toContain('New contractor category');
+        let rows = Array.from(element.querySelectorAll('[aria-label="Contractor categories"] [role="row"]'));
+        expect(rows[0].textContent).toContain('Contractors');
+        expect(rows[1].textContent).toContain('1 contractor');
+        let deleteButton = (row: Element) => row.querySelector('p-button[icon="pi pi-trash"] button') as HTMLButtonElement;
+        expect(deleteButton(rows[1]).disabled).toBeTrue();
+        expect(deleteButton(rows[2]).disabled).toBeFalse();
+    });
+
+    it('should offer to add the first supplier category when there are none', async () => {
+        httpTesting.expectOne(request => request.url.endsWith('/system-parameters')).flush([]);
+        await harness.navigateByUrl('/settings/supplier-categories', SettingsShellComponent);
+        httpTesting.expectOne(request => request.url.endsWith('/supplier-categories')).flush([]);
+        harness.detectChanges();
+
+        let element = harness.routeNativeElement!;
+        expect(element.querySelector('nav .app-nav-item.active')?.textContent).toContain('Supplier categories');
+        expect(element.textContent).toContain('No supplier categories yet');
+        expect(element.textContent).toContain('New supplier category');
+    });
+
     it('should show the Google Calendar section with its connection status', async () => {
         httpTesting.expectOne(request => request.url.endsWith('/system-parameters')).flush([]);
         await harness.navigateByUrl('/settings/google-calendar', SettingsShellComponent);

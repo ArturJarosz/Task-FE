@@ -22,4 +22,13 @@ describe('AddContractorComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should send the chosen category as a numeric categoryId', () => {
+    let createContractor = spyOn(component.contractorStore, 'createContractor');
+    component.addContractorForm.patchValue({name: 'NORSON', category: '101'});
+
+    component.onSave();
+
+    expect(createContractor).toHaveBeenCalledWith({contractor: jasmine.objectContaining({categoryId: 101})});
+  });
 });

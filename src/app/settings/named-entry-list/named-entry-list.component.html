@@ -1,13 +1,13 @@
 @if (loadFailed) {
-    <app-empty-state icon="pi pi-exclamation-triangle" title="Couldn't load project types"
+    <app-empty-state icon="pi pi-exclamation-triangle" [title]="'Couldn\'t load ' + texts.plural"
                      text="Check your connection and try again.">
         <p-button label="Try again" icon="pi pi-refresh" severity="secondary" [outlined]="true" (onClick)="retry.emit()"/>
     </app-empty-state>
 } @else {
-    <div role="table" aria-label="Project types" class="text-sm">
+    <div role="table" [attr.aria-label]="texts.title" class="text-sm">
         <div role="row" class="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_5.5rem] gap-3 items-center px-5 py-2 bg-gray-50 border-y border-gray-200 text-xs text-gray-500">
             <span role="columnheader">Name</span>
-            <span role="columnheader">Projects</span>
+            <span role="columnheader">{{ usageHeader }}</span>
             <span role="columnheader"><span class="sr-only">Actions</span></span>
         </div>
         @if (loading) {
@@ -19,28 +19,27 @@
                 </div>
             }
         } @else {
-            @for (projectType of projectTypes; track projectType.id) {
+            @for (entry of entries; track entry.id) {
                 <div role="row" class="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_5.5rem] gap-3 items-center px-5 py-1.5 border-b border-gray-100 last:border-b-0 hover:bg-gray-50">
-                    <span role="cell" class="min-w-0 truncate font-medium text-gray-800">{{ projectType.name }}</span>
-                    <span role="cell" class="app-num text-left text-gray-500">{{ projectsText(projectType) }}</span>
+                    <span role="cell" class="min-w-0 truncate font-medium text-gray-800">{{ entry.name }}</span>
+                    <span role="cell" class="app-num text-left text-gray-500">{{ usageText(entry) }}</span>
                     <span role="cell" class="flex justify-end">
                         <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" severity="secondary"
-                                  [pTooltip]="'Rename ' + projectType.name" tooltipPosition="left"
-                                  [ariaLabel]="'Rename ' + projectType.name" (onClick)="rename.emit(projectType)"/>
+                                  [pTooltip]="'Rename ' + entry.name" tooltipPosition="left"
+                                  [ariaLabel]="'Rename ' + entry.name" (onClick)="rename.emit(entry)"/>
                         <!-- The tooltip sits on a span, because a disabled button gets no pointer events -->
-                        <span [pTooltip]="deleteTooltip(projectType)" tooltipPosition="left">
+                        <span [pTooltip]="deleteTooltip(entry)" tooltipPosition="left">
                             <p-button icon="pi pi-trash" [text]="true" [rounded]="true" severity="secondary"
-                                      [ariaLabel]="deleteTooltip(projectType)"
-                                      [disabled]="isUsed(projectType) || deleting !== null"
-                                      [loading]="deleting === projectType.id"
-                                      (onClick)="delete.emit(projectType)"/>
+                                      [ariaLabel]="deleteTooltip(entry)"
+                                      [disabled]="isUsed(entry) || deleting !== null"
+                                      [loading]="deleting === entry.id"
+                                      (onClick)="delete.emit(entry)"/>
                         </span>
                     </span>
                 </div>
             } @empty {
-                <app-empty-state icon="pi pi-tags" title="No project types yet"
-                                 text="Add the kinds of work you take on, such as interior design or architecture.">
-                    <p-button label="New project type" icon="pi pi-plus" (onClick)="add.emit()"/>
+                <app-empty-state [icon]="texts.emptyIcon" [title]="'No ' + texts.plural + ' yet'" [text]="texts.emptyText">
+                    <p-button [label]="'New ' + texts.singular" icon="pi pi-plus" (onClick)="add.emit()"/>
                 </app-empty-state>
             }
         }

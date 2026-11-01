@@ -13,3 +13,8 @@ export function resolveLabel(id: string | number | null | undefined, entries: Co
     let maybeLabel = entries.find(element => element.id === key)?.label;
     return maybeLabel ? maybeLabel : key;
 }
+
+// "contractor" -> "Contractor", for nouns used both inside sentences and as titles
+export function capitalize(text: string): string {
+    return text.charAt(0).toUpperCase() + text.slice(1);
+}

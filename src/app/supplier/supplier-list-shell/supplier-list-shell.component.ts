@@ -46,7 +46,7 @@ export class SupplierListShellComponent implements OnInit {
     readonly $rows = computed<PartnerRow[]>(() => (this.$suppliers() ?? []).map(item => ({
         id: item.id!,
         name: item.name ?? '',
-        category: resolveLabel(item.category, this.$supplierTypes()),
+        category: resolveLabel(item.categoryId, this.$supplierTypes()),
         email: item.email,
         telephone: item.telephone,
         count: item.numberOfSupplies ?? 0,
