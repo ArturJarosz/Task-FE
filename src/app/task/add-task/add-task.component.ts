@@ -88,7 +88,7 @@ export class AddTaskComponent implements OnInit {
         const value = this.addTaskForm.getRawValue();
         return {
             name: value.name,
-            type: value.type,
+            typeId: Number(value.type),
             note: value.note ?? undefined,
             architectId: value.architectId ?? undefined,
         };

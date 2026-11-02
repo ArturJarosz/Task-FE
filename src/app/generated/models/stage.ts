@@ -3,7 +3,6 @@
 
 import { Installment } from '../models/installment';
 import { StageStatus } from '../models/stage-status';
-import { StageType } from '../models/stage-type';
 import { Task } from '../models/task';
 export interface Stage {
   architectId?: number;
@@ -20,5 +19,5 @@ export interface Stage {
   status?: StageStatus;
   tasks?: Array<Task>;
   tasksNumber?: number;
-  type?: StageType;
+  typeId?: number;
 }

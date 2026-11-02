@@ -158,6 +158,46 @@ describe('SettingsShellComponent', () => {
         expect(deleteButton(rows[2]).disabled).toBeFalse();
     });
 
+    it('should list stage types and block deleting a type used by stages', async () => {
+        httpTesting.expectOne(request => request.url.endsWith('/system-parameters')).flush([]);
+        await harness.navigateByUrl('/settings/stage-types', SettingsShellComponent);
+        httpTesting.expectOne(request => request.url.endsWith('/stage-types')).flush([
+            {id: 100, name: 'Visualisations', numberOfStages: 3},
+            {id: 101, name: 'Functional layout', numberOfStages: 0}
+        ]);
+        harness.detectChanges();
+
+        let element = harness.routeNativeElement!;
+        expect(element.querySelector('nav .app-nav-item.active')?.textContent).toContain('Stage types');
+        expect(element.textContent).toContain('New stage type');
+        let rows = Array.from(element.querySelectorAll('[aria-label="Stage types"] [role="row"]'));
+        expect(rows[0].textContent).toContain('Stages');
+        expect(rows[1].textContent).toContain('3 stages');
+        let deleteButton = (row: Element) => row.querySelector('p-button[icon="pi pi-trash"] button') as HTMLButtonElement;
+        expect(deleteButton(rows[1]).disabled).toBeTrue();
+        expect(deleteButton(rows[2]).disabled).toBeFalse();
+    });
+
+    it('should list task types and block deleting a type used by tasks', async () => {
+        httpTesting.expectOne(request => request.url.endsWith('/system-parameters')).flush([]);
+        await harness.navigateByUrl('/settings/task-types', SettingsShellComponent);
+        httpTesting.expectOne(request => request.url.endsWith('/task-types')).flush([
+            {id: 100, name: 'Render', numberOfTasks: 3},
+            {id: 101, name: 'Shopping', numberOfTasks: 0}
+        ]);
+        harness.detectChanges();
+
+        let element = harness.routeNativeElement!;
+        expect(element.querySelector('nav .app-nav-item.active')?.textContent).toContain('Task types');
+        expect(element.textContent).toContain('New task type');
+        let rows = Array.from(element.querySelectorAll('[aria-label="Task types"] [role="row"]'));
+        expect(rows[0].textContent).toContain('Tasks');
+        expect(rows[1].textContent).toContain('3 tasks');
+        let deleteButton = (row: Element) => row.querySelector('p-button[icon="pi pi-trash"] button') as HTMLButtonElement;
+        expect(deleteButton(rows[1]).disabled).toBeTrue();
+        expect(deleteButton(rows[2]).disabled).toBeFalse();
+    });
+
     it('should show the Google Calendar section with its connection status', async () => {
         httpTesting.expectOne(request => request.url.endsWith('/system-parameters')).flush([]);
         await harness.navigateByUrl('/settings/google-calendar', SettingsShellComponent);

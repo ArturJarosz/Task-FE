@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
-import {resolveLabel} from "../../shared/utils/label-utils";
+import {resolveKnownLabel, resolveLabel} from "../../shared/utils/label-utils";
 import {Task} from "../../generated/models/task";
 import {DeleteTaskDto} from "../model/task";
 import {Architect} from "../../generated/models/architect";
@@ -48,8 +48,8 @@ export class TaskListComponent {
     constructor(private router: Router) {
     }
 
-    getTypeLabel(type: string): string {
-        return resolveLabel(type, this.taskTypes);
+    getTypeLabel(typeId: number | undefined): string {
+        return resolveKnownLabel(typeId, this.taskTypes);
     }
 
     getStatusLabel(type: string): string {

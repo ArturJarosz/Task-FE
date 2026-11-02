@@ -22,6 +22,8 @@ export const SETTINGS_SECTION_GROUPS: SettingsSectionGroup[] = [
     {
         label: 'Projects', sections: [
             {key: 'project-types', label: 'Project types', icon: 'pi pi-tags', showsSystemParameters: false},
+            {key: 'stage-types', label: 'Stage types', icon: 'pi pi-list', showsSystemParameters: false},
+            {key: 'task-types', label: 'Task types', icon: 'pi pi-check-square', showsSystemParameters: false},
         ]
     },
     {

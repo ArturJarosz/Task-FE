@@ -17,7 +17,7 @@ import {StageForm, StageFormProvider} from "../form/stage-form-provider";
 import {StageDto} from "../model/stage";
 import {Architect, ConfigurationEntry, Stage, StageStatus} from "../../generated/models";
 import {EmptyStateComponent, FieldComponent, LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../shared";
-import {resolveLabel} from "../../shared/utils/label-utils";
+import {resolveKnownLabel, resolveLabel} from "../../shared/utils/label-utils";
 import {statusSeverity} from "../../shared/status-severity";
 import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
 import {changedFields} from "../../shared/utils/form-utils";
@@ -96,7 +96,7 @@ export class StageDetailComponent implements OnChanges {
         }
         if (this.stage) {
             this.resolvedStatusLabel = resolveLabel(this.stage.status, this.stageStatuses);
-            this.resolvedTypeLabel = resolveLabel(this.stage.type, this.stageTypes);
+            this.resolvedTypeLabel = resolveKnownLabel(this.stage.typeId, this.stageTypes);
             this.architectName = this.architectOptions.find(option => option.id === this.stage?.architectId)?.name ?? '';
         }
         this.crumbs = [
@@ -139,7 +139,7 @@ export class StageDetailComponent implements OnChanges {
         const value = this.stageDetailsForm.getRawValue();
         this.updateEvent.emit({
             name: value.name,
-            type: value.type,
+            typeId: Number(value.type),
             startDate: toTimeZoneString(value.startDate ?? undefined),
             endDate: toTimeZoneString(value.endDate ?? undefined),
             deadline: toTimeZoneString(value.deadline ?? undefined),
@@ -156,7 +156,7 @@ export class StageDetailComponent implements OnChanges {
         this.stageDetailsForm.reset({
             id: this.stage.id,
             name: this.stage.name,
-            type: this.stage.type,
+            type: this.stage.typeId != null ? String(this.stage.typeId) : '',
             status: this.stage.status,
             startDate: toDateIfExists(this.stage.startDate) ?? null,
             deadline: toDateIfExists(this.stage.deadline) ?? null,

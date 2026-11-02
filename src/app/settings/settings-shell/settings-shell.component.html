@@ -83,19 +83,19 @@
                     <h2 class="m-0 text-base font-semibold text-gray-800">{{ section.texts.title }}</h2>
                     <p class="m-0 text-xs text-gray-500">{{ section.texts.description }}</p>
                 </div>
-                @if (section.$entries().length) {
+                @if (section.store.entries().length) {
                     <p-button [label]="'New ' + section.texts.singular" icon="pi pi-plus" (onClick)="onAddEntry()"/>
                 }
             </div>
             <named-entry-list [texts]="section.texts"
-                              [entries]="section.$entries()"
-                              [loading]="section.$loading()"
-                              [loadFailed]="section.$loadFailed()"
-                              [deleting]="section.$deleting()"
+                              [entries]="section.store.entries()"
+                              [loading]="section.store.entriesLoading()"
+                              [loadFailed]="section.store.entriesLoadFailed()"
+                              [deleting]="section.store.entryDeleting()"
                               (add)="onAddEntry()"
                               (rename)="onRenameEntry($event)"
                               (delete)="onDeleteEntry($event)"
-                              (retry)="section.load()"/>
+                              (retry)="section.store.loadEntries()"/>
         </section>
     }
 </div>
@@ -103,8 +103,8 @@
 <edit-system-parameter [systemParameter]="$editedParameter()" (save)="onSave($event)" (closed)="onEditClosed()"/>
 
 @if ($namedEntrySection(); as section) {
-    <edit-named-entry [texts]="section.texts" [entry]="$editedEntry()" [entries]="section.$entries()"
-                      [saving]="section.$saving()"
+    <edit-named-entry [texts]="section.texts" [entry]="$editedEntry()" [entries]="section.store.entries()"
+                      [saving]="section.store.entrySaving()"
                       (save)="onSaveEntry($event)" (closed)="onEntryEditClosed()"/>
 }
 

@@ -97,7 +97,7 @@ export class AddStageComponent implements OnInit {
         const value = this.addStageForm.getRawValue();
         const stage: Stage = {
             name: value.name,
-            type: value.type,
+            typeId: Number(value.type),
             note: value.note ?? undefined,
             deadline: toTimeZoneString(value.deadline ?? undefined),
             architectId: value.architectId ?? undefined
