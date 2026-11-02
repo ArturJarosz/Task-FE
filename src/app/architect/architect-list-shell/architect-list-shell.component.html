@@ -3,9 +3,9 @@
 @if ($architectsLoadFailed()) {
     <app-load-error title="Couldn't load architects" text="Check your connection and try again." (retry)="onRetry()"/>
 } @else {
-    <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-gutter">
         <!-- KPIs -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
             <app-kpi-card icon="pi pi-id-card" label="Architects">{{ $kpis().architects }}</app-kpi-card>
             <app-kpi-card icon="pi pi-briefcase" label="With active projects">{{ $kpis().withActiveProjects }}</app-kpi-card>
         </div>

@@ -1,6 +1,6 @@
 // App theme v2 — PrimeNG 19 preset ("TailAdmin" style). Rules: DESIGN_GUIDELINES.md
 //
-// Brand colour (default muted blue #415cc8), TailAdmin greys, soft radii (8px controls, 16px cards), pill status tags.
+// Brand colour (default muted blue #415cc8), TailAdmin greys, soft radii (8px controls and status tags, 16px cards).
 // Every PrimeNG component reads these tokens. Change the look HERE, never with ::ng-deep.
 //
 // Colours are CSS variables from styles.css, never hex values: ThemeService rewrites the brand palette at runtime
@@ -22,6 +22,9 @@ const brandTint = scale(shade => `var(--color-brand-${shade})`);
 // Greys; 0 is the card/control surface
 const gray = { 0: 'var(--color-white)', ...scale(shade => `var(--color-gray-${shade})`) };
 const white = 'var(--color-white)';
+// Status tag fill: the light tint with 8% of the tag's text colour mixed in, so tags stand out on white cards.
+// 8% is as far as it goes: on a darker fill the amber text drops below 4.5:1.
+const tagFill = (tint: string, text: string) => `color-mix(in srgb, ${text} 8%, ${tint})`;
 
 export const AppThemePreset = definePreset(Aura, {
   primitive: {
@@ -47,10 +50,10 @@ export const AppThemePreset = definePreset(Aura, {
       shadow: 'none',
     },
 
-    // 44px controls with 16px text (line height fixed at 24px in styles.css)
+    // 40px controls with 16px text (line height fixed at 24px in styles.css)
     formField: {
       paddingX: '0.875rem',
-      paddingY: '0.5625rem', // 24px line + 2 x 9px + 2px border = 44px
+      paddingY: '0.4375rem', // 24px line + 2 x 7px + 2px border = 40px
       borderRadius: '{border.radius.md}',
     },
 
@@ -111,15 +114,29 @@ export const AppThemePreset = definePreset(Aura, {
     button: {
       root: {
         paddingX: '1rem',
-        paddingY: '0.5625rem', // 24px line + 2 x 9px + 2px border = 44px = --spacing-control in styles.css
+        paddingY: '0.4375rem', // 24px line + 2 x 7px + 2px border = 40px = --spacing-control in styles.css
         borderRadius: '{border.radius.md}',
         iconOnlyWidth: 'var(--spacing-control)', // icon-only buttons are square
         // All buttons share one height: size="small" renders like the default size
         sm: {
           fontSize: '1rem',
           paddingX: '1rem',
-          paddingY: '0.5625rem',
+          paddingY: '0.4375rem',
           iconOnlyWidth: 'var(--spacing-control)',
+        },
+      },
+      // Outline buttons (severity="secondary" [outlined]="true") get a brand outline and text, so they read as buttons;
+      // the solid primary still leads. brand-600 text keeps 4.5:1 with any Theme color.
+      colorScheme: {
+        light: {
+          outlined: {
+            secondary: {
+              hoverBackground: brandTint[50],
+              activeBackground: brandTint[100],
+              borderColor: brandTint[300],
+              color: brandTint[600],
+            },
+          },
         },
       },
     },
@@ -138,17 +155,17 @@ export const AppThemePreset = definePreset(Aura, {
         fontSize: '0.875rem',
         fontWeight: '500',
         padding: '0.125rem 0.625rem',
-        borderRadius: '999px',
+        borderRadius: '{border.radius.md}', // 8px, the same corner as buttons
       },
       // Text one shade darker than TailAdmin's so it passes 4.5:1 contrast
       colorScheme: {
         light: {
-          primary: { background: brandTint[50], color: brandTint[600] },
-          info: { background: brandTint[50], color: brandTint[600] },
-          secondary: { background: gray[100], color: gray[700] },
-          success: { background: 'var(--color-success-50)', color: 'var(--color-success-700)' },
-          warn: { background: 'var(--color-warning-50)', color: 'var(--color-warning-700)' },
-          danger: { background: 'var(--color-error-50)', color: 'var(--color-error-700)' },
+          primary: { background: tagFill(brandTint[50], brandTint[600]), color: brandTint[600] },
+          info: { background: tagFill(brandTint[50], brandTint[600]), color: brandTint[600] },
+          secondary: { background: tagFill(gray[100], gray[700]), color: gray[700] },
+          success: { background: tagFill('var(--color-success-50)', 'var(--color-success-700)'), color: 'var(--color-success-700)' },
+          warn: { background: tagFill('var(--color-warning-50)', 'var(--color-warning-700)'), color: 'var(--color-warning-700)' },
+          danger: { background: tagFill('var(--color-error-50)', 'var(--color-error-700)'), color: 'var(--color-error-700)' },
           contrast: { background: gray[800], color: white },
         },
       },
@@ -197,8 +214,8 @@ export const AppThemePreset = definePreset(Aura, {
 
     datatable: {
       headerCell: {
-        background: gray[50],
-        borderColor: gray[100],
+        background: gray[100], // gray-500 text on it is 4.5:1, so it can't get darker without darker text
+        borderColor: gray[200], // ends the band, also above a gray-100 group row (financial report)
         color: gray[500],
         padding: '0.75rem 1.5rem', // 24px sides line table text up with the card header
       },

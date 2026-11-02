@@ -1,7 +1,7 @@
 <app-page-header title="Project" [crumbs]="crumbs"/>
 
 @if (project) {
-    <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-gutter">
         <!-- Header card -->
         <section class="app-card flex flex-wrap items-center gap-5 p-6">
             <div class="flex items-center justify-center shrink-0 w-[72px] h-[72px] rounded-2xl bg-brand-50 text-brand-500">
@@ -37,9 +37,9 @@
         </nav>
         @switch (view) {
             @case ('overview') {
-                <div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_6px)_minmax(0,1fr)] gap-6 items-start">
+                <div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_var(--spacing-gutter)/4)_minmax(0,1fr)] gap-gutter items-start">
                     <!-- Main column -->
-                    <div class="flex flex-col gap-6 min-w-0">
+                    <div class="flex flex-col gap-gutter min-w-0">
                         <section class="app-card">
                             <div class="app-card-header">
                                 <h3 class="app-card-title">Contract</h3>
@@ -78,8 +78,8 @@
                         </section>
                     </div>
                     <!-- Side column -->
-                    <div class="flex flex-col gap-6">
-                        <section class="rounded-2xl border border-gray-200 bg-gray-100">
+                    <div class="flex flex-col gap-gutter">
+                        <section class="rounded-2xl border border-gray-200 bg-gray-100 shadow-card">
                             <div class="rounded-2xl bg-white px-6 pt-6 pb-8 shadow-theme-xs">
                                 <div class="flex items-start justify-between gap-4">
                                     <div>
@@ -102,7 +102,7 @@
                                     </svg>
                                     <div class="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1.5">
                                         <span class="app-gauge-value">{{ paidPercent }}%</span>
-                                        <span class="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-700">{{ installmentsSummary }}</span>
+                                        <span class="app-badge">{{ installmentsSummary }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -159,7 +159,7 @@
         <app-load-error title="Couldn't load this project" backLabel="Back to projects"
                         [backRoute]="['/projects']" (retry)="reloadEvent.emit()"/>
     } @else {
-        <div class="flex flex-col gap-6">
+        <div class="flex flex-col gap-gutter">
             <div class="app-card flex items-center gap-5 p-6">
                 <p-skeleton width="72px" height="72px" borderRadius="16px"/>
                 <div class="flex flex-col gap-2 flex-1">
@@ -167,7 +167,7 @@
                     <p-skeleton width="24rem" height="1rem"/>
                 </div>
             </div>
-            <div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_6px)_minmax(0,1fr)] gap-6">
+            <div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_var(--spacing-gutter)/4)_minmax(0,1fr)] gap-gutter">
                 <div class="app-card p-6"><p-skeleton height="12rem"/></div>
                 <div class="app-card p-6"><p-skeleton height="12rem"/></div>
             </div>

@@ -95,12 +95,23 @@
   --color-chart-6: #7a5af8;
 
   --shadow-theme-xs: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
+  /* Cards: a thin contact shadow plus a wide, blurred one under the card that lifts it off the grey page */
+  --shadow-card: 0 1px 3px 0 rgba(16, 24, 40, 0.06), 0 10px 28px -4px rgba(16, 24, 40, 0.12);
   --shadow-focus-ring: 0 0 0 4px var(--app-focus-ring);
+  /* Active segment of a segmented control (inset-shadow-pressed): a 1px inner ring and a soft inner shadow, the same on
+     every side (no offset), so the segment still looks centred in its frame */
+  --inset-shadow-pressed: inset 0 0 0 1px rgba(16, 24, 40, 0.04), inset 0 0 3px 0 rgba(16, 24, 40, 0.11);
+  /* Segmented control track (inset-shadow-track): a soft inner shadow from the top and a faint 1px inner edge, so the
+     gray-100 track shows on the gray-50 page as well as on white cards */
+  --inset-shadow-track: inset 0 1px 2px 0 rgba(16, 24, 40, 0.08), inset 0 0 0 1px rgba(16, 24, 40, 0.06);
 
   /* Control height (h-control): buttons, inputs, the segmented control frame, the calendar toolbar.
      Items inside a segmented frame (2px padding) use h-control-inner. The PrimeNG preset uses the same value. */
-  --spacing-control: 2.75rem;
+  --spacing-control: 2.5rem;
   --spacing-control-inner: calc(var(--spacing-control) - 0.25rem);
+
+  /* Gutter (gap-gutter): the space between cards and between grid columns of cards */
+  --spacing-gutter: 1rem;
 }
 
 /* ---------- Dark mode ----------
@@ -170,36 +181,60 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* PrimeNG: inherit Outfit and use 16px text in controls and tables */
-.p-component,
-.p-inputtext,
-.p-select-label,
-.p-button-label,
-.p-datatable,
-.p-tag {
-  font-family: inherit;
+/* App shell backdrop: gray-50 with a faint, blurred glow of the brand colour centred on the top right intersection of
+   a 3 x 3 grid over the screen (2/3 across, 1/3 down), fixed so it stays while the page scrolls */
+.app-backdrop {
+  background-color: var(--color-gray-50);
+  background-image: radial-gradient(ellipse 45% 45% at 66.67% 33.33%, color-mix(in srgb, var(--color-brand-500) 8%, transparent), transparent);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
 }
-.p-inputtext,
-.p-select-label,
-.p-button-label,
-.p-datatable .p-datatable-tbody > tr > td {
-  font-size: 1rem;
+
+/* PrimeNG: inherit Outfit and use 16px text in controls and tables. In the components layer: above PrimeNG's own
+   styles (the primeng layer), below Tailwind utilities, so a text-* class on a cell or control still wins. */
+@layer components {
+  .p-component,
+  .p-inputtext,
+  .p-select-label,
+  .p-button-label,
+  .p-datatable,
+  .p-tag {
+    font-family: inherit;
+  }
+  .p-inputtext,
+  .p-select-label,
+  .p-button-label,
+  .p-datatable .p-datatable-thead > tr > th,
+  .p-datatable .p-datatable-tbody > tr > td {
+    font-size: 1rem;
+  }
+  /* Fixed line height, so the preset's padding gives the control height whatever the inherited line height is */
+  .p-inputtext,
+  .p-select-label,
+  .p-button-label {
+    line-height: 1.5rem;
+  }
+  /* Outline buttons get the inputs' small shadow; their brand outline and text come from the preset */
+  .p-button-outlined.p-button-secondary {
+    box-shadow: var(--shadow-theme-xs);
+  }
 }
-/* Fixed line height, so the preset's padding gives 44px controls whatever the inherited line height is */
-.p-inputtext,
-.p-select-label,
-.p-button-label {
-  line-height: 1.5rem;
-}
-.p-datatable .p-datatable-thead > tr > th {
-  font-size: 0.9375rem;
+/* Table headers: a short gray-300 line between columns, as a background on the cell's left edge (no positioning, so
+   sticky or frozen headers would keep working). Div tables get theirs from .app-table-head. */
+.p-datatable .p-datatable-thead > tr > th + th,
+.app-calendar .fc .fc-col-header-cell + .fc-col-header-cell {
+  background-image: linear-gradient(var(--color-gray-300), var(--color-gray-300));
+  background-size: 1px 1.25rem;
+  background-position: left center;
+  background-repeat: no-repeat;
 }
 
 /* ---------- Reusable layout classes ---------- */
 @layer components {
-  /* Page header: title left, breadcrumb right */
+  /* Page header: title left, breadcrumb right. At least one control high, so a page with header buttons (the
+     dashboard) starts its cards at the same height as one without */
   .app-page-header {
-    @apply flex flex-wrap items-center justify-between gap-3 mb-6;
+    @apply flex flex-wrap items-center justify-between gap-3 min-h-control mb-6;
   }
   .app-page-title {
     @apply m-0 text-[22px] leading-[30px] font-semibold text-gray-800;
@@ -207,7 +242,7 @@ body {
 
   /* Card: the only container. Never nest cards in cards. */
   .app-card {
-    @apply bg-white border border-gray-200 rounded-2xl;
+    @apply bg-white border border-gray-200 rounded-2xl shadow-card;
   }
   .app-card-header {
     @apply flex flex-wrap items-center justify-between gap-4 px-6 py-5;
@@ -222,20 +257,38 @@ body {
     @apply p-6;
   }
 
-  /* Read-only field: small grey label above a medium-weight value */
+  /* Read-only field: small grey label above a regular-weight value (data is 400, DESIGN_GUIDELINES.md) */
   .app-field-label {
     @apply block mb-1.5 text-xs text-gray-500;
   }
   .app-field-value {
-    @apply text-sm font-medium text-gray-800;
+    @apply text-sm font-normal text-gray-800;
   }
   .app-field-value--empty {
-    @apply font-normal text-gray-400;
+    @apply text-gray-400;
   }
 
   /* Form label above an input */
   .app-form-label {
     @apply block mb-1.5 text-sm font-medium text-gray-700;
+  }
+
+  /* Header row of a div table (role="table", the Settings lists): the table header band, its cells in a gap-3 grid
+     (the row sets grid-cols), with the short gray-300 line between columns in the middle of the gap */
+  .app-table-head {
+    @apply gap-3 items-center px-5 py-2 bg-gray-100 border-y border-gray-200 font-medium text-gray-500;
+  }
+  .app-table-head > * + * {
+    @apply relative;
+  }
+  .app-table-head > * + *::before {
+    content: '';
+    position: absolute;
+    left: -0.375rem;
+    top: 50%;
+    height: 1.25rem;
+    translate: 0 -50%;
+    border-left: 1px solid var(--color-gray-300);
   }
 
   /* KPI card: <section class="app-card app-kpi-card"> with an icon tile, then a min-w-0 column with label and value */
@@ -260,9 +313,9 @@ body {
   .app-nav-group {
     @apply px-3 mt-6 mb-2 text-xs uppercase tracking-wide text-gray-500;
   }
-  /* min-h-control keeps rows as tall with the label hidden (collapsed sidebar): .pi icons have line-height 1 */
+  /* min-h-11 keeps rows 44px with the label hidden (collapsed sidebar): .pi icons have line-height 1 */
   .app-nav-item {
-    @apply flex items-center gap-3 min-h-control px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 no-underline hover:bg-gray-100;
+    @apply flex items-center gap-3 min-h-11 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 no-underline hover:bg-gray-100;
   }
   .app-nav-item i {
     @apply text-lg text-gray-500;
@@ -276,14 +329,14 @@ body {
 
   /* Segmented control: routed page tabs and small filters */
   .app-seg {
-    @apply inline-flex flex-wrap gap-0.5 p-0.5 rounded-lg bg-gray-100;
+    @apply inline-flex flex-wrap gap-0.5 p-0.5 rounded-lg bg-gray-100 inset-shadow-track;
   }
   /* Works on <a> (routed tabs) and <button> (filters) */
   .app-seg-item {
-    @apply inline-flex items-center h-control-inner px-4 rounded-md border-0 bg-transparent cursor-pointer font-[inherit] text-sm font-medium text-gray-500 no-underline hover:text-gray-800;
+    @apply inline-flex items-center h-control-inner px-4 rounded-md border-0 bg-transparent cursor-pointer font-[inherit] text-sm font-medium text-gray-600 no-underline hover:text-gray-800;
   }
   .app-seg-item.active {
-    @apply bg-white text-gray-900 shadow-theme-xs;
+    @apply bg-white text-gray-900 shadow-theme-xs inset-shadow-pressed;
   }
   .app-seg-item:disabled {
     @apply cursor-not-allowed text-gray-400;
@@ -294,9 +347,21 @@ body {
     @apply flex items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-gray-300 bg-transparent cursor-pointer font-[inherit] text-sm font-medium text-gray-500 hover:border-brand-300 hover:text-brand-500 focus-visible:outline-none focus-visible:shadow-focus-ring;
   }
 
-  /* Initials avatar; pick a tint with bg-*-50 + text-*-700 */
+  /* Initials avatar; pick a tint and the text shade status tags use with it: bg-brand-50 + text-brand-600,
+     bg-warning-50 + text-warning-700, bg-gray-100 + text-gray-700 */
   .app-avatar {
     @apply inline-flex items-center justify-center shrink-0 w-10 h-10 rounded-full text-sm font-medium;
+  }
+
+  /* Grey badge next to a figure ("9 in total"), shaped like a secondary status tag */
+  .app-badge {
+    @apply rounded-lg px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-700;
+  }
+  /* Avatars and badges get the status tags' fill (tagFill() in the preset): 8% of their own text colour laid over
+     their light tint, which blends the same as color-mix(in srgb, text 8%, tint) */
+  .app-avatar,
+  .app-badge {
+    background-image: linear-gradient(color-mix(in srgb, currentColor 8%, transparent), color-mix(in srgb, currentColor 8%, transparent));
   }
 
   /* Money and numbers line up */
@@ -352,12 +417,16 @@ body {
 .app-calendar .fc .fc-toolbar-title {
   @apply text-xl font-semibold text-gray-800;
 }
-/* Toolbar buttons look like outline secondary buttons; the view switcher like the segmented control */
+/* Toolbar buttons look like outline buttons (brand outline, see the preset); the view switcher like the segmented control */
 .app-calendar .fc .fc-button {
-  @apply h-control px-4 rounded-lg border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-theme-xs capitalize;
+  @apply h-control px-4 rounded-lg border border-brand-300 bg-white text-sm font-medium text-brand-600 shadow-theme-xs capitalize;
 }
-.app-calendar .fc .fc-button:hover:not(:disabled) {
-  @apply bg-gray-50 text-gray-800;
+/* Segments in a group only darken their text on hover, like .app-seg-item */
+.app-calendar .fc .fc-button:not(.fc-button-group > .fc-button):hover:not(:disabled) {
+  @apply bg-brand-50;
+}
+.app-calendar .fc .fc-button-group > .fc-button:not(.fc-button-active):hover:not(:disabled) {
+  @apply text-gray-800;
 }
 .app-calendar .fc .fc-button:focus {
   @apply shadow-focus-ring;
@@ -366,21 +435,23 @@ body {
   @apply opacity-50;
 }
 .app-calendar .fc .fc-button-group {
-  @apply gap-0.5 p-0.5 rounded-lg bg-gray-100;
+  @apply gap-0.5 p-0.5 rounded-lg bg-gray-100 inset-shadow-track;
 }
 .app-calendar .fc .fc-button-group > .fc-button {
-  @apply h-control-inner rounded-md border-0 bg-transparent text-gray-500 shadow-none;
+  @apply h-control-inner rounded-md border-0 bg-transparent text-gray-600 shadow-none;
   margin-left: 0;
 }
 .app-calendar .fc .fc-button-group > .fc-button.fc-button-active {
-  @apply bg-white text-gray-900 shadow-theme-xs;
+  @apply bg-white text-gray-900 shadow-theme-xs inset-shadow-pressed;
 }
 .app-calendar .fc .fc-prev-button,
 .app-calendar .fc .fc-next-button {
   @apply w-control-inner px-0;
 }
-.app-calendar .fc .fc-col-header-cell {
-  @apply bg-gray-50 py-2.5 text-xs font-medium text-gray-500;
+/* Day names: the table header band (the week view's empty time-axis corner too), with its lines between columns */
+.app-calendar .fc .fc-col-header-cell,
+.app-calendar .fc .fc-col-header .fc-timegrid-axis {
+  @apply bg-gray-100 py-2.5 text-sm font-medium text-gray-500;
 }
 .app-calendar .fc .fc-col-header-cell-cushion,
 .app-calendar .fc .fc-daygrid-day-number {

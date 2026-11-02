@@ -30,7 +30,7 @@
                 </p>
             </div>
             @if (loading) {
-                <p-skeleton width="10rem" height="2.75rem"/>
+                <p-skeleton width="10rem" height="2.5rem"/>
             } @else {
                 <div class="flex items-center gap-2 shrink-0">
                     <p-colorpicker [ngModel]="$pickerColor()" (onChange)="onDraftChange($any($event.value))" format="hex"

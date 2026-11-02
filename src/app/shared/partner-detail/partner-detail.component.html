@@ -1,6 +1,6 @@
 <app-page-header [title]="entityTitle" [crumbs]="crumbs"/>
 
-<div class="flex flex-col gap-6">
+<div class="flex flex-col gap-gutter">
     <!-- Header card -->
     <section class="app-card flex flex-wrap items-center gap-5 p-6">
         <div class="flex items-center justify-center shrink-0 w-[72px] h-[72px] rounded-2xl bg-gray-100 text-gray-700 text-2xl font-semibold">
@@ -22,9 +22,9 @@
         </div>
     </section>
 
-    <div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_6px)_minmax(0,1fr)] gap-6 items-start">
+    <div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_var(--spacing-gutter)/4)_minmax(0,1fr)] gap-gutter items-start">
         <!-- Main column -->
-        <div class="flex flex-col gap-6 min-w-0">
+        <div class="flex flex-col gap-gutter min-w-0">
             <section class="app-card">
                 <div class="app-card-header">
                     <h3 class="app-card-title">{{ entityTitle }} details</h3>
@@ -89,7 +89,7 @@
         </div>
 
         <!-- Side column -->
-        <div class="flex flex-col gap-6">
+        <div class="flex flex-col gap-gutter">
             <section class="app-card">
                 <div class="app-card-header">
                     <h3 class="app-card-title">Total billed</h3>

@@ -1,6 +1,6 @@
-<div class="flex flex-col gap-6">
+<div class="flex flex-col gap-gutter">
     <!-- Financial summary -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter">
         @for (kpi of kpis; track kpi.label) {
             <app-kpi-card [icon]="kpi.icon" [label]="kpi.label">{{ (kpi.value ?? 0) | currency:'PLN':'symbol':'1.2-2' }}</app-kpi-card>
         }

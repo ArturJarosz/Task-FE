@@ -1,8 +1,8 @@
 <app-page-header title="Projects" [crumbs]="crumbs"/>
 
-<div class="flex flex-col gap-6">
+<div class="flex flex-col gap-gutter">
     <!-- KPIs -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter">
         <app-kpi-card icon="pi pi-folder" label="Projects" [loading]="$loading()" [loadFailed]="$loadFailed()">{{ $kpis().total }}</app-kpi-card>
         <app-kpi-card icon="pi pi-play-circle" label="Active" [loading]="$loading()" [loadFailed]="$loadFailed()">{{ $kpis().active }}</app-kpi-card>
         <app-kpi-card icon="pi pi-check-circle" label="Finished" [loading]="$loading()" [loadFailed]="$loadFailed()">{{ $kpis().finished }}</app-kpi-card>
@@ -37,7 +37,7 @@
                                 (click)="onSelectSegment(segment.key)">
                             {{ segment.label }}
                             <!-- Room for two digits, so the header doesn't shift as filters change the counts -->
-                            <span class="min-w-[2ch] text-xs text-gray-400 tabular-nums">{{ $segmentCounts()[segment.key] }}</span>
+                            <span class="min-w-[2ch] text-xs text-gray-500 tabular-nums">{{ $segmentCounts()[segment.key] }}</span>
                         </button>
                     }
                 </div>

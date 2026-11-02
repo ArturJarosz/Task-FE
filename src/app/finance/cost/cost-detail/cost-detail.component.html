@@ -1,7 +1,7 @@
 <app-page-header title="Cost" [crumbs]="crumbs"/>
 
 @if (cost) {
-    <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-gutter">
         <!-- Header card -->
         <section class="app-card flex flex-wrap items-center gap-5 p-6">
             <div class="flex items-center justify-center shrink-0 w-[72px] h-[72px] rounded-2xl bg-brand-50 text-brand-500">
@@ -17,7 +17,7 @@
             </div>
         </section>
 
-        <div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_6px)_minmax(0,1fr)] gap-6 items-start">
+        <div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_var(--spacing-gutter)/4)_minmax(0,1fr)] gap-gutter items-start">
             <!-- Main column -->
             <section class="app-card min-w-0">
                 <div class="app-card-header">
@@ -54,7 +54,7 @@
     <app-load-error title="Couldn't load this cost" backLabel="Back to finance"
                     [backRoute]="['/projects', projectId, 'finance']" (retry)="reloadEvent.emit()"/>
 } @else {
-    <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-gutter">
         <div class="app-card flex items-center gap-5 p-6">
             <p-skeleton width="72px" height="72px" borderRadius="16px"/>
             <div class="flex flex-col gap-2 flex-1">

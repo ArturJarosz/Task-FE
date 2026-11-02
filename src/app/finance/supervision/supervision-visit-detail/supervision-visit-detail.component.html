@@ -1,7 +1,7 @@
 <app-page-header title="Supervision visit" [crumbs]="crumbs"/>
 
 @if (supervisionVisit) {
-    <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-gutter">
         <!-- Header card -->
         <section class="app-card flex flex-wrap items-center gap-5 p-6">
             <div class="flex items-center justify-center shrink-0 w-[72px] h-[72px] rounded-2xl bg-brand-50 text-brand-500">
@@ -40,7 +40,7 @@
     <app-load-error title="Couldn't load this visit" backLabel="Back to finance"
                     [backRoute]="['/projects', projectId, 'finance']" (retry)="reloadEvent.emit()"/>
 } @else {
-    <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-gutter">
         <div class="app-card flex items-center gap-5 p-6">
             <p-skeleton width="72px" height="72px" borderRadius="16px"/>
             <div class="flex flex-col gap-2 flex-1">
