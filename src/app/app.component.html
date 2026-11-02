@@ -1,4 +1,7 @@
 <p-toast [life]="12000"></p-toast>
+<whats-new-dialog [mode]="releaseNoteStore.mode()" [releaseNotes]="releaseNoteStore.releaseNotes()" [since]="releaseNoteStore.since()"
+                  [loading]="releaseNoteStore.releaseNotesLoading()" [loadFailed]="releaseNoteStore.releaseNotesLoadFailed()"
+                  (closed)="releaseNoteStore.close()" (retry)="releaseNoteStore.openHistory({})"/>
 
 <div class="min-h-screen flex bg-gray-50">
     <!-- Backdrop for the sidebar on small screens -->

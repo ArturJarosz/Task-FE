@@ -179,6 +179,8 @@ code completion and should not be edited manually. Also they are used in API ser
 
 ### Important things to remember
 
+- A story or bugfix that changes what users see or can do also adds a "What's new" note in the backend repo, even
+  when only the frontend changes (see "Release Notes" in `../Task/AGENTS.md`)
 - Always make all components **standalone** (`standalone: true`) — never create NgModule files
 - Declare all dependencies explicitly in each component's `imports: [...]` array
 - Load every piece of displayed data through a signal store, with loading/failure flags in the store and

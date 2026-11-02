@@ -1,0 +1,54 @@
+<p-dialog [visible]="visible" (visibleChange)="!$event && closed.emit()" [modal]="true" appendTo="body" [draggable]="false"
+          [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}">
+    <ng-template #header>
+        <div class="flex flex-col gap-1">
+            <span class="p-dialog-title">What's new</span>
+            @if (since) {
+                <span class="text-sm text-gray-500">
+                    {{ mode === 'history' ? 'All changes since' : 'Changes since' }} {{ since | date:'dd.MM.yyyy' }}
+                </span>
+            }
+        </div>
+    </ng-template>
+    @if (loading) {
+        <div class="flex flex-col gap-5">
+            @for (row of [1, 2, 3]; track row) {
+                <div class="flex gap-4">
+                    <p-skeleton width="5.5rem" height="1.75rem" borderRadius="999px"/>
+                    <div class="flex flex-col gap-2 flex-1">
+                        <p-skeleton width="60%" height="1.25rem"/>
+                        <p-skeleton width="90%" height="1rem"/>
+                    </div>
+                </div>
+            }
+        </div>
+    } @else if (loadFailed) {
+        <app-empty-state icon="pi pi-exclamation-triangle" title="Couldn't load what's new"
+                         text="Check your connection and try again.">
+            <p-button label="Try again" icon="pi pi-refresh" severity="secondary" [outlined]="true" (onClick)="retry.emit()"/>
+        </app-empty-state>
+    } @else if (releaseNotes.length === 0) {
+        <app-empty-state icon="pi pi-megaphone" title="No changes yet"
+                         text="New features and fixes will be listed here as they are released."/>
+    } @else {
+        <ul class="list-none m-0 p-0">
+            @for (releaseNote of releaseNotes; track releaseNote.id) {
+                <li class="flex gap-4 py-4 border-t border-gray-200 first:border-t-0 first:pt-0">
+                    <div class="shrink-0 w-[5.5rem]">
+                        <p-tag [value]="typeLabel(releaseNote.type)" [severity]="statusSeverity(releaseNote.type)"/>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="font-medium text-gray-800">{{ releaseNote.title }}</div>
+                        <p class="m-0 mt-1 text-sm text-gray-500">{{ releaseNote.description }}</p>
+                        @if (mode === 'history') {
+                            <div class="mt-1 text-xs text-gray-400">{{ releaseNote.createdDateTime | date:'dd.MM.yyyy' }}</div>
+                        }
+                    </div>
+                </li>
+            }
+        </ul>
+    }
+    <ng-template #footer>
+        <p-button label="Got it" (onClick)="closed.emit()"/>
+    </ng-template>
+</p-dialog>

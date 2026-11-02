@@ -166,6 +166,14 @@ Built only from dates the app already has: the contract (start, end, deadline), 
 ### Edit dialog
 `p-dialog` with 24px radius, about 700px wide, 32px padding. It has a title, a one-line description, and a round grey close button. The form is a 2-column grid with labels above 44px inputs, plus a "Cancel" outline button and a "Save changes" primary button on the bottom right.
 
+### What's new dialog
+After login, the app opens a "What's new" dialog when there are changes the user hasn't seen yet. "What's new" in the user menu opens it again with every change. Both use the same `p-dialog` (`src/app/shared/release-note/whats-new-dialog`), about 700px wide:
+- The title is "What's new". The description says since when the list runs (`dd.mm.yyyy`). After login it says "Changes since" the publish date of the newest change the user has already seen, or the date their account was created if that is later or they have seen none. From the menu it says "All changes since" the date of the oldest change.
+- Each change is a row (separated by a `gray-200` line) with a type `p-tag` in a fixed 88px column: New, Improved or Fixed (see Status tags). Next to it are the title (500 `gray-800`) and a 14px `gray-500` description. From the menu, the publish date (`dd.mm.yyyy`, `gray-400`) follows.
+- The only button is a primary "Got it". Closing the dialog in any way marks every change it showed as seen.
+- From the menu, rows load with skeletons and failures show the empty state with "Try again". After login, the dialog only opens once the changes have loaded, and a failed load shows nothing.
+- The texts come from the backend (`RELEASE_NOTE`, one Liquibase changeset per story, see the backend `AGENTS.md`), so they are never written in the frontend.
+
 ### Settings page (`/settings/:section`)
 A 25% section nav card next to a 75% content column (`grid grid-cols-1 xl:grid-cols-[calc(25%_-_18px)_minmax(0,1fr)] gap-6 items-start`). The nav groups sections under `.app-nav-group` labels and links them with `.app-nav-item` (active: `routerLinkActive="active"`); below `xl` the items wrap in a row above the content. Each section is its own route, listed in `settings-sections.ts`; `/settings` opens the first one and the breadcrumb ends with the section name (Home › Settings › System parameters).
 
@@ -223,6 +231,9 @@ Pills, always through `statusSeverity()` in `src/app/shared/status-severity.ts`:
 | Google Calendar share role: Can edit (`WRITER`) | `success` | green |
 | Google Calendar share role: Free/busy only (`FREE_BUSY_READER`) | `secondary` | grey |
 | Google Calendar share role: Owner (`OWNER`) | `warn` | orange |
+| Release note type: New (`NEW`) | `info` | blue |
+| Release note type: Improved (`IMPROVED`) | `success` | green |
+| Release note type: Fixed (`FIXED`) | `warn` | orange |
 
 The keys come from the generated enums (`ProjectStatus`, `StageStatus`, `TaskStatus`, `ContractStatus`, `CalendarEventSyncStatus`, `GoogleCalendarConnectionStatus`, `CalendarShareRole`). A new enum value fails to compile until it gets a severity in `status-severity.ts`. Labels come from the configuration entries via `resolveLabel()`. `contrast` (dark) is reserved for statuses that don't exist yet, such as "On hold".
 

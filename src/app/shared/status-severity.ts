@@ -6,13 +6,14 @@ import {CalendarShareRole} from '../generated/models/calendar-share-role';
 import {ContractStatus} from '../generated/models/contract-status';
 import {GoogleCalendarConnectionStatus} from '../generated/models/google-calendar-connection-status';
 import {ProjectStatus} from '../generated/models/project-status';
+import {ReleaseNoteType} from '../generated/models/release-note-type';
 import {StageStatus} from '../generated/models/stage-status';
 import {TaskStatus} from '../generated/models/task-status';
 
 export type TagSeverity = 'secondary' | 'info' | 'warn' | 'success' | 'danger' | 'contrast';
 
 export type Status = ProjectStatus | StageStatus | TaskStatus | ContractStatus | CalendarEventSyncStatus
-    | GoogleCalendarConnectionStatus | CalendarShareRole;
+    | GoogleCalendarConnectionStatus | CalendarShareRole | ReleaseNoteType;
 
 // Several enums share values (TO_DO, DONE, REJECTED, COMPLETED...), so the map is keyed by the string value.
 // Adding a value to any of the enums above makes this a compile error until it gets a severity.
@@ -45,6 +46,10 @@ const SEVERITY: Record<`${Status}`, TagSeverity> = {
     WRITER: 'success',
     FREE_BUSY_READER: 'secondary',
     OWNER: 'warn',
+    // Release note type
+    NEW: 'info',
+    IMPROVED: 'success',
+    FIXED: 'warn',
 };
 
 export function statusSeverity(status: Status | string | null | undefined): TagSeverity {
