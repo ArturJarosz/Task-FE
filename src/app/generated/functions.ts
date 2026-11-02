@@ -255,3 +255,9 @@ export type { GetCurrentUserConfigurations$Params as GetCurrentUserConfiguration
 export { getCurrentUserConfigurations as getCurrentUserConfigurations } from './fn/user/get-current-user-configurations';
 export type { UpdateCurrentUserConfiguration$Params as UpdateCurrentUserConfiguration$Params } from './fn/user/update-current-user-configuration';
 export { updateCurrentUserConfiguration as updateCurrentUserConfiguration } from './fn/user/update-current-user-configuration';
+export type { GetReleaseNotes$Params as GetReleaseNotes$Params } from './fn/release-note/get-release-notes';
+export { getReleaseNotes as getReleaseNotes } from './fn/release-note/get-release-notes';
+export type { GetUnseenReleaseNotes$Params as GetUnseenReleaseNotes$Params } from './fn/release-note/get-unseen-release-notes';
+export { getUnseenReleaseNotes as getUnseenReleaseNotes } from './fn/release-note/get-unseen-release-notes';
+export type { MarkReleaseNotesSeen$Params as MarkReleaseNotesSeen$Params } from './fn/release-note/mark-release-notes-seen';
+export { markReleaseNotesSeen as markReleaseNotesSeen } from './fn/release-note/mark-release-notes-seen';

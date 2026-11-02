@@ -28,6 +28,7 @@ import {SupervisionRestService, SupervisionRestServiceImpl} from './finance/supe
 import {FinancialReportRestService, FinancialReportRestServiceImpl} from './financial-report/rest/financial-report-rest.service';
 import {ConfigurationRestService, ConfigurationRestServiceImpl} from './shared/configuration/rest/configuration.rest';
 import {UserRestService, UserRestServiceImpl} from './shared/user/rest/user-rest.service';
+import {ReleaseNoteRestService, ReleaseNoteRestServiceImpl} from './shared/release-note/rest/release-note-rest.service';
 import {BreadcrumbService, BreadcrumbServiceImpl} from './shared/breadcrumb/breadcrumb.service';
 import {ClientRestService, ClientRestServiceImpl} from './client/rest/client-rest.service';
 import {ArchitectRestService, ArchitectRestServiceImpl} from './architect/rest/architect-rest.service';
@@ -86,6 +87,7 @@ export const appConfig: ApplicationConfig = {
         {provide: FinancialReportRestService, useClass: FinancialReportRestServiceImpl},
         {provide: ConfigurationRestService, useClass: ConfigurationRestServiceImpl},
         {provide: UserRestService, useClass: UserRestServiceImpl},
+        {provide: ReleaseNoteRestService, useClass: ReleaseNoteRestServiceImpl},
         {provide: BreadcrumbService, useClass: BreadcrumbServiceImpl},
         {provide: ClientRestService, useClass: ClientRestServiceImpl},
         {provide: ArchitectRestService, useClass: ArchitectRestServiceImpl},

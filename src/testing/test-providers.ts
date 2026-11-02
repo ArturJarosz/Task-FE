@@ -24,6 +24,7 @@ import {SupervisionRestService, SupervisionRestServiceImpl} from '../app/finance
 import {FinancialReportRestService, FinancialReportRestServiceImpl} from '../app/financial-report/rest/financial-report-rest.service';
 import {ConfigurationRestService, ConfigurationRestServiceImpl} from '../app/shared/configuration/rest/configuration.rest';
 import {UserRestService, UserRestServiceImpl} from '../app/shared/user/rest/user-rest.service';
+import {ReleaseNoteRestService, ReleaseNoteRestServiceImpl} from '../app/shared/release-note/rest/release-note-rest.service';
 import {BreadcrumbService, BreadcrumbServiceImpl} from '../app/shared/breadcrumb/breadcrumb.service';
 import {ClientRestService, ClientRestServiceImpl} from '../app/client/rest/client-rest.service';
 import {ArchitectRestService, ArchitectRestServiceImpl} from '../app/architect/rest/architect-rest.service';
@@ -75,6 +76,7 @@ export function provideTestDependencies(): (Provider | EnvironmentProviders)[] {
         {provide: FinancialReportRestService, useClass: FinancialReportRestServiceImpl},
         {provide: ConfigurationRestService, useClass: ConfigurationRestServiceImpl},
         {provide: UserRestService, useClass: UserRestServiceImpl},
+        {provide: ReleaseNoteRestService, useClass: ReleaseNoteRestServiceImpl},
         {provide: BreadcrumbService, useClass: BreadcrumbServiceImpl},
         {provide: ClientRestService, useClass: ClientRestServiceImpl},
         {provide: ArchitectRestService, useClass: ArchitectRestServiceImpl},

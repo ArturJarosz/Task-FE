@@ -3,6 +3,8 @@ import {toSignal} from "@angular/core/rxjs-interop";
 import {MenuItem} from "primeng/api";
 import {ConfigurationStore} from "./shared/configuration/state";
 import {UserStore} from "./shared/user/state";
+import {ReleaseNoteStore} from "./shared/release-note/state";
+import {WhatsNewDialogComponent} from "./shared/release-note/whats-new-dialog/whats-new-dialog.component";
 import {SystemParameterStore} from "./settings/state";
 import {AuthorizationService} from "./security/authorization.service";
 import {ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
@@ -63,7 +65,8 @@ const DESKTOP_MEDIA_QUERY = '(min-width: 64rem)';
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.less'],
     standalone: true,
-    imports: [ToastModule, ButtonModule, Menu, BreadcrumbModule, TooltipModule, NgClass, AsyncPipe, RouterLink, RouterLinkActive, RouterOutlet]
+    imports: [ToastModule, ButtonModule, Menu, BreadcrumbModule, TooltipModule, NgClass, AsyncPipe, RouterLink, RouterLinkActive, RouterOutlet,
+        WhatsNewDialogComponent]
 })
 export class AppComponent implements OnInit {
     title = 'Task-FE';
@@ -77,6 +80,7 @@ export class AppComponent implements OnInit {
     ownPageHeader = false;
     // The name and email sit in the menu's start template; items are actions only
     readonly userMenuItems: MenuItem[] = [
+        {label: "What's new", icon: 'pi pi-megaphone', command: () => this.releaseNoteStore.openHistory({})},
         {label: 'Log out', icon: 'pi pi-sign-out', command: () => this.logout()}
     ];
     userMenuOpen = false;
@@ -85,6 +89,8 @@ export class AppComponent implements OnInit {
 
     readonly configurationStore = inject(ConfigurationStore);
     readonly userStore = inject(UserStore);
+    // Holds the "What's new" dialog, opened after login when there are changes the user hasn't seen
+    readonly releaseNoteStore = inject(ReleaseNoteStore);
     // Holds the "Theme color" parameter; ThemeService applies it as soon as it loads
     private readonly systemParameterStore = inject(SystemParameterStore);
     private readonly authorization = inject(AuthorizationService);
@@ -106,6 +112,7 @@ export class AppComponent implements OnInit {
                     this.userStore.loadCurrentUser({});
                     this.userStore.loadConfigurations({});
                     this.systemParameterStore.loadSystemParameters({});
+                    this.releaseNoteStore.loadUnseen({});
                 }
             })
 
