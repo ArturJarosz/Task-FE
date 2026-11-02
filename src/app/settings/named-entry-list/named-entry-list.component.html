@@ -5,14 +5,14 @@
     </app-empty-state>
 } @else {
     <div role="table" [attr.aria-label]="texts.title" class="text-sm">
-        <div role="row" class="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_5.5rem] gap-3 items-center px-5 py-2 bg-gray-50 border-y border-gray-200 text-xs text-gray-500">
+        <div role="row" class="app-table-head grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_5rem]">
             <span role="columnheader">Name</span>
             <span role="columnheader">{{ usageHeader }}</span>
             <span role="columnheader"><span class="sr-only">Actions</span></span>
         </div>
         @if (loading) {
             @for (row of skeletonRows; track row) {
-                <div role="row" class="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_5.5rem] gap-3 items-center px-5 py-3 border-b border-gray-100 last:border-b-0">
+                <div role="row" class="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_5rem] gap-3 items-center px-5 py-3 border-b border-gray-100 last:border-b-0">
                     <p-skeleton width="9rem" height="1rem"/>
                     <p-skeleton width="4rem" height="1rem"/>
                     <span></span>
@@ -20,7 +20,7 @@
             }
         } @else {
             @for (entry of entries; track entry.id) {
-                <div role="row" class="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_5.5rem] gap-3 items-center px-5 py-1.5 border-b border-gray-100 last:border-b-0 hover:bg-gray-50">
+                <div role="row" class="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_5rem] gap-3 items-center px-5 py-1.5 border-b border-gray-100 last:border-b-0 hover:bg-gray-50">
                     <span role="cell" class="min-w-0 truncate font-medium text-gray-800">{{ entry.name }}</span>
                     <span role="cell" class="app-num text-left text-gray-500">{{ usageText(entry) }}</span>
                     <span role="cell" class="flex justify-end">

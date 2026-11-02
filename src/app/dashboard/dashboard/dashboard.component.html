@@ -14,8 +14,8 @@
 </app-page-header>
 
 @if (layoutLoading) {
-    <div class="flex flex-col gap-6" aria-busy="true">
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+    <div class="flex flex-col gap-gutter" aria-busy="true">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter">
             @for (placeholder of [1, 2, 3, 4]; track placeholder) {
                 <p-skeleton height="5.5rem" borderRadius="1rem"/>
             }
@@ -23,14 +23,14 @@
         <p-skeleton height="24rem" borderRadius="1rem"/>
     </div>
 } @else if (draftLayout) {
-    <p class="m-0 mb-6 flex items-start gap-3 rounded-xl bg-gray-100 px-4 py-3 text-sm text-gray-700">
+    <p class="m-0 mb-gutter flex items-start gap-3 rounded-xl bg-gray-100 px-4 py-3 text-sm text-gray-700">
         <i class="pi pi-info-circle mt-0.5" aria-hidden="true"></i>
         <span>Drag a stack by its width bar to reorder it or move it to another row. Drag a widget by its name into
             another stack to stack them (up to {{ maxStackSize }}), or onto a row's free space to give it its own stack.
             Each row is as tall as its tallest stack, and widgets in a stack share its height. Changes show for you
             once you save the layout.</span>
     </p>
-    <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-gutter">
         @for (row of draftLayout.rows; track $index; let rowIndex = $index) {
             <section class="flex flex-col gap-4 p-4 rounded-2xl border-2 border-dashed border-gray-300"
                      [attr.aria-label]="'Row ' + (rowIndex + 1)">
@@ -44,7 +44,7 @@
                 <div cdkDropList [id]="rowListIds[rowIndex]" [cdkDropListConnectedTo]="rowListIds"
                      cdkDropListOrientation="mixed" [cdkDropListData]="rowIndex"
                      [cdkDropListEnterPredicate]="canDropStack" (cdkDropListDropped)="onStackDropped($event)"
-                     class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 min-h-24">
+                     class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter min-h-24">
                     @for (stack of row.stacks; track $index; let stackIndex = $index) {
                         @let stackLabel = stackName(stack);
                         <div cdkDrag [cdkDragData]="stack" class="flex flex-col gap-3 p-2 rounded-2xl bg-gray-100 min-w-0"
@@ -132,12 +132,12 @@
         </app-empty-state>
     </section>
 } @else {
-    <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-gutter">
         @for (row of layout.rows; track $index) {
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter">
                 @for (stack of row.stacks; track $index; let stackIndex = $index) {
                     <!-- Widgets in a stack split its height -->
-                    <div class="flex flex-col gap-6 min-w-0" [class]="stackClasses(row, stackIndex)">
+                    <div class="flex flex-col gap-gutter min-w-0" [class]="stackClasses(row, stackIndex)">
                         @for (widget of stack.widgets; track widget.type) {
                             <div class="flex flex-col flex-1 min-w-0">
                                 <ng-container *ngTemplateOutlet="widgetCard; context: {$implicit: widget.type}"/>
@@ -168,7 +168,7 @@
                 <app-kpi-card class="flex-1" icon="pi pi-folder" label="Active projects" [loading]="!projects"
                               [loadFailed]="projectsLoadFailed">
                     {{ activeProjects.length }}
-                    <span class="rounded-full px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-700">{{ totalProjects }} in total</span>
+                    <span class="app-badge">{{ totalProjects }} in total</span>
                 </app-kpi-card>
             }
             @case ('finance-chart') {
@@ -233,13 +233,13 @@
                                     <dt class="flex items-center gap-2 text-sm text-gray-500">
                                         <span class="w-2.5 h-2.5 rounded-full bg-chart-1" aria-hidden="true"></span>Income
                                     </dt>
-                                    <dd class="m-0 app-num font-medium text-gray-800">{{ yearTotals.income | currency:'PLN':'symbol':'1.2-2' }}</dd>
+                                    <dd class="m-0 app-num text-gray-800">{{ yearTotals.income | currency:'PLN':'symbol':'1.2-2' }}</dd>
                                 </div>
                                 <div class="flex items-center justify-between gap-4 py-3 border-b border-gray-100">
                                     <dt class="flex items-center gap-2 text-sm text-gray-500">
                                         <span class="w-2.5 h-2.5 rounded-full bg-chart-5" aria-hidden="true"></span>Expenses
                                     </dt>
-                                    <dd class="m-0 app-num font-medium text-gray-800">{{ yearTotals.expenses | currency:'PLN':'symbol':'1.2-2' }}</dd>
+                                    <dd class="m-0 app-num text-gray-800">{{ yearTotals.expenses | currency:'PLN':'symbol':'1.2-2' }}</dd>
                                 </div>
                                 <div class="flex items-center justify-between gap-4 mt-3 px-3 py-3 rounded-lg bg-brand-50">
                                     <dt class="text-sm font-semibold text-gray-800">Balance</dt>
@@ -314,7 +314,7 @@
                                     @if (getClientName(project.client); as clientName) {
                                         <div class="flex items-center gap-3">
                                             <span class="app-avatar bg-warning-50 text-warning-700">{{ getInitials(clientName) }}</span>
-                                            <span class="font-medium text-gray-800 truncate">{{ clientName }}</span>
+                                            <span class="text-gray-800 truncate">{{ clientName }}</span>
                                         </div>
                                     } @else {
                                         <app-not-set/>

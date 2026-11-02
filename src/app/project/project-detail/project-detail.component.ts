@@ -224,7 +224,7 @@ export class ProjectDetailComponent implements OnChanges {
             let name = `${architect.firstName} ${architect.lastName}`;
             this.people.push({
                 initials: toInitials(name), name: name, role: 'Architect', route: ['/architects', architect.id!],
-                avatarClass: 'bg-brand-50 text-brand-500'
+                avatarClass: 'bg-brand-50 text-brand-600'
             });
         }
         if (client) {

@@ -1,8 +1,8 @@
 <app-page-header title="Suppliers" [crumbs]="crumbs"/>
 
-<div class="flex flex-col gap-6">
+<div class="flex flex-col gap-gutter">
     <!-- KPIs -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
         <app-kpi-card icon="pi pi-truck" label="Suppliers">{{ $kpis().total }}</app-kpi-card>
         <app-kpi-card icon="pi pi-box" label="With supplies">{{ $kpis().withItems }}</app-kpi-card>
     </div>

@@ -1,6 +1,6 @@
 <app-page-header title="Calendar" [crumbs]="crumbs"/>
 
-<div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_6px)_minmax(0,1fr)] gap-6 items-start">
+<div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_var(--spacing-gutter)/4)_minmax(0,1fr)] gap-gutter items-start">
     <section class="app-card min-w-0">
         <div class="app-card-header">
             <div>
@@ -17,7 +17,7 @@
         </div>
     </section>
 
-    <div class="flex flex-col gap-6 min-w-0">
+    <div class="flex flex-col gap-gutter min-w-0">
         <upcoming-events [events]="$upcomingEvents()"
                          (editEvent)="onEditEvent($event)"
                          (deleteEvent)="onDeleteEvent($event)"></upcoming-events>

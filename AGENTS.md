@@ -148,7 +148,7 @@ it doesn't cover, add the rule there first, then build it.
 - **CSS layers**: PrimeNG renders into the `primeng` layer, ordered `theme, base, primeng, components, utilities`, so
   Tailwind utilities override PrimeNG without `!important`
 - **PostCSS**: `.postcssrc.json` configures `@tailwindcss/postcss`
-- Use **Tailwind utility classes** that match the tokens (`text-gray-500`, `bg-brand-50`, `border-gray-200`, `gap-6`, `p-6`)
+- Use **Tailwind utility classes** that match the tokens (`text-gray-500`, `bg-brand-50`, `border-gray-200`, `gap-gutter`, `p-6`)
 - **No** `::ng-deep`, hex values, inline color styles or `!important` overrides in components
 - **Status tags**: always `<p-tag>` with `statusSeverity()` from `src/app/shared/status-severity.ts`; it is keyed by the
   backend status enums, so a new enum value must get a severity there

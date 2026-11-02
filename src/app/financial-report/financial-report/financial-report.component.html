@@ -1,6 +1,6 @@
 <app-page-header title="Financial report" [crumbs]="crumbs"/>
 
-<div class="flex flex-col gap-6">
+<div class="flex flex-col gap-gutter">
     <!-- Filters: one row above the charts -->
     <section class="app-card flex flex-wrap items-end gap-x-6 gap-y-4 p-5">
         <div class="w-full sm:w-auto">
@@ -38,7 +38,7 @@
 
     @if (financialReport) {
         <!-- KPIs -->
-        <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-gutter">
             <app-kpi-card icon="pi pi-arrow-down-left" label="Income ({{ selectedValueType }})">{{ kpiValue(financialReport.totalIncome) | currency:'PLN':'symbol':'1.2-2' }}</app-kpi-card>
             <app-kpi-card icon="pi pi-arrow-up-right" label="Expenses ({{ selectedValueType }})">{{ kpiValue(financialReport.totalExpense) | currency:'PLN':'symbol':'1.2-2' }}</app-kpi-card>
             <app-kpi-card icon="pi pi-wallet" label="Balance ({{ selectedValueType }})" class="xl:col-span-2">{{ kpiValue(financialReport.totalBalance) | currency:'PLN':'symbol':'1.2-2' }}</app-kpi-card>
@@ -79,7 +79,8 @@
                     <p class="app-card-subtitle m-0">Totals for the selected range, by category</p>
                 </div>
             </div>
-            <p-table [value]="summaryRows" [tableStyle]="{'min-width': '44rem'}">
+            <!-- pb-6: the Balance band ends the card, so it gets the card's padding under it -->
+            <p-table class="block pb-6" [value]="summaryRows" [tableStyle]="{'min-width': '44rem'}">
                 <ng-template #header>
                     <tr>
                         <th>Category</th>
@@ -91,7 +92,7 @@
                 </ng-template>
                 <ng-template #body let-row>
                     @if (row.kind === 'header') {
-                        <tr class="bg-gray-50">
+                        <tr class="bg-gray-100">
                             <td colspan="5" class="text-xs font-semibold uppercase tracking-wide text-gray-500">{{ row.label }}</td>
                         </tr>
                     } @else {
@@ -118,7 +119,7 @@
             <app-load-error title="Couldn't load the financial report" text="Check your connection and try again."
                             (retry)="reloadReport.emit()"/>
         } @else {
-            <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 xl:grid-cols-4 gap-gutter">
                 <div class="app-card p-5"><p-skeleton height="3rem"/></div>
                 <div class="app-card p-5"><p-skeleton height="3rem"/></div>
                 <div class="app-card p-5 xl:col-span-2"><p-skeleton height="3rem"/></div>
