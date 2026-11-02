@@ -22,4 +22,18 @@ describe('AddStageComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should start with no type selected', () => {
+    expect(component.addStageForm.controls.type.value).toBe('');
+    expect(component.isSaveEnabled()).toBeFalse();
+  });
+
+  it('should send the chosen type as a numeric typeId', () => {
+    let createStage = spyOn(component.stageStore, 'createStage');
+    component.addStageForm.patchValue({name: 'Functional layout', type: '101', architectId: 1});
+
+    component.onSave();
+
+    expect(createStage).toHaveBeenCalledWith(jasmine.objectContaining({stage: jasmine.objectContaining({typeId: 101})}));
+  });
 });

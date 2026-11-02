@@ -14,6 +14,13 @@ export function resolveLabel(id: string | number | null | undefined, entries: Co
     return maybeLabel ? maybeLabel : key;
 }
 
+// For entries configured by users (types, categories): until the entry is in the list (configuration still loading or
+// stale), shows nothing instead of the bare id
+export function resolveKnownLabel(id: string | number | null | undefined, entries: ConfigurationEntry[] | null): string {
+    let known = id != null && (entries ?? []).some(entry => entry.id === String(id));
+    return known ? resolveLabel(id, entries) : '';
+}
+
 // "contractor" -> "Contractor", for nouns used both inside sentences and as titles
 export function capitalize(text: string): string {
     return text.charAt(0).toUpperCase() + text.slice(1);

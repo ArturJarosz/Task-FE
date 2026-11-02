@@ -35,6 +35,8 @@ import {ProjectTypeRestService, ProjectTypeRestServiceImpl} from '../app/setting
 import {ContractorCategoryRestService, ContractorCategoryRestServiceImpl} from '../app/settings/rest/contractor-category-rest.service';
 import {SupplierCategoryRestService, SupplierCategoryRestServiceImpl} from '../app/settings/rest/supplier-category-rest.service';
 import {CostCategoryRestService, CostCategoryRestServiceImpl} from '../app/settings/rest/cost-category-rest.service';
+import {StageTypeRestService, StageTypeRestServiceImpl} from '../app/settings/rest/stage-type-rest.service';
+import {TaskTypeRestService, TaskTypeRestServiceImpl} from '../app/settings/rest/task-type-rest.service';
 
 registerLocaleData(localePl);
 
@@ -84,5 +86,7 @@ export function provideTestDependencies(): (Provider | EnvironmentProviders)[] {
         {provide: ContractorCategoryRestService, useClass: ContractorCategoryRestServiceImpl},
         {provide: SupplierCategoryRestService, useClass: SupplierCategoryRestServiceImpl},
         {provide: CostCategoryRestService, useClass: CostCategoryRestServiceImpl},
+        {provide: StageTypeRestService, useClass: StageTypeRestServiceImpl},
+        {provide: TaskTypeRestService, useClass: TaskTypeRestServiceImpl},
     ];
 }

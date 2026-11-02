@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, effect, inject, Signal, signal, untracked} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked} from '@angular/core';
 import {ActivatedRoute, Router, RouterLink, RouterLinkActive} from "@angular/router";
 import {toSignal} from "@angular/core/rxjs-interop";
 import {map} from "rxjs";
@@ -10,9 +10,12 @@ import {
     ContractorCategoryStore,
     CostCategoryStore,
     GoogleCalendarSettingsStore,
+    NamedEntryStore,
     ProjectTypeStore,
+    StageTypeStore,
     SupplierCategoryStore,
-    SystemParameterStore
+    SystemParameterStore,
+    TaskTypeStore
 } from "../state";
 import {EditSystemParameterComponent} from "../edit-system-parameter/edit-system-parameter.component";
 import {SystemParameterListComponent} from "../system-parameter-list/system-parameter-list.component";
@@ -32,22 +35,16 @@ import {
     NamedEntry,
     NamedEntryTexts,
     PROJECT_TYPE_TEXTS,
-    SUPPLIER_CATEGORY_TEXTS
+    STAGE_TYPE_TEXTS,
+    SUPPLIER_CATEGORY_TEXTS,
+    TASK_TYPE_TEXTS
 } from "../named-entry";
 import {ButtonModule} from "primeng/button";
 
 // What the shell needs from the store of one list of named entries (project types, contractor categories...)
 interface NamedEntrySection {
     texts: NamedEntryTexts;
-    $entries: Signal<NamedEntry[]>;
-    $loading: Signal<boolean>;
-    $loadFailed: Signal<boolean>;
-    $saving: Signal<boolean>;
-    $deleting: Signal<number | null>;
-    load(): void;
-    // afterSave runs only when the save worked
-    save(entry: NamedEntry, afterSave: () => void): void;
-    delete(entry: NamedEntry): void;
+    store: NamedEntryStore;
 }
 
 @Component({
@@ -62,10 +59,6 @@ interface NamedEntrySection {
 export class SettingsShellComponent {
     readonly systemParameterStore = inject(SystemParameterStore);
     readonly googleCalendarSettingsStore = inject(GoogleCalendarSettingsStore);
-    private readonly projectTypeStore = inject(ProjectTypeStore);
-    private readonly contractorCategoryStore = inject(ContractorCategoryStore);
-    private readonly supplierCategoryStore = inject(SupplierCategoryStore);
-    private readonly costCategoryStore = inject(CostCategoryStore);
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
     private readonly confirmationService = inject(ConfirmationService);
@@ -94,62 +87,12 @@ export class SettingsShellComponent {
 
     // Sections that list named entries, by section key
     private readonly namedEntrySections: Record<string, NamedEntrySection> = {
-        'project-types': {
-            texts: PROJECT_TYPE_TEXTS,
-            $entries: computed(() => this.projectTypeStore.projectTypes()
-                .map(type => ({id: type.id, name: type.name, usageCount: type.numberOfProjects}))),
-            $loading: computed(() => !this.projectTypeStore.projectTypesLoaded()
-                && !this.projectTypeStore.projectTypesLoadFailed()),
-            $loadFailed: this.projectTypeStore.projectTypesLoadFailed,
-            $saving: this.projectTypeStore.projectTypeSaving,
-            $deleting: this.projectTypeStore.projectTypeDeleting,
-            load: () => this.projectTypeStore.loadProjectTypes(),
-            save: (entry, afterSave) => this.projectTypeStore.saveProjectType({projectType: entry, afterSave}),
-            delete: entry => this.projectTypeStore.deleteProjectType(entry),
-        },
-        'contractor-categories': {
-            texts: CONTRACTOR_CATEGORY_TEXTS,
-            $entries: computed(() => this.contractorCategoryStore.contractorCategories()
-                .map(category => ({
-                    id: category.id, name: category.name, usageCount: category.numberOfContractors
-                }))),
-            $loading: computed(() => !this.contractorCategoryStore.contractorCategoriesLoaded()
-                && !this.contractorCategoryStore.contractorCategoriesLoadFailed()),
-            $loadFailed: this.contractorCategoryStore.contractorCategoriesLoadFailed,
-            $saving: this.contractorCategoryStore.contractorCategorySaving,
-            $deleting: this.contractorCategoryStore.contractorCategoryDeleting,
-            load: () => this.contractorCategoryStore.loadContractorCategories(),
-            save: (entry, afterSave) =>
-                this.contractorCategoryStore.saveContractorCategory({contractorCategory: entry, afterSave}),
-            delete: entry => this.contractorCategoryStore.deleteContractorCategory(entry),
-        },
-        'supplier-categories': {
-            texts: SUPPLIER_CATEGORY_TEXTS,
-            $entries: computed(() => this.supplierCategoryStore.supplierCategories()
-                .map(category => ({id: category.id, name: category.name, usageCount: category.numberOfSuppliers}))),
-            $loading: computed(() => !this.supplierCategoryStore.supplierCategoriesLoaded()
-                && !this.supplierCategoryStore.supplierCategoriesLoadFailed()),
-            $loadFailed: this.supplierCategoryStore.supplierCategoriesLoadFailed,
-            $saving: this.supplierCategoryStore.supplierCategorySaving,
-            $deleting: this.supplierCategoryStore.supplierCategoryDeleting,
-            load: () => this.supplierCategoryStore.loadSupplierCategories(),
-            save: (entry, afterSave) =>
-                this.supplierCategoryStore.saveSupplierCategory({supplierCategory: entry, afterSave}),
-            delete: entry => this.supplierCategoryStore.deleteSupplierCategory(entry),
-        },
-        'cost-categories': {
-            texts: COST_CATEGORY_TEXTS,
-            $entries: computed(() => this.costCategoryStore.costCategories()
-                .map(category => ({id: category.id, name: category.name, usageCount: category.numberOfCosts}))),
-            $loading: computed(() => !this.costCategoryStore.costCategoriesLoaded()
-                && !this.costCategoryStore.costCategoriesLoadFailed()),
-            $loadFailed: this.costCategoryStore.costCategoriesLoadFailed,
-            $saving: this.costCategoryStore.costCategorySaving,
-            $deleting: this.costCategoryStore.costCategoryDeleting,
-            load: () => this.costCategoryStore.loadCostCategories(),
-            save: (entry, afterSave) => this.costCategoryStore.saveCostCategory({costCategory: entry, afterSave}),
-            delete: entry => this.costCategoryStore.deleteCostCategory(entry),
-        },
+        'project-types': {texts: PROJECT_TYPE_TEXTS, store: inject(ProjectTypeStore)},
+        'stage-types': {texts: STAGE_TYPE_TEXTS, store: inject(StageTypeStore)},
+        'task-types': {texts: TASK_TYPE_TEXTS, store: inject(TaskTypeStore)},
+        'contractor-categories': {texts: CONTRACTOR_CATEGORY_TEXTS, store: inject(ContractorCategoryStore)},
+        'supplier-categories': {texts: SUPPLIER_CATEGORY_TEXTS, store: inject(SupplierCategoryStore)},
+        'cost-categories': {texts: COST_CATEGORY_TEXTS, store: inject(CostCategoryStore)},
     };
     readonly $namedEntrySection = computed(() => this.namedEntrySections[this.$section()?.key ?? '']);
     // An entry without an id is a new one
@@ -180,7 +123,7 @@ export class SettingsShellComponent {
                 // A dialog left open (e.g. by going back in the browser) belongs to the previous section
                 this.$editedEntry.set(null);
                 // Every visit: the number of projects, contractors... using each entry changes as they are added
-                namedEntrySection?.load();
+                namedEntrySection?.store.loadEntries();
             });
         });
         effect(() => {
@@ -217,7 +160,7 @@ export class SettingsShellComponent {
     }
 
     onSaveEntry(entry: NamedEntry): void {
-        this.$namedEntrySection()?.save(entry, () => this.$editedEntry.set(null));
+        this.$namedEntrySection()?.store.saveEntry({entry, afterSave: () => this.$editedEntry.set(null)});
     }
 
     onEntryEditClosed(): void {
@@ -233,7 +176,7 @@ export class SettingsShellComponent {
             acceptButtonProps: {label: 'Delete', severity: 'danger'},
             rejectButtonProps: {label: 'Cancel', severity: 'secondary', outlined: true},
             accept: () => {
-                section.delete(entry);
+                section.store.deleteEntry(entry);
                 this.confirmationService.close();
             },
             reject: () => {

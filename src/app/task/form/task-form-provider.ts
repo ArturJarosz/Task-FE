@@ -1,10 +1,8 @@
 import {Injectable} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {TaskStatus} from "../../generated/models/task-status";
-import {TaskType} from "../../generated/models/task-type";
 
 const DEFAULT_STATUS = TaskStatus.TO_DO;
-const DEFAULT_TYPE = TaskType.CONCEPT;
 
 @Injectable({
     providedIn: 'root'
@@ -20,7 +18,8 @@ export class TaskFormProvider {
             startDate: this.formBuilder.control<Date | null>(null),
             endDate: this.formBuilder.control<Date | null>(null),
             status: this.formBuilder.nonNullable.control<TaskStatus>(DEFAULT_STATUS),
-            type: this.formBuilder.nonNullable.control<TaskType>(DEFAULT_TYPE, [Validators.required]),
+            // id of the task type as a string, the way configuration entries hold it
+            type: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
             note: this.formBuilder.control<string | null>(''),
             architectId: this.formBuilder.control<number | null>(null, [Validators.required])
         });
@@ -30,7 +29,8 @@ export class TaskFormProvider {
         return this.formBuilder.nonNullable.group<AddTaskForm>({
             name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
             startDate: this.formBuilder.control<Date>(new Date()),
-            type: this.formBuilder.nonNullable.control<TaskType>(DEFAULT_TYPE, [Validators.required]),
+            // id of the task type as a string, the way configuration entries hold it
+            type: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
             note: this.formBuilder.control(''),
             architectId: this.formBuilder.control<number | null>(null, [Validators.required])
         })
@@ -43,7 +43,7 @@ export interface TaskForm {
     startDate: FormControl<Date | null>,
     endDate: FormControl<Date | null>;
     status: FormControl<TaskStatus>,
-    type: FormControl<TaskType>,
+    type: FormControl<string>,
     note: FormControl<string | null>,
     architectId: FormControl<number | null>
 }
@@ -51,7 +51,7 @@ export interface TaskForm {
 export interface AddTaskForm {
     name: FormControl<string>,
     startDate: FormControl<Date | null>,
-    type: FormControl<TaskType>,
+    type: FormControl<string>,
     note: FormControl<string | null>,
     architectId: FormControl<number | null>
 }

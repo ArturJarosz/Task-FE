@@ -51,6 +51,8 @@ export class TaskDetailShellComponent implements OnInit {
         this.projectId = Number(this.route.snapshot.paramMap.get('projectId'));
         this.stageId = Number(this.route.snapshot.paramMap.get('stageId'));
         this.taskId = Number(this.route.snapshot.paramMap.get('taskId'));
+        // Type labels come from the configuration, which a type change in Settings marks stale
+        this.configurationStore.loadConfiguration({});
 
         this.taskStore.setTaskId(this.taskId);
         this.taskStore.setStageId(this.stageId);

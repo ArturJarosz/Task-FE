@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
-import {resolveLabel} from "../../shared/utils/label-utils";
+import {resolveKnownLabel, resolveLabel} from "../../shared/utils/label-utils";
 import {Stage} from "../../generated/models/stage";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {StageDto} from "../model/stage";
@@ -42,8 +42,8 @@ export class StageListComponent {
     protected readonly statusSeverity = statusSeverity;
     rowMenuItems: MenuItem[] = [];
 
-    getStageLabelType(type: string): string {
-        return resolveLabel(type, this.stageTypes);
+    getStageLabelType(typeId: number | undefined): string {
+        return resolveKnownLabel(typeId, this.stageTypes);
     }
 
     getStageStatusLabel(type: string): string {

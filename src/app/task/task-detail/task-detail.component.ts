@@ -17,7 +17,7 @@ import {Architect, ConfigurationEntry, Task, TaskStatus} from "../../generated/m
 import {TaskForm, TaskFormProvider} from "../form/task-form-provider";
 import {DeleteTaskDto, UpdateTaskDto} from "../model/task";
 import {EmptyStateComponent, FieldComponent, LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../shared";
-import {resolveLabel} from "../../shared/utils/label-utils";
+import {resolveKnownLabel, resolveLabel} from "../../shared/utils/label-utils";
 import {statusSeverity} from "../../shared/status-severity";
 import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
 import {changedFields} from "../../shared/utils/form-utils";
@@ -94,7 +94,7 @@ export class TaskDetailComponent implements OnChanges {
             ];
         }
         if (this.task) {
-            this.resolvedTypeLabel = resolveLabel(this.task.type, this.taskTypes);
+            this.resolvedTypeLabel = resolveKnownLabel(this.task.typeId, this.taskTypes);
             this.resolvedStatusLabel = resolveLabel(this.task.status, this.taskStatuses);
             this.architectName = this.architectOptions.find(option => option.id === this.task?.architectId)?.name ?? '';
             this.resolveAvailableStatuses();
@@ -147,7 +147,7 @@ export class TaskDetailComponent implements OnChanges {
                 name: value.name,
                 startDate: toTimeZoneString(value.startDate ?? undefined),
                 endDate: toTimeZoneString(value.endDate ?? undefined),
-                type: value.type,
+                typeId: Number(value.type),
                 note: value.note ?? undefined,
                 architectId: value.architectId ?? undefined,
             },
@@ -167,7 +167,7 @@ export class TaskDetailComponent implements OnChanges {
             startDate: toDateIfExists(this.task.startDate) ?? null,
             endDate: toDateIfExists(this.task.endDate) ?? null,
             status: this.task.status,
-            type: this.task.type,
+            type: this.task.typeId != null ? String(this.task.typeId) : '',
             note: this.task.note ?? null,
             architectId: this.task.architectId ?? null
         });

@@ -1,6 +1,6 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 
-import {resolveLabel} from "../../../shared/utils/label-utils";
+import {resolveKnownLabel} from "../../../shared/utils/label-utils";
 import {Cost} from "../../../generated/models/cost";
 import {ConfigurationEntry} from "../../../generated/models/configuration-entry";
 import {CostProjectData} from "../../../generated/models/cost-project-data";
@@ -46,8 +46,7 @@ export class CostListComponent implements OnChanges {
 
     // Empty until the configuration has the category, never the bare id
     getCostCategoryLabel(categoryId: number | undefined): string {
-        let known = this.costCategories?.some(category => category.id === String(categoryId));
-        return known ? resolveLabel(categoryId, this.costCategories) : '';
+        return resolveKnownLabel(categoryId, this.costCategories);
     }
 
     private fillFormData(): void {

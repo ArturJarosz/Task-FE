@@ -1,5 +1,5 @@
-// Configurable lists that are only a name each (project types, contractor, supplier and cost categories). They share the
-// settings list and the create/rename dialog, which take their words from NamedEntryTexts.
+// Configurable lists that are only a name each (project, stage and task types, contractor, supplier and cost
+// categories). They share the settings list and the create/rename dialog, which take their words from NamedEntryTexts.
 
 // Same limit as the NAME column of their tables
 export const NAMED_ENTRY_NAME_MAX_LENGTH = 100;
@@ -42,6 +42,34 @@ export const PROJECT_TYPE_TEXTS: NamedEntryTexts = {
     placeholder: 'e.g. Interior office',
     emptyIcon: 'pi pi-tags',
     emptyText: 'Add the kinds of work you take on, such as interior design or architecture.',
+};
+
+export const STAGE_TYPE_TEXTS: NamedEntryTexts = {
+    title: 'Stage types',
+    description: "Kinds of project stages; a type used by a stage can't be deleted",
+    singular: 'stage type',
+    plural: 'stage types',
+    usageSingular: 'stage',
+    usagePlural: 'stages',
+    newHint: 'It can be chosen for new and existing stages.',
+    renameHint: 'Stages of this type show the new name.',
+    placeholder: 'e.g. Functional layout',
+    emptyIcon: 'pi pi-list',
+    emptyText: 'Add the kinds of stages your projects go through, such as a functional layout or visualisations.',
+};
+
+export const TASK_TYPE_TEXTS: NamedEntryTexts = {
+    title: 'Task types',
+    description: "Kinds of tasks within a stage; a type used by a task can't be deleted",
+    singular: 'task type',
+    plural: 'task types',
+    usageSingular: 'task',
+    usagePlural: 'tasks',
+    newHint: 'It can be chosen for new and existing tasks.',
+    renameHint: 'Tasks of this type show the new name.',
+    placeholder: 'e.g. Render',
+    emptyIcon: 'pi pi-check-square',
+    emptyText: 'Add the kinds of work done in a stage, such as renders or shopping.',
 };
 
 export const CONTRACTOR_CATEGORY_TEXTS: NamedEntryTexts = {
