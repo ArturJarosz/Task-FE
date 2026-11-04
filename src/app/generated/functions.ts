@@ -11,6 +11,10 @@ export type { UpdateArchitect$Params as UpdateArchitect$Params } from './fn/arch
 export { updateArchitect as updateArchitect } from './fn/architect/update-architect';
 export type { DeleteArchitect$Params as DeleteArchitect$Params } from './fn/architect/delete-architect';
 export { deleteArchitect as deleteArchitect } from './fn/architect/delete-architect';
+export type { LinkArchitectUser$Params as LinkArchitectUser$Params } from './fn/architect/link-architect-user';
+export { linkArchitectUser as linkArchitectUser } from './fn/architect/link-architect-user';
+export type { UnlinkArchitectUser$Params as UnlinkArchitectUser$Params } from './fn/architect/unlink-architect-user';
+export { unlinkArchitectUser as unlinkArchitectUser } from './fn/architect/unlink-architect-user';
 export type { GetArchitectProjectsSummary$Params as GetArchitectProjectsSummary$Params } from './fn/architect/get-architect-projects-summary';
 export { getArchitectProjectsSummary as getArchitectProjectsSummary } from './fn/architect/get-architect-projects-summary';
 export type { GetClients$Params as GetClients$Params } from './fn/client/get-clients';
@@ -249,6 +253,8 @@ export type { AddGoogleCalendarShare$Params as AddGoogleCalendarShare$Params } f
 export { addGoogleCalendarShare as addGoogleCalendarShare } from './fn/calendar/add-google-calendar-share';
 export type { RemoveGoogleCalendarShare$Params as RemoveGoogleCalendarShare$Params } from './fn/calendar/remove-google-calendar-share';
 export { removeGoogleCalendarShare as removeGoogleCalendarShare } from './fn/calendar/remove-google-calendar-share';
+export type { GetUsers$Params as GetUsers$Params } from './fn/user/get-users';
+export { getUsers as getUsers } from './fn/user/get-users';
 export type { GetCurrentUser$Params as GetCurrentUser$Params } from './fn/user/get-current-user';
 export { getCurrentUser as getCurrentUser } from './fn/user/get-current-user';
 export type { GetCurrentUserConfigurations$Params as GetCurrentUserConfigurations$Params } from './fn/user/get-current-user-configurations';

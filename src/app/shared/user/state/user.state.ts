@@ -1,5 +1,6 @@
 import {AppState} from "../../../state/app.store";
 import {User} from "../../../generated/models/user";
+import {UserSummary} from "../../../generated/models/user-summary";
 import {UserConfiguration} from "../../../generated/models/user-configuration";
 import {UserConfigurationName} from "../../../generated/models/user-configuration-name";
 import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
@@ -13,12 +14,17 @@ export interface UserState extends AppState {
     // Settings the current user has defined (USER_CONFIGURATION); null until loaded
     configurations: UserConfiguration[] | null;
     configurationsLoadFailed: boolean;
+    // Everyone who has logged in at least once; null until loaded
+    users: UserSummary[] | null;
+    usersLoadFailed: boolean;
 }
 
 export const initialState: UserState = {
     currentUser: null,
     configurations: null,
-    configurationsLoadFailed: false
+    configurationsLoadFailed: false,
+    users: null,
+    usersLoadFailed: false
 }
 
 export const UserStore = signalStore(
@@ -37,6 +43,20 @@ export const UserStore = signalStore(
                     }
                     return of({})
                 })
+            )
+        ),
+        loadUsers: rxMethod<{}>(
+            pipe(
+                tap(() => patchState(store, {usersLoadFailed: false})),
+                switchMap(() => userRestService.getUsers()
+                    .pipe(
+                        tap(users => patchState(store, {users: users})),
+                        // The REST service already shows the error toast; keep the stream alive for the next load
+                        catchError(() => {
+                            patchState(store, {usersLoadFailed: true});
+                            return EMPTY;
+                        })
+                    ))
             )
         ),
         loadConfigurations: rxMethod<{}>(

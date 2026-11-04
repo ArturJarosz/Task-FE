@@ -27,6 +27,11 @@ export const SETTINGS_SECTION_GROUPS: SettingsSectionGroup[] = [
         ]
     },
     {
+        label: 'People', sections: [
+            {key: 'architect-accounts', label: 'Architect accounts', icon: 'pi pi-id-card', showsSystemParameters: false},
+        ]
+    },
+    {
         label: 'Partners', sections: [
             {key: 'contractor-categories', label: 'Contractor categories', icon: 'pi pi-wrench', showsSystemParameters: false},
             {key: 'supplier-categories', label: 'Supplier categories', icon: 'pi pi-truck', showsSystemParameters: false},

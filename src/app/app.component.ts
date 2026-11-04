@@ -140,6 +140,10 @@ export class AppComponent implements OnInit {
         return this.$displayName();
     }
 
+    get userMenuLabel(): string {
+        return this.displayName ? `${this.displayName}, open account menu` : 'Open account menu';
+    }
+
     getUserInitial(): string {
         const name = this.$displayName();
         return name ? name.charAt(0).toUpperCase() : '?';

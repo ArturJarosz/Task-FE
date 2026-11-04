@@ -13,6 +13,10 @@ export abstract class ArchitectRestService {
     abstract getArchitect(architectId: number): Observable<Architect>;
 
     abstract getArchitectProjectSummary(architectId: number): Observable<EntityProjectsSummary>;
+
+    abstract linkUser(architectId: number, userId: number): Observable<Architect>;
+
+    abstract unlinkUser(architectId: number): Observable<Architect>;
 }
 
 @Injectable()
@@ -43,6 +47,20 @@ export class ArchitectRestServiceImpl extends AbstractRestService implements Arc
             .pipe(
                 catchError(error => this.handleError(error, this.messageService,
                     `Error loading projects summary for architect with id: ${architectId}`))
+            );
+    }
+
+    linkUser(architectId: number, userId: number): Observable<Architect> {
+        return this.httpClient.put<Architect>(`${this.architectUrl}/${architectId}/user`, {userId})
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService, `Error linking account`))
+            );
+    }
+
+    unlinkUser(architectId: number): Observable<Architect> {
+        return this.httpClient.delete<Architect>(`${this.architectUrl}/${architectId}/user`)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService, `Error unlinking account`))
             );
     }
 }
