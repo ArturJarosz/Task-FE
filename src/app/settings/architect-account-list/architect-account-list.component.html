@@ -1,0 +1,47 @@
+@if (loadFailed) {
+    <app-empty-state icon="pi pi-exclamation-triangle" title="Couldn't load architects"
+                     text="Check your connection and try again.">
+        <p-button label="Try again" icon="pi pi-refresh" severity="secondary" [outlined]="true" (onClick)="retry.emit()"/>
+    </app-empty-state>
+} @else {
+    <div role="table" aria-label="Architect accounts" class="text-sm">
+        <div role="row" class="app-table-head grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_3rem]">
+            <span role="columnheader">Architect</span>
+            <span role="columnheader">Account</span>
+            <span role="columnheader"><span class="sr-only">Actions</span></span>
+        </div>
+        @if (loading) {
+            @for (row of skeletonRows; track row) {
+                <div role="row" class="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_3rem] gap-3 items-center px-5 py-3 border-b border-gray-100 last:border-b-0">
+                    <p-skeleton width="9rem" height="1rem"/>
+                    <p-skeleton width="9rem" height="1rem"/>
+                    <span></span>
+                </div>
+            }
+        } @else {
+            @for (architect of architects; track architect.id) {
+                <div role="row" class="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_3rem] gap-3 items-center px-5 py-1.5 border-b border-gray-100 last:border-b-0 hover:bg-gray-50">
+                    <span role="cell" class="min-w-0 truncate font-medium text-gray-800">{{ getName(architect) }}</span>
+                    <span role="cell" class="min-w-0">
+                        @if (architect.linkedUser; as linkedUser) {
+                            <span class="block truncate text-gray-800">{{ getAccountName(linkedUser) }}</span>
+                            @if (linkedUser.email && linkedUser.email !== getAccountName(linkedUser)) {
+                                <span class="block truncate text-xs text-gray-500">{{ linkedUser.email }}</span>
+                            }
+                        } @else {
+                            <app-not-set/>
+                        }
+                    </span>
+                    <span role="cell" class="flex justify-end">
+                        <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" severity="secondary"
+                                  [pTooltip]="getEditLabel(architect)" tooltipPosition="left"
+                                  [ariaLabel]="getEditLabel(architect)" (onClick)="editAccount.emit(architect)"/>
+                    </span>
+                </div>
+            } @empty {
+                <app-empty-state icon="pi pi-id-card" title="No architects yet"
+                                 text="Architects show up here once they're added to the system."/>
+            }
+        }
+    </div>
+}

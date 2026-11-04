@@ -1,0 +1,45 @@
+<p-dialog [visible]="visible" (visibleChange)="!$event && closed.emit()" [modal]="true" appendTo="body" [draggable]="false"
+          [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}">
+    <ng-template #header>
+        <div class="flex flex-col gap-1">
+            <span class="p-dialog-title">{{ isLinked ? 'Edit account' : 'Link account' }}</span>
+            <span class="text-sm text-gray-500">Choose the account {{ name }} logs in with.</span>
+        </div>
+    </ng-template>
+    @if (loadFailed) {
+        <app-empty-state icon="pi pi-exclamation-triangle" title="Couldn't load accounts" text="Check your connection and try again.">
+            <p-button label="Try again" severity="secondary" [outlined]="true" (onClick)="retry.emit()"/>
+        </app-empty-state>
+    } @else if (isLoading) {
+        <p-skeleton width="6rem" height="1rem" styleClass="mb-2"/>
+        <p-skeleton height="2.5rem"/>
+    } @else {
+        <label for="linkAccountUser" class="app-form-label">Account <span class="text-error-600">*</span></label>
+        <p-select inputId="linkAccountUser" [formControl]="account" [options]="options" optionLabel="username"
+                  optionValue="id" optionDisabled="disabled" [filter]="true" filterBy="username,email"
+                  placeholder="Select an account" emptyMessage="No accounts yet" appendTo="body" [fluid]="true">
+            <ng-template #item let-option>
+                <div class="flex items-center justify-between gap-4 w-full min-w-0">
+                    <div class="min-w-0">
+                        <div class="truncate">{{ option.username }}</div>
+                        @if (option.email) {
+                            <div class="text-xs truncate" [class.text-gray-500]="!option.disabled">{{ option.email }}</div>
+                        }
+                    </div>
+                    @if (option.note) {
+                        <span class="text-xs shrink-0">{{ option.note }}</span>
+                    }
+                </div>
+            </ng-template>
+        </p-select>
+        <small class="block mt-1.5 text-xs text-gray-500">People appear here after their first login.</small>
+    }
+    <ng-template #footer>
+        @if (isLinked) {
+            <p-button label="Unlink account" severity="secondary" [text]="true" class="mr-auto" [disabled]="saving || isLoading"
+                      (onClick)="unlink.emit()"/>
+        }
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="closed.emit()"/>
+        <p-button label="Save changes" [disabled]="!canSave" [loading]="saving" (onClick)="onSave()"/>
+    </ng-template>
+</p-dialog>

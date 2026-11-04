@@ -45,6 +45,19 @@
                                      (retry)="onRetry()"/>
             </section>
         }
+        @case ('architect-accounts') {
+            <section class="app-card overflow-hidden min-w-0">
+                <div class="px-5 py-4">
+                    <h2 class="m-0 text-base font-semibold text-gray-800">Architect accounts</h2>
+                    <p class="m-0 text-xs text-gray-500">The account each architect logs in with</p>
+                </div>
+                <architect-account-list [architects]="architectStore.architects()"
+                                        [loading]="$architectsLoading()"
+                                        [loadFailed]="architectStore.architectsLoadFailed()"
+                                        (editAccount)="onEditArchitectAccount($event)"
+                                        (retry)="architectStore.loadArchitects({})"/>
+            </section>
+        }
         @case ('google-calendar') {
             <section class="app-card overflow-hidden min-w-0">
                 <div class="px-5 py-4">
@@ -107,5 +120,15 @@
                       [saving]="section.store.entrySaving()"
                       (save)="onSaveEntry($event)" (closed)="onEntryEditClosed()"/>
 }
+
+<link-account [architect]="$editedArchitect()"
+              [architects]="$linkAccountArchitects()"
+              [users]="userStore.users()"
+              [loadFailed]="userStore.usersLoadFailed() || architectStore.architectsLoadFailed()"
+              [saving]="architectStore.accountSaving()"
+              (save)="onLinkAccount($event)"
+              (unlink)="onUnlinkAccount()"
+              (retry)="loadAccounts()"
+              (closed)="$editedArchitect.set(null)"/>
 
 <p-confirmdialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>

@@ -219,4 +219,82 @@ describe('SettingsShellComponent', () => {
         expect(element.textContent).toContain('Saved for task@project.iam.gserviceaccount.com');
         expect((element.querySelector('#calendarName') as HTMLInputElement).value).toBe('Task');
     });
+
+    describe('architect account dialog', () => {
+        it('should leave another architect\'s dialog open when an earlier save finishes', async () => {
+            httpTesting.expectOne(request => request.url.endsWith('/system-parameters')).flush([]);
+            await harness.navigateByUrl('/settings/architect-accounts', SettingsShellComponent);
+            let first = {id: 1, firstName: 'Anna', lastName: 'Nowak'};
+            let second = {id: 2, firstName: 'Piotr', lastName: 'Zielinski'};
+            httpTesting.expectOne(request => request.url.endsWith('/architects')).flush([first, second]);
+            let shell = harness.routeDebugElement!.componentInstance as SettingsShellComponent;
+
+            shell.onEditArchitectAccount(first);
+            httpTesting.expectOne(request => request.url.endsWith('/users')).flush([]);
+            shell.onLinkAccount(5);
+            shell.$editedArchitect.set(null);
+            shell.onEditArchitectAccount(second);
+            httpTesting.expectOne(request => request.url.endsWith('/users')).flush([]);
+            httpTesting.expectOne(request => request.url.endsWith('/architects/1/user')).flush(first);
+
+            expect(shell.$editedArchitect()).toEqual(second);
+        });
+    });
+
+    describe('architect accounts', () => {
+        beforeEach(async () => {
+            httpTesting.expectOne(request => request.url.endsWith('/system-parameters')).flush([]);
+            await harness.navigateByUrl('/settings/architect-accounts', SettingsShellComponent);
+        });
+
+        it('should list architects with their accounts', () => {
+            httpTesting.expectOne(request => request.url.endsWith('/architects')).flush([
+                {id: 1, firstName: 'Anna', lastName: 'Nowak', linkedUser: {id: 5, username: 'Maria Kowalska'}}
+            ]);
+            harness.detectChanges();
+
+            let text = harness.routeNativeElement!.textContent;
+            expect(text).toContain('Anna Nowak');
+            expect(text).toContain('Maria Kowalska');
+        });
+
+        it('should load the accounts when opening the dialog and link the picked one', () => {
+            let architect = {id: 1, firstName: 'Anna', lastName: 'Nowak'};
+            httpTesting.expectOne(request => request.url.endsWith('/architects')).flush([architect]);
+            harness.detectChanges();
+
+            let shell = harness.routeDebugElement!.componentInstance as SettingsShellComponent;
+            shell.onEditArchitectAccount(architect);
+            httpTesting.expectOne(request => request.url.endsWith('/users')).flush([{id: 5, username: 'Maria Kowalska'}]);
+            httpTesting.expectNone(request => request.url.endsWith('/architects'));
+            harness.detectChanges();
+            expect(shell.$linkAccountArchitects()).toEqual([architect]);
+
+            shell.onLinkAccount(5);
+            let request = httpTesting.expectOne(request => request.url.endsWith('/architects/1/user'));
+            expect(request.request.method).toBe('PUT');
+            expect(request.request.body).toEqual({userId: 5});
+            request.flush({...architect, linkedUser: {id: 5, username: 'Maria Kowalska'}});
+            harness.detectChanges();
+
+            expect(shell.$editedArchitect()).toBeNull();
+            expect(harness.routeNativeElement!.textContent).toContain('Maria Kowalska');
+        });
+
+        it('should keep the dialog open and reload the lists when linking fails', () => {
+            let architect = {id: 1, firstName: 'Anna', lastName: 'Nowak'};
+            httpTesting.expectOne(request => request.url.endsWith('/architects')).flush([architect]);
+            let shell = harness.routeDebugElement!.componentInstance as SettingsShellComponent;
+            shell.onEditArchitectAccount(architect);
+            httpTesting.expectOne(request => request.url.endsWith('/users')).flush([]);
+
+            shell.onLinkAccount(5);
+            httpTesting.expectOne(request => request.url.endsWith('/architects/1/user'))
+                .flush({message: 'taken'}, {status: 400, statusText: 'Bad Request'});
+
+            expect(shell.$editedArchitect()).toEqual(architect);
+            httpTesting.expectOne(request => request.url.endsWith('/users')).flush([]);
+            httpTesting.expectOne(request => request.url.endsWith('/architects')).flush([architect]);
+        });
+    });
 });

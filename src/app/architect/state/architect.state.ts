@@ -2,11 +2,12 @@ import {AppState} from "../../state/app.store";
 import {Architect} from "../../generated/models/architect";
 import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {catchError, EMPTY, of, pipe, switchMap, tap} from "rxjs";
+import {catchError, concatMap, EMPTY, finalize, of, pipe, switchMap, tap} from "rxjs";
 import {ArchitectRestService} from "../rest/architect-rest.service";
 import {inject} from "@angular/core";
 import {MessageService} from "primeng/api";
 import {EntityProjectsSummary} from "../../generated/models/entity-projects-summary";
+import {MessageSeverity} from "../../shared";
 
 export interface ArchitectState extends AppState {
     architects: Architect[];
@@ -16,6 +17,8 @@ export interface ArchitectState extends AppState {
     architectProjectsSummary: EntityProjectsSummary;
     architectLoadFailed: boolean;
     architectsLoadFailed: boolean;
+    // A link to an account is being saved or removed
+    accountSaving: boolean;
 }
 
 export const initialState: ArchitectState = {
@@ -26,6 +29,15 @@ export const initialState: ArchitectState = {
     architectProjectsSummary: {},
     architectLoadFailed: false,
     architectsLoadFailed: false,
+    accountSaving: false,
+}
+
+// A linked or unlinked account changes only this architect, wherever it is shown
+function withSavedArchitect(state: ArchitectState, saved: Architect): Partial<ArchitectState> {
+    return {
+        architect: state.architect?.id === saved.id ? saved : state.architect,
+        architects: state.architects.map(architect => architect.id === saved.id ? saved : architect),
+    };
 }
 
 export const ArchitectStore = signalStore(
@@ -91,6 +103,44 @@ export const ArchitectStore = signalStore(
                                 })),
                                 catchError(() => EMPTY)
                             )
+                    })
+                )
+            ),
+            // afterSave runs only when the link was saved; onError lets the dialog stay open and refresh its list
+            linkUser: rxMethod<{ architectId: number, userId: number, afterSave?: () => void, onError?: () => void }>(
+                pipe(
+                    concatMap(({architectId, userId, afterSave, onError}) => {
+                        patchState(store, {accountSaving: true});
+                        return architectRestService.linkUser(architectId, userId)
+                            .pipe(
+                                tap(architect => {
+                                    patchState(store, state => withSavedArchitect(state, architect));
+                                    messageService.add({severity: MessageSeverity.INFO, summary: 'Account linked'});
+                                    afterSave?.();
+                                }),
+                                catchError(() => {
+                                    onError?.();
+                                    return EMPTY;
+                                }),
+                                finalize(() => patchState(store, {accountSaving: false}))
+                            );
+                    })
+                )
+            ),
+            unlinkUser: rxMethod<{ architectId: number, afterSave?: () => void }>(
+                pipe(
+                    concatMap(({architectId, afterSave}) => {
+                        patchState(store, {accountSaving: true});
+                        return architectRestService.unlinkUser(architectId)
+                            .pipe(
+                                tap(architect => {
+                                    patchState(store, state => withSavedArchitect(state, architect));
+                                    messageService.add({severity: MessageSeverity.INFO, summary: 'Account unlinked'});
+                                    afterSave?.();
+                                }),
+                                catchError(() => EMPTY),
+                                finalize(() => patchState(store, {accountSaving: false}))
+                            );
                     })
                 )
             )

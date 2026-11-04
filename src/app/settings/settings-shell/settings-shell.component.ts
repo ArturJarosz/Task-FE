@@ -40,6 +40,12 @@ import {
     TASK_TYPE_TEXTS
 } from "../named-entry";
 import {ButtonModule} from "primeng/button";
+import {ArchitectAccountListComponent} from "../architect-account-list/architect-account-list.component";
+import {LinkAccountComponent} from "../link-account/link-account.component";
+import {ArchitectStore} from "../../architect/state";
+import {Architect} from "../../generated/models/architect";
+import {UserStore} from "../../shared/user/state";
+import {architectName} from "../../project/project-filter/project-filter";
 
 // What the shell needs from the store of one list of named entries (project types, contractor categories...)
 interface NamedEntrySection {
@@ -54,11 +60,14 @@ interface NamedEntrySection {
     standalone: true,
     imports: [PageHeaderComponent, SystemParameterListComponent, EditSystemParameterComponent,
         AppearanceSettingsComponent, GoogleCalendarSettingsComponent, GoogleCalendarSharesComponent, ConfirmDialogModule,
-        RouterLink, RouterLinkActive, NamedEntryListComponent, EditNamedEntryComponent, ButtonModule]
+        RouterLink, RouterLinkActive, NamedEntryListComponent, EditNamedEntryComponent, ButtonModule,
+        ArchitectAccountListComponent, LinkAccountComponent]
 })
 export class SettingsShellComponent {
     readonly systemParameterStore = inject(SystemParameterStore);
     readonly googleCalendarSettingsStore = inject(GoogleCalendarSettingsStore);
+    readonly architectStore = inject(ArchitectStore);
+    readonly userStore = inject(UserStore);
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
     private readonly confirmationService = inject(ConfirmationService);
@@ -101,6 +110,15 @@ export class SettingsShellComponent {
     readonly $googleCalendarParameters = computed(() =>
         toGoogleCalendarParameters(this.systemParameterStore.systemParameters()));
 
+    // The architect whose account is being edited; the dialog is open while it is set
+    readonly $editedArchitect = signal<Architect | null>(null);
+    // The table keeps its rows during a reload, as opening the dialog reloads the list
+    readonly $architectsLoading = computed(() => this.architectStore.architectsNeedRefresh()
+        && !this.architectStore.architects().length && !this.architectStore.architectsLoadFailed());
+    // The dialog waits while the list loads, so its "Linked to" labels and the unlink button use the current links
+    readonly $linkAccountArchitects = computed(() =>
+        this.architectStore.architectsNeedRefresh() ? null : this.architectStore.architects());
+
     constructor() {
         effect(() => {
             let sectionKey = this.$sectionKey();
@@ -124,6 +142,17 @@ export class SettingsShellComponent {
                 this.$editedEntry.set(null);
                 // Every visit: the number of projects, contractors... using each entry changes as they are added
                 namedEntrySection?.store.loadEntries();
+            });
+        });
+        effect(() => {
+            let isArchitectAccounts = this.$section()?.key === 'architect-accounts';
+            untracked(() => {
+                // A dialog left open (e.g. by going back in the browser) belongs to the previous section
+                this.$editedArchitect.set(null);
+                if (isArchitectAccounts) {
+                    this.architectStore.setArchitectsNeedRefresh();
+                    this.architectStore.loadArchitects({});
+                }
             });
         });
         effect(() => {
@@ -183,6 +212,61 @@ export class SettingsShellComponent {
                 this.confirmationService.close();
             }
         });
+    }
+
+    // Uses the architects this section already loaded: the backend rejects an account taken in the meantime
+    onEditArchitectAccount(architect: Architect): void {
+        this.$editedArchitect.set(architect);
+        this.userStore.loadUsers({});
+    }
+
+    loadAccounts(): void {
+        this.userStore.loadUsers({});
+        this.architectStore.setArchitectsNeedRefresh();
+        this.architectStore.loadArchitects({});
+    }
+
+    onLinkAccount(userId: number): void {
+        let architectId = this.$editedArchitect()!.id!;
+        this.architectStore.linkUser({
+            architectId: architectId,
+            userId: userId,
+            afterSave: () => this.closeAccountDialog(architectId),
+            // Someone else may have just taken this account, so show the current state
+            onError: () => {
+                if (this.$editedArchitect()?.id === architectId) {
+                    this.loadAccounts();
+                }
+            }
+        });
+    }
+
+    onUnlinkAccount(): void {
+        let architect = this.$editedArchitect()!;
+        this.confirmationService.confirm({
+            header: 'Unlink account',
+            message: `Unlink the account of ${architectName(architect)}? Their projects and history stay as they are.`,
+            icon: 'pi pi-exclamation-triangle',
+            acceptButtonProps: {label: 'Unlink'},
+            rejectButtonProps: {label: 'Cancel', severity: 'secondary', outlined: true},
+            accept: () => {
+                this.architectStore.unlinkUser({
+                    architectId: architect.id!,
+                    afterSave: () => this.closeAccountDialog(architect.id!)
+                });
+                this.confirmationService.close();
+            },
+            reject: () => {
+                this.confirmationService.close();
+            }
+        });
+    }
+
+    // A save can finish after its dialog was cancelled and another architect's was opened; that one stays open
+    private closeAccountDialog(architectId: number): void {
+        if (this.$editedArchitect()?.id === architectId) {
+            this.$editedArchitect.set(null);
+        }
     }
 
     onGoogleCalendarSave(systemParameters: SystemParameter[]): void {

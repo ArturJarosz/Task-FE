@@ -1,5 +1,6 @@
 import {catchError, Observable} from "rxjs";
 import {User} from "../../../generated/models/user";
+import {UserSummary} from "../../../generated/models/user-summary";
 import {UserConfiguration} from "../../../generated/models/user-configuration";
 import {UserConfigurationName} from "../../../generated/models/user-configuration-name";
 import {AbstractRestService} from "../../rest/abstract-rest.service";
@@ -11,6 +12,8 @@ import {Injectable} from "@angular/core";
 export abstract class UserRestService {
     abstract getCurrentUser(): Observable<User>;
 
+    abstract getUsers(): Observable<UserSummary[]>;
+
     abstract getCurrentUserConfigurations(): Observable<UserConfiguration[]>;
 
     abstract updateCurrentUserConfiguration(name: UserConfigurationName, value: string): Observable<UserConfiguration>;
@@ -19,7 +22,7 @@ export abstract class UserRestService {
 @Injectable()
 export class UserRestServiceImpl extends AbstractRestService implements UserRestService {
     private userUrl: string = `${environment.baseUrl}/users/current`;
-
+    private usersUrl: string = `${environment.baseUrl}/users`;
 
     constructor(private httpClient: HttpClient, private messageService: MessageService) {
         super();
@@ -30,6 +33,13 @@ export class UserRestServiceImpl extends AbstractRestService implements UserRest
             .pipe(
                 catchError(error => this.handleError(error, this.messageService,
                     "Error loading current user"))
+            );
+    }
+
+    getUsers(): Observable<UserSummary[]> {
+        return this.httpClient.get<UserSummary[]>(this.usersUrl)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService, "Error loading accounts"))
             );
     }
 
