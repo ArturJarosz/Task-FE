@@ -5,6 +5,11 @@ import { ReleaseNoteType } from '../models/release-note-type';
 export interface ReleaseNote {
 
   /**
+   * Release of the application the change came with, such as 0.6.2
+   */
+  applicationVersion?: string;
+
+  /**
    * When the note was published
    */
   createdDateTime?: string;
