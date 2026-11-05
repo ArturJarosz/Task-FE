@@ -1,9 +1,8 @@
-<p-dialog [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
+<p-dialog closeAriaLabel="Close" [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onClose()">
     <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">New stage</span>
-            <span class="text-sm text-gray-500">Add a phase of the work, its architect, deadline and optional client payment.</span>
         </div>
     </ng-template>
     <form [formGroup]="addStageForm" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -46,7 +45,7 @@
         </div>
         @if (addStageForm.get('hasInstallment')?.value) {
             <div>
-                <label for="addStageInstallmentValue" class="app-form-label">Installment value <span class="text-error-600">*</span></label>
+                <label for="addStageInstallmentValue" class="app-form-label">Net installment value <span class="text-error-600">*</span></label>
                 <p-inputnumber inputId="addStageInstallmentValue" formControlName="installmentValue" mode="decimal" locale="pl-PL"
                                [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0" suffix=" zł" [fluid]="true"
                                (onBlur)="markAsDirty('installmentValue')"/>
@@ -73,6 +72,6 @@
     </form>
     <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
-        <p-button label="Create stage" icon="pi pi-plus" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
+        <p-button label="Create stage" icon="pi pi-plus" (onClick)="onSave()"/>
     </ng-template>
 </p-dialog>

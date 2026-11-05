@@ -2,9 +2,11 @@
 
 <div class="flex flex-col gap-gutter">
     <!-- KPIs -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter">
         <app-kpi-card icon="pi pi-truck" label="Suppliers">{{ $kpis().total }}</app-kpi-card>
         <app-kpi-card icon="pi pi-box" label="With supplies">{{ $kpis().withItems }}</app-kpi-card>
+        <app-kpi-card icon="pi pi-shopping-cart" label="Supplies">{{ $kpis().items }}</app-kpi-card>
+        <app-kpi-card icon="pi pi-tags" label="Shop types">{{ $kpis().categories }}</app-kpi-card>
     </div>
 
     <!-- Table card -->
@@ -18,7 +20,7 @@
         </div>
         <app-partner-list [rows]="$pagedRows()" routeBase="/suppliers" entityLabel="supplier" countLabel="Supplies"
                            icon="pi pi-truck" emptyText="Add the shops you buy materials and furniture from."
-                           (deleteEvent)="onDelete($event)"/>
+                           (deleteEvent)="onDelete($event)" (sortChange)="onSortChange($event)"/>
         <app-table-footer [total]="$rows().length" [page]="$page()" [pageSize]="pageSize"
                            (pageChange)="$page.set($event)"/>
     </section>

@@ -1,7 +1,7 @@
 <div [formGroup]="form" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
     <div class="sm:col-span-2">
         <label for="clientType" class="app-form-label">Client type <span class="text-error-600">*</span></label>
-        <p-select inputId="clientType" formControlName="clientType" [options]="clientTypes ?? []"
+        <p-select inputId="clientType" formControlName="clientType" [options]="clientTypeOptions"
                   optionLabel="label" optionValue="id" appendTo="body" class="w-full sm:w-1/2"/>
     </div>
 

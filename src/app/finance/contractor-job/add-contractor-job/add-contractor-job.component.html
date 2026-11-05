@@ -1,9 +1,8 @@
-<p-dialog [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
+<p-dialog closeAriaLabel="Close" [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onClose()">
     <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">New contractor job</span>
-            <span class="text-sm text-gray-500">Add work done by a contractor, its value and payment.</span>
         </div>
     </ng-template>
     <form [formGroup]="addContractorJobForm" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -35,7 +34,7 @@
             </div>
         </div>
         <div>
-            <label for="addContractorJobValue" class="app-form-label">Value <span class="text-error-600">*</span></label>
+            <label for="addContractorJobValue" class="app-form-label">Net value <span class="text-error-600">*</span></label>
             <p-inputnumber inputId="addContractorJobValue" formControlName="value" mode="decimal" locale="pl-PL"
                            [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0" suffix=" zł" [fluid]="true"/>
             @if (isFieldInvalid('value')) {
@@ -60,6 +59,6 @@
     </form>
     <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
-        <p-button label="Create contractor job" icon="pi pi-plus" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
+        <p-button label="Create contractor job" icon="pi pi-plus" (onClick)="onSave()"/>
     </ng-template>
 </p-dialog>

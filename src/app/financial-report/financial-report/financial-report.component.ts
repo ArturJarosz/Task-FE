@@ -10,7 +10,7 @@ import {ChartModule} from "primeng/chart";
 import {TableModule} from "primeng/table";
 import {SkeletonModule} from "primeng/skeleton";
 import {FormsModule} from "@angular/forms";
-import {NgClass, CurrencyPipe, DatePipe} from "@angular/common";
+import {NgClass, CurrencyPipe} from "@angular/common";
 import {
     barChartOptions,
     closeBarSpacing,
@@ -64,7 +64,7 @@ const EXPENSE_CATEGORIES: CategoryDef[] = [
     styleUrl: './financial-report.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [PageHeaderComponent, LoadErrorComponent, EmptyStateComponent, KpiCardComponent, DatePickerModule, ChartModule, TableModule, SkeletonModule, FormsModule, NgClass, CurrencyPipe, DatePipe]
+    imports: [PageHeaderComponent, LoadErrorComponent, EmptyStateComponent, KpiCardComponent, DatePickerModule, ChartModule, TableModule, SkeletonModule, FormsModule, NgClass, CurrencyPipe]
 })
 export class FinancialReportComponent implements OnInit, OnChanges {
     @Input()
@@ -91,7 +91,7 @@ export class FinancialReportComponent implements OnInit, OnChanges {
     readonly periodTypeOptions = [
         {label: 'Monthly', value: PeriodType.MONTHLY},
         {label: 'Quarterly', value: PeriodType.QUARTERLY},
-        {label: 'Yearly', value: PeriodType.YEARLY},
+        {label: 'Annually', value: PeriodType.YEARLY},
     ];
     readonly valueTypeOptions: { label: string, value: ValueType }[] = [
         {label: 'Gross', value: 'gross'},
@@ -192,6 +192,9 @@ export class FinancialReportComponent implements OnInit, OnChanges {
                     borderColor: surface,
                     ...shapes[index],
                     data: values.map(value => value === 0 ? null : value),
+                    // Small expenses stay visible next to large income (zeros are null, so they draw nothing). Only on
+                    // the expense stack: stretching a thin income segment would push it into the one above
+                    ...(stack === 'expense' ? {minBarLength: 3} : {}),
                     stack,
                     // Income and expenses of a period sit close together
                     ...closeBarSpacing(2, 24, 6),

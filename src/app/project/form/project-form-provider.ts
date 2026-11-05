@@ -42,8 +42,9 @@ export class ProjectFormProvider {
     public getAddProjectForm(): FormGroup<AddProjectForm> {
         return this.formBuilder.nonNullable.group<AddProjectForm>({
             name: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
-            architectId: this.formBuilder.nonNullable.control<number>(0, [Validators.required]),
-            clientId: this.formBuilder.nonNullable.control<number>(0, [Validators.required]),
+            // Empty until the user picks one ("Select an architect", "Select a client"); never the first option
+            architectId: this.formBuilder.control<number | null>(null, [Validators.required]),
+            clientId: this.formBuilder.control<number | null>(null, [Validators.required]),
             type: this.formBuilder.nonNullable.control<string>('', [Validators.required]),
             offerValue: this.formBuilder.nonNullable.control<number>(0, [Validators.required]),
             note: this.formBuilder.control<string>('')
@@ -76,8 +77,8 @@ export interface ProjectCreateForm {
 
 export interface AddProjectForm {
     name: FormControl<string>,
-    architectId: FormControl<number>,
-    clientId: FormControl<number>,
+    architectId: FormControl<number | null>,
+    clientId: FormControl<number | null>,
     type: FormControl<string>,
     offerValue: FormControl<number>,
     note: FormControl<string | null>

@@ -1,19 +1,23 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
-import {resolveKnownLabel, resolveLabel} from "../../shared/utils/label-utils";
+import {initials, resolveKnownLabel, resolveLabel} from "../../shared/utils/label-utils";
 import {Stage} from "../../generated/models/stage";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {StageDto} from "../model/stage";
 import {Architect} from "../../generated/models/architect";
-import {TableModule} from "primeng/table";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {MenuModule, Menu} from "primeng/menu";
 import {MenuItem} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {RouterLink} from "@angular/router";
 import {DatePipe} from "@angular/common";
-import {EmptyStateComponent, NotSetComponent} from "../../shared";
+import {DurationPipe, EmptyStateComponent, NotSetComponent} from "../../shared";
 import {statusSeverity} from "../../shared/status-severity";
+import {parseISO} from "date-fns";
 import {TooltipModule} from "primeng/tooltip";
+import {fieldValue, SortValue, TableSort, toTableSort} from "../../shared/utils/sort-utils";
+import {SortRowsPipe} from "../../shared/sort-rows/sort-rows.pipe";
+import {ThreeStepSortDirective} from "../../shared/sort-rows/three-step-sort.directive";
 
 const ARCHITECT_NOT_FOUND_INITIAL = '?';
 
@@ -23,11 +27,34 @@ const ARCHITECT_NOT_FOUND_INITIAL = '?';
     styleUrls: ['stage-list.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [TableModule, TagModule, MenuModule, ButtonModule, RouterLink, DatePipe, TooltipModule, EmptyStateComponent, NotSetComponent]
+    imports: [ThreeStepSortDirective, SortRowsPipe, TableModule, TagModule, MenuModule, ButtonModule, RouterLink, DatePipe, TooltipModule, EmptyStateComponent, NotSetComponent,
+        DurationPipe]
 })
 export class StageListComponent {
+
+    // Column sort of the table: it is lazy, so it only reports the sort and the sortRows pipe sorts a copy of the rows
+    sort: TableSort | null = null;
+
+    readonly sortValue = (row: Stage, field: string): SortValue => {
+        switch (field) {
+            case 'architect':
+                return this.getArchitectName(row.architectId);
+            case 'status':
+                return this.getStageStatusLabel(row.status ?? '');
+            default:
+                return fieldValue(row, field);
+        }
+    };
+
+    onSort(event: TableLazyLoadEvent): void {
+        this.sort = toTableSort(event);
+    }
+    // Kept in time order, like the timeline: by start date, then deadline, then name; stages without dates last
     @Input()
-    stages!: Stage[] | null;
+    set stages(stages: Stage[] | null) {
+        this.sortedStages = stages ? byTime(stages) : null;
+    }
+    sortedStages: Stage[] | null = null;
     @Input()
     stageTypes!: ConfigurationEntry[] | null;
     @Input()
@@ -53,10 +80,7 @@ export class StageListComponent {
     getArchitectInitials(architectId?: number): string {
         if (!architectId) return ARCHITECT_NOT_FOUND_INITIAL;
         const architect = this.architects?.find(a => a.id === architectId);
-        if (architect?.firstName && architect?.lastName) {
-            return `${architect.firstName.charAt(0)}${architect.lastName.charAt(0)}`.toUpperCase();
-        }
-        return ARCHITECT_NOT_FOUND_INITIAL;
+        return architect ? initials(architect.firstName, architect.lastName) : ARCHITECT_NOT_FOUND_INITIAL;
     }
 
     getArchitectName(architectId?: number): string {
@@ -80,4 +104,11 @@ export class StageListComponent {
     deleteStage(stageName: string, stageId: number) {
         this.deleteStageEvent.emit({stageName: stageName, stageId: stageId});
     }
+}
+
+function byTime(stages: Stage[]): Stage[] {
+    let time = (date?: string) => date ? parseISO(date).getTime() : Infinity;
+    return [...stages].sort((a, b) => time(a.startDate) - time(b.startDate)
+        || time(a.deadline) - time(b.deadline)
+        || (a.name ?? '').localeCompare(b.name ?? '', 'pl'));
 }

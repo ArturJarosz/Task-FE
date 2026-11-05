@@ -8,6 +8,7 @@ import {DialogModule} from "primeng/dialog";
 import {InputNumberModule} from "primeng/inputnumber";
 import {ToggleSwitchModule} from "primeng/toggleswitch";
 import {ButtonModule} from "primeng/button";
+import {showErrors} from "../../../shared/utils/form-utils";
 
 @Component({
     selector: 'add-supervision',
@@ -49,6 +50,11 @@ export class AddSupervisionComponent implements OnInit, AbstractAddEditComponent
     }
 
     onSave(): void {
+        // Never disabled: with something missing, saving shows every error instead
+        if (!this.isSaveEnabled()) {
+            showErrors(this.addSupervisionForm);
+            return;
+        }
         this.visible = false;
         this.supervisionStore.createSupervision({supervision: this.createSupervision()});
     }

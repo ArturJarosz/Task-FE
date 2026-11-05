@@ -7,7 +7,7 @@ import {ChangeDetectionStrategy, Component} from "@angular/core";
     templateUrl: 'not-set.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    host: {class: 'font-normal text-gray-400'}
+    host: {class: 'font-normal text-gray-500'}
 })
 export class NotSetComponent {
 }

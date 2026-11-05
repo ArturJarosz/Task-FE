@@ -3,6 +3,7 @@ import {HttpTestingController} from '@angular/common/http/testing';
 
 import {ContractStore} from './contract.store';
 import {InstallmentStore} from '../../../finance/installment/state/installment.state';
+import {ProjectTimeSummaryStore} from '../../state/project-time-summary.state';
 import {provideTestDependencies} from '../../../../testing/test-providers';
 import {ContractStatus, InstallmentType} from '../../../generated/models';
 
@@ -35,6 +36,19 @@ describe('ContractStore', () => {
         expect(request.request.body.deposit).toEqual({type: InstallmentType.DEPOSIT, value: 3000});
         request.flush({id: 4, status: ContractStatus.SIGNED});
         expect(installmentStore.installmentsNeedRefresh()).toBeTrue();
+    });
+
+    it('should mark the time summary stale, as the rates per hour depend on the contract', () => {
+        const timeSummaryStore = TestBed.inject(ProjectTimeSummaryStore);
+        timeSummaryStore.setProjectId(1);
+        timeSummaryStore.loadTimeSummary();
+        httpTesting.expectOne(request => request.url.endsWith('/projects/1/time-summary')).flush({totalMinutes: 60});
+        expect(timeSummaryStore.timeSummaryNeedsRefresh()).toBeFalse();
+
+        store.changeStatus({contract: {status: ContractStatus.SIGNED, offerValue: 5000}});
+        httpTesting.expectOne(isStatusChange).flush({id: 4, status: ContractStatus.SIGNED});
+
+        expect(timeSummaryStore.timeSummaryNeedsRefresh()).toBeTrue();
     });
 
     it('should keep saving after a failed status change', () => {

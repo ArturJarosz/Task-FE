@@ -7,7 +7,7 @@ import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {SupplyStore} from "../state/supply.state";
 import {Supply} from "../../../generated/models/supply";
 import {toTimeZoneString} from "../../../shared/utils/date-utils";
-import {isControlInvalid, isPaymentDateMissing} from "../../../shared/utils/form-utils";
+import {isControlInvalid, isPaymentDateMissing, showErrors} from "../../../shared/utils/form-utils";
 import {DialogModule} from "primeng/dialog";
 import {SelectModule} from "primeng/select";
 import {InputNumberModule} from "primeng/inputnumber";
@@ -59,6 +59,11 @@ export class AddSupplyComponent implements OnInit, AbstractAddEditComponent {
     }
 
     onSave(): void {
+        // Never disabled: with something missing, saving shows every error instead
+        if (!this.isSaveEnabled()) {
+            showErrors(this.addSupplyForm);
+            return;
+        }
         this.visible = false;
         this.supplyStore.createSupply({supply: this.createSupply()});
     }

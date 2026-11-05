@@ -6,7 +6,7 @@ import {catchError, EMPTY, of, pipe, switchMap, tap} from "rxjs";
 import {ClientRestService} from "../rest/client-rest.service";
 import {inject} from "@angular/core";
 import {MessageService} from "primeng/api";
-import {MessageSeverity} from "../../shared";
+import {MessageSeverity} from "../../shared/message";
 import {EntityProjectsSummary} from "../../generated/models/entity-projects-summary";
 
 export interface ClientState extends AppState {

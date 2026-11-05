@@ -2,7 +2,9 @@ import {Component, DestroyRef, inject, Input, OnChanges, OnInit, SimpleChanges} 
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {TotalProjectFinancialSummary} from "../../../generated/models/total-project-financial-summary";
 import {Cost} from "../../../generated/models/cost";
-import {ActivatedRoute, RouterLink} from "@angular/router";
+import {ActivatedRoute, Router, RouterLink} from "@angular/router";
+import {FormsModule} from "@angular/forms";
+import {SelectModule} from "primeng/select";
 import {CurrencyPipe} from "@angular/common";
 import {CostListShellComponent} from "../../cost/cost-list-shell/cost-list-shell.component";
 import {InstallmentListShellComponent} from "../../installment/installment-list-shell/installment-list-shell.component";
@@ -36,7 +38,7 @@ const FINANCE_TABS: FinanceTab[] = [
     templateUrl: './project-financial-detail.component.html',
     styleUrl: './project-financial-detail.component.less',
     standalone: true,
-    imports: [CostListShellComponent, InstallmentListShellComponent, SupplyListShellComponent, ContractorJobListShellComponent, SupervisionShellComponent, KpiCardComponent, RouterLink, CurrencyPipe]
+    imports: [CostListShellComponent, InstallmentListShellComponent, SupplyListShellComponent, ContractorJobListShellComponent, SupervisionShellComponent, KpiCardComponent, RouterLink, CurrencyPipe, FormsModule, SelectModule]
 })
 export class ProjectFinancialDetailComponent implements OnInit, OnChanges {
     @Input()
@@ -47,12 +49,20 @@ export class ProjectFinancialDetailComponent implements OnInit, OnChanges {
     projectFinancialSummary!: TotalProjectFinancialSummary | null;
     @Input()
     costs!: Cost[] | null;
+    // Not set while no time is logged on the project
+    @Input()
+    netValuePerHour: number | undefined = undefined;
+    @Input()
+    netValuePerHourLoading: boolean = false;
+    @Input()
+    netValuePerHourLoadFailed: boolean = false;
 
     readonly tabs = FINANCE_TABS;
     selectedTab: string = FINANCE_TABS[0].key;
     kpis: FinanceKpi[] = toKpis(null);
 
     private readonly route = inject(ActivatedRoute);
+    private readonly router = inject(Router);
     private readonly destroyRef = inject(DestroyRef);
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -65,6 +75,11 @@ export class ProjectFinancialDetailComponent implements OnInit, OnChanges {
         this.route.queryParams
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(params => this.selectedTab = this.resolveTab(params['tab']));
+    }
+
+    // The phone's select: the same ?tab= query parameter as the tabs
+    onSelectTab(key: string): void {
+        this.router.navigate([], {relativeTo: this.route, queryParams: {tab: key}, queryParamsHandling: 'merge'});
     }
 
     resolveTab(tabName: string | undefined): string {

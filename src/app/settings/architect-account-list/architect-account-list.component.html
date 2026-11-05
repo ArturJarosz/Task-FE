@@ -21,7 +21,7 @@
         } @else {
             @for (architect of architects; track architect.id) {
                 <div role="row" class="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_3rem] gap-3 items-center px-5 py-1.5 border-b border-gray-100 last:border-b-0 hover:bg-gray-50">
-                    <span role="cell" class="min-w-0 truncate font-medium text-gray-800">{{ getName(architect) }}</span>
+                    <span role="cell" class="min-w-0 break-words font-medium text-gray-800">{{ getName(architect) }}</span>
                     <span role="cell" class="min-w-0">
                         @if (architect.linkedUser; as linkedUser) {
                             <span class="block truncate text-gray-800">{{ getAccountName(linkedUser) }}</span>

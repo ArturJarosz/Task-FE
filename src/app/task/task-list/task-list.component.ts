@@ -4,7 +4,7 @@ import {resolveKnownLabel, resolveLabel} from "../../shared/utils/label-utils";
 import {Task} from "../../generated/models/task";
 import {DeleteTaskDto} from "../model/task";
 import {Architect} from "../../generated/models/architect";
-import {TableModule} from "primeng/table";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {ButtonModule} from "primeng/button";
 import {TagModule} from "primeng/tag";
 import {Menu, MenuModule} from "primeng/menu";
@@ -12,8 +12,11 @@ import {MenuItem} from "primeng/api";
 import {Router, RouterLink} from "@angular/router";
 import {DatePipe} from "@angular/common";
 import {TooltipModule} from "primeng/tooltip";
-import {EmptyStateComponent, NotSetComponent} from "../../shared";
+import {DurationPipe, EmptyStateComponent, NotSetComponent} from "../../shared";
 import {statusSeverity} from "../../shared/status-severity";
+import {fieldValue, SortValue, TableSort, toTableSort} from "../../shared/utils/sort-utils";
+import {SortRowsPipe} from "../../shared/sort-rows/sort-rows.pipe";
+import {ThreeStepSortDirective} from "../../shared/sort-rows/three-step-sort.directive";
 
 const ARCHITECT_NOT_FOUND_INITIAL = '?';
 
@@ -23,9 +26,28 @@ const ARCHITECT_NOT_FOUND_INITIAL = '?';
     styleUrl: './task-list.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [TableModule, ButtonModule, TagModule, MenuModule, RouterLink, DatePipe, TooltipModule, EmptyStateComponent, NotSetComponent]
+    imports: [ThreeStepSortDirective, SortRowsPipe, TableModule, ButtonModule, TagModule, MenuModule, RouterLink, DatePipe, TooltipModule, EmptyStateComponent, NotSetComponent,
+        DurationPipe]
 })
 export class TaskListComponent {
+
+    // Column sort of the table: it is lazy, so it only reports the sort and the sortRows pipe sorts a copy of the rows
+    sort: TableSort | null = null;
+
+    readonly sortValue = (row: Task, field: string): SortValue => {
+        switch (field) {
+            case 'architect':
+                return this.getArchitectName(row.architectId);
+            case 'status':
+                return this.getStatusLabel(row.status ?? '');
+            default:
+                return fieldValue(row, field);
+        }
+    };
+
+    onSort(event: TableLazyLoadEvent): void {
+        this.sort = toTableSort(event);
+    }
 
     @Input()
     tasks!: Task[] | null;
@@ -41,6 +63,8 @@ export class TaskListComponent {
     stageId: number = 0;
     @Output()
     deleteTaskEVent: EventEmitter<DeleteTaskDto> = new EventEmitter<DeleteTaskDto>();
+    @Output()
+    logTimeEvent: EventEmitter<Task> = new EventEmitter<Task>();
 
     protected readonly statusSeverity = statusSeverity;
     rowMenuItems: MenuItem[] = [];
@@ -79,6 +103,8 @@ export class TaskListComponent {
         this.rowMenuItems = [
             {label: 'Open', icon: 'pi pi-arrow-right',
                 command: () => this.router.navigate(['/projects', this.projectId, 'stages', this.stageId, 'tasks', task.id])},
+            {label: 'Log time', icon: 'pi pi-clock', command: () => this.logTimeEvent.emit(task)},
+            {separator: true},
             {label: 'Delete task', icon: 'pi pi-trash', command: () => this.deleteTaskEVent.emit({taskName: task.name!, taskId: task.id!})}
         ];
         menu.toggle($event);

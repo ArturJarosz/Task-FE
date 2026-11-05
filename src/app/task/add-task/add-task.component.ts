@@ -12,6 +12,7 @@ import {SelectModule} from "primeng/select";
 import {InputTextModule} from "primeng/inputtext";
 import {Textarea} from "primeng/textarea";
 import {ButtonModule} from "primeng/button";
+import {showErrors} from "../../shared/utils/form-utils";
 
 @Component({
     selector: 'add-task',
@@ -67,6 +68,11 @@ export class AddTaskComponent implements OnInit {
     }
 
     onSave(): void {
+        // Never disabled: with something missing, saving shows every error instead
+        if (!this.isSaveEnabled()) {
+            showErrors(this.addTaskForm);
+            return;
+        }
         this.visible = false;
         this.taskStore.createTask({projectId: this.projectId, stageId: this.stageId, task: this.createTask()});
     }

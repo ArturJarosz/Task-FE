@@ -6,10 +6,9 @@ import {TooltipModule} from "primeng/tooltip";
 import {ConfigurationEntry, Project} from "../../generated/models";
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {updateAtMidnight} from "../../shared/utils/date-utils";
-import {isDate, spanOf, TimelineScale, TimelineSpan, toDay} from "../timeline/timeline-scale";
+import {barLabel, isDate, spanOf, TimelineScale, TimelineSpan, toDay} from "../timeline/timeline-scale";
 
 // Width of the label column, also where the track starts
-const LABEL_COLUMN_PX = 320;
 
 // One project: its contract row and its project row, each from its own dates only
 export interface ProjectTimelineGroup {
@@ -32,6 +31,7 @@ export interface ProjectTimelineGroup {
     imports: [TooltipModule, RouterLink, DatePipe, NgTemplateOutlet]
 })
 export class ProjectsTimelineComponent implements OnChanges, AfterViewChecked {
+    readonly barLabel = barLabel;
     @Input()
     projects: Project[] = [];
     @Input()
@@ -42,7 +42,6 @@ export class ProjectsTimelineComponent implements OnChanges, AfterViewChecked {
     @ViewChild('scroller')
     scroller?: ElementRef<HTMLElement>;
 
-    readonly labelColumnPx = LABEL_COLUMN_PX;
     today: Date = startOfDay(new Date());
     scale: TimelineScale = new TimelineScale(this.today);
     groups: ProjectTimelineGroup[] = [];
@@ -94,16 +93,22 @@ export class ProjectsTimelineComponent implements OnChanges, AfterViewChecked {
     }
 
     // Only as far as it takes to bring today within the first two thirds of the visible track, so the start of the
-    // bars (and their labels) stays in view whenever today allows it
+    // bars (and their labels) stays in view whenever today allows it, then back to the start of that month
     scrollToToday(scroller: HTMLElement): void {
         let todayLeft = this.scale.todayLeft;
-        let visibleTrack = scroller.clientWidth - LABEL_COLUMN_PX;
+        // The label column's width is the scroll box's --label-col (320px, 136px on a phone)
+        let labelColumn = (scroller instanceof Element
+            ? parseFloat(getComputedStyle(scroller).getPropertyValue('--label-col')) : NaN) || 320;
+        let visibleTrack = scroller.clientWidth - labelColumn;
         if (todayLeft === null || scroller.scrollWidth <= scroller.clientWidth || visibleTrack <= 0) {
             scroller.scrollLeft = 0;
             return;
         }
-        let todayPx = (scroller.scrollWidth - LABEL_COLUMN_PX) * todayLeft / 100;
-        scroller.scrollLeft = Math.max(todayPx - visibleTrack * 2 / 3, 0);
+        let trackPx = scroller.scrollWidth - labelColumn;
+        let target = Math.max(trackPx * todayLeft / 100 - visibleTrack * 2 / 3, 0);
+        // Back to the start of that month, so the first month label in view is never cut in half
+        let monthStarts = (this.scale.ticks ?? []).map(tick => trackPx * tick.left / 100).filter(px => px <= target);
+        scroller.scrollLeft = monthStarts.length ? Math.max(...monthStarts) : target;
     }
 
     private toGroup(project: Project): ProjectTimelineGroup {

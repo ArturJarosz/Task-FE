@@ -1,5 +1,5 @@
-import {ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, Signal} from '@angular/core';
-import {ProjectStore} from "../state";
+import {ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, Signal, untracked} from '@angular/core';
+import {ProjectStore, ProjectTimeSummaryStore} from "../state";
 import {ArchitectStore} from "../../architect/state";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -11,6 +11,7 @@ import {ProjectDetailComponent, ProjectDetailView} from "../project-detail/proje
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {InstallmentStore} from "../../finance/installment/state/installment.state";
 import {Installment} from "../../generated/models/installment";
+import {ProjectTimeSummary} from "../../generated/models/project-time-summary";
 
 @Component({
     selector: 'project-detail-shell',
@@ -28,6 +29,7 @@ export class ProjectDetailShellComponent implements OnInit {
     readonly projectStore = inject(ProjectStore);
     readonly configurationStore = inject(ConfigurationStore);
     readonly installmentStore = inject(InstallmentStore);
+    readonly timeSummaryStore = inject(ProjectTimeSummaryStore);
     // While the store still holds a project from another page, show skeletons instead of the wrong one
     $project: Signal<Project | null> = computed(() => this.projectStore.project()?.id === this.projectId ? this.projectStore.project() : null);
     $projectLoadFailed: Signal<boolean> = this.projectStore.projectLoadFailed;
@@ -41,6 +43,10 @@ export class ProjectDetailShellComponent implements OnInit {
     $installmentsLoadFailed: Signal<boolean> = this.installmentStore.installmentsLoadFailed;
     $installmentsNeedRefresh: Signal<boolean> = this.installmentStore.installmentsNeedRefresh;
     $hasDeposit: Signal<boolean | null> = this.installmentStore.hasDeposit;
+    // The store drops the summary of another project, so it always belongs to this one
+    $timeSummary: Signal<ProjectTimeSummary | null> = this.timeSummaryStore.timeSummary;
+    $timeSummaryLoading: Signal<boolean> = this.timeSummaryStore.timeSummaryLoading;
+    $timeSummaryLoadFailed: Signal<boolean> = this.timeSummaryStore.timeSummaryLoadFailed;
 
     constructor(private route: ActivatedRoute,
                 private router: Router,
@@ -57,6 +63,12 @@ export class ProjectDetailShellComponent implements OnInit {
                 this.installmentStore.loadProjectInstallments({});
             }
         })
+        // The overview's "Time and rate" card loads when the overview is opened and again after time is logged
+        effect(() => {
+            if (this.view === 'overview' && this.timeSummaryStore.timeSummaryNeedsRefresh()) {
+                untracked(() => this.timeSummaryStore.loadTimeSummary());
+            }
+        })
     }
 
     ngOnInit(): void {
@@ -67,6 +79,11 @@ export class ProjectDetailShellComponent implements OnInit {
         this.projectStore.loadProject({});
         // The effect above loads them once the project is set
         this.installmentStore.setProjectId(this.projectId);
+        this.timeSummaryStore.setProjectId(this.projectId);
+        if (this.view === 'overview') {
+            // The project's finances and supervision visits change the summary too, so it loads on every visit
+            this.timeSummaryStore.setTimeSummaryNeedsRefresh();
+        }
 
         this.configurationStore.loadConfiguration({});
         this.architectStore.loadArchitects({});
@@ -101,5 +118,9 @@ export class ProjectDetailShellComponent implements OnInit {
 
     onReloadInstallments(): void {
         this.installmentStore.loadProjectInstallments({});
+    }
+
+    onReloadTimeSummary(): void {
+        this.timeSummaryStore.loadTimeSummary();
     }
 }

@@ -2,9 +2,11 @@
 
 <div class="flex flex-col gap-gutter">
     <!-- KPIs -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter">
         <app-kpi-card icon="pi pi-wrench" label="Contractors">{{ $kpis().total }}</app-kpi-card>
         <app-kpi-card icon="pi pi-briefcase" label="With jobs">{{ $kpis().withItems }}</app-kpi-card>
+        <app-kpi-card icon="pi pi-list" label="Jobs">{{ $kpis().items }}</app-kpi-card>
+        <app-kpi-card icon="pi pi-tags" label="Trades">{{ $kpis().categories }}</app-kpi-card>
     </div>
 
     <!-- Table card -->
@@ -18,7 +20,7 @@
         </div>
         <app-partner-list [rows]="$pagedRows()" routeBase="/contractors" entityLabel="contractor" countLabel="Jobs"
                            icon="pi pi-wrench" emptyText="Add the electricians, plumbers and other trades you work with."
-                           (deleteEvent)="onDelete($event)"/>
+                           (deleteEvent)="onDelete($event)" (sortChange)="onSortChange($event)"/>
         <app-table-footer [total]="$rows().length" [page]="$page()" [pageSize]="pageSize"
                            (pageChange)="$page.set($event)"/>
     </section>

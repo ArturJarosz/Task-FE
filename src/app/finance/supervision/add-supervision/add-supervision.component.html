@@ -1,9 +1,8 @@
-<p-dialog [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
+<p-dialog closeAriaLabel="Close" [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onClose()">
     <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">New supervision</span>
-            <span class="text-sm text-gray-500">Set the net rates for the author's supervision of this project.</span>
         </div>
     </ng-template>
     <form [formGroup]="addSupervisionForm" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -32,6 +31,6 @@
     </form>
     <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
-        <p-button label="Create supervision" icon="pi pi-plus" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
+        <p-button label="Create supervision" icon="pi pi-plus" (onClick)="onSave()"/>
     </ng-template>
 </p-dialog>

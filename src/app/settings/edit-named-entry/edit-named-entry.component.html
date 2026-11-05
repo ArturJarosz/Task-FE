@@ -1,9 +1,8 @@
-<p-dialog [visible]="visible" (visibleChange)="!$event && onHide()" [modal]="true" appendTo="body" [draggable]="false"
+<p-dialog closeAriaLabel="Close" [visible]="visible" (visibleChange)="!$event && onHide()" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}">
     <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">{{ isNew ? 'New ' + texts.singular : 'Rename ' + entry?.name }}</span>
-            <span class="text-sm text-gray-500">{{ isNew ? texts.newHint : texts.renameHint }}</span>
         </div>
     </ng-template>
     <!-- No form directive here, so Enter would submit natively and reload the page -->
@@ -20,7 +19,7 @@
     </form>
     <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onHide()"/>
-        <p-button [label]="isNew ? 'Create ' + texts.singular : 'Save changes'" [disabled]="!canSave" [loading]="saving"
+        <p-button [label]="isNew ? 'Create ' + texts.singular : 'Save changes'" [disabled]="saving" [loading]="saving"
                   (onClick)="onSave()"/>
     </ng-template>
 </p-dialog>

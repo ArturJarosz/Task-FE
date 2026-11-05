@@ -1,10 +1,12 @@
-<p-table [value]="tasks ?? []" [rowHover]="true" [tableStyle]="{'min-width': '44rem'}">
+<p-table [value]="(tasks ?? []) | sortRows:sort:sortValue"
+             [lazy]="true" [lazyLoadOnInit]="false" (onLazyLoad)="onSort($event)" [rowHover]="true" tableStyleClass="sm:min-w-[50rem]">
     <ng-template #header>
         <tr>
-            <th>Task</th>
-            <th>Architect</th>
-            <th>Dates</th>
-            <th>Status</th>
+            <th pSortableColumn="name">Task <p-sortIcon field="name"/></th>
+            <th pSortableColumn="architect" class="max-sm:hidden">Architect <p-sortIcon field="architect"/></th>
+            <th pSortableColumn="startDate" class="max-sm:hidden">Dates <p-sortIcon field="startDate"/></th>
+            <th pSortableColumn="timeSpentMinutes" class="app-num max-sm:hidden">Time <p-sortIcon field="timeSpentMinutes"/></th>
+            <th pSortableColumn="status" class="max-sm:hidden">Status <p-sortIcon field="status"/></th>
             <th class="w-16"><span class="sr-only">Actions</span></th>
         </tr>
     </ng-template>
@@ -13,8 +15,9 @@
             <td>
                 <div class="font-medium text-gray-800">{{ task.name }}</div>
                 <div class="text-xs text-gray-500">{{ getTypeLabel(task.typeId) }}</div>
+                <p-tag class="sm:hidden mt-2 inline-flex" [value]="getStatusLabel(task.status)" [severity]="statusSeverity(task.status)"/>
             </td>
-            <td>
+            <td class="max-sm:hidden">
                 @if (getArchitectName(task.architectId); as architectName) {
                     <div class="flex items-center gap-3">
                         <span class="app-avatar bg-brand-50 text-brand-600">{{ getArchitectInitials(task.architectId) }}</span>
@@ -24,7 +27,7 @@
                     <app-not-set/>
                 }
             </td>
-            <td>
+            <td class="max-sm:hidden">
                 @if (task.startDate || task.endDate) {
                     <span class="tabular-nums whitespace-nowrap">
                         {{ (task.startDate | date:'dd.MM.yyyy') || '…' }} – {{ (task.endDate | date:'dd.MM.yyyy') || '…' }}
@@ -33,7 +36,8 @@
                     <app-not-set/>
                 }
             </td>
-            <td>
+            <td class="app-num max-sm:hidden">{{ (task.timeSpentMinutes ?? 0) | duration }}</td>
+            <td class="max-sm:hidden">
                 <p-tag [value]="getStatusLabel(task.status)" [severity]="statusSeverity(task.status)"/>
             </td>
             <td class="text-right">
@@ -45,7 +49,7 @@
     </ng-template>
     <ng-template #emptymessage>
         <tr>
-            <td colspan="5" class="p-0">
+            <td colspan="6" class="p-0">
                 <app-empty-state icon="pi pi-check-square" title="No tasks yet"
                                  text="Break the stage into tasks to track who does what."/>
             </td>

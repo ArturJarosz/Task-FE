@@ -13,3 +13,6 @@ export {PartnerFormFieldsComponent} from './partner-form-fields/partner-form-fie
 export {PartnerDetailComponent, Partner, PartnerItem, PartnerItemsData} from './partner-detail/partner-detail.component';
 export {StoreName} from './store';
 export * from './component';
+export {DurationPipe, formatDuration} from './duration/duration.pipe';
+export {parseDuration, toDurationInput} from './duration/duration-input';
+export {SortRowsPipe} from './sort-rows/sort-rows.pipe';

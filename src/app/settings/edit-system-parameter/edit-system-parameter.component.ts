@@ -6,7 +6,15 @@ import {InputTextModule} from "primeng/inputtext";
 import {InputNumberModule} from "primeng/inputnumber";
 import {ToggleSwitchModule} from "primeng/toggleswitch";
 import {SystemParameter} from "../../generated/models/system-parameter";
-import {formatParameterValue, isNumericParameter, SystemParameterType} from "../system-parameter-format";
+import {
+    formatParameterValue,
+    fractionToPercent,
+    isNumericParameter,
+    isRateParameter,
+    parameterLabel,
+    percentToFraction,
+    SystemParameterType
+} from "../system-parameter-format";
 
 @Component({
     selector: 'edit-system-parameter',
@@ -47,7 +55,19 @@ export class EditSystemParameterComponent implements OnChanges {
     }
 
     get maxFractionDigits(): number {
+        if (this.isRate) {
+            return 2;
+        }
         return this.systemParameter?.type === SystemParameterType.DECIMAL_NUMBER ? 4 : 0;
+    }
+
+    // A tax rate is edited as a percentage (23) and saved as the fraction the backend keeps (0.23)
+    get isRate(): boolean {
+        return this.isNumeric && isRateParameter(this.systemParameter?.name);
+    }
+
+    get label(): string {
+        return parameterLabel(this.systemParameter?.name);
     }
 
     get valueControl(): FormControl {
@@ -59,7 +79,7 @@ export class EditSystemParameterComponent implements OnChanges {
 
     get defaultValueText(): string {
         let defaultValue = this.systemParameter?.defaultValue;
-        return defaultValue ? formatParameterValue(defaultValue, this.systemParameter?.type) : '';
+        return defaultValue ? formatParameterValue(defaultValue, this.systemParameter?.type, this.systemParameter?.name) : '';
     }
 
     ngOnChanges(): void {
@@ -76,7 +96,8 @@ export class EditSystemParameterComponent implements OnChanges {
             this.valueControl.markAsDirty();
             return;
         }
-        let value = this.isNumeric || this.isBoolean ? String(this.valueControl.value) : this.textValue.value.trim();
+        let number = this.isRate ? percentToFraction(this.numberValue.value!) : this.numberValue.value;
+        let value = this.isNumeric ? String(number) : this.isBoolean ? String(this.booleanValue.value) : this.textValue.value.trim();
         this.save.emit({...this.systemParameter!, value: value});
     }
 
@@ -86,7 +107,7 @@ export class EditSystemParameterComponent implements OnChanges {
 
     private setValue(value: string): void {
         let number = value.trim() === '' ? NaN : Number(value);
-        this.numberValue.reset(isNaN(number) ? null : number);
+        this.numberValue.reset(isNaN(number) ? null : this.isRate ? fractionToPercent(number) : number);
         this.booleanValue.reset(value === 'true');
         this.textValue.reset(value);
     }

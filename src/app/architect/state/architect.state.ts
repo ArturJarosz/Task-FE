@@ -7,7 +7,7 @@ import {ArchitectRestService} from "../rest/architect-rest.service";
 import {inject} from "@angular/core";
 import {MessageService} from "primeng/api";
 import {EntityProjectsSummary} from "../../generated/models/entity-projects-summary";
-import {MessageSeverity} from "../../shared";
+import {MessageSeverity} from "../../shared/message";
 
 export interface ArchitectState extends AppState {
     architects: Architect[];

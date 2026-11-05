@@ -1,4 +1,6 @@
 import {ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked} from '@angular/core';
+import {SelectModule} from "primeng/select";
+import {FormsModule} from "@angular/forms";
 import {ActivatedRoute, Router, RouterLink, RouterLinkActive} from "@angular/router";
 import {toSignal} from "@angular/core/rxjs-interop";
 import {map} from "rxjs";
@@ -61,7 +63,7 @@ interface NamedEntrySection {
     imports: [PageHeaderComponent, SystemParameterListComponent, EditSystemParameterComponent,
         AppearanceSettingsComponent, GoogleCalendarSettingsComponent, GoogleCalendarSharesComponent, ConfirmDialogModule,
         RouterLink, RouterLinkActive, NamedEntryListComponent, EditNamedEntryComponent, ButtonModule,
-        ArchitectAccountListComponent, LinkAccountComponent]
+        ArchitectAccountListComponent, LinkAccountComponent, SelectModule, FormsModule]
 })
 export class SettingsShellComponent {
     readonly systemParameterStore = inject(SystemParameterStore);
@@ -75,6 +77,11 @@ export class SettingsShellComponent {
     protected readonly GoogleCalendarConnectionStatus = GoogleCalendarConnectionStatus;
 
     readonly sectionGroups = SETTINGS_SECTION_GROUPS;
+
+    // The phone's select: the same routes as the nav links
+    onSelectSection(key: string): void {
+        this.router.navigate(['/settings', key]);
+    }
 
     private readonly $sectionKey = toSignal(this.route.paramMap.pipe(map(params => params.get('section'))));
     readonly $section = computed(() => SETTINGS_SECTIONS.find(section => section.key === this.$sectionKey()));

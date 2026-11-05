@@ -32,6 +32,8 @@ import {
     withoutFilter
 } from "../project-filter/project-filter";
 import {earliest, isDate, toDay} from "../timeline/timeline-scale";
+import {SortValue, sortRows, TableSort} from "../../shared/utils/sort-utils";
+import {resolveLabel} from "../../shared/utils/label-utils";
 
 const PAGE_SIZE = 10;
 
@@ -124,9 +126,13 @@ export class ProjectListShellComponent {
     readonly $segment = computed(() => this.$segments().find(segment => segment.key === this.$segmentKey()) ?? this.$segments()[0]);
     readonly $filteredProjects = computed(() => this.$matchingProjects().filter(project => inSegment(project, this.$segment())));
     readonly $pageCount = computed(() => Math.max(Math.ceil(this.$filteredProjects().length / PAGE_SIZE), 1));
+    // The table's column sort, applied to every filtered project before paging
+    readonly $sort = signal<TableSort | null>(null);
+    readonly $sortedProjects = computed(() => sortRows(this.$filteredProjects(), this.$sort(),
+        (project, field) => this.sortValue(project, field)));
     readonly $pagedProjects = computed(() => {
         let start = this.$page() * PAGE_SIZE;
-        return this.$filteredProjects().slice(start, start + PAGE_SIZE);
+        return this.$sortedProjects().slice(start, start + PAGE_SIZE);
     });
     readonly $pagedTimelineProjects = computed(() => {
         let start = this.$page() * PAGE_SIZE;
@@ -167,6 +173,28 @@ export class ProjectListShellComponent {
                 this.$page.set(this.$pageCount() - 1);
             }
         }, {allowSignalWrites: true});
+    }
+
+    onSortChange(sort: TableSort | null) {
+        this.$sort.set(sort);
+        this.$page.set(0);
+    }
+
+    private sortValue(project: Project, field: string): SortValue {
+        switch (field) {
+            case 'name':
+                return project.name;
+            case 'client':
+                return clientName(project.client);
+            case 'architect':
+                return architectName(project.architect);
+            case 'status':
+                return resolveLabel(project.status, this.$projectStatuses());
+            case 'value':
+                return project.contract?.offerValue;
+            default:
+                return null;
+        }
     }
 
     onSelectSegment(key: string) {

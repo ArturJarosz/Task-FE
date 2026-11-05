@@ -3,8 +3,8 @@
 @if (task) {
     <div class="flex flex-col gap-gutter">
         <!-- Header card -->
-        <section class="app-card flex flex-wrap items-center gap-5 p-6">
-            <div class="flex items-center justify-center shrink-0 w-[72px] h-[72px] rounded-2xl bg-brand-50 text-brand-500">
+        <section class="app-card app-detail-header">
+            <div class="app-detail-icon bg-brand-50 text-brand-500">
                 <i class="pi pi-check-square text-3xl" aria-hidden="true"></i>
             </div>
             <div class="flex-1 min-w-0">
@@ -12,15 +12,20 @@
                     <h2 class="m-0 text-xl leading-[30px] font-semibold text-gray-800">{{ task.name }}</h2>
                     <p-tag [value]="resolvedStatusLabel" [severity]="statusSeverity(task.status)"/>
                 </div>
-                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-sm text-gray-500">
+                <div class="app-detail-meta">
                     <span>{{ resolvedTypeLabel }}</span>
-                    <span class="w-px h-4 bg-gray-200"></span>
+                    <span class="app-detail-meta-divider" aria-hidden="true"></span>
                     <span>Stage:
-                        <a [routerLink]="['/projects', projectId, 'stages', stageId]"
-                           class="text-gray-500 no-underline hover:text-brand-500">{{ stageName || 'Open stage' }}</a>
+                        <a [routerLink]="['/projects', projectId, 'stages', stageId]" class="app-meta-link">{{ stageName || 'Open stage' }}</a>
                     </span>
-                    <span class="w-px h-4 bg-gray-200"></span>
-                    <span>Architect: {{ architectName || 'Not set' }}</span>
+                    <span class="app-detail-meta-divider" aria-hidden="true"></span>
+                    <span>Architect:
+                        @if (task.architectId && architectName) {
+                            <a [routerLink]="['/architects', task.architectId]" class="app-meta-link">{{ architectName }}</a>
+                        } @else {
+                            Not set
+                        }
+                    </span>
                 </div>
             </div>
             <p-button icon="pi pi-ellipsis-h" severity="secondary" [outlined]="true"
@@ -31,42 +36,52 @@
 
         <div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_var(--spacing-gutter)/4)_minmax(0,1fr)] gap-gutter items-start">
             <!-- Main column -->
-            <section class="app-card min-w-0">
-                <div class="app-card-header">
-                    <h3 class="app-card-title">Task details</h3>
-                    <p-button label="Edit" icon="pi pi-pencil" severity="secondary" [outlined]="true"
-                              (onClick)="onEdit()"/>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 px-6 pb-6">
-                    <app-field label="Name" [value]="task.name"/>
-                    <div>
-                        <span class="app-field-label">Status</span>
-                        <p-tag [value]="resolvedStatusLabel" [severity]="statusSeverity(task.status)"/>
+            <div class="flex flex-col gap-gutter min-w-0">
+                <section class="app-card">
+                    <div class="app-card-header">
+                        <h3 class="app-card-title">Task details</h3>
+                        <p-button label="Edit" icon="pi pi-pencil" severity="secondary" [outlined]="true"
+                                  (onClick)="onEdit()"/>
                     </div>
-                    <app-field label="Type" [value]="resolvedTypeLabel"/>
-                    <app-field label="Start date" [value]="task.startDate | date:'dd.MM.yyyy'"/>
-                    <app-field label="End date" [value]="task.endDate | date:'dd.MM.yyyy'"/>
-                    <app-field class="sm:col-span-2 lg:col-span-3" label="Note" [value]="task.note" emptyText="No note yet"/>
-                </div>
-            </section>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 px-6 pb-6">
+                        <app-field label="Name" [value]="task.name"/>
+                        <div>
+                            <span class="app-field-label">Status</span>
+                            <p-tag [value]="resolvedStatusLabel" [severity]="statusSeverity(task.status)"/>
+                        </div>
+                        <app-field label="Type" [value]="resolvedTypeLabel"/>
+                        <app-field label="Start date" [value]="task.startDate | date:'dd.MM.yyyy'"/>
+                        <app-field label="End date" [value]="task.endDate | date:'dd.MM.yyyy'"/>
+                        <app-field class="sm:col-span-2 lg:col-span-3" label="Note" [value]="task.note" emptyText="No note yet"/>
+                    </div>
+                </section>
+            </div>
 
             <!-- Side column -->
-            <section class="app-card">
-                <div class="app-card-header">
-                    <h3 class="app-card-title">People</h3>
-                </div>
-                @if (architectName) {
-                    <a [routerLink]="['/architects', task.architectId]" class="flex items-center gap-3 px-6 pb-6 no-underline group">
-                        <span class="app-avatar bg-brand-50 text-brand-600">{{ architectInitials }}</span>
-                        <span class="flex flex-col min-w-0">
-                            <span class="text-sm font-medium text-gray-800 truncate group-hover:text-brand-500">{{ architectName }}</span>
-                            <span class="text-xs text-gray-500">Architect</span>
-                        </span>
-                    </a>
-                } @else {
-                    <app-empty-state icon="pi pi-id-card" title="No architect" text="Edit the task to assign an architect."/>
-                }
-            </section>
+            <div class="flex flex-col gap-gutter">
+                <task-time-card [totalMinutes]="task.timeSpentMinutes ?? 0" [timeEntries]="timeEntries"
+                                [loading]="timeEntriesLoading" [loadFailed]="timeEntriesLoadFailed"
+                                [architects]="architects" [saving]="timeEntrySaving" [logArchitectId]="logArchitectId"
+                                (quickLog)="quickLogEvent.emit($event)" (logTime)="logTimeEvent.emit()"
+                                (showEntries)="showTimeEntriesEvent.emit()" (reload)="reloadTimeEntriesEvent.emit()"/>
+
+                <section class="app-card">
+                    <div class="app-card-header">
+                        <h3 class="app-card-title">People</h3>
+                    </div>
+                    @if (architectName) {
+                        <a [routerLink]="['/architects', task.architectId]" class="flex items-center gap-3 px-6 pb-6 no-underline group">
+                            <span class="app-avatar bg-brand-50 text-brand-600">{{ architectInitials }}</span>
+                            <span class="flex flex-col min-w-0">
+                                <span class="text-sm font-medium text-gray-800 truncate group-hover:text-brand-500">{{ architectName }}</span>
+                                <span class="text-xs text-gray-500">Architect</span>
+                            </span>
+                        </a>
+                    } @else {
+                        <app-empty-state icon="pi pi-id-card" title="No architect" text="Edit the task to assign an architect."/>
+                    }
+                </section>
+            </div>
         </div>
     </div>
 } @else if (loadFailed) {
@@ -86,12 +101,11 @@
 }
 
 <!-- Edit task -->
-<p-dialog [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
+<p-dialog closeAriaLabel="Close" [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onCancelEdit()">
     <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">Edit task</span>
-            <span class="text-sm text-gray-500">Change the task status, details, architect and dates.</span>
         </div>
     </ng-template>
     <form [formGroup]="taskDetailForm" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -136,7 +150,7 @@
     </form>
     <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancelEdit()"/>
-        <p-button label="Save changes" [disabled]="!(statusNeedsUpdate || dataNeedsUpdate) || taskDetailForm.invalid"
+        <p-button label="Save changes" [disabled]="!(statusNeedsUpdate || dataNeedsUpdate)"
                   (onClick)="onSave()"/>
     </ng-template>
 </p-dialog>

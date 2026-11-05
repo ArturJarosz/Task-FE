@@ -17,9 +17,10 @@ import {ProjectRestService, ProjectRestServiceImpl} from './project/rest/project
 import {ContractRestService, ContractRestServiceImpl} from './project/rest/contract-rest.service';
 import {StageRestService, StageRestServiceImpl} from './stage/rest/stage-rest.service';
 import {TaskRestService, TaskRestServiceImpl} from './task/rest/task-rest.service';
+import {TimeEntryRestService, TimeEntryRestServiceImpl} from './time-entry/rest/time-entry-rest.service';
 import {ContractorRestService, ContractorRestServiceImpl} from './contractor/rest/contractor-rest.service';
 import {SupplierRestService, SupplierRestServiceImpl} from './supplier/rest/suppplier-rest.service';
-import {CostRestService, CostRestServiceImpl} from './finance/cost';
+import {CostRestService, CostRestServiceImpl} from './finance/cost/rest/cost-rest.service';
 import {FinancialRestService, FinancialRestServiceImpl} from './finance/project-financial-summary/rest/financial-rest.service';
 import {InstallmentRestService, InstallmentRestServiceImpl} from './finance/installment/rest/installment-rest.service';
 import {SupplyRestService, SupplyRestServiceImpl} from './finance/supply/rest/supply-rest.service';
@@ -76,6 +77,7 @@ export const appConfig: ApplicationConfig = {
         {provide: ContractRestService, useClass: ContractRestServiceImpl},
         {provide: StageRestService, useClass: StageRestServiceImpl},
         {provide: TaskRestService, useClass: TaskRestServiceImpl},
+        {provide: TimeEntryRestService, useClass: TimeEntryRestServiceImpl},
         {provide: ContractorRestService, useClass: ContractorRestServiceImpl},
         {provide: SupplierRestService, useClass: SupplierRestServiceImpl},
         {provide: CostRestService, useClass: CostRestServiceImpl},

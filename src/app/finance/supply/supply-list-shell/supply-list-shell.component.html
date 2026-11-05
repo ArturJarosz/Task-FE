@@ -1,9 +1,6 @@
-<div class="flex flex-wrap items-center justify-between gap-4 px-6 pb-4">
-    <p class="m-0 text-sm text-gray-500">Materials bought from suppliers</p>
-    <p-button label="Add supply" icon="pi pi-plus" (onClick)="onClickAdd()"/>
-</div>
 <div>
     <supply-list
+            (add)="onClickAdd()"
             [projectId]="projectId"
             [suppliers]="$suppliers()"
             [supplyProjectData]="$supplyProjectData()">

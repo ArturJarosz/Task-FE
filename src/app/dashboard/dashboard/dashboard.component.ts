@@ -13,7 +13,7 @@ import {TooltipModule} from "primeng/tooltip";
 import {CalendarEvent, Client, ClientType, ConfigurationEntry, FinancialReport, FinancialReportPeriod, Project, ProjectStatus} from "../../generated/models";
 import {PeriodType} from "../../generated/models/period-type";
 import {EmptyStateComponent, KpiCardComponent, PageCrumb, PageHeaderComponent, NotSetComponent} from "../../shared";
-import {resolveLabel} from "../../shared/utils/label-utils";
+import {initials, resolveLabel} from "../../shared/utils/label-utils";
 import {statusSeverity} from "../../shared/status-severity";
 import {
     barChartOptions,
@@ -444,11 +444,7 @@ export class DashboardComponent implements OnChanges {
     }
 
     getInitials(name: string): string {
-        return name.split(' ')
-            .filter(part => part.length > 0)
-            .slice(0, 2)
-            .map(part => part.charAt(0).toUpperCase())
-            .join('') || '?';
+        return initials(name);
     }
 
     private changeDraft(layout: DashboardLayout): void {
@@ -525,7 +521,9 @@ export class DashboardComponent implements OnChanges {
                 label,
                 backgroundColor: color,
                 hoverBackgroundColor: color,
-                data: periods.map(period => this.periodTotal(period, group)),
+                // Zeros are left out and anything else is at least 3px tall, so small expenses next to large income show
+                data: periods.map(period => this.periodTotal(period, group) || null),
+                minBarLength: 3,
                 maxBarThickness: 24,
                 borderRadius: {topLeft: 4, topRight: 4},
                 borderSkipped: false,

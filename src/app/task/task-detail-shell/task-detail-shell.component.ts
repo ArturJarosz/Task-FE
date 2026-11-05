@@ -1,4 +1,5 @@
-import {ChangeDetectionStrategy, Component, computed, inject, OnInit, Signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, LOCALE_ID, OnInit, signal, Signal} from '@angular/core';
+import {formatDate} from "@angular/common";
 import {TaskStore} from "../state/task.state";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
@@ -12,6 +13,15 @@ import {ProjectStore} from "../../project/state";
 import {StageStore} from "../../stage/state";
 import {TaskDetailComponent} from "../task-detail/task-detail.component";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {TimeEntry} from "../../generated/models/time-entry";
+import {TimeEntryStore, TimeEntryTask} from "../../time-entry/state/time-entry.state";
+import {LogTimeDialogComponent} from "../../time-entry/log-time-dialog/log-time-dialog.component";
+import {TimeEntriesDialogComponent} from "../../time-entry/time-entries-dialog/time-entries-dialog.component";
+import {QuickLog} from "../../time-entry/task-time-card/task-time-card.component";
+import {formatDuration} from "../../shared";
+import {toTimeZoneString} from "../../shared/utils/date-utils";
+import {UserStore} from "../../shared/user/state/user.state";
+import {defaultArchitectId} from "../../time-entry/default-architect";
 
 @Component({
     selector: 'task-detail-shell',
@@ -19,7 +29,7 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
     styleUrl: './task-detail-shell.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [TaskDetailComponent, ConfirmDialogModule]
+    imports: [TaskDetailComponent, LogTimeDialogComponent, TimeEntriesDialogComponent, ConfirmDialogModule]
 })
 export class TaskDetailShellComponent implements OnInit {
     projectId!: number;
@@ -31,6 +41,9 @@ export class TaskDetailShellComponent implements OnInit {
     readonly architectStore = inject(ArchitectStore);
     readonly projectStore = inject(ProjectStore);
     readonly stageStore = inject(StageStore);
+    readonly timeEntryStore = inject(TimeEntryStore);
+    private readonly userStore = inject(UserStore);
+    private readonly locale = inject(LOCALE_ID);
     // While the store still holds a task from another page, show skeletons instead of the wrong task
     $task: Signal<Task | null> = computed(() => this.taskStore.task()?.id === this.taskId ? this.taskStore.task() : null);
     $taskLoadFailed: Signal<boolean> = this.taskStore.taskLoadFailed;
@@ -42,6 +55,18 @@ export class TaskDetailShellComponent implements OnInit {
         this.projectStore.project()?.id === this.projectId ? this.projectStore.projectName() : '');
     $stageName: Signal<string> = computed(() =>
         this.stageStore.stage()?.id === this.stageId ? this.stageStore.stage()?.name ?? '' : '');
+    $timeEntries: Signal<TimeEntry[]> = this.timeEntryStore.timeEntries;
+    $timeEntriesLoading: Signal<boolean> = this.timeEntryStore.timeEntriesLoading;
+    $timeEntriesLoadFailed: Signal<boolean> = this.timeEntryStore.timeEntriesLoadFailed;
+    $timeEntrySaving: Signal<boolean> = this.timeEntryStore.timeEntrySaving;
+    // Who new time is logged for: the quick entry in the Time spent card, and where the Log time dialog starts
+    $logArchitectId: Signal<number | undefined> = computed(() =>
+        defaultArchitectId(this.$architects(), this.userStore.currentUser(), this.$task()?.architectId));
+    // The entry in the "Log time" dialog, open while set
+    readonly $loggedTimeEntry = signal<TimeEntry | null>(null);
+    readonly $timeEntriesOpen = signal(false);
+    // Time typed in the Time spent card while the Log time dialog asks who it is for; cleared from the card once saved
+    private quickLogAwaitingArchitect: QuickLog | null = null;
 
     constructor(private route: ActivatedRoute, private router: Router,
                 private confirmationService: ConfirmationService) {
@@ -58,6 +83,8 @@ export class TaskDetailShellComponent implements OnInit {
         this.taskStore.setStageId(this.stageId);
         this.taskStore.setProjectId(this.projectId);
         this.taskStore.loadTask({});
+        this.timeEntryStore.setTask(this.timeEntryTask);
+        this.timeEntryStore.loadTimeEntries();
 
         this.projectStore.setProjectId(this.projectId);
         this.projectStore.loadProject({});
@@ -101,5 +128,75 @@ export class TaskDetailShellComponent implements OnInit {
 
     onReload(): void {
         this.taskStore.loadTask({});
+    }
+
+    onLogTime(): void {
+        this.$loggedTimeEntry.set({architectId: this.$logArchitectId()});
+    }
+
+    // Time typed in the Time spent card: today, by the same architect the Log time dialog starts with
+    onQuickLog(quickLog: QuickLog): void {
+        const task = this.$task();
+        if (!task) {
+            return;
+        }
+        const architectId = this.$logArchitectId();
+        if (architectId === undefined) {
+            // Nobody to log it for yet: the dialog opens with the typed time, and the architect is chosen there
+            this.quickLogAwaitingArchitect = quickLog;
+            this.$loggedTimeEntry.set({durationMinutes: quickLog.durationMinutes});
+            return;
+        }
+        this.timeEntryStore.saveTimeEntry({
+            task: this.timeEntryTask,
+            timeEntry: {
+                workDate: toTimeZoneString(new Date()), architectId: architectId,
+                durationMinutes: quickLog.durationMinutes
+            },
+            afterSave: quickLog.onSaved
+        });
+    }
+
+    onEditTimeEntry(timeEntry: TimeEntry): void {
+        this.$loggedTimeEntry.set(timeEntry);
+    }
+
+    onSaveTimeEntry(timeEntry: TimeEntry): void {
+        this.timeEntryStore.saveTimeEntry({
+            task: this.timeEntryTask, timeEntry: timeEntry, afterSave: () => {
+                this.quickLogAwaitingArchitect?.onSaved();
+                this.onCloseLogTime();
+            }
+        });
+    }
+
+    onCloseLogTime(): void {
+        this.quickLogAwaitingArchitect = null;
+        this.$loggedTimeEntry.set(null);
+    }
+
+    onDeleteTimeEntry(timeEntry: TimeEntry): void {
+        const duration = formatDuration(timeEntry.durationMinutes, this.locale);
+        const workDate = timeEntry.workDate ? formatDate(timeEntry.workDate, 'dd.MM.yyyy', this.locale) : '';
+        this.confirmationService.confirm({
+            header: 'Delete time entry',
+            message: `Delete the ${duration} logged on ${workDate}? This can't be undone.`,
+            icon: 'pi pi-exclamation-triangle',
+            acceptButtonProps: {label: 'Delete', severity: 'danger'},
+            rejectButtonProps: {label: 'Cancel', severity: 'secondary', outlined: true},
+            accept: () => {
+                this.timeEntryStore.deleteTimeEntry({task: this.timeEntryTask, timeEntry: timeEntry});
+                this.confirmationService.close();
+            },
+            reject: () => this.confirmationService.close()
+        });
+    }
+
+    onReloadTimeEntries(): void {
+        this.timeEntryStore.loadTimeEntries();
+    }
+
+    private get timeEntryTask(): TimeEntryTask {
+        return {projectId: this.projectId, stageId: this.stageId, taskId: this.taskId};
     }
 }

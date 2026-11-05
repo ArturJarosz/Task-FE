@@ -13,5 +13,10 @@ export interface Task {
   note?: string;
   startDate?: string;
   status?: TaskStatus;
+
+  /**
+   * Minutes logged on the task
+   */
+  timeSpentMinutes?: number;
   typeId?: number;
 }

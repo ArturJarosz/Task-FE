@@ -13,22 +13,7 @@ import {EmptyStateComponent, KpiCardComponent, NotSetComponent} from "../../shar
 import {resolveLabel} from "../../shared/utils/label-utils";
 import {updateAtMidnight} from "../../shared/utils/date-utils";
 import {isDeposit} from "../../finance/installment/installment-utils";
-import {
-    dayCount,
-    emptySpan,
-    END_BEFORE_START,
-    endsBeforeStart,
-    isDate,
-    LabelSpot,
-    MIN_CHART_WIDTH_PX,
-    relativeDays,
-    spanOf,
-    TimelineScale,
-    TimelineSpan,
-    TimelineStretch,
-    TimelineTick,
-    toDay
-} from "../timeline/timeline-scale";
+import {END_BEFORE_START, LabelSpot, MIN_CHART_WIDTH_PX, TimelineScale, TimelineSpan, TimelineStretch, TimelineTick, barLabel, dayCount, emptySpan, endsBeforeStart, isDate, relativeDays, spanOf, toDay} from "../timeline/timeline-scale";
 
 export type {LabelPlacement, LabelSpot, TimelineSpan, TimelineStretch, TimelineTick} from "../timeline/timeline-scale";
 
@@ -258,13 +243,15 @@ export class ProjectTimelineComponent implements OnChanges {
     }
 
     readonly dayCount = dayCount;
+    readonly barLabel = barLabel;
 
     get anyDateError(): boolean {
         return !!this.contract.dateError || !!this.work.dateError || this.stages.some(stage => !!stage.dateError);
     }
 
+    // After a date in a KPI card: "175 days ago", "in 5 days", "today"
     relativeDays(date?: Date): string {
-        return date ? relativeDays(date, this.today) : '';
+        return date ? relativeDays(date, this.today).toLowerCase() : '';
     }
 
     // The bar maths lives in TimelineScale, shared with the projects timeline view

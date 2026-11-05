@@ -13,6 +13,8 @@ const MOCK_COST: Cost = {
     note: 'Test note',
     hasInvoice: true,
     paid: true,
+    // A paid cost needs its payment date to be valid
+    paymentDate: '2025-03-20',
     payable: true
 };
 
@@ -100,6 +102,17 @@ describe('CostDetailComponent', () => {
             expect(emitted.note).toBe('Test note');
             expect(emitted.payable).toBe(true);
             expect(typeof emitted.date).toBe('string');
+        });
+
+        it('should show every error instead of saving a form with something missing', () => {
+            spyOn(component.updateCostEvent, 'emit');
+            component.costDetailsForm.controls.name.setValue('');
+
+            component.onSave();
+
+            expect(component.updateCostEvent.emit).not.toHaveBeenCalled();
+            expect(component.costDetailsForm.controls.name.touched).toBeTrue();
+            expect(component.costDetailsForm.controls.name.dirty).toBeTrue();
         });
 
         it('should send a payment date only when the cost is paid', () => {

@@ -5,9 +5,11 @@
 } @else {
     <div class="flex flex-col gap-gutter">
         <!-- KPIs -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter">
             <app-kpi-card icon="pi pi-users" label="Clients">{{ $kpis().clients }}</app-kpi-card>
             <app-kpi-card icon="pi pi-briefcase" label="With active projects">{{ $kpis().withActiveProjects }}</app-kpi-card>
+            <app-kpi-card icon="pi pi-building" label="Companies">{{ $kpis().companies }}</app-kpi-card>
+            <app-kpi-card icon="pi pi-wallet" label="Contract value">{{ $kpis().value | currency:'PLN':'symbol':'1.2-2' }}</app-kpi-card>
         </div>
 
         <!-- Table card -->
@@ -35,7 +37,8 @@
                          [clientTypes]="$clientTypes()"
                          [emptyTitle]="$emptyTitle()"
                          [emptyText]="$emptyText()"
-                         (removeClientEvent)="onDeleteClient($event)">
+                         (removeClientEvent)="onDeleteClient($event)"
+                         (sortChange)="onSortChange($event)">
             </client-list>
             <app-table-footer [total]="$filteredRows().length" [page]="$page()" [pageSize]="pageSize"
                                (pageChange)="$page.set($event)"/>

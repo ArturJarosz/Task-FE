@@ -13,6 +13,7 @@ import {ProjectRestService, ProjectRestServiceImpl} from '../app/project/rest/pr
 import {ContractRestService, ContractRestServiceImpl} from '../app/project/rest/contract-rest.service';
 import {StageRestService, StageRestServiceImpl} from '../app/stage/rest/stage-rest.service';
 import {TaskRestService, TaskRestServiceImpl} from '../app/task/rest/task-rest.service';
+import {TimeEntryRestService, TimeEntryRestServiceImpl} from '../app/time-entry/rest/time-entry-rest.service';
 import {ContractorRestService, ContractorRestServiceImpl} from '../app/contractor/rest/contractor-rest.service';
 import {SupplierRestService, SupplierRestServiceImpl} from '../app/supplier/rest/suppplier-rest.service';
 import {CostRestService, CostRestServiceImpl} from '../app/finance/cost';
@@ -65,6 +66,7 @@ export function provideTestDependencies(): (Provider | EnvironmentProviders)[] {
         {provide: ContractRestService, useClass: ContractRestServiceImpl},
         {provide: StageRestService, useClass: StageRestServiceImpl},
         {provide: TaskRestService, useClass: TaskRestServiceImpl},
+        {provide: TimeEntryRestService, useClass: TimeEntryRestServiceImpl},
         {provide: ContractorRestService, useClass: ContractorRestServiceImpl},
         {provide: SupplierRestService, useClass: SupplierRestServiceImpl},
         {provide: CostRestService, useClass: CostRestServiceImpl},

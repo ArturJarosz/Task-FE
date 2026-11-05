@@ -1,9 +1,8 @@
-<p-dialog [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
+<p-dialog closeAriaLabel="Close" [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onClose()">
     <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">New supplier</span>
-            <span class="text-sm text-gray-500">Add a shop or supplier with its category and contact details.</span>
         </div>
     </ng-template>
     <form [formGroup]="addSupplierForm">
@@ -11,6 +10,6 @@
     </form>
     <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
-        <p-button label="Create supplier" icon="pi pi-plus" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
+        <p-button label="Create supplier" icon="pi pi-plus" (onClick)="onSave()"/>
     </ng-template>
 </p-dialog>

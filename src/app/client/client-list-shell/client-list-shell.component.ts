@@ -2,7 +2,8 @@ import {ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, si
 import {ClientStore} from "../state";
 import {Client} from "../../generated/models/client";
 import {ClientType} from "../../generated/models/client-type";
-import {ClientDto} from "../model/client";
+import {clientDisplayName, ClientDto} from "../model/client";
+import {SortValue, sortRows, TableSort} from "../../shared/utils/sort-utils";
 import {ConfirmationService} from "primeng/api";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
@@ -11,6 +12,7 @@ import {AddClientComponent} from "../add-client";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ButtonModule} from "primeng/button";
 import {LoadErrorComponent, KpiCardComponent, PageCrumb, PageHeaderComponent, TableFooterComponent} from "../../shared";
+import {CurrencyPipe} from "@angular/common";
 
 const PAGE_SIZE = 10;
 
@@ -36,7 +38,7 @@ function inSegment(client: Client, segment: ClientSegment): boolean {
     styleUrl: './client-list-shell.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [ClientListComponent, AddClientComponent, ConfirmDialogModule, ButtonModule, LoadErrorComponent, PageHeaderComponent, KpiCardComponent, TableFooterComponent]
+    imports: [CurrencyPipe, ClientListComponent, AddClientComponent, ConfirmDialogModule, ButtonModule, LoadErrorComponent, PageHeaderComponent, KpiCardComponent, TableFooterComponent]
 })
 export class ClientListShellComponent implements OnInit {
     readonly clientStore = inject(ClientStore);
@@ -65,7 +67,10 @@ export class ClientListShellComponent implements OnInit {
     readonly $segment = computed(() => this.segments.find(segment => segment.key === this.$segmentKey()) ?? this.segments[0]);
     readonly $filteredRows = computed(() => this.$rows().filter(row => inSegment(row.client, this.$segment())));
     readonly $pageCount = computed(() => Math.max(Math.ceil(this.$filteredRows().length / PAGE_SIZE), 1));
-    readonly $pagedRows = computed(() => this.$filteredRows().slice(this.$page() * PAGE_SIZE, (this.$page() + 1) * PAGE_SIZE));
+    // The table's column sort, applied to every filtered row before paging
+    readonly $sort = signal<TableSort | null>(null);
+    readonly $sortedRows = computed(() => sortRows(this.$filteredRows(), this.$sort(), clientSortValue));
+    readonly $pagedRows = computed(() => this.$sortedRows().slice(this.$page() * PAGE_SIZE, (this.$page() + 1) * PAGE_SIZE));
     readonly $segmentCounts = computed(() => {
         let clients = this.$clients() ?? [];
         return Object.fromEntries(this.segments.map(segment =>
@@ -76,6 +81,8 @@ export class ClientListShellComponent implements OnInit {
         return {
             clients: rows.length,
             withActiveProjects: rows.filter(row => row.activeProjects > 0).length,
+            companies: rows.filter(row => row.client.clientType === ClientType.CORPORATE).length,
+            value: rows.reduce((sum, row) => sum + (row.value ?? 0), 0),
         };
     });
     readonly $emptyTitle = computed(() =>
@@ -136,5 +143,29 @@ export class ClientListShellComponent implements OnInit {
                 this.confirmationService.close();
             }
         });
+    }
+
+    onSortChange(sort: TableSort | null) {
+        this.$sort.set(sort);
+        this.$page.set(0);
+    }
+}
+
+function clientSortValue(row: ClientRow, field: string): SortValue {
+    switch (field) {
+        case 'name':
+            return clientDisplayName(row.client);
+        case 'contact':
+            return row.client.contact?.email ?? row.client.contact?.telephone;
+        case 'city':
+            return row.client.contact?.address?.city;
+        case 'projects':
+            return row.projects;
+        case 'activeProjects':
+            return row.activeProjects;
+        case 'value':
+            return row.value;
+        default:
+            return null;
     }
 }

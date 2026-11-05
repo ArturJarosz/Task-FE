@@ -11,7 +11,7 @@
         </div>
         <div>
             <span class="app-form-label">Period</span>
-            <div class="app-seg" role="group" aria-label="Period">
+            <div class="app-seg app-seg-tabs" role="group" aria-label="Period">
                 @for (option of periodTypeOptions; track option.value) {
                     <button type="button" class="app-seg-item"
                             [class.active]="option.value === periodType" [attr.aria-pressed]="option.value === periodType"
@@ -48,9 +48,6 @@
             <div class="app-card-header">
                 <div>
                     <h2 class="app-card-title">Income and expenses</h2>
-                    <p class="app-card-subtitle m-0">
-                        {{ startDate | date:'dd.MM.yyyy' }} – {{ endDate | date:'dd.MM.yyyy' }} · income next to expenses for each period
-                    </p>
                 </div>
                 <ul class="list-none m-0 p-0 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-gray-700" aria-label="Legend">
                     @for (item of legendItems; track item.label) {
@@ -76,7 +73,6 @@
             <div class="app-card-header">
                 <div>
                     <h2 class="app-card-title">Summary</h2>
-                    <p class="app-card-subtitle m-0">Totals for the selected range, by category</p>
                 </div>
             </div>
             <!-- pb-6: the Balance band ends the card, so it gets the card's padding under it -->

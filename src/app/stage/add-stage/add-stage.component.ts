@@ -17,6 +17,7 @@ import {Textarea} from "primeng/textarea";
 import {ToggleSwitchModule} from "primeng/toggleswitch";
 import {InputNumberModule} from "primeng/inputnumber";
 import {ButtonModule} from "primeng/button";
+import {showErrors} from "../../shared/utils/form-utils";
 
 @Component({
     selector: 'add-stage',
@@ -70,6 +71,11 @@ export class AddStageComponent implements OnInit {
     }
 
     onSave(): void {
+        // Never disabled: with something missing, saving shows every error instead
+        if (!this.isSaveEnabled()) {
+            showErrors(this.addStageForm);
+            return;
+        }
         this.visible = false;
         this.stageStore.createStage({projectId: this.projectId, stage: this.createStage()});
     }

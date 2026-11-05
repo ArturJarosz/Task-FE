@@ -1,9 +1,6 @@
-<div class="flex flex-wrap items-center justify-between gap-4 px-6 pb-4">
-    <p class="m-0 text-sm text-gray-500">Costs of this project, such as travel or corrections</p>
-    <p-button label="Add cost" icon="pi pi-plus" (onClick)="onClickAdd()"/>
-</div>
 <div>
     <cost-list
+            (add)="onClickAdd()"
             [projectId]="projectId"
             [costCategories]="$costCategories()"
             [projectCostsData]="$projectCostsData()">

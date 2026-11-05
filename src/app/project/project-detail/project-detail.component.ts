@@ -11,20 +11,28 @@ import {
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {startOfToday} from "date-fns";
 import {ProjectContractForm, ProjectCreateForm, ProjectFormProvider} from "../form/project-form-provider";
-import {resolveLabel} from "../../shared/utils/label-utils";
+import {initials, resolveLabel} from "../../shared/utils/label-utils";
 import {Architect} from "../../generated/models/architect";
 import {Project} from "../../generated/models/project";
 import {Installment} from "../../generated/models/installment";
-import {ConfigurationEntry, Contract, ContractStatus, InstallmentType, ProjectStatus} from "../../generated/models";
+import {
+    ConfigurationEntry,
+    Contract,
+    ContractStatus,
+    InstallmentType,
+    ProjectStatus,
+    ProjectTimeSummary
+} from "../../generated/models";
 import {ContractStore} from "../contract-status/state/contract.store";
 import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
-import {changedFields} from "../../shared/utils/form-utils";
+import {changedFields, showErrors} from "../../shared/utils/form-utils";
 import {InstallmentForm, InstallmentFormProvider} from "../../finance/installment/form/installment-form-provider";
 import {InstallmentPaymentFieldsComponent} from "../../finance/installment/installment-payment-fields/installment-payment-fields.component";
 import {FieldComponent, LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../shared";
 import {statusSeverity} from "../../shared/status-severity";
 import {StageListShellComponent} from "../../stage/stage-list-shell/stage-list-shell.component";
 import {ProjectTimelineComponent} from "../project-timeline/project-timeline.component";
+import {ProjectTimeSummaryComponent} from "../project-time-summary/project-time-summary.component";
 import {ProjectFinancialDetailShellComponent} from "../../finance/project-financial-summary/project-financial-detail-shell/project-financial-detail-shell.component";
 import {SelectModule} from "primeng/select";
 import {DatePickerModule} from "primeng/datepicker";
@@ -61,7 +69,7 @@ const GAUGE_ARC_LENGTH = Math.PI * 80;
     styleUrls: ['./project-detail.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [LoadErrorComponent, FieldComponent, PageHeaderComponent, StageListShellComponent, ProjectTimelineComponent, ProjectFinancialDetailShellComponent, SelectModule, DatePickerModule, ButtonModule, InputTextModule, Textarea, TagModule, DialogModule, MenuModule, SkeletonModule, ReactiveFormsModule, RouterLink, RouterLinkActive, CurrencyPipe, DatePipe, TooltipModule, InstallmentPaymentFieldsComponent]
+    imports: [LoadErrorComponent, FieldComponent, PageHeaderComponent, StageListShellComponent, ProjectTimelineComponent, ProjectTimeSummaryComponent, ProjectFinancialDetailShellComponent, SelectModule, DatePickerModule, ButtonModule, InputTextModule, Textarea, TagModule, DialogModule, MenuModule, SkeletonModule, ReactiveFormsModule, RouterLink, RouterLinkActive, CurrencyPipe, DatePipe, TooltipModule, InstallmentPaymentFieldsComponent]
 })
 export class ProjectDetailComponent implements OnChanges {
     @Input()
@@ -87,8 +95,16 @@ export class ProjectDetailComponent implements OnChanges {
     hasDeposit: boolean | null = null;
     @Input()
     view: ProjectDetailView = 'overview';
+    @Input()
+    timeSummary: ProjectTimeSummary | null = null;
+    @Input()
+    timeSummaryLoading: boolean = false;
+    @Input()
+    timeSummaryLoadFailed: boolean = false;
     @Output()
     reloadEvent: EventEmitter<void> = new EventEmitter<void>();
+    @Output()
+    reloadTimeSummaryEvent: EventEmitter<void> = new EventEmitter<void>();
     @Output()
     reloadInstallmentsEvent: EventEmitter<void> = new EventEmitter<void>();
     @Output()
@@ -223,14 +239,14 @@ export class ProjectDetailComponent implements OnChanges {
         if (architect) {
             let name = `${architect.firstName} ${architect.lastName}`;
             this.people.push({
-                initials: toInitials(name), name: name, role: 'Architect', route: ['/architects', architect.id!],
+                initials: initials(name), name: name, role: 'Architect', route: ['/architects', architect.id!],
                 avatarClass: 'bg-brand-50 text-brand-600'
             });
         }
         if (client) {
             let name = client.firstName ? `${client.firstName} ${client.lastName}` : `${client.companyName}`;
             this.people.push({
-                initials: toInitials(name), name: name, role: 'Client', route: ['/clients', client.id!],
+                initials: initials(name), name: name, role: 'Client', route: ['/clients', client.id!],
                 avatarClass: 'bg-warning-50 text-warning-700'
             });
         }
@@ -341,12 +357,20 @@ export class ProjectDetailComponent implements OnChanges {
     }
 
     onContractUpdate(): void {
+        // Disabled only while nothing changed: a missing deposit field shows its error instead
+        if (this.depositRequired && showErrors(this.depositForm)) {
+            return;
+        }
         let contract: Contract = {...this.createContract(), deposit: this.depositRequired ? this.createDeposit() : undefined};
         this.contractStore.changeStatus({contract: contract});
         this.showContractDialog = false;
     }
 
     onProjectUpdate(): void {
+        // Disabled only while nothing changed: with something missing, saving shows every error instead
+        if (showErrors(this.projectDetailsForm)) {
+            return;
+        }
         let project = this.createProject();
         this.updateProjectEvent.emit(project);
         this.showProjectDialog = false;
@@ -412,10 +436,3 @@ export class ProjectDetailComponent implements OnChanges {
     }
 }
 
-function toInitials(name: string): string {
-    return name.split(' ')
-        .filter(part => part.length > 0)
-        .slice(0, 2)
-        .map(part => part.charAt(0).toUpperCase())
-        .join('');
-}

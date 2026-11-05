@@ -5,7 +5,7 @@ import {SupervisionVisit} from "../../../generated/models/supervision-visit";
 import {AbstractAddEditComponent} from "../../../shared";
 import {SupervisionStore} from "../state/supervision.state";
 import {toTimeZoneString} from "../../../shared/utils/date-utils";
-import {isControlInvalid} from "../../../shared/utils/form-utils";
+import {isControlInvalid, showErrors} from "../../../shared/utils/form-utils";
 import {DialogModule} from "primeng/dialog";
 import {DatePickerModule} from "primeng/datepicker";
 import {InputNumberModule} from "primeng/inputnumber";
@@ -51,6 +51,11 @@ export class AddSupervisionVisitComponent implements OnInit, AbstractAddEditComp
     }
 
     onSave(): void {
+        // Never disabled: with something missing, saving shows every error instead
+        if (!this.isSaveEnabled()) {
+            showErrors(this.addSupervisionVisitForm);
+            return;
+        }
         this.visible = false;
         this.supervisionStore.createSupervisionVisit({supervisionVisit: this.createSupervisionVisit()});
     }

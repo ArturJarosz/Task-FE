@@ -1,9 +1,5 @@
 @if (supervision) {
-    <div class="flex flex-wrap items-center justify-between gap-4 px-6 pb-4">
-        <p class="m-0 text-sm text-gray-500">Author's supervision rates and recorded visits</p>
-        <p-button label="Add visit" icon="pi pi-plus" (onClick)="onAddVisitClick()"/>
-    </div>
-    <div class="px-6 pb-6">
+    <div class="px-6 pb-4">
         <dl class="m-0 grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-px overflow-hidden rounded-xl border border-gray-200 bg-gray-200">
             @for (stat of stats; track stat.label) {
                 <div class="bg-gray-50 px-4 py-3">
@@ -15,12 +11,17 @@
             }
         </dl>
     </div>
-    <p-table [value]="supervisionVisits" [tableStyle]="{'min-width': '30rem'}">
+    <!-- Under the figures, right above the table it adds to -->
+    <div class="flex flex-wrap items-center justify-end gap-4 px-6 pb-4">
+        <p-button label="Add visit" icon="pi pi-plus" (onClick)="onAddVisitClick()"/>
+    </div>
+    <p-table [value]="(supervisionVisits) | sortRows:sort:sortValue"
+             [lazy]="true" [lazyLoadOnInit]="false" (onLazyLoad)="onSort($event)" tableStyleClass="sm:min-w-[30rem]" styleClass="app-table-phone">
         <ng-template #header>
             <tr>
-                <th>Date of visit</th>
-                <th class="app-num">Hours</th>
-                <th class="w-24 text-center">Payable</th>
+                <th pSortableColumn="dateOfVisit">Date of visit <p-sortIcon field="dateOfVisit"/></th>
+                <th pSortableColumn="hoursCount" class="app-num">Hours <p-sortIcon field="hoursCount"/></th>
+                <th pSortableColumn="payable" class="w-24 text-center">Payable <p-sortIcon field="payable"/></th>
             </tr>
         </ng-template>
         <ng-template #body let-visit>

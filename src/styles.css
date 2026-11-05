@@ -32,7 +32,8 @@
   --app-brand-900: #1a2550;
   --app-brand-950: #101732;
   --app-brand-contrast: #ffffff;
-  --app-focus-ring: color-mix(in srgb, var(--app-brand-500) 12%, transparent);
+  /* Keyboard focus: a solid brand ring (WCAG 2.4.7); the soft 12% halo it replaced was almost invisible */
+  --app-focus-ring: var(--app-brand-500);
 }
 
 /* ---------- Tailwind theme: same palette as the PrimeNG preset ----------
@@ -92,12 +93,13 @@
   --color-chart-3: #1baf7a;
   --color-chart-4: #eda100;
   --color-chart-5: #e34948;
-  --color-chart-6: #7a5af8;
+  --color-chart-6: #d6409f; /* pink: a violet read as the brand blue next to it */
 
   --shadow-theme-xs: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
   /* Cards: a thin contact shadow plus a wide, blurred one under the card that lifts it off the grey page */
   --shadow-card: 0 1px 3px 0 rgba(16, 24, 40, 0.06), 0 10px 28px -4px rgba(16, 24, 40, 0.12);
-  --shadow-focus-ring: 0 0 0 4px var(--app-focus-ring);
+  /* The same ring as the preset's focusRing: a 2px surface gap, then 2px of brand */
+  --shadow-focus-ring: 0 0 0 2px var(--color-white), 0 0 0 4px var(--app-focus-ring);
   /* Active segment of a segmented control (inset-shadow-pressed): a 1px inner ring and a soft inner shadow, the same on
      every side (no offset), so the segment still looks centred in its frame */
   --inset-shadow-pressed: inset 0 0 0 1px rgba(16, 24, 40, 0.04), inset 0 0 3px 0 rgba(16, 24, 40, 0.11);
@@ -151,7 +153,7 @@
   --color-error-600: #f97066;
   --color-error-700: #fda29b;
 
-  --app-focus-ring: color-mix(in srgb, var(--app-brand-400) 30%, transparent);
+  --app-focus-ring: var(--app-brand-400);
   --shadow-theme-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
 }
 
@@ -236,8 +238,9 @@ body {
   .app-page-header {
     @apply flex flex-wrap items-center justify-between gap-3 min-h-control mb-6;
   }
+  /* 24px over the 20px card titles, so the page title leads */
   .app-page-title {
-    @apply m-0 text-[22px] leading-[30px] font-semibold text-gray-800;
+    @apply m-0 text-2xl leading-8 font-semibold text-gray-800;
   }
 
   /* Card: the only container. Never nest cards in cards. */
@@ -253,6 +256,10 @@ body {
   .app-card-subtitle {
     @apply mt-1 text-sm text-gray-500;
   }
+  /* A link in a card's top right corner ("Finance", "Stages", "Entries"), as an <a> or a <button> that opens a dialog */
+  .app-card-link {
+    @apply p-0 border-0 bg-transparent cursor-pointer text-sm font-medium text-brand-600 no-underline hover:underline rounded-sm focus-visible:outline-none focus-visible:shadow-focus-ring;
+  }
   .app-card-body {
     @apply p-6;
   }
@@ -264,8 +271,9 @@ body {
   .app-field-value {
     @apply text-sm font-normal text-gray-800;
   }
+  /* "Not set", "No note yet": gray-500 like hints, so it still passes 4.5:1 (gray-400 is for placeholders only) */
   .app-field-value--empty {
-    @apply text-gray-400;
+    @apply text-gray-500;
   }
 
   /* Form label above an input */
@@ -291,22 +299,112 @@ body {
     border-left: 1px solid var(--color-gray-300);
   }
 
-  /* KPI card: <section class="app-card app-kpi-card"> with an icon tile, then a min-w-0 column with label and value */
+  /* KPI card: <section class="app-card app-kpi-card"> with an icon tile, then .app-kpi-body with label and value.
+     Below sm it is one compact line: no icon tile, label on the left, figure on the right */
   .app-kpi-card {
-    @apply flex items-center gap-4 p-5;
+    @apply flex items-center gap-4 p-5 max-sm:px-4 max-sm:py-3;
   }
   .app-kpi-icon {
-    @apply flex items-center justify-center w-12 h-12 rounded-xl bg-gray-100 text-gray-800;
+    @apply flex items-center justify-center w-12 h-12 rounded-xl bg-gray-100 text-gray-800 max-sm:hidden;
   }
+  .app-kpi-body {
+    @apply min-w-0 max-sm:flex-1 max-sm:flex max-sm:items-center max-sm:justify-between max-sm:gap-3;
+  }
+
+  /* Detail page header card: icon tile, name with status and a meta line, actions on the right. Below sm the icon
+     tile goes, the meta items stack without dividers and the actions stay in the top right corner */
+  .app-detail-header {
+    @apply flex items-start gap-4 p-5 sm:items-center sm:gap-5 sm:p-6;
+  }
+  .app-detail-icon {
+    @apply flex items-center justify-center shrink-0 w-[72px] h-[72px] rounded-2xl max-sm:hidden;
+  }
+  .app-detail-meta {
+    @apply flex flex-col gap-x-3 gap-y-1 mt-1 text-sm text-gray-500 sm:flex-row sm:flex-wrap sm:items-center;
+  }
+  .app-detail-meta-divider {
+    @apply w-px h-4 bg-gray-200 max-sm:hidden;
+  }
+  /* A person, stage or partner named in the header meta line: a link that keeps the quiet meta colour, underlined so it
+     reads as one */
+  .app-meta-link {
+    @apply text-gray-700 underline decoration-gray-300 underline-offset-2 hover:text-brand-600 hover:decoration-brand-300 rounded-sm focus-visible:outline-none focus-visible:shadow-focus-ring;
+  }
+
+  /* A sortable header keeps its sort icon on its line, also in the narrow yes/no columns */
+  .p-datatable .p-datatable-thead > tr > th.p-datatable-sortable-column {
+    white-space: nowrap;
+  }
+
+  /* Sort icons of every table: PrimeIcons' solid carets instead of PrimeNG's own svgs (DESIGN_GUIDELINES.md, "List page").
+     The svg PrimeNG renders tells the state: a neutral double caret, then one caret in the brand colour once sorted */
+  p-sorticon svg[data-p-icon] {
+    /* Important: wherever PrimeNG's styles load outside the layers, its .p-icon would otherwise win over this layer */
+    display: none !important;
+  }
+  p-sorticon::before {
+    @apply text-xs leading-none text-brand-600;
+    font-family: "primeicons";
+  }
+  p-sorticon:has(svg[data-p-icon="sort-alt"])::before {
+    @apply text-gray-400;
+    content: "\e915" / "";
+  }
+  p-sorticon:has(svg[data-p-icon="sort-amount-up-alt"])::before {
+    content: "\ea30" / "";
+  }
+  p-sorticon:has(svg[data-p-icon="sort-amount-down"])::before {
+    content: "\ea33" / "";
+  }
+
+  /* Finance tables on a phone (styleClass="app-table-phone"): the first column and the money (.app-num) only, so they
+     fit without scrolling sideways (DESIGN_GUIDELINES.md, "List page") */
+  @media (width < 40rem) {
+    .app-table-phone th:not(:first-child, .app-num),
+    .app-table-phone td:not(:first-child, .app-num) {
+      display: none;
+    }
+  }
+
+  /* Timeline bars and markers take keyboard focus (their tooltip opens on focus too): the same ring as controls */
+  .app-timeline [role="img"][tabindex="0"]:focus-visible {
+    @apply outline-none shadow-focus-ring;
+  }
+
   .app-kpi-label {
     @apply text-sm text-gray-500;
   }
+  /* 20px in the one-line phone layout, so the label next to it doesn't have to wrap */
   .app-kpi-value {
-    @apply text-2xl leading-8 font-bold text-gray-800 tabular-nums;
+    @apply text-2xl leading-8 font-bold text-gray-800 tabular-nums max-sm:text-xl max-sm:leading-7;
+  }
+  /* What a KPI figure is out of, or how far a date is from today ("on 2 tasks", "of 9", "175 days ago"): plain text
+     after the figure, never a tag (tags show states) */
+  .app-kpi-context {
+    @apply text-sm font-normal text-gray-500;
   }
   /* Large standalone figure, e.g. the paid percentage in the payments gauge */
   .app-gauge-value {
     @apply text-[32px] leading-[40px] font-bold text-gray-800 tabular-nums;
+  }
+
+  /* Figures in a card's grey footer (Payments, Time and rate): three side by side once the card is 19rem wide, below
+     that one row each with the label on the left and the value on the right, so they never overflow. The card needs
+     the @container class */
+  .app-card-figures {
+    @apply m-0 grid grid-cols-1 px-5 py-1.5 @[19rem]:grid-cols-3 @[19rem]:px-2 @[19rem]:py-4 @[19rem]:text-center;
+  }
+  .app-card-figure {
+    @apply flex items-baseline justify-between gap-3 min-w-0 py-2 @[19rem]:block @[19rem]:px-2 @[19rem]:py-0;
+  }
+  .app-card-figure + .app-card-figure {
+    @apply border-t border-gray-200 @[19rem]:border-t-0 @[19rem]:border-l;
+  }
+  .app-card-figure-label {
+    @apply text-xs text-gray-500;
+  }
+  .app-card-figure-value {
+    @apply m-0 text-base font-semibold text-gray-800 tabular-nums whitespace-nowrap @[19rem]:mt-1;
   }
 
   /* Sidebar navigation */
@@ -320,8 +418,9 @@ body {
   .app-nav-item i {
     @apply text-lg text-gray-500;
   }
+  /* brand-600 text: brand-500 on the brand-50 tint drops to 3.7:1 in the dark theme */
   .app-nav-item.active {
-    @apply bg-brand-50 text-brand-500;
+    @apply bg-brand-50 text-brand-600;
   }
   .app-nav-item.active i {
     @apply text-brand-500;
@@ -334,6 +433,13 @@ body {
   /* Works on <a> (routed tabs) and <button> (filters) */
   .app-seg-item {
     @apply inline-flex items-center h-control-inner px-4 rounded-md border-0 bg-transparent cursor-pointer font-[inherit] text-sm font-medium text-gray-600 no-underline hover:text-gray-800;
+  }
+  /* Routed tabs never wrap: narrower items below sm, and they scroll sideways if they still don't fit */
+  .app-seg.app-seg-tabs {
+    @apply flex-nowrap max-w-full overflow-x-auto;
+  }
+  .app-seg-tabs .app-seg-item {
+    @apply shrink-0 whitespace-nowrap max-sm:px-3;
   }
   .app-seg-item.active {
     @apply bg-white text-gray-900 shadow-theme-xs inset-shadow-pressed;
@@ -354,13 +460,9 @@ body {
   }
 
   /* Grey badge next to a figure ("9 in total"), shaped like a secondary status tag */
-  .app-badge {
-    @apply rounded-lg px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-700;
-  }
-  /* Avatars and badges get the status tags' fill (tagFill() in the preset): 8% of their own text colour laid over
-     their light tint, which blends the same as color-mix(in srgb, text 8%, tint) */
-  .app-avatar,
-  .app-badge {
+  /* Avatars get the status tags' fill (tagFill() in the preset): 8% of their own text colour laid over their light
+     tint, which blends the same as color-mix(in srgb, text 8%, tint) */
+  .app-avatar {
     background-image: linear-gradient(color-mix(in srgb, currentColor 8%, transparent), color-mix(in srgb, currentColor 8%, transparent));
   }
 

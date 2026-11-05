@@ -1,9 +1,6 @@
-<div class="flex flex-wrap items-center justify-between gap-4 px-6 pb-4">
-    <p class="m-0 text-sm text-gray-500">Work done by contractors</p>
-    <p-button label="Add contractor job" icon="pi pi-plus" (onClick)="onClickAdd()"/>
-</div>
 <div>
     <contractor-job-list
+            (add)="onClickAdd()"
             [projectId]="projectId"
             [contractors]="$contractors()"
             [contractorsJobsProjectData]="$contractorsJobsProjectData()">

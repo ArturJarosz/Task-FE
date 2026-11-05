@@ -3,8 +3,8 @@
 @if (stage) {
     <div class="flex flex-col gap-gutter">
         <!-- Header card -->
-        <section class="app-card flex flex-wrap items-center gap-5 p-6">
-            <div class="flex items-center justify-center shrink-0 w-[72px] h-[72px] rounded-2xl bg-brand-50 text-brand-500">
+        <section class="app-card app-detail-header">
+            <div class="app-detail-icon bg-brand-50 text-brand-500">
                 <i class="pi pi-list text-3xl" aria-hidden="true"></i>
             </div>
             <div class="flex-1 min-w-0">
@@ -12,11 +12,17 @@
                     <h2 class="m-0 text-xl leading-[30px] font-semibold text-gray-800">{{ stage.name }}</h2>
                     <p-tag [value]="resolvedStatusLabel" [severity]="statusSeverity(stage.status)"/>
                 </div>
-                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-sm text-gray-500">
+                <div class="app-detail-meta">
                     <span>{{ resolvedTypeLabel }}</span>
-                    <span class="w-px h-4 bg-gray-200"></span>
-                    <span>Architect: {{ architectName || 'Not set' }}</span>
-                    <span class="w-px h-4 bg-gray-200"></span>
+                    <span class="app-detail-meta-divider" aria-hidden="true"></span>
+                    <span>Architect:
+                        @if (stage.architectId && architectName) {
+                            <a [routerLink]="['/architects', stage.architectId]" class="app-meta-link">{{ architectName }}</a>
+                        } @else {
+                            Not set
+                        }
+                    </span>
+                    <span class="app-detail-meta-divider" aria-hidden="true"></span>
                     <span>Deadline: {{ (stage.deadline | date:'dd.MM.yyyy') || 'Not set' }}</span>
                 </div>
             </div>
@@ -54,21 +60,28 @@
 
             <!-- Side column -->
             <div class="flex flex-col gap-gutter">
+                <!-- 600, not the KPI rows' 700: a single figure beside the page's cards -->
+                <app-kpi-card icon="pi pi-clock" label="Time spent">
+                    <span class="font-semibold">{{ (stage.timeSpentMinutes ?? 0) | duration }}</span>
+                    @if (timedTaskCount > 0) {
+                        <span class="app-kpi-context">{{ timedTaskCountLabel }}</span>
+                    }
+                </app-kpi-card>
+
                 <section class="app-card">
                     <div class="app-card-header">
                         <div>
                             <h3 class="app-card-title">Installment</h3>
-                            <p class="app-card-subtitle m-0">Client payment for this stage</p>
                         </div>
                         @if (stage.installment?.id) {
                             <a [routerLink]="['/projects', projectId, 'installments', stage.installment!.id]"
-                               class="text-sm font-medium text-brand-500 no-underline hover:text-brand-600">Open</a>
+                               class="app-card-link">Open</a>
                         }
                     </div>
                     @if (stage.installment; as installment) {
                         <div class="flex flex-col gap-5 px-6 pb-6">
                             <div>
-                                <span class="app-field-label">Value</span>
+                                <span class="app-field-label">Net value</span>
                                 <span class="block app-kpi-value">{{ installment.value | currency:'PLN':'symbol':'1.2-2' }}</span>
                             </div>
                             <div class="grid grid-cols-2 gap-x-6 gap-y-5">
@@ -78,8 +91,7 @@
                             </div>
                         </div>
                     } @else {
-                        <app-empty-state icon="pi pi-credit-card" title="No installment"
-                                         text="This stage has no client payment attached."/>
+                        <app-empty-state icon="pi pi-credit-card" title="No installment"/>
                     }
                 </section>
 
@@ -122,12 +134,11 @@
 }
 
 <!-- Edit stage details -->
-<p-dialog [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
+<p-dialog closeAriaLabel="Close" [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onCancelEdit()">
     <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">Edit stage details</span>
-            <span class="text-sm text-gray-500">Change the stage name, type, architect, dates and note.</span>
         </div>
     </ng-template>
     <form [formGroup]="stageDetailsForm" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -172,6 +183,6 @@
     </form>
     <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancelEdit()"/>
-        <p-button label="Save changes" [disabled]="!isUpdated || stageDetailsForm.invalid" (onClick)="onSave()"/>
+        <p-button label="Save changes" [disabled]="!isUpdated" (onClick)="onSave()"/>
     </ng-template>
 </p-dialog>

@@ -14,7 +14,7 @@ import {SupervisionVisit} from "../../../generated/models/supervision-visit";
 import {SupervisionVisitForm, SupervisionVisitFormProvider} from "../form/supervision-visit-form-provider";
 import {FieldComponent, LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../../shared";
 import {toDateIfExists, toTimeZoneString} from "../../../shared/utils/date-utils";
-import {changedFields, isControlInvalid} from "../../../shared/utils/form-utils";
+import {changedFields, isControlInvalid, showErrors} from "../../../shared/utils/form-utils";
 
 type VisitFormValue = ReturnType<FormGroup<SupervisionVisitForm>['getRawValue']>;
 
@@ -107,6 +107,10 @@ export class SupervisionVisitDetailComponent implements OnChanges {
     }
 
     onSave(): void {
+        // Disabled only while nothing changed: with something missing, saving shows every error instead
+        if (showErrors(this.visitDetailForm)) {
+            return;
+        }
         const value = this.visitDetailForm.getRawValue();
         this.updateVisitEvent.emit({
             id: this.supervisionVisit?.id,

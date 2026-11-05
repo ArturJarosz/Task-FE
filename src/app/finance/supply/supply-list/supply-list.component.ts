@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {SupplyProjectData} from "../../../generated/models/supply-project-data";
 import {
     FinanceObjectSummaryForm,
@@ -8,19 +8,42 @@ import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {Supplier} from "../../../generated/models/supplier";
 import {isUndefinedOrEmpty} from "../../../shared/utils/data-validation-util";
 import {FinanceComponentSummaryComponent} from "../../../shared/finance-component-summary/finance-component-summary.component";
-import {TableModule} from "primeng/table";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {RouterLink} from "@angular/router";
 import {CurrencyPipe} from "@angular/common";
 import {EmptyStateComponent, YesNoMarkComponent} from "../../../shared";
+import {fieldValue, SortValue, TableSort, toTableSort} from "../../../shared/utils/sort-utils";
+import {Supply} from "../../../generated/models/supply";
+import {SortRowsPipe} from "../../../shared/sort-rows/sort-rows.pipe";
+import {ThreeStepSortDirective} from "../../../shared/sort-rows/three-step-sort.directive";
 
 @Component({
     selector: 'supply-list',
     templateUrl: './supply-list.component.html',
     styleUrl: './supply-list.component.less',
     standalone: true,
-    imports: [FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, CurrencyPipe, EmptyStateComponent, YesNoMarkComponent]
+    imports: [ThreeStepSortDirective, SortRowsPipe, FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, CurrencyPipe, EmptyStateComponent, YesNoMarkComponent]
 })
 export class SupplyListComponent implements OnChanges{
+    // "Add supply" under the summary figures; the shell opens the dialog
+    @Output()
+    add = new EventEmitter<void>();
+
+    // Column sort of the table: it is lazy, so it only reports the sort and the sortRows pipe sorts a copy of the rows
+    sort: TableSort | null = null;
+
+    readonly sortValue = (row: Supply, field: string): SortValue => {
+        switch (field) {
+            case 'supplier':
+                return String(this.supplierIdToSupplier?.get(row.supplierId!) ?? '');
+            default:
+                return fieldValue(row, field);
+        }
+    };
+
+    onSort(event: TableLazyLoadEvent): void {
+        this.sort = toTableSort(event);
+    }
     @Input()
     projectId: number = 0;
     @Input()

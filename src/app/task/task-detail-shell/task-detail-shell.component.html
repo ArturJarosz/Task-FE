@@ -7,6 +7,22 @@
         [projectName]="$projectName()"
         [stageId]="stageId"
         [stageName]="$stageName()"
+        [timeEntries]="$timeEntries()"
+        [timeEntriesLoading]="$timeEntriesLoading()"
+        [timeEntriesLoadFailed]="$timeEntriesLoadFailed()"
+        [timeEntrySaving]="$timeEntrySaving()"
+        [logArchitectId]="$logArchitectId()"
         (updateStatusEvent)="updateTask($event)"
-        (deleteTaskEVent)="deleteTask($event)" (reloadEvent)="onReload()"/>
+        (deleteTaskEVent)="deleteTask($event)" (reloadEvent)="onReload()"
+        (logTimeEvent)="onLogTime()"
+        (quickLogEvent)="onQuickLog($event)"
+        (showTimeEntriesEvent)="$timeEntriesOpen.set(true)"
+        (reloadTimeEntriesEvent)="onReloadTimeEntries()"/>
+<time-entries-dialog [visible]="$timeEntriesOpen()" [taskName]="$task()?.name ?? ''" [timeEntries]="$timeEntries()"
+                     [loading]="$timeEntriesLoading()" [loadFailed]="$timeEntriesLoadFailed()"
+                     [architects]="$architects()" (editEntry)="onEditTimeEntry($event)"
+                     (deleteEntry)="onDeleteTimeEntry($event)" (reload)="onReloadTimeEntries()"
+                     (closed)="$timeEntriesOpen.set(false)"/>
+<log-time-dialog [timeEntry]="$loggedTimeEntry()" [taskName]="$task()?.name ?? ''" [architects]="$architects()"
+                 [saving]="$timeEntrySaving()" (save)="onSaveTimeEntry($event)" (closed)="onCloseLogTime()"/>
 <p-confirmdialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>

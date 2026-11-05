@@ -1,9 +1,8 @@
-<p-dialog [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
+<p-dialog closeAriaLabel="Close" [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onClose()">
     <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">New supervision visit</span>
-            <span class="text-sm text-gray-500">Record a supervision visit and the hours spent on site.</span>
         </div>
     </ng-template>
     <form [formGroup]="addSupervisionVisitForm" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -30,6 +29,6 @@
     </form>
     <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
-        <p-button label="Create visit" icon="pi pi-plus" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
+        <p-button label="Create visit" icon="pi pi-plus" (onClick)="onSave()"/>
     </ng-template>
 </p-dialog>

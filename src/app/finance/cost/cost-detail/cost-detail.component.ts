@@ -1,4 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {paidSeverity} from "../../../shared/status-severity";
+import {TagModule} from "primeng/tag";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {CurrencyPipe, DatePipe} from "@angular/common";
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
@@ -17,7 +19,7 @@ import {ConfigurationEntry} from "../../../generated/models/configuration-entry"
 import {FieldComponent, LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../../shared";
 import {resolveLabel} from "../../../shared/utils/label-utils";
 import {toDateIfExists, toTimeZoneString} from "../../../shared/utils/date-utils";
-import {changedFields, isControlInvalid, isPaymentDateMissing} from "../../../shared/utils/form-utils";
+import {changedFields, isControlInvalid, isPaymentDateMissing, showErrors} from "../../../shared/utils/form-utils";
 
 type CostFormValue = ReturnType<FormGroup<CostForm>['getRawValue']>;
 
@@ -29,11 +31,12 @@ const DATA_FIELDS: (keyof CostFormValue)[] = ['name', 'category', 'value', 'date
     styleUrl: './cost-detail.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [LoadErrorComponent, PageHeaderComponent, FieldComponent, ButtonModule, DatePickerModule, DialogModule, InputNumberModule,
+    imports: [TagModule, LoadErrorComponent, PageHeaderComponent, FieldComponent, ButtonModule, DatePickerModule, DialogModule, InputNumberModule,
         InputTextModule, SelectModule, SkeletonModule, Textarea, ToggleSwitchModule, ReactiveFormsModule,
         CurrencyPipe, DatePipe]
 })
 export class CostDetailComponent implements OnInit, OnChanges {
+    protected readonly paidSeverity = paidSeverity;
     @Input()
     cost!: Cost | null;
     @Input()
@@ -107,6 +110,10 @@ export class CostDetailComponent implements OnInit, OnChanges {
     }
 
     onSave(): void {
+        // Disabled only while nothing changed: with something missing, saving shows every error instead
+        if (showErrors(this.costDetailsForm)) {
+            return;
+        }
         const value = this.costDetailsForm.getRawValue();
         this.updateCostEvent.emit({
             name: value.name,
