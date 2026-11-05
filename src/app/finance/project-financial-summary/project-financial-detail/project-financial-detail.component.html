@@ -1,9 +1,17 @@
 <div class="flex flex-col gap-gutter">
-    <!-- Financial summary -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter">
+    <!-- Financial summary: the fifth card takes a row of its own until all five fit in one row -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5 gap-gutter">
         @for (kpi of kpis; track kpi.label) {
             <app-kpi-card [icon]="kpi.icon" [label]="kpi.label">{{ (kpi.value ?? 0) | currency:'PLN':'symbol':'1.2-2' }}</app-kpi-card>
         }
+        <app-kpi-card class="md:col-span-2 xl:col-span-4 2xl:col-span-1" icon="pi pi-stopwatch" label="Net value per hour"
+                      [loading]="netValuePerHourLoading" [loadFailed]="netValuePerHourLoadFailed">
+            @if (netValuePerHour != null) {
+                {{ netValuePerHour | currency:'PLN':'symbol':'1.2-2' }}
+            } @else {
+                <span class="text-sm font-normal text-gray-500">Not available</span>
+            }
+        </app-kpi-card>
     </div>
 
     <!-- Financial components -->
@@ -11,11 +19,13 @@
         <div class="app-card-header">
             <div>
                 <h3 class="app-card-title">Financial components</h3>
-                <p class="app-card-subtitle m-0">Costs, payments and work billed to this project</p>
             </div>
-            <nav class="app-seg" aria-label="Financial components">
+            <!-- Five tabs don't fit a phone: a select picks the component there -->
+            <p-select class="w-full sm:hidden" [options]="tabs" optionLabel="label" optionValue="key" [ngModel]="selectedTab"
+                      (onChange)="onSelectTab($event.value)" ariaLabel="Financial component" appendTo="body" [fluid]="true"/>
+            <nav class="app-seg app-seg-tabs max-sm:hidden" aria-label="Financial components">
                 @for (tab of tabs; track tab.key) {
-                    <a class="app-seg-item" [class.active]="tab.key === selectedTab"
+                    <a class="app-seg-item" [class.active]="tab.key === selectedTab" [attr.aria-current]="tab.key === selectedTab ? 'page' : null"
                        [routerLink]="[]" [queryParams]="{tab: tab.key}" queryParamsHandling="merge">{{ tab.label }}</a>
                 }
             </nav>

@@ -3,18 +3,25 @@
 @if (item) {
     <div class="flex flex-col gap-gutter">
         <!-- Header card -->
-        <section class="app-card flex flex-wrap items-center gap-5 p-6">
-            <div class="flex items-center justify-center shrink-0 w-[72px] h-[72px] rounded-2xl bg-brand-50 text-brand-500">
+        <section class="app-card app-detail-header">
+            <div class="app-detail-icon bg-brand-50 text-brand-500">
                 <i [class]="labels.icon + ' text-3xl'" aria-hidden="true"></i>
             </div>
             <div class="flex-1 min-w-0">
-                <h2 class="m-0 text-xl leading-[30px] font-semibold text-gray-800">{{ item.name }}</h2>
-                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-sm text-gray-500">
+                <div class="flex flex-wrap items-center gap-3">
+                    <h2 class="m-0 text-xl leading-[30px] font-semibold text-gray-800">{{ item.name }}</h2>
+                    <p-tag [value]="item.paid ? 'Paid' : 'Not paid'" [severity]="paidSeverity(item.paid)"/>
+                </div>
+                <div class="app-detail-meta">
                     <span>{{ itemTitle }}</span>
-                    <span class="w-px h-4 bg-gray-200"></span>
-                    <span>{{ partnerName || 'Not set' }}</span>
-                    <span class="w-px h-4 bg-gray-200"></span>
-                    <span>{{ item.paid ? 'Paid' : 'Not paid' }}</span>
+                    <span class="app-detail-meta-divider" aria-hidden="true"></span>
+                    <span>
+                        @if (item.partnerId && partnerName) {
+                            <a [routerLink]="['/' + labels.partnerRoute, item.partnerId]" class="app-meta-link">{{ partnerName }}</a>
+                        } @else {
+                            Not set
+                        }
+                    </span>
                 </div>
             </div>
             <p-button icon="pi pi-ellipsis-h" severity="secondary" [outlined]="true"
@@ -35,7 +42,7 @@
                     <app-field label="Name" [value]="item.name"/>
                     <app-field [label]="partnerTitle" [value]="partnerName"/>
                     <div>
-                        <span class="app-field-label">Value</span>
+                        <span class="app-field-label">Net value</span>
                         <div class="app-field-value tabular-nums">{{ (item.value ?? 0) | currency:'PLN':'symbol':'1.2-2' }}</div>
                     </div>
                     <app-field label="Has invoice" [value]="item.hasInvoice ? 'Yes' : 'No'"/>
@@ -82,12 +89,11 @@
 }
 
 <!-- Edit dialog -->
-<p-dialog [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
+<p-dialog closeAriaLabel="Close" [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onCancelEdit()">
     <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">Edit {{ labels.item }}</span>
-            <span class="text-sm text-gray-500">Change the {{ labels.item }} details, {{ labels.partner }} and payment.</span>
         </div>
     </ng-template>
     <form [formGroup]="detailForm" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -121,7 +127,7 @@
             </div>
         </div>
         <div>
-            <label for="itemValue" class="app-form-label">Value <span class="text-error-600">*</span></label>
+            <label for="itemValue" class="app-form-label">Net value <span class="text-error-600">*</span></label>
             <p-inputnumber inputId="itemValue" formControlName="value" mode="decimal" locale="pl-PL"
                            [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0" suffix=" zł" [fluid]="true"/>
             @if (isFieldInvalid('value')) {
@@ -146,7 +152,7 @@
     </form>
     <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancelEdit()"/>
-        <p-button label="Save changes" [disabled]="!dataNeedsUpdate || detailForm.invalid"
+        <p-button label="Save changes" [disabled]="!dataNeedsUpdate"
                   (onClick)="onSave()"/>
     </ng-template>
 </p-dialog>

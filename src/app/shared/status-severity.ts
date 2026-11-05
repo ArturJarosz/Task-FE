@@ -59,3 +59,9 @@ export function statusSeverity(status: Status | string | null | undefined): TagS
 // Usage in a template (label comes from the configuration entries via resolveLabel()):
 //   <p-tag [value]="resolveLabel(project.status, statuses)" [severity]="statusSeverity(project.status)" />
 // Expose it in the component:  protected readonly statusSeverity = statusSeverity;
+
+// Paid state of a finance item (cost, supply, contractor job, installment): a tag next to its name, like a status.
+// It isn't a backend enum, so it has its own helper: green once paid, grey until then
+export function paidSeverity(paid: boolean | null | undefined): TagSeverity {
+    return paid ? 'success' : 'secondary';
+}

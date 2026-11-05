@@ -28,6 +28,7 @@ import {SelectModule} from "primeng/select";
 import {InputTextModule} from "primeng/inputtext";
 import {ButtonModule} from "primeng/button";
 import {InputNumberModule} from "primeng/inputnumber";
+import {showErrors} from "../../shared/utils/form-utils";
 
 @Component({
     selector: 'add-project',
@@ -86,14 +87,9 @@ export class AddProjectComponent implements OnInit, OnChanges {
         this.setFormDefaultValues();
     }
 
+    // Type, client and architect start empty, so the user picks them on purpose instead of keeping the first option
+    // by accident (DESIGN_GUIDELINES.md, "Forms")
     setFormDefaultValues() {
-        if (this.existsAndNotEmpty(this.$clientsForm()) && this.existsAndNotEmpty(this.$architects()) && this.existsAndNotEmpty(this.$projectTypes()) && this.addProjectForm) {
-            this.addProjectForm.patchValue({
-                type: this.$projectTypes()[0]?.id,
-                architectId: this.$architects()![0]?.id,
-                clientId: this.$clientsForm()[0]?.id
-            })
-        }
     }
 
     private existsAndNotEmpty(collection: any[] | null): boolean {
@@ -109,6 +105,11 @@ export class AddProjectComponent implements OnInit, OnChanges {
     }
 
     onSave(): void {
+        // Never disabled: with something missing, saving shows every error instead
+        if (!this.isSaveEnabled()) {
+            showErrors(this.addProjectForm);
+            return;
+        }
         this.visible = false;
         let project: ProjectCreate = this.createProject();
         this.projectStore.createProject({projectCreate: project});

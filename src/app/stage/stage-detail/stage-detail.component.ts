@@ -16,11 +16,19 @@ import {TooltipModule} from "primeng/tooltip";
 import {StageForm, StageFormProvider} from "../form/stage-form-provider";
 import {StageDto} from "../model/stage";
 import {Architect, ConfigurationEntry, Stage, StageStatus} from "../../generated/models";
-import {EmptyStateComponent, FieldComponent, LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../shared";
-import {resolveKnownLabel, resolveLabel} from "../../shared/utils/label-utils";
+import {
+    DurationPipe,
+    EmptyStateComponent,
+    FieldComponent,
+    KpiCardComponent,
+    LoadErrorComponent,
+    PageCrumb,
+    PageHeaderComponent
+} from "../../shared";
+import {initials, resolveKnownLabel, resolveLabel} from "../../shared/utils/label-utils";
 import {statusSeverity} from "../../shared/status-severity";
 import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
-import {changedFields} from "../../shared/utils/form-utils";
+import {changedFields, showErrors} from "../../shared/utils/form-utils";
 import {TaskListShellComponent} from "../../task/task-list-shell/task-list-shell.component";
 
 type StageFormValue = ReturnType<FormGroup<StageForm>['getRawValue']>;
@@ -38,9 +46,9 @@ export interface ArchitectOption {
     styleUrls: ['./stage-detail.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [PageHeaderComponent, FieldComponent, EmptyStateComponent, LoadErrorComponent, TaskListShellComponent, ButtonModule, DatePickerModule,
-        DialogModule, InputTextModule, MenuModule, SelectModule, SkeletonModule, TagModule, Textarea, TooltipModule,
-        ReactiveFormsModule, RouterLink, CurrencyPipe, DatePipe]
+    imports: [PageHeaderComponent, FieldComponent, EmptyStateComponent, KpiCardComponent, LoadErrorComponent, TaskListShellComponent,
+        ButtonModule, DatePickerModule, DialogModule, InputTextModule, MenuModule, SelectModule, SkeletonModule, TagModule,
+        Textarea, TooltipModule, ReactiveFormsModule, RouterLink, CurrencyPipe, DatePipe, DurationPipe]
 })
 export class StageDetailComponent implements OnChanges {
     @Input()
@@ -70,6 +78,7 @@ export class StageDetailComponent implements OnChanges {
 
     protected readonly statusSeverity = statusSeverity;
 
+
     stageDetailsForm: FormGroup<StageForm>;
     private initialValue!: StageFormValue;
     showEditDialog = false;
@@ -80,6 +89,8 @@ export class StageDetailComponent implements OnChanges {
     resolvedStatusLabel = '';
     resolvedTypeLabel = '';
     architectName = '';
+    // Tasks of the stage with time logged on them
+    timedTaskCount = 0;
 
     constructor(private formProvider: StageFormProvider) {
         this.stageDetailsForm = this.formProvider.getStageDetailForm();
@@ -93,6 +104,9 @@ export class StageDetailComponent implements OnChanges {
         if (changes['stage'] && this.stage) {
             this.resetForm();
             this.actions = this.buildActions();
+        }
+        if (changes['stage']) {
+            this.timedTaskCount = (this.stage?.tasks ?? []).filter(task => (task.timeSpentMinutes ?? 0) > 0).length;
         }
         if (this.stage) {
             this.resolvedStatusLabel = resolveLabel(this.stage.status, this.stageStatuses);
@@ -109,11 +123,11 @@ export class StageDetailComponent implements OnChanges {
     }
 
     get architectInitials(): string {
-        return this.architectName.split(' ')
-            .filter(part => part.length > 0)
-            .slice(0, 2)
-            .map(part => part.charAt(0).toUpperCase())
-            .join('');
+        return initials(this.architectName);
+    }
+
+    get timedTaskCountLabel(): string {
+        return this.timedTaskCount === 1 ? 'on 1 task' : `on ${this.timedTaskCount} tasks`;
     }
 
     get isUpdated(): boolean {
@@ -136,6 +150,10 @@ export class StageDetailComponent implements OnChanges {
     }
 
     onSave(): void {
+        // Disabled only while nothing changed: with something missing, saving shows every error instead
+        if (showErrors(this.stageDetailsForm)) {
+            return;
+        }
         const value = this.stageDetailsForm.getRawValue();
         this.updateEvent.emit({
             name: value.name,

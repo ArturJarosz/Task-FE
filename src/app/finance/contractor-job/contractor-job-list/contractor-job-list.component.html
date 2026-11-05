@@ -1,18 +1,19 @@
-<finance-component-summary [financeComponentDataForm]="contractorsJobsSummaryForm">
+<finance-component-summary [financeComponentDataForm]="contractorsJobsSummaryForm" addLabel="Add contractor job" (add)="add.emit()">
     <div wrapper-list>
-        <p-table [value]="contractorsJobsProjectData.contractorJobs ?? []" [tableStyle]="{'min-width': '44rem'}">
+        <p-table [value]="(contractorsJobsProjectData.contractorJobs ?? []) | sortRows:sort:sortValue"
+             [lazy]="true" [lazyLoadOnInit]="false" (onLazyLoad)="onSort($event)" tableStyleClass="sm:min-w-[44rem]" styleClass="app-table-phone">
             <ng-template #header>
                 <tr>
-                    <th>Name</th>
-                    <th>Contractor</th>
-                    <th class="app-num">Value</th>
-                    <th class="w-24 text-center">Invoice</th>
-                    <th class="w-24 text-center">Paid</th>
+                    <th pSortableColumn="name">Name <p-sortIcon field="name"/></th>
+                    <th pSortableColumn="contractor">Contractor <p-sortIcon field="contractor"/></th>
+                    <th pSortableColumn="value" class="app-num">Net value <p-sortIcon field="value"/></th>
+                    <th pSortableColumn="hasInvoice" class="w-24 text-center">Invoice <p-sortIcon field="hasInvoice"/></th>
+                    <th pSortableColumn="paid" class="w-24 text-center">Paid <p-sortIcon field="paid"/></th>
                 </tr>
             </ng-template>
             <ng-template #body let-contractorjob>
-                <tr [routerLink]="['/projects', projectId, 'contractorJob', contractorjob.id]" class="cursor-pointer">
-                    <td class="font-medium text-gray-800">{{ contractorjob.name }}</td>
+                <tr [routerLink]="['/projects', projectId, 'contractorJob', contractorjob.id]" tabindex="-1" class="cursor-pointer">
+                    <td class="font-medium text-gray-800"><a [routerLink]="['/projects', projectId, 'contractorJob', contractorjob.id]" class="app-row-link" (click)="$event.stopPropagation()">{{ contractorjob.name }}</a></td>
                     <td>{{ contractorIdToContractorName.get(contractorjob.contractorId) }}</td>
                     <td class="app-num">{{ contractorjob.value | currency:'PLN':'symbol':'1.2-2' }}</td>
                     <td class="w-24 text-center"><app-yes-no-mark [value]="contractorjob.hasInvoice" label="Invoice"/></td>
@@ -22,7 +23,7 @@
             <ng-template #emptymessage>
                 <tr>
                     <td [attr.colspan]="5" class="p-0">
-                        <app-empty-state icon="pi pi-wrench" title="No contractor jobs yet" text="Add work done by contractors on this project."/>
+                        <app-empty-state icon="pi pi-wrench" title="No contractor jobs yet"/>
                     </td>
                 </tr>
             </ng-template>

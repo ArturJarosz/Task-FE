@@ -13,18 +13,14 @@ export interface NamedEntry {
 }
 
 export interface NamedEntryTexts {
-    // Section title and its line below
+    // Section title
     title: string;
-    description: string;
     // Lower case, as used inside sentences: "New project type", "No project types yet"
     singular: string;
     plural: string;
     // What uses an entry: "1 project", "3 projects"
     usageSingular: string;
     usagePlural: string;
-    // Dialog lines under the title, for a new entry and for a renamed one
-    newHint: string;
-    renameHint: string;
     placeholder: string;
     emptyIcon: string;
     emptyText: string;
@@ -32,13 +28,10 @@ export interface NamedEntryTexts {
 
 export const PROJECT_TYPE_TEXTS: NamedEntryTexts = {
     title: 'Project types',
-    description: "Kinds of projects to choose from; a type used by a project can't be deleted",
     singular: 'project type',
     plural: 'project types',
     usageSingular: 'project',
     usagePlural: 'projects',
-    newHint: 'It can be chosen for new and existing projects.',
-    renameHint: 'Projects of this type show the new name.',
     placeholder: 'e.g. Interior office',
     emptyIcon: 'pi pi-tags',
     emptyText: 'Add the kinds of work you take on, such as interior design or architecture.',
@@ -46,13 +39,10 @@ export const PROJECT_TYPE_TEXTS: NamedEntryTexts = {
 
 export const STAGE_TYPE_TEXTS: NamedEntryTexts = {
     title: 'Stage types',
-    description: "Kinds of project stages; a type used by a stage can't be deleted",
     singular: 'stage type',
     plural: 'stage types',
     usageSingular: 'stage',
     usagePlural: 'stages',
-    newHint: 'It can be chosen for new and existing stages.',
-    renameHint: 'Stages of this type show the new name.',
     placeholder: 'e.g. Functional layout',
     emptyIcon: 'pi pi-list',
     emptyText: 'Add the kinds of stages your projects go through, such as a functional layout or visualisations.',
@@ -60,13 +50,10 @@ export const STAGE_TYPE_TEXTS: NamedEntryTexts = {
 
 export const TASK_TYPE_TEXTS: NamedEntryTexts = {
     title: 'Task types',
-    description: "Kinds of tasks within a stage; a type used by a task can't be deleted",
     singular: 'task type',
     plural: 'task types',
     usageSingular: 'task',
     usagePlural: 'tasks',
-    newHint: 'It can be chosen for new and existing tasks.',
-    renameHint: 'Tasks of this type show the new name.',
     placeholder: 'e.g. Render',
     emptyIcon: 'pi pi-check-square',
     emptyText: 'Add the kinds of work done in a stage, such as renders or shopping.',
@@ -74,13 +61,10 @@ export const TASK_TYPE_TEXTS: NamedEntryTexts = {
 
 export const CONTRACTOR_CATEGORY_TEXTS: NamedEntryTexts = {
     title: 'Contractor categories',
-    description: "Trades of your contractors; a category used by a contractor can't be deleted",
     singular: 'contractor category',
     plural: 'contractor categories',
     usageSingular: 'contractor',
     usagePlural: 'contractors',
-    newHint: 'It can be chosen for new and existing contractors.',
-    renameHint: 'Contractors in this category show the new name.',
     placeholder: 'e.g. Plumber',
     emptyIcon: 'pi pi-wrench',
     emptyText: 'Add the trades you work with, such as plumbers or electricians.',
@@ -88,13 +72,10 @@ export const CONTRACTOR_CATEGORY_TEXTS: NamedEntryTexts = {
 
 export const SUPPLIER_CATEGORY_TEXTS: NamedEntryTexts = {
     title: 'Supplier categories',
-    description: "Kinds of shops you buy from; a category used by a supplier can't be deleted",
     singular: 'supplier category',
     plural: 'supplier categories',
     usageSingular: 'supplier',
     usagePlural: 'suppliers',
-    newHint: 'It can be chosen for new and existing suppliers.',
-    renameHint: 'Suppliers in this category show the new name.',
     placeholder: 'e.g. Paint shop',
     emptyIcon: 'pi pi-truck',
     emptyText: 'Add the kinds of shops you buy from, such as tile or paint shops.',
@@ -102,13 +83,10 @@ export const SUPPLIER_CATEGORY_TEXTS: NamedEntryTexts = {
 
 export const COST_CATEGORY_TEXTS: NamedEntryTexts = {
     title: 'Cost categories',
-    description: "Kinds of project costs; a category used by a cost can't be deleted",
     singular: 'cost category',
     plural: 'cost categories',
     usageSingular: 'cost',
     usagePlural: 'costs',
-    newHint: 'It can be chosen for new and existing costs.',
-    renameHint: 'Costs in this category show the new name.',
     placeholder: 'e.g. Parking',
     emptyIcon: 'pi pi-wallet',
     emptyText: 'Add the kinds of costs your projects have, such as fuel or parking.',

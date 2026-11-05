@@ -208,7 +208,7 @@
                 @if (form.dirty || replacingKey) {
                     <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
                 }
-                <p-button type="submit" label="Save changes" [loading]="saving" [disabled]="!canSave"/>
+                <p-button type="submit" label="Save changes" [loading]="saving" [disabled]="!form.dirty || saving"/>
             </div>
         </form>
     }

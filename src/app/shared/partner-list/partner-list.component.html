@@ -1,24 +1,26 @@
-<p-table [value]="rows" [rowHover]="true" [tableStyle]="{'min-width': '44rem'}">
+<p-table [value]="rows" [rowHover]="true" tableStyleClass="sm:min-w-[44rem]"
+         [lazy]="true" [lazyLoadOnInit]="false" (onLazyLoad)="onSort($event)">
     <ng-template #header>
         <tr>
-            <th>{{ entityTitle }}</th>
-            <th>Contact</th>
-            <th class="app-num">{{ countLabel }}</th>
+            <th pSortableColumn="name">{{ entityTitle }} <p-sortIcon field="name"/></th>
+            <th pSortableColumn="contact" class="w-[22rem] max-sm:hidden">Contact <p-sortIcon field="contact"/></th>
+            <th pSortableColumn="count" class="app-num w-32 max-sm:hidden">{{ countLabel }} <p-sortIcon field="count"/></th>
             <th class="w-16"><span class="sr-only">Actions</span></th>
         </tr>
     </ng-template>
     <ng-template #body let-row>
-        <tr [routerLink]="[routeBase, row.id]" class="cursor-pointer">
+        <tr [routerLink]="[routeBase, row.id]" tabindex="-1" class="cursor-pointer">
             <td>
                 <div class="flex items-center gap-3">
                     <span class="app-avatar bg-gray-100 text-gray-700">{{ getInitials(row.name) }}</span>
                     <div class="min-w-0">
-                        <div class="font-medium text-gray-800 truncate">{{ row.name }}</div>
+                        <a [routerLink]="[routeBase, row.id]" class="app-row-link block font-medium text-gray-800 truncate"
+                           (click)="$event.stopPropagation()">{{ row.name }}</a>
                         <div class="text-xs text-gray-500">{{ row.category }}</div>
                     </div>
                 </div>
             </td>
-            <td>
+            <td class="max-sm:hidden">
                 @if (row.email || row.telephone) {
                     <div class="min-w-0">
                         @if (row.email) {
@@ -32,7 +34,7 @@
                     <app-not-set/>
                 }
             </td>
-            <td class="app-num">{{ row.count }}</td>
+            <td class="app-num max-sm:hidden">{{ row.count }}</td>
             <td class="text-right">
                 <p-button icon="pi pi-ellipsis-h" [text]="true" [rounded]="true" severity="secondary"
                           [pTooltip]="entityTitle + ' actions'" tooltipPosition="left" [ariaLabel]="entityTitle + ' actions'"

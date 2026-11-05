@@ -39,7 +39,7 @@
                             <li>
                                 <!-- lg:px-5 centres the icon in the collapsed sidebar -->
                                 <a class="app-nav-item overflow-hidden transition-[padding] duration-300 ease-in-out motion-reduce:transition-none"
-                                   [routerLink]="item.route" routerLinkActive="active" [ngClass]="{'lg:px-5': sidebarCollapsed}"
+                                   [routerLink]="item.route" routerLinkActive="active" ariaCurrentWhenActive="page" [ngClass]="{'lg:px-5': sidebarCollapsed}"
                                    [pTooltip]="item.label" tooltipPosition="right" [tooltipDisabled]="!sidebarCollapsed"
                                    (click)="closeMobileSidebar()">
                                     <i [class]="item.icon"></i>
@@ -97,7 +97,7 @@
                             @if (item.route) {
                                 <a [routerLink]="item.route" class="p-menuitem-link">
                                     <span [ngClass]="[item.icon ? item.icon : '', 'text-color']"></span>
-                                    <span class="text-brand-500 font-semibold">{{ item.label }}</span>
+                                    <span class="text-brand-600 font-semibold">{{ item.label }}</span>
                                 </a>
                             } @else {
                                 <a [href]="item.url">

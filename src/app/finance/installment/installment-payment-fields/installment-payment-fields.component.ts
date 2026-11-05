@@ -23,7 +23,7 @@ export class InstallmentPaymentFieldsComponent {
     @Input()
     idPrefix: string = 'installment';
     @Input()
-    valueLabel: string = 'Value';
+    valueLabel: string = 'Net value';
     @Input()
     maxPaymentDate: Date | null = null;
 

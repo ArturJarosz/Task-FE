@@ -4,7 +4,7 @@
         <app-kpi-card icon="pi pi-flag" label="Project start">
             @if (start) {
                 {{ start | date:'dd.MM.yyyy' }}
-                <p-tag [value]="relativeDays(start)" [severity]="start > today ? 'info' : 'secondary'"/>
+                <span class="app-kpi-context">{{ relativeDays(start) }}</span>
             } @else {
                 <app-not-set class="text-sm"/>
             }
@@ -15,22 +15,22 @@
                 @if (endBeforeStart) {
                     <p-tag value="Before start" severity="danger"/>
                 } @else {
-                    <p-tag [value]="relativeDays(end)" severity="secondary"/>
+                    <span class="app-kpi-context">{{ relativeDays(end) }}</span>
                 }
             } @else {
                 <app-not-set class="text-sm"/>
                 @if (openEnded && elapsedDays > 0) {
-                    <p-tag value="Ongoing" severity="warn"/>
+                    <span class="app-kpi-context">ongoing</span>
                 }
             }
         </app-kpi-card>
         <app-kpi-card icon="pi pi-arrows-h" label="Project duration">
             @if (durationDays > 0) {
                 {{ dayCount(durationDays) }}
-                <p-tag [value]="durationMonths === 1 ? '1 month' : durationMonths + ' months'" severity="secondary"/>
+                <span class="app-kpi-context">about {{ durationMonths === 1 ? '1 month' : durationMonths + ' months' }}</span>
             } @else if (openEnded && elapsedDays > 0) {
                 {{ dayCount(elapsedDays) }}
-                <p-tag value="So far" severity="secondary"/>
+                <span class="app-kpi-context">so far</span>
             } @else {
                 <app-not-set class="text-sm"/>
             }
@@ -38,7 +38,6 @@
         <app-kpi-card icon="pi pi-clock" label="Contract deadline">
             @if (contractDeadline) {
                 {{ contractDeadline | date:'dd.MM.yyyy' }}
-                <p-tag [value]="relativeDays(contractDeadline)" [severity]="daysToDeadline! < 0 ? 'danger' : 'warn'"/>
             } @else {
                 <app-not-set class="text-sm"/>
             }
@@ -50,7 +49,6 @@
         <div class="app-card-header">
             <div>
                 <h3 class="app-card-title">Project timeline</h3>
-                <p class="app-card-subtitle m-0">Contract, project and stages by month</p>
             </div>
             @if (rangeStart) {
                 <ul class="list-none m-0 p-0 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-gray-700" aria-label="Legend">
@@ -94,16 +92,17 @@
             </ng-template>
 
             <!-- Inside the card padding, like the bar charts; it scrolls sideways within it -->
-            <div class="isolate overflow-x-auto overflow-y-hidden mx-6 mb-6">
-                <div class="relative" [style.min-width.px]="chartMinWidth + 240">
+            <!-- --label-col: the label column, narrower on a phone so the bars get the screen -->
+            <div class="app-timeline isolate overflow-x-auto overflow-y-hidden mx-6 mb-6 [--label-col:112px] sm:[--label-col:240px]">
+                <div class="relative" [style.min-width]="'calc(' + chartMinWidth + 'px + var(--label-col))'">
                     <!-- Column lines behind the rows, and today above them but under the bars and markers (no z-index, so the later
                          rows paint over it); both over the track column only -->
-                    <div class="pointer-events-none absolute inset-y-0 left-[240px] right-0 -z-10" aria-hidden="true">
+                    <div class="pointer-events-none absolute inset-y-0 left-(--label-col) right-0 -z-10" aria-hidden="true">
                         @for (tick of ticks; track tick.left) {
                             <div class="absolute inset-y-0 border-l border-gray-100" [style.left.%]="tick.left"></div>
                         }
                     </div>
-                    <div class="pointer-events-none absolute inset-y-0 left-[240px] right-0" aria-hidden="true">
+                    <div class="pointer-events-none absolute inset-y-0 left-(--label-col) right-0" aria-hidden="true">
                         @if (todayLeft !== null) {
                             <!-- Starts in the header's today lane, under the 32px month row and 6px from the lane's top, where the label sits -->
                             <div class="absolute top-[38px] bottom-0 w-0.5 -translate-x-1/2 bg-today" [style.left.%]="todayLeft">
@@ -117,8 +116,8 @@
                     <!-- Months as "May'25" on one line, styled like chart axis labels. Under them, still in the header, a lane
                          for the today label, so it never sits on the contract row -->
                     <div class="flex">
-                        <div class="sticky left-0 z-30 w-[240px] shrink-0 bg-white">
-                            <div class="flex items-end h-8 pr-6 pb-1.5 text-xs text-gray-500">Phase</div>
+                        <div class="sticky left-0 z-30 w-(--label-col) shrink-0 bg-white">
+                            <div class="flex items-end h-8 pr-3 sm:pr-6 pb-1.5 text-xs text-gray-500">Phase</div>
                         </div>
                         <div class="flex-1">
                             <div class="relative h-8">
@@ -134,7 +133,7 @@
 
                     <!-- Contract, set apart from the project rows below by a stronger line. Dates are in the bar's tooltip -->
                     <div class="flex border-b border-gray-200">
-                        <div class="sticky left-0 z-30 -mb-px flex items-center w-[240px] shrink-0 border-b border-gray-200 bg-white pr-6">
+                        <div class="sticky left-0 z-30 -mb-px flex items-center w-(--label-col) shrink-0 border-b border-gray-200 bg-white pr-3 sm:pr-6">
                             <span class="text-sm font-medium text-gray-800">Contract</span>
                         </div>
                         <div class="relative flex-1 h-11">
@@ -146,7 +145,8 @@
                                 <div class="absolute top-2.5 h-6 flex items-center overflow-hidden rounded px-2.5 text-xs font-medium whitespace-nowrap bg-gray-200 text-gray-800"
                                      [class.rounded-r-none]="!!contract.toDeadline" [style.left.%]="contract.left" [style.width.%]="contract.width"
                                      [style.padding-left]="contract.labelPad ? 'calc(' + contract.labelPad + '% + 10px)' : null"
-                                     [pTooltip]="contractTip" tooltipPosition="top" tooltipStyleClass="app-chart-tooltip">
+                                     [pTooltip]="contractTip" tooltipPosition="top" tooltipStyleClass="app-chart-tooltip"
+                                     tabindex="0" role="img" tooltipEvent="both" [attr.aria-label]="barLabel('Contract', contract, contractDeadline)">
                                     @if (contract.labelAt === 'inside') {
                                         <span class="truncate tabular-nums">{{ contract.label }}</span>
                                     }
@@ -171,7 +171,7 @@
                                           [style.right]="labelBefore(contract.left)">{{ contract.label }}</span>
                                 }
                             } @else {
-                                <span class="absolute top-1/2 -translate-y-1/2 left-2 text-xs text-gray-400">No start date yet</span>
+                                <span class="absolute top-1/2 -translate-y-1/2 left-2 text-xs text-gray-500">No start date yet</span>
                             }
                             @for (payment of contractPayments; track $index) {
                                 <ng-container *ngTemplateOutlet="paymentMarker; context: {$implicit: payment}"/>
@@ -181,7 +181,7 @@
 
                     <!-- Project: the work and its stages. Dates are in the bar's tooltip -->
                     <div class="flex">
-                        <div class="sticky left-0 z-30 flex items-center w-[240px] shrink-0 bg-white pr-6">
+                        <div class="sticky left-0 z-30 flex items-center w-(--label-col) shrink-0 bg-white pr-3 sm:pr-6">
                             <span class="text-sm font-medium text-gray-800">Project</span>
                         </div>
                         <div class="relative flex-1 h-11">
@@ -193,7 +193,8 @@
                                 <div class="absolute top-2.5 h-6 flex items-center overflow-hidden rounded px-2.5 text-xs font-medium whitespace-nowrap bg-(--app-brand-500) text-(--app-brand-contrast)"
                                      [style.left.%]="work.left" [style.width.%]="work.width"
                                      [style.padding-left]="work.labelPad ? 'calc(' + work.labelPad + '% + 10px)' : null"
-                                     [pTooltip]="workTip" tooltipPosition="top" tooltipStyleClass="app-chart-tooltip">
+                                     [pTooltip]="workTip" tooltipPosition="top" tooltipStyleClass="app-chart-tooltip"
+                                     tabindex="0" role="img" tooltipEvent="both" [attr.aria-label]="barLabel('Project', work)">
                                     @if (work.labelAt === 'inside') {
                                         <span class="truncate tabular-nums">{{ work.label }}</span>
                                     }
@@ -206,7 +207,7 @@
                                           [style.right]="labelBefore(work.left)">{{ work.label }}</span>
                                 }
                             } @else {
-                                <span class="absolute top-1/2 -translate-y-1/2 left-2 text-xs text-gray-400">No start date yet</span>
+                                <span class="absolute top-1/2 -translate-y-1/2 left-2 text-xs text-gray-500">No start date yet</span>
                             }
                             @for (payment of otherPayments; track $index) {
                                 <ng-container *ngTemplateOutlet="paymentMarker; context: {$implicit: payment}"/>
@@ -217,8 +218,10 @@
                     <!-- Stages: name only, and bars with no text (name, dates, length and deadline are in the tooltip), with their installments' payment dates -->
                     @for (stage of stages; track stage.id) {
                         <div class="flex">
-                            <div class="sticky left-0 z-30 flex items-center w-[240px] shrink-0 bg-white pr-6 min-w-0">
-                                <a [routerLink]="['/projects', project.id, 'stages', stage.id]"
+                            <div class="sticky left-0 z-30 flex items-center w-(--label-col) shrink-0 bg-white pr-3 sm:pr-6 min-w-0">
+                                <!-- Long names are cut; the tooltip has the full name -->
+                                <a [routerLink]="['/projects', project.id, 'stages', stage.id]" [pTooltip]="stage.name"
+                                   tooltipPosition="top" [showDelay]="300" tooltipStyleClass="app-chart-tooltip"
                                    class="block truncate text-sm font-medium text-gray-800 no-underline hover:text-brand-500">{{ stage.name }}</a>
                             </div>
                             <div class="relative flex-1 h-11">
@@ -227,7 +230,8 @@
                                     <ng-template #stageTip><div class="app-tooltip-title">{{ stage.name }}</div><div class="flex items-center gap-1.5 tabular-nums"><span class="w-2.5 h-2.5 rounded-full" [class]="stage.barClass" aria-hidden="true"></span>{{ stage.start | date:'dd.MM.yyyy' }} – {{ stage.open || !stage.end ? 'no end date' : (stage.end | date:'dd.MM.yyyy') }}</div><div class="tabular-nums">{{ stage.label }}</div>@if (stage.deadline) {<div class="tabular-nums">Deadline {{ stage.deadline | date:'dd.MM.yyyy' }}</div>}</ng-template>
                                     <div class="absolute top-2.5 h-6 rounded"
                                          [class]="stage.barClass" [class.rounded-r-none]="!!stage.toDeadline" [style.left.%]="stage.left" [style.width.%]="stage.width"
-                                         [pTooltip]="stageTip" tooltipPosition="top" tooltipStyleClass="app-chart-tooltip"></div>
+                                         [pTooltip]="stageTip" tooltipPosition="top" tooltipStyleClass="app-chart-tooltip"
+                                         tabindex="0" role="img" tooltipEvent="both" [attr.aria-label]="barLabel(stage.name, stage, stage.deadline)"></div>
                                     @if (stage.pastDeadline) {
                                         <div class="app-past-deadline pointer-events-none absolute top-2.5 h-6 box-content rounded-r border-white"
                                              [class]="stage.pastDeadline.whole ? 'rounded-l' : '-ml-0.5 border-l-2'"
@@ -241,9 +245,9 @@
                                 } @else if (stage.dateError) {
                                     <ng-container *ngTemplateOutlet="dateErrorMarker; context: {$implicit: stage.dateError, left: stage.left}"/>
                                 } @else if (stage.note) {
-                                    <span class="absolute top-1/2 -translate-y-1/2 left-2 text-xs text-gray-400">{{ stage.note }}</span>
+                                    <span class="absolute top-1/2 -translate-y-1/2 left-2 text-xs text-gray-500">{{ stage.note }}</span>
                                 } @else if (!stage.start) {
-                                    <span class="absolute top-1/2 -translate-y-1/2 left-2 text-xs text-gray-400">No dates yet</span>
+                                    <span class="absolute top-1/2 -translate-y-1/2 left-2 text-xs text-gray-500">No dates yet</span>
                                 }
                                 @for (payment of stage.payments; track $index) {
                                     <ng-container *ngTemplateOutlet="paymentMarker; context: {$implicit: payment}"/>
@@ -309,7 +313,7 @@
                 <div>
                     <dt class="app-field-label">Installments paid</dt>
                     @if (installmentsLoadFailed) {
-                        <dd class="m-0 text-base text-gray-400">Couldn't load</dd>
+                        <dd class="m-0 text-base text-gray-500">Couldn't load</dd>
                     } @else {
                         <dd class="m-0 text-base font-semibold text-gray-800 tabular-nums">{{ installmentsPaid }} of {{ installmentsCount }}</dd>
                     }
@@ -317,7 +321,7 @@
                 <div>
                     <dt class="app-field-label">Days to deadline</dt>
                     @if (daysToDeadline === null) {
-                        <dd class="m-0 text-base text-gray-400">Not set</dd>
+                        <dd class="m-0 text-base text-gray-500">Not set</dd>
                     } @else if (daysToDeadline < 0) {
                         <dd class="m-0 text-base font-semibold text-error-700 tabular-nums">{{ dayCount(-daysToDeadline) }} late</dd>
                     } @else {

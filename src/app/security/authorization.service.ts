@@ -4,7 +4,7 @@ import {AuthService} from "@auth0/auth0-angular";
 import {Observable} from "rxjs";
 import {User} from "@auth0/auth0-spa-js";
 import {MessageService} from "primeng/api";
-import {MessageSeverity} from "../shared";
+import {MessageSeverity} from "../shared/message";
 import {isSessionExpiredError} from "./session-expiry";
 
 export abstract class AuthorizationService {

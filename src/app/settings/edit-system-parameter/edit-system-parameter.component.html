@@ -1,8 +1,8 @@
-<p-dialog [visible]="visible" (visibleChange)="!$event && onHide()" [modal]="true" appendTo="body" [draggable]="false"
+<p-dialog closeAriaLabel="Close" [visible]="visible" (visibleChange)="!$event && onHide()" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}">
     <ng-template #header>
         <div class="flex flex-col gap-1">
-            <span class="p-dialog-title">Edit {{ systemParameter?.name }}</span>
+            <span class="p-dialog-title">Edit {{ label }}</span>
             <span class="text-sm text-gray-500">The new value is used from the next calculation on.</span>
         </div>
     </ng-template>
@@ -17,6 +17,7 @@
         @if (isNumeric) {
             <p-inputnumber inputId="systemParameterValue" [formControl]="numberValue" mode="decimal" locale="pl-PL"
                            [minFractionDigits]="0" [maxFractionDigits]="maxFractionDigits" [fluid]="true"
+                           [suffix]="isRate ? '%' : ''" [min]="isRate ? 0 : undefined" [max]="isRate ? 100 : undefined"
                            (onBlur)="numberValue.markAsDirty()"/>
         } @else if (isBoolean) {
             <p-toggleswitch inputId="systemParameterValue" [formControl]="booleanValue"/>
@@ -41,6 +42,6 @@
                       (onClick)="onResetToDefault()"/>
         }
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onHide()"/>
-        <p-button label="Save changes" [disabled]="valueControl.invalid" (onClick)="onSave()"/>
+        <p-button label="Save changes" (onClick)="onSave()"/>
     </ng-template>
 </p-dialog>

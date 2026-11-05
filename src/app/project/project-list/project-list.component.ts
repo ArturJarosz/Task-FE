@@ -1,8 +1,10 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
-import {resolveLabel} from "../../shared/utils/label-utils";
+import {initials, resolveLabel} from "../../shared/utils/label-utils";
 import {Architect, Client, ClientType, ConfigurationEntry, Project} from "../../generated/models";
 import {ProjectDto} from "../model/project.model";
-import {TableModule} from "primeng/table";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
+import {TableSort, toTableSort} from "../../shared/utils/sort-utils";
+import {clientTypeLabel} from "../../client/model/client";
 import {ButtonModule} from "primeng/button";
 import {TagModule} from "primeng/tag";
 import {Menu, MenuModule} from "primeng/menu";
@@ -39,6 +41,9 @@ export class ProjectListComponent {
     deleteProjectEvent: EventEmitter<ProjectDto> = new EventEmitter<ProjectDto>();
 
     protected readonly statusSeverity = statusSeverity;
+    @Output()
+    sortChange: EventEmitter<TableSort | null> = new EventEmitter<TableSort | null>();
+
     rowMenuItems: MenuItem[] = [];
 
     constructor(private router: Router) {
@@ -57,16 +62,16 @@ export class ProjectListComponent {
     }
 
     getClientKind(client?: Client): string {
-        return client?.clientType === ClientType.CORPORATE ? 'Company' : 'Private';
+        return clientTypeLabel(client?.clientType);
+    }
+
+    // The table is lazy: it only reports the sort, and the shell sorts every row before paging
+    onSort(event: TableLazyLoadEvent): void {
+        this.sortChange.emit(toTableSort(event));
     }
 
     getInitials(name: string): string {
-        let initials = name.split(' ')
-            .filter(part => part.length > 0)
-            .slice(0, 2)
-            .map(part => part.charAt(0).toUpperCase())
-            .join('');
-        return initials || NOT_FOUND_INITIAL;
+        return initials(name);
     }
 
     getArchitectName(architect?: Architect): string {

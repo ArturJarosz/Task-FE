@@ -73,6 +73,18 @@ describe('ProjectTimelineComponent', () => {
         expect(component.daysToDeadline).toBe(119);
     });
 
+    it('adds context to the KPI figures as plain text, and shows only the date of the contract deadline', () => {
+        let cards = [...fixture.nativeElement.querySelectorAll('app-kpi-card')] as HTMLElement[];
+        let card = (label: string) => cards.find(kpi => kpi.querySelector('.app-kpi-label')!.textContent!.trim() === label)!;
+        let context = (label: string) => card(label).querySelector('.app-kpi-context')?.textContent!.trim();
+        expect(context('Project start')).toBe('10 days ago');
+        expect(context('Project end')).toBe('in 89 days');
+        expect(context('Project duration')).toBe('about 3 months');
+        expect(card('Contract deadline').querySelector('.app-kpi-value')!.textContent!.trim())
+            .toBe(format(addDays(startOfDay(new Date()), 119), 'dd.MM.yyyy'));
+        expect(fixture.nativeElement.querySelector('app-kpi-card p-tag')).toBeNull();
+    });
+
     it('puts each installment payment date on the row of its stage', () => {
         let byName = (name: string) => component.stages.find(stage => stage.name === name)!;
         expect(byName('Concept').payments.map(payment => payment.paid)).toEqual([true]);
@@ -179,6 +191,9 @@ describe('ProjectTimelineComponent', () => {
             expect(component.elapsedDays).toBe(31);
             expect(component.work.left + component.work.width).toBeCloseTo(component.todayLeft! + component.span(component.today, component.today), 5);
             expect(component.work.label).toBe('31 days so far');
+            let contexts = Array.from<HTMLElement>(fixture.nativeElement.querySelectorAll('.app-kpi-context'));
+            expect(contexts.map(context => context.textContent)).toContain('ongoing');
+            expect(fixture.nativeElement.querySelector('app-kpi-card p-tag')).toBeNull();
         });
 
         it('says "1 day" for a project that started today', () => {
@@ -249,9 +264,14 @@ describe('ProjectTimelineComponent', () => {
             expect(stage.open).toBeTrue();
             expect(stage.end).toEqual(component.today);
             expect(stage.deadline).toEqual(addDays(startOfDay(new Date()), 10));
-            // No deadline marker: the deadline is where the dashed stretch after the bar ends
-            let tips = [...fixture.nativeElement.querySelectorAll('[role=img]')].map((marker: HTMLElement) => marker.getAttribute('aria-label'));
-            expect(tips.some(tip => /deadline/i.test(tip!))).toBeFalse();
+            // No deadline marker: the deadline is where the dashed stretch after the bar ends. Markers have no width;
+            // the bars do, and their own label names the deadline for keyboard and screen reader users
+            let markers = [...fixture.nativeElement.querySelectorAll('[role=img]:not([style*="width"])')]
+                .map((marker: HTMLElement) => marker.getAttribute('aria-label'));
+            expect(markers.some(tip => /deadline/i.test(tip!))).toBeFalse();
+            let bar: HTMLElement = fixture.nativeElement.querySelector('[role=img][aria-label^="Visualisations"]');
+            expect(bar.getAttribute('tabindex')).toBe('0');
+            expect(bar.getAttribute('aria-label')).toContain('deadline');
         });
 
         it('dashes an open bar on from today to its deadline while that is still ahead', () => {
@@ -325,7 +345,7 @@ describe('ProjectTimelineComponent', () => {
             expect(stage.label).not.toContain('-');
             let text = fixture.nativeElement.textContent;
             expect(text).toContain('Before start');
-            expect(text).not.toContain('Ongoing');
+            expect(text).not.toContain('ongoing');
             expect(text).not.toContain('so far');
         });
 

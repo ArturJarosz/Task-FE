@@ -12,6 +12,7 @@ import {DialogModule} from "primeng/dialog";
 import {SelectModule} from "primeng/select";
 import {Textarea} from "primeng/textarea";
 import {ButtonModule} from "primeng/button";
+import {showErrors} from "../../../shared/utils/form-utils";
 
 // Adds the installment of a stage. The deposit is added when the contract is signed
 @Component({
@@ -63,6 +64,11 @@ export class AddInstallmentComponent implements OnInit, AbstractAddEditComponent
     }
 
     onSave(): void {
+        // Never disabled: with something missing, saving shows every error instead
+        if (!this.isSaveEnabled()) {
+            showErrors(this.addInstallmentForm);
+            return;
+        }
         this.visible = false;
         this.installmentStore.createInstallment({installment: this.createInstallment()});
     }

@@ -1,0 +1,61 @@
+<!-- A quick entry, so narrower than the edit dialogs: time and date in one row, then architect and note.
+     Opens with the cursor in Time spent: the date and architect have defaults, and focusing the date would open its
+     calendar -->
+<p-dialog closeAriaLabel="Close" [visible]="visible" (visibleChange)="!$event && onHide()" [modal]="true" appendTo="body" [draggable]="false"
+          [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}" [focusOnShow]="false" (onShow)="focusDuration()">
+    <ng-template #header>
+        <div class="flex flex-col gap-1 min-w-0">
+            <span class="p-dialog-title">{{ isNew ? 'Log time' : 'Edit time entry' }}</span>
+            @if (taskName) {
+                <span class="text-sm text-gray-500 truncate">{{ taskName }}</span>
+            }
+        </div>
+    </ng-template>
+    <form [formGroup]="form" class="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_10rem] gap-x-4 gap-y-4">
+        <div class="min-w-0">
+            <label for="logTimeDuration" class="app-form-label">Time spent <span class="text-error-600">*</span></label>
+            <input #durationInput id="logTimeDuration" formControlName="duration" pInputText class="w-full"
+                   placeholder="2h30m" autocomplete="off" aria-describedby="logTimeDurationHint"
+                   [invalid]="!!durationError" [attr.aria-invalid]="!!durationError"
+                   (blur)="form.controls.duration.markAsTouched()"/>
+            @if (durationError; as error) {
+                <small id="logTimeDurationHint" class="block mt-1.5 text-xs text-error-600">{{ error }}</small>
+            } @else if (durationMinutes !== null) {
+                <small id="logTimeDurationHint" class="block mt-1.5 text-xs text-gray-500">Saved as {{ durationMinutes | duration }}</small>
+            } @else {
+                <small id="logTimeDurationHint" class="block mt-1.5 text-xs text-gray-500">Like 2h30m or 45m. Just 2 means 2 h.</small>
+            }
+        </div>
+        <div>
+            <label for="logTimeDate" class="app-form-label">Date <span class="text-error-600">*</span></label>
+            <p-datepicker inputId="logTimeDate" formControlName="workDate" dateFormat="dd.mm.yy" [maxDate]="today"
+                          [showIcon]="true" appendTo="body" [fluid]="true"
+                          (onClose)="form.controls.workDate.markAsTouched()"/>
+            @if (workDateError; as error) {
+                <small class="block mt-1.5 text-xs text-error-600">{{ error }}</small>
+            }
+        </div>
+        <div class="sm:col-span-2">
+            <label for="logTimeArchitect" class="app-form-label">Architect <span class="text-error-600">*</span></label>
+            <p-select inputId="logTimeArchitect" formControlName="architectId" [options]="architectOptions"
+                      optionLabel="name" optionValue="id" [filter]="true" filterBy="name" placeholder="Select an architect"
+                      appendTo="body" [fluid]="true"/>
+            @if (isFieldInvalid('architectId')) {
+                <small class="block mt-1.5 text-xs text-error-600">Select the architect who did the work</small>
+            }
+        </div>
+        <div class="sm:col-span-2">
+            <label for="logTimeNote" class="app-form-label">Note</label>
+            <input id="logTimeNote" formControlName="note" pInputText class="w-full" placeholder="Optional"
+                   autocomplete="off" (blur)="form.controls.note.markAsTouched()"/>
+            @if (isFieldInvalid('note')) {
+                <small class="block mt-1.5 text-xs text-error-600">Shorten the note to {{ noteMaxLength }} characters or fewer</small>
+            }
+        </div>
+    </form>
+    <ng-template #footer>
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onHide()"/>
+        <p-button [label]="isNew ? 'Log time' : 'Save changes'" [icon]="isNew ? 'pi pi-plus' : ''" [disabled]="!hasChanges || saving"
+                  [loading]="saving" (onClick)="onSave()"/>
+    </ng-template>
+</p-dialog>

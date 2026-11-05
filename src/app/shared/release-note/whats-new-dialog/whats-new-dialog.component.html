@@ -1,4 +1,4 @@
-<p-dialog [visible]="visible" (visibleChange)="!$event && closed.emit()" [modal]="true" appendTo="body" [draggable]="false"
+<p-dialog closeAriaLabel="Close" [visible]="visible" (visibleChange)="!$event && closed.emit()" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}">
     <ng-template #header>
         <div class="flex flex-col gap-1">
@@ -28,15 +28,14 @@
             <p-button label="Try again" icon="pi pi-refresh" severity="secondary" [outlined]="true" (onClick)="retry.emit()"/>
         </app-empty-state>
     } @else if (releaseNotes.length === 0) {
-        <app-empty-state icon="pi pi-megaphone" title="No changes yet"
-                         text="New features and fixes will be listed here as they are released."/>
+        <app-empty-state icon="pi pi-megaphone" title="No changes yet"/>
     } @else {
         <div class="flex flex-col gap-6">
             @for (group of versionGroups; track group.version) {
                 <section>
                     <div class="flex items-baseline gap-2 mb-3">
                         <h3 class="m-0 text-sm font-semibold text-gray-500">Version {{ group.version }}</h3>
-                        <span class="text-xs text-gray-400">{{ group.releasedOn | date:'dd.MM.yyyy' }}</span>
+                        <span class="text-xs text-gray-500">{{ group.releasedOn | date:'dd.MM.yyyy' }}</span>
                     </div>
                     <ul class="list-none m-0 p-0">
                         @for (releaseNote of group.releaseNotes; track releaseNote.id) {

@@ -2,7 +2,11 @@
     <div class="flex items-center justify-center w-14 h-14 rounded-full bg-gray-100 text-gray-500">
         <i [class]="icon + ' text-xl'"></i>
     </div>
-    <h4 class="m-0 mt-2 text-base font-semibold text-gray-800">{{ title }}</h4>
-    <p class="m-0 text-sm text-gray-500">{{ text }}</p>
+    <!-- Not a heading: it says what is missing, and an h4 under the card's h2 would skip a heading level -->
+    <p class="m-0 mt-2 text-base font-semibold text-gray-800">{{ title }}</p>
+    <!-- Only when it says something the title doesn't -->
+    @if (text) {
+        <p class="m-0 text-sm text-gray-500">{{ text }}</p>
+    }
     <div class="mt-2 empty:hidden"><ng-content></ng-content></div>
 </div>

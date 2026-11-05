@@ -1,4 +1,6 @@
 import {ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal, Signal} from '@angular/core';
+import {sortRows, TableSort} from "../../shared/utils/sort-utils";
+import {partnerSortValue} from "../../shared/partner-list/partner-list.component";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {Supplier} from "../../generated/models/supplier";
 import {SupplierStore} from "../state";
@@ -52,10 +54,16 @@ export class SupplierListShellComponent implements OnInit {
         count: item.numberOfSupplies ?? 0,
     })));
     readonly $pageCount = computed(() => Math.max(Math.ceil(this.$rows().length / PAGE_SIZE), 1));
-    readonly $pagedRows = computed(() => this.$rows().slice(this.$page() * PAGE_SIZE, (this.$page() + 1) * PAGE_SIZE));
+    // The table's column sort, applied to every row before paging
+    readonly $sort = signal<TableSort | null>(null);
+    readonly $sortedRows = computed(() => sortRows(this.$rows(), this.$sort(), partnerSortValue));
+    readonly $pagedRows = computed(() => this.$sortedRows().slice(this.$page() * PAGE_SIZE, (this.$page() + 1) * PAGE_SIZE));
     readonly $kpis = computed(() => ({
         total: this.$rows().length,
         withItems: this.$rows().filter(row => row.count > 0).length,
+        items: this.$rows().reduce((sum, row) => sum + row.count, 0),
+        // Categories in use among them
+        categories: new Set(this.$rows().map(row => row.category).filter(category => !!category)).size,
     }));
 
     constructor(private confirmationService: ConfirmationService) {
@@ -100,5 +108,10 @@ export class SupplierListShellComponent implements OnInit {
                 this.confirmationService.close();
             }
         });
+    }
+
+    onSortChange(sort: TableSort | null) {
+        this.$sort.set(sort);
+        this.$page.set(0);
     }
 }

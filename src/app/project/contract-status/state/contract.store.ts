@@ -8,6 +8,7 @@ import {inject} from "@angular/core";
 import {MessageService} from "primeng/api";
 import {ContractRestService} from "../../rest/contract-rest.service";
 import {ProjectStore} from "../../state";
+import {ProjectTimeSummaryStore} from "../../state/project-time-summary.state";
 import {InstallmentStore} from "../../../finance/installment/state/installment.state";
 import {FinancialDataStore} from "../../../finance/project-financial-summary/state/financial-data.state";
 
@@ -25,7 +26,7 @@ export const ContractStore = signalStore(
     withMethods(
         (store, messageService = inject(MessageService), contractRestService = inject(ContractRestService),
          projectStore = inject(ProjectStore), installmentStore = inject(InstallmentStore),
-         financialDataStore = inject(FinancialDataStore)) => ({
+         financialDataStore = inject(FinancialDataStore), timeSummaryStore = inject(ProjectTimeSummaryStore)) => ({
             setContractId(contractId: number) : void {
                 patchState(store, {contractId: contractId});
             },
@@ -37,6 +38,8 @@ export const ContractStore = signalStore(
                             .pipe(
                                 tap(savedContract => {
                                     projectStore.setProjectNeedsRefresh();
+                                    // The rates per hour divide the contract value and the net value
+                                    timeSummaryStore.setTimeSummaryNeedsRefresh();
                                     messageService.add({
                                         severity: MessageSeverity.INFO,
                                         summary: `Contract status changed.`,

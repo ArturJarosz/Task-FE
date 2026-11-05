@@ -8,8 +8,12 @@
                 [installmentsLoadFailed]="$installmentsLoadFailed()"
                 [hasDeposit]="$hasDeposit()"
                 [view]="view"
+                [timeSummary]="$timeSummary()"
+                [timeSummaryLoading]="$timeSummaryLoading()"
+                [timeSummaryLoadFailed]="$timeSummaryLoadFailed()"
                 (updateProjectEvent)="onUpdateProject($event)"
                 (removeProjectEvent)="onRemoveProject($event)" (reloadEvent)="onReload()"
-                (reloadInstallmentsEvent)="onReloadInstallments()">
+                (reloadInstallmentsEvent)="onReloadInstallments()"
+                (reloadTimeSummaryEvent)="onReloadTimeSummary()">
 </project-detail>
 <p-confirmdialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>

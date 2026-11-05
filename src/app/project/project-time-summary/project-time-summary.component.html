@@ -1,0 +1,45 @@
+<!-- Built like the Payments card above it: the title and a link on white, the three figures in the grey footer. The
+     time of each stage is in the Stages tab, so the card links there instead of listing the stages -->
+<section class="@container rounded-2xl border border-gray-200 bg-gray-100 shadow-card">
+    <div class="rounded-2xl bg-white p-6 shadow-theme-xs">
+        <div class="flex items-start justify-between gap-4">
+            <h3 class="app-card-title">Time and rate</h3>
+            @if (projectId) {
+                <a [routerLink]="['/projects', projectId, 'stages']"
+                   class="app-card-link">Stages</a>
+            }
+        </div>
+        @if (loadFailed) {
+            <app-empty-state icon="pi pi-exclamation-triangle" title="Couldn't load the time spent"
+                             text="Check your connection and try again.">
+                <p-button label="Try again" severity="secondary" [outlined]="true" (onClick)="reload.emit()"/>
+            </app-empty-state>
+        } @else if (timeSummary && !loading && !timeSummary.totalMinutes) {
+            <p class="m-0 mt-2 text-sm text-gray-500">Log time on tasks to see the rate per hour.</p>
+        }
+    </div>
+    @if (!loadFailed) {
+        <dl class="app-card-figures">
+            @for (figure of figures; track figure.label) {
+                <div class="app-card-figure">
+                    <dt class="app-card-figure-label">{{ figure.label }}</dt>
+                    @if (loading || !timeSummary) {
+                        <dd class="app-card-figure-value flex justify-end @[19rem]:justify-center">
+                            <p-skeleton width="4rem" height="1.5rem"/>
+                        </dd>
+                    } @else if (figure.value != null) {
+                        <dd class="app-card-figure-value">
+                            @if (figure.kind === 'money') {
+                                {{ figure.value | currency:'PLN':'symbol':'1.0-0' }}
+                            } @else {
+                                {{ figure.value | duration:'short' }}
+                            }
+                        </dd>
+                    } @else {
+                        <dd class="app-card-figure-value font-normal text-gray-500" [attr.aria-label]="figure.label + ': not available'">–</dd>
+                    }
+                </div>
+            }
+        </dl>
+    }
+</section>

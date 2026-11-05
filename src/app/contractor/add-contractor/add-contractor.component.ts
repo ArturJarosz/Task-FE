@@ -8,6 +8,7 @@ import {ContractorStore} from "../state";
 import {DialogModule} from "primeng/dialog";
 import {ButtonModule} from "primeng/button";
 import {PartnerFormFieldsComponent} from "../../shared";
+import {showErrors} from "../../shared/utils/form-utils";
 
 @Component({
     selector: 'add-contractor',
@@ -53,6 +54,11 @@ export class AddContractorComponent implements OnInit, OnChanges {
     }
 
     onSave() {
+        // Never disabled: with something missing, saving shows every error instead
+        if (!this.isSaveEnabled()) {
+            showErrors(this.addContractorForm);
+            return;
+        }
         this.visible = false;
         let contractor = this.createContractor();
         this.contractorStore.createContractor({contractor: contractor});

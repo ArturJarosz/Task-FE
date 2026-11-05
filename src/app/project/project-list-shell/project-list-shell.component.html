@@ -6,7 +6,7 @@
         <app-kpi-card icon="pi pi-folder" label="Projects" [loading]="$loading()" [loadFailed]="$loadFailed()">{{ $kpis().total }}</app-kpi-card>
         <app-kpi-card icon="pi pi-play-circle" label="Active" [loading]="$loading()" [loadFailed]="$loadFailed()">{{ $kpis().active }}</app-kpi-card>
         <app-kpi-card icon="pi pi-check-circle" label="Finished" [loading]="$loading()" [loadFailed]="$loadFailed()">{{ $kpis().finished }}</app-kpi-card>
-        <app-kpi-card icon="pi pi-wallet" label="Contract value" [loading]="$loading()" [loadFailed]="$loadFailed()">{{ $kpis().value | currency:'PLN':'symbol':'1.0-0' }}</app-kpi-card>
+        <app-kpi-card icon="pi pi-wallet" label="Contract value" [loading]="$loading()" [loadFailed]="$loadFailed()">{{ $kpis().value | currency:'PLN':'symbol':'1.2-2' }}</app-kpi-card>
     </div>
 
     <!-- Projects card: the table or the timeline, with the same filters -->
@@ -15,7 +15,6 @@
             <div>
                 @if ($view() === 'timeline') {
                     <h2 class="app-card-title">Projects timeline</h2>
-                    <p class="app-card-subtitle m-0">Contract and project of each project by month</p>
                 } @else {
                     <h2 class="app-card-title">All projects</h2>
                     <p class="app-card-subtitle m-0">{{ $filteredProjects().length }} {{ $filteredProjects().length === 1 ? 'project' : 'projects' }}</p>
@@ -86,7 +85,8 @@
                           [projectStatuses]="$projectStatuses()"
                           [emptyTitle]="$emptyTitle()"
                           [emptyText]="$emptyText()"
-                          (deleteProjectEvent)="onDeleteProject($event)">
+                          (deleteProjectEvent)="onDeleteProject($event)"
+                          (sortChange)="onSortChange($event)">
             </project-list>
         }
 

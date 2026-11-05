@@ -5,12 +5,12 @@ import {RouterLink} from "@angular/router";
 import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
 import {MenuModule} from "primeng/menu";
-import {TableModule} from "primeng/table";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {MenuItem} from "primeng/api";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {FinancialPartialData} from "../../generated/models/financial-partial-data";
-import {capitalize, resolveLabel} from "../utils/label-utils";
+import {capitalize, initials, resolveLabel} from "../utils/label-utils";
 import {PageCrumb, PageHeaderComponent} from "../page-header/page-header.component";
 import {FieldComponent} from "../field/field.component";
 import {EmptyStateComponent} from "../empty-state/empty-state.component";
@@ -23,6 +23,9 @@ import {
 import {PartnerRef} from "../partner-list/partner-list.component";
 import {NotSetComponent} from "../not-set/not-set.component";
 import {YesNoMarkComponent} from "../yes-no-mark/yes-no-mark.component";
+import {fieldValue, SortValue, TableSort, toTableSort} from "../../shared/utils/sort-utils";
+import {SortRowsPipe} from "../../shared/sort-rows/sort-rows.pipe";
+import {showErrors} from "../../shared/utils/form-utils";
 
 // Contractor or supplier, as shown and edited on its detail page
 export interface Partner {
@@ -57,11 +60,27 @@ export interface PartnerItemsData {
     templateUrl: 'partner-detail.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [PageHeaderComponent, FieldComponent, EmptyStateComponent, PartnerFormFieldsComponent,
+    imports: [SortRowsPipe, PageHeaderComponent, FieldComponent, EmptyStateComponent, PartnerFormFieldsComponent,
         FinanceComponentSummaryComponent, ButtonModule, DialogModule, MenuModule, TableModule, TooltipModule,
         ReactiveFormsModule, RouterLink, CurrencyPipe, DatePipe, NotSetComponent, YesNoMarkComponent]
 })
 export class PartnerDetailComponent implements OnChanges {
+
+    // Column sort of the table: it is lazy, so it only reports the sort and the sortRows pipe sorts a copy of the rows
+    sort: TableSort | null = null;
+
+    readonly sortValue = (row: PartnerItem, field: string): SortValue => {
+        switch (field) {
+            case 'project':
+                return this.projectNames.get(row.projectId!);
+            default:
+                return fieldValue(row, field);
+        }
+    };
+
+    onSort(event: TableLazyLoadEvent): void {
+        this.sort = toTableSort(event);
+    }
     @Input()
     partner!: Partner;
     @Input()
@@ -76,6 +95,9 @@ export class PartnerDetailComponent implements OnChanges {
     // Section title and project route segment of the items, e.g. "Jobs" and "contractorJob"
     @Input()
     itemsLabel: string = '';
+    // Lower case singular for counts: "1 job", "2 jobs"
+    @Input()
+    itemLabel: string = '';
     @Input()
     itemRouteSegment: string = '';
     @Input()
@@ -112,7 +134,7 @@ export class PartnerDetailComponent implements OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         let name = this.partner.name ?? '';
         this.categoryLabel = resolveLabel(this.partner.categoryId, this.categories);
-        this.initials = name.trim().split(/\s+/).slice(0, 2).map(word => word.charAt(0)).join('').toUpperCase() || '?';
+        this.initials = initials(name);
         this.crumbs = [
             {label: 'Home', route: ['/home']},
             {label: `${this.entityTitle}s`, route: [`/${this.entityLabel}s`]},
@@ -173,7 +195,12 @@ export class PartnerDetailComponent implements OnChanges {
     }
 
     isSaveEnabled(): boolean {
-        return this.form.valid && JSON.stringify(this.form.getRawValue()) !== this.initialFormValue;
+        return this.form.valid && this.hasChanges();
+    }
+
+    // Save stays enabled once something changed, also with errors: saving then shows them
+    hasChanges(): boolean {
+        return JSON.stringify(this.form.getRawValue()) !== this.initialFormValue;
     }
 
     onEdit(): void {
@@ -187,6 +214,10 @@ export class PartnerDetailComponent implements OnChanges {
     }
 
     onSave(): void {
+        // Disabled only while nothing changed: with something missing, saving shows every error instead
+        if (showErrors(this.form)) {
+            return;
+        }
         let value = this.form.getRawValue();
         this.showEditDialog = false;
         this.updateEvent.emit({

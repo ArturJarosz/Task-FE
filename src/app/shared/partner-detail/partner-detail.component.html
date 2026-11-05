@@ -2,16 +2,16 @@
 
 <div class="flex flex-col gap-gutter">
     <!-- Header card -->
-    <section class="app-card flex flex-wrap items-center gap-5 p-6">
-        <div class="flex items-center justify-center shrink-0 w-[72px] h-[72px] rounded-2xl bg-gray-100 text-gray-700 text-2xl font-semibold">
+    <section class="app-card app-detail-header">
+        <div class="app-detail-icon bg-gray-100 text-gray-700 text-2xl font-semibold">
             {{ initials }}
         </div>
         <div class="flex-1 min-w-0">
             <h2 class="m-0 text-xl leading-[30px] font-semibold text-gray-800">{{ partner.name }}</h2>
-            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-sm text-gray-500">
+            <div class="app-detail-meta">
                 <span>{{ categoryLabel }}</span>
-                <span class="w-px h-4 bg-gray-200"></span>
-                <span>{{ itemsData.items.length }} {{ itemsLabel.toLowerCase() }}</span>
+                <span class="app-detail-meta-divider" aria-hidden="true"></span>
+                <span>{{ itemsData.items.length }} {{ itemsData.items.length === 1 ? itemLabel : itemsLabel.toLowerCase() }}</span>
             </div>
         </div>
         <div class="flex items-center gap-3">
@@ -35,8 +35,7 @@
                     <app-field label="Name" [value]="partner.name"/>
                     <app-field label="Category" [value]="categoryLabel"/>
                     <app-field label="Added" [value]="partner.createdDateTime | date:'dd.MM.yyyy'"/>
-                    <app-field label="Email" [value]="partner.email"/>
-                    <app-field label="Phone" [value]="partner.telephone"/>
+                    <!-- Email and phone are in the Contact card only -->
                     <app-field class="sm:col-span-2 lg:col-span-3" label="Note" [value]="partner.note" emptyText="No note yet"/>
                 </div>
             </section>
@@ -45,27 +44,34 @@
                 <div class="app-card-header">
                     <div>
                         <h3 class="app-card-title">{{ itemsLabel }}</h3>
-                        <p class="app-card-subtitle m-0">Across all projects</p>
                     </div>
                 </div>
                 <finance-component-summary [financeComponentDataForm]="summaryForm"
                                            [hasAveragedData]="itemsData.items.length > 0"
                                            [averageFinanceComponentDataForm]="averageSummaryForm">
                     <div wrapper-list>
-                        <p-table [value]="itemsData.items" [rowHover]="true" [tableStyle]="{'min-width': '40rem'}">
+                        <p-table [value]="(itemsData.items) | sortRows:sort:sortValue"
+             [lazy]="true" [lazyLoadOnInit]="false" (onLazyLoad)="onSort($event)" [rowHover]="true" tableStyleClass="sm:min-w-[40rem]" styleClass="app-table-phone">
                             <ng-template #header>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Project</th>
-                                    <th class="app-num">Value</th>
-                                    <th class="w-24 text-center">Invoice</th>
-                                    <th class="w-24 text-center">Paid</th>
+                                    <th pSortableColumn="name">Name <p-sortIcon field="name"/></th>
+                                    <th pSortableColumn="project">Project <p-sortIcon field="project"/></th>
+                                    <th pSortableColumn="value" class="app-num">Net value <p-sortIcon field="value"/></th>
+                                    <th pSortableColumn="hasInvoice" class="w-24 text-center">Invoice <p-sortIcon field="hasInvoice"/></th>
+                                    <th pSortableColumn="paid" class="w-24 text-center">Paid <p-sortIcon field="paid"/></th>
                                 </tr>
                             </ng-template>
                             <ng-template #body let-item>
-                                <tr [routerLink]="['/projects', item.projectId, itemRouteSegment, item.id]" class="cursor-pointer">
-                                    <td class="font-medium text-gray-800">{{ item.name }}</td>
-                                    <td>{{ projectNames.get(item.projectId) ?? '—' }}</td>
+                                <tr [routerLink]="['/projects', item.projectId, itemRouteSegment, item.id]" tabindex="-1" class="cursor-pointer">
+                                    <td class="font-medium text-gray-800"><a [routerLink]="['/projects', item.projectId, itemRouteSegment, item.id]" class="app-row-link" (click)="$event.stopPropagation()">{{ item.name }}</a></td>
+                                    <td>
+                                        @if (projectNames.get(item.projectId); as projectName) {
+                                            <a [routerLink]="['/projects', item.projectId]" class="app-row-link"
+                                               (click)="$event.stopPropagation()">{{ projectName }}</a>
+                                        } @else {
+                                            <app-not-set/>
+                                        }
+                                    </td>
                                     <td class="app-num">{{ item.value | currency:'PLN':'symbol':'1.2-2' }}</td>
                                     <td class="w-24 text-center">
                                         <app-yes-no-mark [value]="item.hasInvoice" label="Invoice"/>
@@ -111,7 +117,7 @@
                         <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-gray-100 text-gray-500"><i class="pi pi-envelope"></i></span>
                         @if (partner.email) {
                             <a [href]="'mailto:' + partner.email"
-                               class="text-gray-800 no-underline hover:text-brand-500 truncate">{{ partner.email }}</a>
+                               class="text-brand-600 no-underline hover:underline truncate">{{ partner.email }}</a>
                         } @else {
                             <app-not-set/>
                         }
@@ -120,7 +126,7 @@
                         <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-gray-100 text-gray-500"><i class="pi pi-phone"></i></span>
                         @if (partner.telephone) {
                             <a [href]="'tel:' + partner.telephone"
-                               class="text-gray-800 no-underline hover:text-brand-500">{{ partner.telephone }}</a>
+                               class="text-brand-600 no-underline hover:underline">{{ partner.telephone }}</a>
                         } @else {
                             <app-not-set/>
                         }
@@ -132,12 +138,11 @@
 </div>
 
 <!-- Edit -->
-<p-dialog [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
+<p-dialog closeAriaLabel="Close" [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onCancelEdit()">
     <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">Edit {{ entityLabel }}</span>
-            <span class="text-sm text-gray-500">Update the name, category and contact details.</span>
         </div>
     </ng-template>
     <form [formGroup]="form">
@@ -145,6 +150,6 @@
     </form>
     <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancelEdit()"/>
-        <p-button label="Save changes" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
+        <p-button label="Save changes" [disabled]="!hasChanges()" (onClick)="onSave()"/>
     </ng-template>
 </p-dialog>

@@ -1,9 +1,8 @@
-<p-dialog [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
+<p-dialog closeAriaLabel="Close" [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onClose()">
     <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">New project</span>
-            <span class="text-sm text-gray-500">Add the project, its client, architect and contract value.</span>
         </div>
     </ng-template>
     <form [formGroup]="addProjectForm" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -17,20 +16,29 @@
         </div>
         <div>
             <label for="type" class="app-form-label">Type <span class="text-error-600">*</span></label>
-            <p-select inputId="type" formControlName="type" [options]="$projectTypes()"
-                      optionLabel="label" optionValue="id" appendTo="body" [fluid]="true"/>
+            <p-select inputId="type" formControlName="type" [options]="$projectTypes()" placeholder="Select a type"
+                      optionLabel="label" optionValue="id" appendTo="body" [fluid]="true" (onBlur)="markAsDirty('type')"/>
+            @if (isFieldInvalid('type')) {
+                <small class="block mt-1.5 text-xs text-error-600">Select a type</small>
+            }
         </div>
         <div>
             <label for="client" class="app-form-label">Client <span class="text-error-600">*</span></label>
-            <p-select inputId="client" formControlName="clientId" [options]="$clientsForm()"
+            <p-select inputId="client" formControlName="clientId" [options]="$clientsForm()" placeholder="Select a client"
                       optionLabel="resolvedName" optionValue="id" [filter]="true" filterBy="resolvedName"
-                      appendTo="body" [fluid]="true"/>
+                      appendTo="body" [fluid]="true" (onHide)="markAsDirty('clientId')"/>
+            @if (isFieldInvalid('clientId')) {
+                <small class="block mt-1.5 text-xs text-error-600">Select a client</small>
+            }
         </div>
         <div>
             <label for="architect" class="app-form-label">Architect <span class="text-error-600">*</span></label>
-            <p-select inputId="architect" formControlName="architectId" [options]="$architectsModel()"
+            <p-select inputId="architect" formControlName="architectId" [options]="$architectsModel()" placeholder="Select an architect"
                       optionLabel="resolvedName" optionValue="id" [filter]="true" filterBy="resolvedName"
-                      appendTo="body" [fluid]="true"/>
+                      appendTo="body" [fluid]="true" (onHide)="markAsDirty('architectId')"/>
+            @if (isFieldInvalid('architectId')) {
+                <small class="block mt-1.5 text-xs text-error-600">Select an architect</small>
+            }
         </div>
         <div>
             <label for="offerValue" class="app-form-label">Contract value <span class="text-error-600">*</span></label>
@@ -44,6 +52,6 @@
     </form>
     <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
-        <p-button label="Create project" icon="pi pi-plus" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
+        <p-button label="Create project" icon="pi pi-plus" (onClick)="onSave()"/>
     </ng-template>
 </p-dialog>

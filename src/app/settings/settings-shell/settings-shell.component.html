@@ -1,7 +1,11 @@
 <app-page-header title="Settings" [crumbs]="$crumbs()"/>
 
 <div class="grid grid-cols-1 xl:grid-cols-[calc(25%_-_var(--spacing-gutter)*3/4)_minmax(0,1fr)] gap-gutter items-start">
-    <nav class="app-card p-4" aria-label="Settings sections">
+    <!-- On a phone the eleven sections would push the content far down: a grouped select picks one there -->
+    <p-select class="w-full sm:hidden" [options]="sectionGroups" [group]="true" optionGroupLabel="label"
+              optionGroupChildren="sections" optionLabel="label" optionValue="key" [ngModel]="$section()?.key"
+              (onChange)="onSelectSection($event.value)" ariaLabel="Settings section" appendTo="body" [fluid]="true"/>
+    <nav class="app-card p-4 max-sm:hidden" aria-label="Settings sections">
         @for (group of sectionGroups; track group.label) {
             <div class="app-nav-group first:mt-0">{{ group.label }}</div>
             <ul class="list-none m-0 p-0 flex flex-wrap xl:flex-col gap-1">
@@ -23,7 +27,6 @@
             <section class="app-card overflow-hidden min-w-0">
                 <div class="px-5 py-4">
                     <h2 class="m-0 text-base font-semibold text-gray-800">System parameters</h2>
-                    <p class="m-0 text-xs text-gray-500">Values the application uses in its calculations</p>
                 </div>
                 <system-parameter-list [systemParameters]="$systemParameters()"
                                        [loading]="$loading() && !$loadFailed()"
@@ -36,7 +39,6 @@
             <section class="app-card overflow-hidden min-w-0">
                 <div class="px-5 py-4">
                     <h2 class="m-0 text-base font-semibold text-gray-800">Appearance</h2>
-                    <p class="m-0 text-xs text-gray-500">Light or dark theme and the brand color</p>
                 </div>
                 <appearance-settings [themeColorParameter]="$themeColorParameter()"
                                      [loading]="$loading() && !$loadFailed()"
@@ -49,7 +51,6 @@
             <section class="app-card overflow-hidden min-w-0">
                 <div class="px-5 py-4">
                     <h2 class="m-0 text-base font-semibold text-gray-800">Architect accounts</h2>
-                    <p class="m-0 text-xs text-gray-500">The account each architect logs in with</p>
                 </div>
                 <architect-account-list [architects]="architectStore.architects()"
                                         [loading]="$architectsLoading()"
@@ -94,7 +95,6 @@
             <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
                 <div>
                     <h2 class="m-0 text-base font-semibold text-gray-800">{{ section.texts.title }}</h2>
-                    <p class="m-0 text-xs text-gray-500">{{ section.texts.description }}</p>
                 </div>
                 @if (section.store.entries().length) {
                     <p-button [label]="'New ' + section.texts.singular" icon="pi pi-plus" (onClick)="onAddEntry()"/>

@@ -1,10 +1,11 @@
+import {parameterLabel} from "../system-parameter-format";
 import {AppState} from "../../state/app.store";
 import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {inject} from "@angular/core";
 import {MessageService} from "primeng/api";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
 import {catchError, concatMap, EMPTY, finalize, from, of, pipe, switchMap, tap, toArray} from "rxjs";
-import {MessageSeverity} from "../../shared";
+import {MessageSeverity} from "../../shared/message";
 import {SystemParameter} from "../../generated/models/system-parameter";
 import {SystemParameterRestService} from "../rest/system-parameter-rest.service";
 
@@ -68,7 +69,7 @@ export const SystemParameterStore = signalStore(
                                     replaceSystemParameter(updated);
                                     messageService.add({
                                         severity: MessageSeverity.INFO,
-                                        summary: `${updated.name} saved`,
+                                        summary: `${parameterLabel(updated.name)} saved`,
                                     });
                                 }),
                                 catchError(() => EMPTY)

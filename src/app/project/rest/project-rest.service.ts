@@ -6,6 +6,7 @@ import {AbstractRestService} from "../../shared/rest/abstract-rest.service";
 import {environment} from "../../../environments/environment";
 import {ProjectCreate} from "../../generated/models/project-create";
 import {Project} from "../../generated/models/project";
+import {ProjectTimeSummary} from "../../generated/models/project-time-summary";
 
 export abstract class ProjectRestService {
     abstract getProjects(): Observable<Project[]>;
@@ -17,6 +18,8 @@ export abstract class ProjectRestService {
     abstract updateProject(projectId: number, project: Project): Observable<Project>;
 
     abstract removeProject(projectId: number): Observable<void>;
+
+    abstract getProjectTimeSummary(projectId: number): Observable<ProjectTimeSummary>;
 }
 
 @Injectable()
@@ -63,6 +66,14 @@ export class ProjectRestServiceImpl extends AbstractRestService implements Proje
             .pipe(
                 catchError(error => this.handleError(error, this.messageService,
                     `Error deleting project with id: ${projectId}`))
+            );
+    }
+
+    getProjectTimeSummary(projectId: number): Observable<ProjectTimeSummary> {
+        return this.httpClient.get<ProjectTimeSummary>(`${this.projectUrl}/${projectId}/time-summary`)
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error loading time summary of project with id: ${projectId}`))
             );
     }
 }

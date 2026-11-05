@@ -31,3 +31,13 @@ export function paymentDateRequiredWhenPaid(group: AbstractControl): ValidationE
 export function isPaymentDateMissing(form: AbstractControl): boolean {
     return form.hasError('paymentDateRequired') && !!form.get('paymentDate')?.touched;
 }
+
+// Save buttons stay enabled (DESIGN_GUIDELINES.md, "Forms"): saving a form with something missing shows every field's
+// error at once (fields show theirs once touched or dirty) instead of a disabled button that doesn't say why.
+// Returns whether the form has errors, so the caller stops: if (showErrors(form)) { return; }
+export function showErrors(form: AbstractControl): boolean {
+    // Marked even when valid, so checks outside the validators (such as a stage's installment value) show theirs too
+    form.markAllAsTouched();
+    form.markAllAsDirty();
+    return form.invalid;
+}

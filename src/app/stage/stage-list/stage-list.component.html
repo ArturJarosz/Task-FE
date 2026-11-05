@@ -1,21 +1,25 @@
-@if (stages?.length) {
-    <p-table [value]="stages!" [rowHover]="true" [tableStyle]="{'min-width': '44rem'}">
+@if (sortedStages?.length) {
+    <p-table [value]="(sortedStages!) | sortRows:sort:sortValue"
+             [lazy]="true" [lazyLoadOnInit]="false" (onLazyLoad)="onSort($event)" [rowHover]="true" tableStyleClass="sm:min-w-[50rem]">
         <ng-template #header>
             <tr>
-                <th>Stage</th>
-                <th>Architect</th>
-                <th>Deadline</th>
-                <th>Status</th>
+                <th pSortableColumn="name">Stage <p-sortIcon field="name"/></th>
+                <th pSortableColumn="architect" class="max-sm:hidden">Architect <p-sortIcon field="architect"/></th>
+                <th pSortableColumn="deadline" class="max-sm:hidden">Deadline <p-sortIcon field="deadline"/></th>
+                <th pSortableColumn="timeSpentMinutes" class="app-num max-sm:hidden">Time <p-sortIcon field="timeSpentMinutes"/></th>
+                <th pSortableColumn="status" class="max-sm:hidden">Status <p-sortIcon field="status"/></th>
                 <th class="w-16"><span class="sr-only">Actions</span></th>
             </tr>
         </ng-template>
         <ng-template #body let-stage>
-            <tr [routerLink]="['/projects', projectId, 'stages', stage.id]" class="cursor-pointer">
+            <tr [routerLink]="['/projects', projectId, 'stages', stage.id]" tabindex="-1" class="cursor-pointer">
                 <td>
-                    <div class="font-medium text-gray-800">{{ stage.name }}</div>
+                    <a [routerLink]="['/projects', projectId, 'stages', stage.id]" class="app-row-link font-medium text-gray-800"
+                       (click)="$event.stopPropagation()">{{ stage.name }}</a>
                     <div class="text-xs text-gray-500">{{ getStageLabelType(stage.typeId) }}</div>
+                    <p-tag class="sm:hidden mt-2 inline-flex" [value]="getStageStatusLabel(stage.status)" [severity]="statusSeverity(stage.status)"/>
                 </td>
-                <td>
+                <td class="max-sm:hidden">
                     @if (getArchitectName(stage.architectId); as architectName) {
                         <div class="flex items-center gap-3">
                             <span class="app-avatar bg-brand-50 text-brand-600">{{ getArchitectInitials(stage.architectId) }}</span>
@@ -25,14 +29,15 @@
                         <app-not-set/>
                     }
                 </td>
-                <td>
+                <td class="max-sm:hidden">
                     @if (stage.deadline) {
                         <span class="tabular-nums">{{ stage.deadline | date:'dd.MM.yyyy' }}</span>
                     } @else {
                         <app-not-set/>
                     }
                 </td>
-                <td>
+                <td class="app-num max-sm:hidden">{{ (stage.timeSpentMinutes ?? 0) | duration }}</td>
+                <td class="max-sm:hidden">
                     <p-tag [value]="getStageStatusLabel(stage.status)" [severity]="statusSeverity(stage.status)"/>
                 </td>
                 <td class="text-right">

@@ -1,18 +1,19 @@
-<finance-component-summary [financeComponentDataForm]="projectCostsSummaryForm">
+<finance-component-summary [financeComponentDataForm]="projectCostsSummaryForm" addLabel="Add cost" (add)="add.emit()">
     <div wrapper-list>
-        <p-table [value]="projectCostsData.costs ?? []" [tableStyle]="{'min-width': '44rem'}">
+        <p-table [value]="(projectCostsData.costs ?? []) | sortRows:sort:sortValue"
+             [lazy]="true" [lazyLoadOnInit]="false" (onLazyLoad)="onSort($event)" tableStyleClass="sm:min-w-[44rem]" styleClass="app-table-phone">
             <ng-template #header>
                 <tr>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Date</th>
-                    <th class="app-num">Value</th>
-                    <th class="w-24 text-center">Invoice</th>
+                    <th pSortableColumn="name">Name <p-sortIcon field="name"/></th>
+                    <th pSortableColumn="category">Category <p-sortIcon field="category"/></th>
+                    <th pSortableColumn="date">Date <p-sortIcon field="date"/></th>
+                    <th pSortableColumn="value" class="app-num">Net value <p-sortIcon field="value"/></th>
+                    <th pSortableColumn="hasInvoice" class="w-24 text-center">Invoice <p-sortIcon field="hasInvoice"/></th>
                 </tr>
             </ng-template>
             <ng-template #body let-cost>
-                <tr [routerLink]="['/projects', projectId, 'costs', cost.id]" class="cursor-pointer">
-                    <td class="font-medium text-gray-800">{{ cost.name }}</td>
+                <tr [routerLink]="['/projects', projectId, 'costs', cost.id]" tabindex="-1" class="cursor-pointer">
+                    <td class="font-medium text-gray-800"><a [routerLink]="['/projects', projectId, 'costs', cost.id]" class="app-row-link" (click)="$event.stopPropagation()">{{ cost.name }}</a></td>
                     <td>{{ getCostCategoryLabel(cost.categoryId) }}</td>
                     <td>{{ cost.date | date:'dd.MM.yyyy' }}</td>
                     <td class="app-num">{{ cost.value | currency:'PLN':'symbol':'1.2-2' }}</td>
@@ -22,7 +23,7 @@
             <ng-template #emptymessage>
                 <tr>
                     <td [attr.colspan]="5" class="p-0">
-                        <app-empty-state icon="pi pi-shopping-cart" title="No costs yet" text="Add the costs of this project, such as travel or corrections."/>
+                        <app-empty-state icon="pi pi-shopping-cart" title="No costs yet"/>
                     </td>
                 </tr>
             </ng-template>

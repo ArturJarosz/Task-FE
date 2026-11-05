@@ -5,7 +5,7 @@ import {rxMethod} from "@ngrx/signals/rxjs-interop";
 import {catchError, EMPTY, of, pipe, switchMap, tap} from "rxjs";
 import {ContractorRestService} from "../rest/contractor-rest.service";
 import {inject} from "@angular/core";
-import {MessageSeverity} from "../../shared";
+import {MessageSeverity} from "../../shared/message";
 import {MessageService} from "primeng/api";
 import {ContractorContractorJobsData} from "../../generated/models/contractor-contractor-jobs-data";
 

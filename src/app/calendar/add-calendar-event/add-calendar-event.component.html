@@ -1,9 +1,8 @@
-<p-dialog [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
+<p-dialog closeAriaLabel="Close" [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onClose()">
     <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">{{ title }}</span>
-            <span class="text-sm text-gray-500">{{ event ? 'Change the name, time or description.' : 'Add a meeting, site visit or deadline.' }}</span>
         </div>
     </ng-template>
     <form [formGroup]="calendarEventForm" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -48,7 +47,7 @@
             </div>
             <div class="flex items-center gap-3">
                 <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
-                <p-button [label]="event ? 'Save changes' : 'Create event'" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
+                <p-button [label]="event ? 'Save changes' : 'Create event'" (onClick)="onSave()"/>
             </div>
         </div>
     </ng-template>

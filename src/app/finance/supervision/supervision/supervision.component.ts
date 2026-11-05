@@ -1,21 +1,34 @@
 import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {Supervision} from '../../../generated/models/supervision';
 import {SupervisionVisit} from '../../../generated/models/supervision-visit';
-import {TableModule} from "primeng/table";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {RouterLink} from "@angular/router";
 import {ButtonModule} from "primeng/button";
 import {DatePipe, CurrencyPipe} from "@angular/common";
 import {EmptyStateComponent, YesNoMarkComponent} from "../../../shared";
 import {FinanceStat} from "../../../shared/finance-component-summary/finance-component-summary.component";
+import {fieldValue, SortValue, TableSort, toTableSort} from "../../../shared/utils/sort-utils";
+import {SortRowsPipe} from "../../../shared/sort-rows/sort-rows.pipe";
 
 @Component({
     selector: 'supervision',
     templateUrl: './supervision.component.html',
     styleUrl: './supervision.component.less',
     standalone: true,
-    imports: [TableModule, RouterLink, ButtonModule, DatePipe, CurrencyPipe, EmptyStateComponent, YesNoMarkComponent]
+    imports: [SortRowsPipe, TableModule, RouterLink, ButtonModule, DatePipe, CurrencyPipe, EmptyStateComponent, YesNoMarkComponent]
 })
 export class SupervisionComponent implements OnChanges {
+
+    // Column sort of the table: it is lazy, so it only reports the sort and the sortRows pipe sorts a copy of the rows
+    sort: TableSort | null = null;
+
+    readonly sortValue = (row: SupervisionVisit, field: string): SortValue => {
+        return fieldValue(row, field);
+    };
+
+    onSort(event: TableLazyLoadEvent): void {
+        this.sort = toTableSort(event);
+    }
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 

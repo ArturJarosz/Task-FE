@@ -1,5 +1,7 @@
 <!-- The legend is the first line of the body: the card header holds the view switch and the filters -->
 <ul class="list-none m-0 mb-4 px-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-gray-700" aria-label="Legend">
+    <li class="flex items-center gap-2 sm:hidden"><span class="w-4 h-2.5 rounded-sm bg-gray-200" aria-hidden="true"></span>Contract</li>
+    <li class="flex items-center gap-2 sm:hidden"><span class="w-4 h-2.5 rounded-sm bg-(--app-brand-500)" aria-hidden="true"></span>Project</li>
     <li class="flex items-center gap-2"><span class="app-past-deadline w-4 h-2.5 rounded-sm" aria-hidden="true"></span>Past deadline</li>
     @if (anyDateError) {
         <li class="flex items-center gap-2"><span class="flex items-center justify-center w-3 h-3 text-error-600" aria-hidden="true"><i class="pi pi-exclamation-triangle text-[12px]"></i></span>Date error</li>
@@ -26,10 +28,11 @@
                  [class]="kind === 'contract' ? 'bg-gray-200 text-gray-800' : 'bg-(--app-brand-500) text-(--app-brand-contrast)'"
                  [class.rounded-r-none]="!!span.toDeadline" [style.left.%]="span.left" [style.width.%]="span.width"
                  [style.padding-left]="span.labelPad ? 'calc(' + span.labelPad + '% + 10px)' : null"
-                 [pTooltip]="tip" tooltipPosition="top" tooltipStyleClass="app-chart-tooltip">
+                 [pTooltip]="tip" tooltipPosition="top" tooltipStyleClass="app-chart-tooltip"
+                 tabindex="0" role="img" tooltipEvent="both" [attr.aria-label]="barLabel(group.name + (kind === 'contract' ? ' · Contract' : ' · Project'), span, deadline)">
                 @if (span.labelAt === 'inside') {
                     <!-- Stays readable while the start of the bar is scrolled under the label column -->
-                    <span class="sticky truncate tabular-nums" [style.left.px]="labelColumnPx + 10">{{ span.label }}</span>
+                    <span class="sticky truncate tabular-nums" [style.left]="'calc(var(--label-col) + 10px)'">{{ span.label }}</span>
                 }
             </div>
             @if (span.pastDeadline) {
@@ -52,22 +55,23 @@
             }
         } @else {
             <!-- Sticky just past the label column, so it stays readable however far the chart is scrolled -->
-            <span class="sticky inline-flex h-9 items-center pl-2 text-xs text-gray-400" [style.left.px]="labelColumnPx">No start date yet</span>
+            <span class="sticky inline-flex h-9 items-center pl-2 text-xs text-gray-500" [style.left]="'var(--label-col)'">No start date yet</span>
         }
     </div>
 </ng-template>
 
 <!-- Inside the card padding, like the bar charts; it scrolls sideways within it -->
-<div #scroller class="isolate overflow-x-auto overflow-y-hidden mx-6 mb-2">
-    <div class="relative" [style.min-width.px]="scale.chartMinWidth + labelColumnPx">
+<!-- --label-col: the label column, narrower on a phone so the bars get the screen (the scroll reads it too) -->
+<div #scroller class="app-timeline isolate overflow-x-auto overflow-y-hidden mx-6 mb-2 [--label-col:136px] sm:[--label-col:320px]">
+    <div class="relative" [style.min-width]="'calc(' + scale.chartMinWidth + 'px + var(--label-col))'">
         <!-- Column lines behind the rows, and today above them but under the bars (no z-index, so the later rows paint
              over it); both over the track column only -->
-        <div class="pointer-events-none absolute inset-y-0 right-0 -z-10" [style.left.px]="labelColumnPx" aria-hidden="true">
+        <div class="pointer-events-none absolute inset-y-0 right-0 -z-10" [style.left]="'var(--label-col)'" aria-hidden="true">
             @for (tick of scale.ticks; track tick.left) {
                 <div class="absolute inset-y-0 border-l border-gray-100" [style.left.%]="tick.left"></div>
             }
         </div>
-        <div class="pointer-events-none absolute inset-y-0 right-0" [style.left.px]="labelColumnPx" aria-hidden="true">
+        <div class="pointer-events-none absolute inset-y-0 right-0" [style.left]="'var(--label-col)'" aria-hidden="true">
             @if (scale.todayLeft !== null) {
                 <!-- Starts in the header's today lane, under the 32px month row and 6px from the lane's top, where the label sits -->
                 <div class="absolute top-[38px] bottom-0 w-0.5 -translate-x-1/2 bg-today" [style.left.%]="scale.todayLeft">
@@ -79,7 +83,7 @@
 
         <!-- Months as "May'25", styled like chart axis labels, then the lane for the today label -->
         <div class="flex">
-            <div class="sticky left-0 z-30 shrink-0 bg-white" [style.width.px]="labelColumnPx">
+            <div class="sticky left-0 z-30 shrink-0 bg-white" [style.width]="'var(--label-col)'">
                 <div class="flex items-end h-8 pr-4 pb-1.5 text-xs text-gray-500">Project</div>
             </div>
             <div class="flex-1">
@@ -97,12 +101,15 @@
         <!-- One group per project: its name and client over the Contract and Project rows; a line between groups -->
         @for (group of groups; track group.id; let first = $first) {
             <div class="flex" [class.border-t]="!first" [class.border-gray-200]="!first">
-                <div class="sticky left-0 z-30 flex shrink-0 gap-3 bg-white py-1 pr-4" [style.width.px]="labelColumnPx">
+                <div class="sticky left-0 z-30 flex shrink-0 gap-3 bg-white py-1 pr-3 sm:pr-4" [style.width]="'var(--label-col)'">
                     <div class="flex min-w-0 flex-1 flex-col justify-center">
-                        <a [routerLink]="['/projects', group.id, 'timeline']"
+                        <!-- At most two lines; the tooltip has the full name -->
+                        <a [routerLink]="['/projects', group.id, 'timeline']" [pTooltip]="group.name" tooltipPosition="top"
+                           [showDelay]="300" tooltipStyleClass="app-chart-tooltip"
                            class="line-clamp-2 text-sm font-medium leading-tight text-gray-800 no-underline hover:text-brand-500">{{ group.name }}</a>
                     </div>
-                    <div class="flex shrink-0 flex-col text-xs text-gray-500" aria-hidden="true">
+                    <!-- On a phone the legend names the two rows instead -->
+                    <div class="flex shrink-0 flex-col text-xs text-gray-500 max-sm:hidden" aria-hidden="true">
                         <span class="flex h-9 items-center">Contract</span>
                         <span class="flex h-9 items-center">Project</span>
                     </div>

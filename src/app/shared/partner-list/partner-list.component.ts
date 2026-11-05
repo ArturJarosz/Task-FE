@@ -1,13 +1,14 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
 import {Router, RouterLink} from "@angular/router";
-import {TableModule} from "primeng/table";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
+import {SortValue, TableSort, toTableSort} from "../utils/sort-utils";
 import {ButtonModule} from "primeng/button";
 import {Menu, MenuModule} from "primeng/menu";
 import {TooltipModule} from "primeng/tooltip";
 import {MenuItem} from "primeng/api";
 import {EmptyStateComponent} from "../empty-state/empty-state.component";
 import {NotSetComponent} from "../not-set/not-set.component";
-import {capitalize} from "../utils/label-utils";
+import {capitalize, initials} from "../utils/label-utils";
 
 // A business partner row: contractors and suppliers share the same shape
 export interface PartnerRow {
@@ -49,6 +50,9 @@ export class PartnerListComponent {
     @Output()
     deleteEvent: EventEmitter<PartnerRef> = new EventEmitter<PartnerRef>();
 
+    @Output()
+    sortChange: EventEmitter<TableSort | null> = new EventEmitter<TableSort | null>();
+
     rowMenuItems: MenuItem[] = [];
 
     constructor(private router: Router) {
@@ -59,8 +63,12 @@ export class PartnerListComponent {
     }
 
     getInitials(name: string): string {
-        let initials = name.trim().split(/\s+/).slice(0, 2).map(word => word.charAt(0)).join('').toUpperCase();
-        return initials || '?';
+        return initials(name);
+    }
+
+    // The table is lazy: it only reports the sort, and the shell sorts every row before paging
+    onSort(event: TableLazyLoadEvent): void {
+        this.sortChange.emit(toTableSort(event));
     }
 
     openRowMenu($event: MouseEvent, row: PartnerRow, menu: Menu) {
@@ -70,5 +78,19 @@ export class PartnerListComponent {
             {label: `Delete ${this.entityLabel}`, icon: 'pi pi-trash', command: () => this.deleteEvent.emit({id: row.id, name: row.name})}
         ];
         menu.toggle($event);
+    }
+}
+
+// Sort value of a partner row for the list shells
+export function partnerSortValue(row: PartnerRow, field: string): SortValue {
+    switch (field) {
+        case 'name':
+            return row.name;
+        case 'contact':
+            return row.email ?? row.telephone;
+        case 'count':
+            return row.count;
+        default:
+            return null;
     }
 }

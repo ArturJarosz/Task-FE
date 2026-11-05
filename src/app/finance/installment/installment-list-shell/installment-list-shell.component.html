@@ -1,9 +1,6 @@
-<div class="flex flex-wrap items-center justify-between gap-4 px-6 pb-4">
-    <p class="m-0 text-sm text-gray-500">Client payments: the deposit and one installment per stage</p>
-    <p-button label="Add installment" icon="pi pi-plus" (onClick)="onClickAdd()"/>
-</div>
 <div>
     <installment-list
+            (add)="onClickAdd()"
             [projectId]="projectId"
             [installmentProjectData]="$installmentProjectData()"
     ></installment-list>

@@ -6,14 +6,13 @@ import {SupplierStore} from "../../../supplier/state";
 
 import {SupplyListComponent} from "../supply-list/supply-list.component";
 import {AddSupplyComponent} from "../add-supply/add-supply.component";
-import {ButtonModule} from "primeng/button";
 
 @Component({
     selector: 'supply-list-shell',
     templateUrl: './supply-list-shell.component.html',
     styleUrl: './supply-list-shell.component.less',
     standalone: true,
-    imports: [SupplyListComponent, AddSupplyComponent, ButtonModule]
+    imports: [SupplyListComponent, AddSupplyComponent]
 })
 export class SupplyListShellComponent implements OnInit{
     @Input()

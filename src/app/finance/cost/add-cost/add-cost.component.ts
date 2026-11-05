@@ -6,7 +6,7 @@ import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {Cost} from "../../../generated/models/cost";
 import {ConfigurationEntry} from "../../../generated/models/configuration-entry";
 import {toTimeZoneString} from "../../../shared/utils/date-utils";
-import {isControlInvalid, isPaymentDateMissing} from "../../../shared/utils/form-utils";
+import {isControlInvalid, isPaymentDateMissing, showErrors} from "../../../shared/utils/form-utils";
 import {AbstractAddEditComponent} from "../../../shared";
 import {DialogModule} from "primeng/dialog";
 import {SelectModule} from "primeng/select";
@@ -57,6 +57,11 @@ export class AddCostComponent implements OnInit, AbstractAddEditComponent {
     }
 
     onSave(): void {
+        // Never disabled: with something missing, saving shows every error instead
+        if (!this.isSaveEnabled()) {
+            showErrors(this.addCostForm);
+            return;
+        }
         this.visible = false;
         this.costStore.createCost({cost: this.createCost()});
     }

@@ -3,16 +3,17 @@ import {Client, ClientType, ConfigurationEntry, Contact} from "../../generated/m
 import {EntityProjectsSummary} from "../../generated/models/entity-projects-summary";
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {ClientForm, ClientFormProvider} from "../form/client-form-provider";
-import {ClientDto} from "../model/client";
+import {ClientDto, clientTypeLabel} from "../model/client";
 import {ClientFormFieldsComponent} from "../client-form-fields/client-form-fields.component";
 import {EntityProjectsComponent, FieldComponent, PageCrumb, PageHeaderComponent, NotSetComponent} from "../../shared";
-import {resolveLabel} from "../../shared/utils/label-utils";
+import {initials, resolveLabel} from "../../shared/utils/label-utils";
 import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
 import {MenuModule} from "primeng/menu";
 import {TooltipModule} from "primeng/tooltip";
 import {MenuItem} from "primeng/api";
 import {CurrencyPipe} from "@angular/common";
+import {showErrors} from "../../shared/utils/form-utils";
 
 @Component({
     selector: 'client-detail',
@@ -66,10 +67,8 @@ export class ClientDetailComponent implements OnChanges {
         this.clientName = client.clientType === ClientType.CORPORATE
             ? client.companyName ?? ''
             : `${client.firstName ?? ''} ${client.lastName ?? ''}`.trim();
-        this.initials = client.clientType === ClientType.CORPORATE
-            ? (client.companyName?.charAt(0) ?? '?').toUpperCase()
-            : `${client.firstName?.charAt(0) ?? ''}${client.lastName?.charAt(0) ?? ''}`.toUpperCase() || '?';
-        this.typeLabel = resolveLabel(client.clientType, this.clientTypes);
+        this.initials = initials(this.clientName);
+        this.typeLabel = clientTypeLabel(client.clientType);
         // The counts and the value come from the backend, which decides which project statuses are active
         this.projects = client.numberOfProjects ?? 0;
         this.activeProjects = client.numberOfActiveProjects ?? 0;
@@ -112,7 +111,12 @@ export class ClientDetailComponent implements OnChanges {
     }
 
     isSaveEnabled(): boolean {
-        return this.clientDetailsForm.valid && JSON.stringify(this.clientDetailsForm.getRawValue()) !== this.initialFormValue;
+        return this.clientDetailsForm.valid && this.hasChanges();
+    }
+
+    // Save stays enabled once something changed, also with errors: saving then shows them
+    hasChanges(): boolean {
+        return JSON.stringify(this.clientDetailsForm.getRawValue()) !== this.initialFormValue;
     }
 
     onEdit(): void {
@@ -126,6 +130,10 @@ export class ClientDetailComponent implements OnChanges {
     }
 
     onSave(): void {
+        // Disabled only while nothing changed: with something missing, saving shows every error instead
+        if (showErrors(this.clientDetailsForm)) {
+            return;
+        }
         let value = this.clientDetailsForm.getRawValue();
         let client: Client = {
             clientType: value.clientType as ClientType,

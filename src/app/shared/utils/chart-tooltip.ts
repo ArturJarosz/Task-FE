@@ -1,3 +1,7 @@
+// Registers every Chart.js controller and plugin (the tooltip among them) before the defaults below are set. PrimeNG's
+// ChartModule imports it too, but with lazy routes this file can run first, when Chart.defaults.plugins.tooltip
+// doesn't exist yet
+import 'chart.js/auto';
 import {
     ActiveElement,
     Chart,

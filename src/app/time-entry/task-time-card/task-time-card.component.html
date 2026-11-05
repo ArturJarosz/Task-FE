@@ -1,0 +1,72 @@
+<section class="app-card p-5 @container">
+    <!-- The total, like the other figure cards: icon tile, label, figure. The entries open from the link on the label's
+         line, as "Finance" does on the project's Payments card. In the narrowest side column the icon tile goes, so the
+         total stays on one line -->
+    <div class="flex items-center gap-4">
+        <div class="app-kpi-icon @max-[18rem]:hidden"><i class="pi pi-clock text-xl" aria-hidden="true"></i></div>
+        <div class="flex-1 min-w-0">
+            <div class="flex items-baseline justify-between gap-3">
+                <span class="app-kpi-label">Time spent</span>
+                @if (people.length && !loading && !loadFailed) {
+                    <button type="button" class="app-card-link" (click)="showEntries.emit()">Entries</button>
+                }
+            </div>
+            <div class="app-kpi-value font-semibold whitespace-nowrap">{{ totalMinutes | duration }}</div>
+        </div>
+    </div>
+
+    <!-- Logs the typed time for today by the user's own architect (defaultArchitectId), with the button joined to the
+         field; "Change" opens the full dialog for another date or person -->
+    <form class="mt-5" [formGroup]="form" (ngSubmit)="onQuickLog()">
+        <label for="quickLogDuration" class="sr-only">Time spent today</label>
+        <div class="flex">
+            <input id="quickLogDuration" pInputText formControlName="duration" placeholder="2h30m" autocomplete="off"
+                   class="flex-1 min-w-0 rounded-r-none" aria-describedby="quickLogHint quickLogError" [invalid]="!!error"
+                   [attr.aria-invalid]="!!error" (blur)="duration.markAsTouched()"/>
+            <p-button type="submit" icon="pi pi-plus" [loading]="saving" styleClass="rounded-l-none"
+                      ariaLabel="Log time for today" pTooltip="Log time for today" tooltipPosition="bottom"/>
+        </div>
+        <small id="quickLogHint" class="block mt-1.5 text-xs text-gray-500">
+            @if (durationMinutes !== null) {
+                {{ durationMinutes | duration }} today
+            } @else {
+                Today
+            }
+            @if (logArchitectName) {
+                · {{ logArchitectName }}
+            }
+            <!-- The dot goes with "Change" when the line wraps -->
+            <span class="whitespace-nowrap">· <button type="button" class="app-card-link text-xs"
+                                                      aria-label="Change the date or person"
+                                                      (click)="logTime.emit()">Change</button></span>
+        </small>
+        @if (error; as message) {
+            <small id="quickLogError" class="block mt-1 text-xs text-error-600">{{ message }}</small>
+        }
+    </form>
+
+    <!-- Who worked on the task, with their time -->
+    <div class="mt-5 pt-4 border-t border-gray-100">
+        @if (loadFailed) {
+            <p class="m-0 text-sm text-gray-500">Couldn't load the time entries.</p>
+            <p-button label="Try again" severity="secondary" [outlined]="true" size="small" styleClass="mt-3"
+                      (onClick)="reload.emit()"/>
+        } @else if (loading) {
+            <div class="flex flex-col gap-3" aria-busy="true" aria-label="Loading time per person">
+                <p-skeleton height="2rem"/>
+            </div>
+        } @else if (people.length) {
+            <ul class="list-none m-0 p-0 flex flex-col gap-3" aria-label="Time per person">
+                @for (person of people; track person.architectId) {
+                    <li class="flex items-center gap-3">
+                        <span class="app-avatar bg-brand-50 text-brand-600">{{ person.initials }}</span>
+                        <span class="flex-1 min-w-0 truncate text-sm text-gray-800" [title]="person.name">{{ person.name }}</span>
+                        <span class="app-num text-sm text-gray-800">{{ person.minutes | duration }}</span>
+                    </li>
+                }
+            </ul>
+        } @else {
+            <p class="m-0 text-sm text-gray-500">No time logged yet.</p>
+        }
+    </div>
+</section>

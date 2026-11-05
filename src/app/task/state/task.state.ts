@@ -6,7 +6,7 @@ import {catchError, EMPTY, pipe, switchMap, tap} from "rxjs";
 import {Task} from "../../generated/models/task";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
 import {MessageService} from "primeng/api";
-import {MessageSeverity} from "../../shared";
+import {MessageSeverity} from "../../shared/message";
 import {StageStore} from "../../stage/state";
 import {ProjectStore} from "../../project/state";
 import {UpdateTaskStatus} from "../model/task";
@@ -51,6 +51,12 @@ export const TaskStore = signalStore(
         },
         setTaskId(taskId: number) {
             patchState(store, {taskId: taskId});
+        },
+        // Loads the task again when it is the one held here, e.g. after time was logged on it
+        refreshTask(taskId: number): void {
+            if (store.taskId() === taskId && store.task()?.id === taskId) {
+                this.loadTask({});
+            }
         },
 
         loadTask: rxMethod<{}>(
