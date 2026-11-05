@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges} from '@angular/core';
+import {initials} from "../../shared/utils/label-utils";
 import {Architect} from "../../generated/models/architect";
 import {EntityProjectsSummary} from "../../generated/models/entity-projects-summary";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
@@ -33,7 +34,7 @@ export class ArchitectDetailComponent implements OnChanges {
 
     ngOnChanges(): void {
         this.name = `${this.architect.firstName ?? ''} ${this.architect.lastName ?? ''}`.trim();
-        this.initials = `${this.architect.firstName?.charAt(0) ?? ''}${this.architect.lastName?.charAt(0) ?? ''}`.toUpperCase() || '?';
+        this.initials = initials(this.architect.firstName, this.architect.lastName);
         // The counts and the value come from the backend, which decides which project statuses are active
         this.projects = this.architect.numberOfProjects ?? 0;
         this.activeProjects = this.architect.numberOfActiveProjects ?? 0;

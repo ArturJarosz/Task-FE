@@ -4,7 +4,7 @@ import {SkeletonModule} from "primeng/skeleton";
 import {TooltipModule} from "primeng/tooltip";
 import {EmptyStateComponent, NotSetComponent} from "../../shared";
 import {SystemParameter} from "../../generated/models/system-parameter";
-import {formatParameterValue, SystemParameterType} from "../system-parameter-format";
+import {SystemParameterType, formatParameterValue, parameterLabel} from "../system-parameter-format";
 
 // Compact table of system parameters: one short row each, edited through a pencil button
 @Component({
@@ -29,5 +29,6 @@ export class SystemParameterListComponent {
 
     readonly skeletonRows = [1, 2, 3];
     readonly formatValue = formatParameterValue;
+    readonly label = parameterLabel;
     protected readonly SystemParameterType = SystemParameterType;
 }

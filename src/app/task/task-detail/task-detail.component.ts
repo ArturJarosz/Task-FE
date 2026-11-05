@@ -13,14 +13,15 @@ import {SkeletonModule} from "primeng/skeleton";
 import {TagModule} from "primeng/tag";
 import {Textarea} from "primeng/textarea";
 import {TooltipModule} from "primeng/tooltip";
-import {Architect, ConfigurationEntry, Task, TaskStatus} from "../../generated/models";
+import {Architect, ConfigurationEntry, Task, TaskStatus, TimeEntry} from "../../generated/models";
 import {TaskForm, TaskFormProvider} from "../form/task-form-provider";
 import {DeleteTaskDto, UpdateTaskDto} from "../model/task";
 import {EmptyStateComponent, FieldComponent, LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../shared";
-import {resolveKnownLabel, resolveLabel} from "../../shared/utils/label-utils";
+import {initials, resolveKnownLabel, resolveLabel} from "../../shared/utils/label-utils";
 import {statusSeverity} from "../../shared/status-severity";
 import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
-import {changedFields} from "../../shared/utils/form-utils";
+import {changedFields, showErrors} from "../../shared/utils/form-utils";
+import {QuickLog, TaskTimeCardComponent} from "../../time-entry/task-time-card/task-time-card.component";
 
 type TaskFormValue = ReturnType<FormGroup<TaskForm>['getRawValue']>;
 
@@ -33,9 +34,9 @@ const DATA_FIELDS: (keyof TaskFormValue)[] = ['name', 'type', 'startDate', 'endD
     styleUrl: './task-detail.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [LoadErrorComponent, PageHeaderComponent, FieldComponent, EmptyStateComponent, ButtonModule, DatePickerModule, DialogModule,
-        InputTextModule, MenuModule, SelectModule, SkeletonModule, TagModule, Textarea, TooltipModule,
-        ReactiveFormsModule, RouterLink, DatePipe]
+    imports: [LoadErrorComponent, PageHeaderComponent, FieldComponent, EmptyStateComponent,
+        TaskTimeCardComponent, ButtonModule, DatePickerModule, DialogModule, InputTextModule, MenuModule, SelectModule,
+        SkeletonModule, TagModule, Textarea, TooltipModule, ReactiveFormsModule, RouterLink, DatePipe]
 })
 export class TaskDetailComponent implements OnChanges {
     @Input()
@@ -56,12 +57,31 @@ export class TaskDetailComponent implements OnChanges {
     stageId: number = 0;
     @Input()
     stageName: string = '';
+    @Input()
+    timeEntries: TimeEntry[] = [];
+    @Input()
+    timeEntriesLoading: boolean = false;
+    @Input()
+    timeEntriesLoadFailed: boolean = false;
+    @Input()
+    timeEntrySaving: boolean = false;
+    // Who time typed in the Time spent card is logged for
+    @Input()
+    logArchitectId: number | undefined;
     @Output()
     reloadEvent: EventEmitter<void> = new EventEmitter<void>();
     @Output()
     updateStatusEvent: EventEmitter<UpdateTaskDto> = new EventEmitter<UpdateTaskDto>();
     @Output()
     deleteTaskEVent: EventEmitter<DeleteTaskDto> = new EventEmitter<DeleteTaskDto>();
+    @Output()
+    logTimeEvent: EventEmitter<void> = new EventEmitter<void>();
+    @Output()
+    quickLogEvent: EventEmitter<QuickLog> = new EventEmitter<QuickLog>();
+    @Output()
+    showTimeEntriesEvent: EventEmitter<void> = new EventEmitter<void>();
+    @Output()
+    reloadTimeEntriesEvent: EventEmitter<void> = new EventEmitter<void>();
 
     protected readonly statusSeverity = statusSeverity;
 
@@ -89,6 +109,8 @@ export class TaskDetailComponent implements OnChanges {
         if (changes['task'] && this.task) {
             this.resetForm();
             this.actions = [
+                {label: 'Log time', icon: 'pi pi-clock', command: () => this.logTimeEvent.emit()},
+                {separator: true},
                 {label: 'Delete task', icon: 'pi pi-trash',
                     command: () => this.deleteTaskEVent.emit({taskName: this.task!.name!, taskId: this.task!.id!})}
             ];
@@ -109,11 +131,7 @@ export class TaskDetailComponent implements OnChanges {
     }
 
     get architectInitials(): string {
-        return this.architectName.split(' ')
-            .filter(part => part.length > 0)
-            .slice(0, 2)
-            .map(part => part.charAt(0).toUpperCase())
-            .join('');
+        return initials(this.architectName);
     }
 
     get statusNeedsUpdate(): boolean {
@@ -140,6 +158,10 @@ export class TaskDetailComponent implements OnChanges {
     }
 
     onSave(): void {
+        // Disabled only while nothing changed: with something missing, saving shows every error instead
+        if (showErrors(this.taskDetailForm)) {
+            return;
+        }
         const value = this.taskDetailForm.getRawValue();
         this.updateStatusEvent.emit({
             task: {

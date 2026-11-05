@@ -2,21 +2,21 @@
 
 <div class="flex flex-col gap-gutter">
     <!-- Header card -->
-    <section class="app-card flex flex-wrap items-center gap-5 p-6">
-        <div class="flex items-center justify-center shrink-0 w-[72px] h-[72px] rounded-2xl bg-warning-50 text-warning-700 text-2xl font-semibold">
+    <section class="app-card app-detail-header">
+        <div class="app-detail-icon bg-warning-50 text-warning-700 text-2xl font-semibold">
             {{ initials }}
         </div>
         <div class="flex-1 min-w-0">
             <h2 class="m-0 text-xl leading-[30px] font-semibold text-gray-800">{{ clientName }}</h2>
-            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-sm text-gray-500">
+            <div class="app-detail-meta">
                 <span>{{ typeLabel }}</span>
                 @if (client.contact?.address?.city) {
-                    <span class="w-px h-4 bg-gray-200"></span>
+                    <span class="app-detail-meta-divider" aria-hidden="true"></span>
                     <span>{{ client.contact?.address?.city }}</span>
                 }
-                <span class="w-px h-4 bg-gray-200"></span>
+                <span class="app-detail-meta-divider" aria-hidden="true"></span>
                 <span>{{ projects }} {{ projects === 1 ? 'project' : 'projects' }}</span>
-                <span class="w-px h-4 bg-gray-200"></span>
+                <span class="app-detail-meta-divider" aria-hidden="true"></span>
                 <span>{{ activeProjects }} active</span>
             </div>
         </div>
@@ -45,9 +45,7 @@
                         <app-field label="First name" [value]="client.firstName"/>
                         <app-field label="Last name" [value]="client.lastName"/>
                     }
-                    <app-field label="Email" [value]="client.contact?.email"/>
-                    <app-field label="Phone" [value]="client.contact?.telephone"/>
-                    <app-field label="Address" [value]="address"/>
+                    <!-- Email, phone and address are in the Contact card only -->
                     <app-field class="sm:col-span-2 lg:col-span-3" label="Note" [value]="client.note" emptyText="No note yet"/>
                 </div>
             </section>
@@ -81,7 +79,7 @@
                         <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-gray-100 text-gray-500"><i class="pi pi-envelope"></i></span>
                         @if (client.contact?.email) {
                             <a [href]="'mailto:' + client.contact?.email"
-                               class="text-gray-800 no-underline hover:text-brand-500 truncate">{{ client.contact?.email }}</a>
+                               class="text-brand-600 no-underline hover:underline truncate">{{ client.contact?.email }}</a>
                         } @else {
                             <app-not-set/>
                         }
@@ -90,7 +88,7 @@
                         <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-gray-100 text-gray-500"><i class="pi pi-phone"></i></span>
                         @if (client.contact?.telephone) {
                             <a [href]="'tel:' + client.contact?.telephone"
-                               class="text-gray-800 no-underline hover:text-brand-500">{{ client.contact?.telephone }}</a>
+                               class="text-brand-600 no-underline hover:underline">{{ client.contact?.telephone }}</a>
                         } @else {
                             <app-not-set/>
                         }
@@ -110,12 +108,11 @@
 </div>
 
 <!-- Edit client -->
-<p-dialog [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
+<p-dialog closeAriaLabel="Close" [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onCancelEdit()">
     <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">Edit client</span>
-            <span class="text-sm text-gray-500">Update the client's name, contact details and note.</span>
         </div>
     </ng-template>
     <form [formGroup]="clientDetailsForm">
@@ -123,6 +120,6 @@
     </form>
     <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancelEdit()"/>
-        <p-button label="Save changes" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
+        <p-button label="Save changes" [disabled]="!hasChanges()" (onClick)="onSave()"/>
     </ng-template>
 </p-dialog>

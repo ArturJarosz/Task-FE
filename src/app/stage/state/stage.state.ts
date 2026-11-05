@@ -6,7 +6,7 @@ import {catchError, EMPTY, pipe, switchMap, tap} from "rxjs";
 import {inject} from "@angular/core";
 import {StageRestService} from "../rest/stage-rest.service";
 import {MessageService} from "primeng/api";
-import {MessageSeverity} from "../../shared";
+import {MessageSeverity} from "../../shared/message";
 import {ProjectStore} from "../../project/state";
 import {FinancialDataStore} from "../../finance/project-financial-summary/state/financial-data.state";
 

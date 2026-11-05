@@ -74,7 +74,13 @@ Import PrimeNG modules individually per component (e.g. `TableModule` from `prim
   - `providePrimeNG({ theme: { preset: AppThemePreset, options: { darkModeSelector: '.app-dark', cssLayer: {...} } } })` — PrimeNG theme
   - `LOCALE_ID` `'pl'` with `registerLocaleData(localePl)` — Polish money and date formats
   - `ConfirmationService`, `MessageService` and all REST services
-- **`src/app/app.routes.ts`** — all routes; route guards use `canActivate: [loggedInGuardGuard]`
+- **`src/app/app.routes.ts`** — all routes; route guards use `canActivate: [loggedInGuardGuard]`. Every route loads its
+  page lazily (`loadComponent: () => import(…).then(m => m.XShellComponent)`), so each page is its own chunk and the first
+  load stays within the 2 MB budget in `angular.json`; never import a page component into the routes file directly.
+  Code the app shell loads at start (`app.config.ts`, `app.component.ts`, `security/`, every store and REST service)
+  imports from the file itself, never through a barrel (`shared/index.ts`, a feature's `index.ts`): a barrel drags its
+  page components and their PrimeNG modules into the first load. `import {MessageSeverity} from "../../shared/message"`,
+  not `from "../../shared"`. Measure with `ng build --stats-json`; the initial total was 271 kB compressed
 
 ### State Management Pattern
 
@@ -190,6 +196,10 @@ code completion and should not be edited manually. Also they are used in API ser
 - Style PrimeNG through `app-theme-preset.ts` tokens, never with `::ng-deep` or hex values in components
 - Buttons have text labels; at most one primary button per card or dialog; icon-only buttons need `aria-label` and `pTooltip`
 - Copy is sentence case ("Edit contract", "New project"); use "Net", never "Nett"
+- No descriptions that state the obvious. A subtitle, hint or explanation line must tell users something the title,
+  labels and data don't already say; otherwise leave it out. Not "Phases of the work, each with its own deadline and
+  payment" under "Stages", or "Totals of all financial components below: installments, supplies, contractor jobs,
+  supervision and costs" above the project Finance tab's totals
 - Templates use built-in control flow (`@if`, `@for`, `@switch`). Give `@for` a stable `track` key (`item.id`,
   `stat.label`); tracking the item itself breaks with lists rebuilt by a getter (NG0100 in dev mode)
 - PrimeNG templates are template refs (`<ng-template #body let-row>`), never `pTemplate`, and PrimeNG tags are

@@ -3,17 +3,17 @@
 @if (supervisionVisit) {
     <div class="flex flex-col gap-gutter">
         <!-- Header card -->
-        <section class="app-card flex flex-wrap items-center gap-5 p-6">
-            <div class="flex items-center justify-center shrink-0 w-[72px] h-[72px] rounded-2xl bg-brand-50 text-brand-500">
+        <section class="app-card app-detail-header">
+            <div class="app-detail-icon bg-brand-50 text-brand-500">
                 <i class="pi pi-calendar text-3xl" aria-hidden="true"></i>
             </div>
             <div class="flex-1 min-w-0">
                 <h2 class="m-0 text-xl leading-[30px] font-semibold text-gray-800">{{ visitDate ? 'Visit on ' + visitDate : 'Supervision visit' }}</h2>
-                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-sm text-gray-500">
+                <div class="app-detail-meta">
                     <span>Supervision visit</span>
-                    <span class="w-px h-4 bg-gray-200"></span>
+                    <span class="app-detail-meta-divider" aria-hidden="true"></span>
                     <span>{{ (supervisionVisit.hoursCount ?? 0) | number:'1.0-2' }} h</span>
-                    <span class="w-px h-4 bg-gray-200"></span>
+                    <span class="app-detail-meta-divider" aria-hidden="true"></span>
                     <span>{{ supervisionVisit.payable ? 'Payable' : 'Not payable' }}</span>
                 </div>
             </div>
@@ -53,12 +53,11 @@
 }
 
 <!-- Edit visit -->
-<p-dialog [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
+<p-dialog closeAriaLabel="Close" [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onEditDialogHide()">
     <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">Edit visit</span>
-            <span class="text-sm text-gray-500">Change the date, the hours spent and whether the visit is payable.</span>
         </div>
     </ng-template>
     <form [formGroup]="visitDetailForm" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -85,7 +84,7 @@
     </form>
     <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancelEdit()"/>
-        <p-button label="Save changes" [disabled]="!dataNeedsUpdate || visitDetailForm.invalid"
+        <p-button label="Save changes" [disabled]="!dataNeedsUpdate"
                   (onClick)="onSave()"/>
     </ng-template>
 </p-dialog>

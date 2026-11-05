@@ -1,4 +1,4 @@
-import {Component, computed, inject, OnInit, ViewChild} from '@angular/core';
+import {ApplicationRef, Component, computed, DestroyRef, HostListener, inject, OnInit, ViewChild} from '@angular/core';
 import {toSignal} from "@angular/core/rxjs-interop";
 import {MenuItem} from "primeng/api";
 import {ConfigurationStore} from "./shared/configuration/state";
@@ -60,6 +60,9 @@ const NAV_GROUPS: NavGroup[] = [
 // Below this width the sidebar is an overlay opened from the top bar instead of a collapsible column
 const DESKTOP_MEDIA_QUERY = '(min-width: 64rem)';
 
+// What can take focus inside a dialog
+const DIALOG_FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled])';
+
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
@@ -102,6 +105,58 @@ export class AppComponent implements OnInit {
 
     constructor(protected authorizationService: AuthorizationService, private router: Router,
                 private activatedRoute: ActivatedRoute, private breadcrumbService: BreadcrumbService) {
+        this.restoreFocusAfterDialogs();
+    }
+
+    private readonly appRef = inject(ApplicationRef);
+
+    // PrimeNG 21 binds a dialog's Escape listener from its opening animation, outside Angular's zone, so Escape closed
+    // the dialog without redrawing it: it stayed on screen until the next click. This listener runs inside the zone and
+    // redraws once the dialog has handled the key (a timeout, because listeners run in the order they were added)
+    @HostListener('document:keydown.escape')
+    onEscape(): void {
+        setTimeout(() => this.appRef.tick());
+    }
+
+    // The control that had focus before a dialog or popup opened. PrimeNG leaves focus on the page body when a dialog
+    // closes, so keyboard users lost their place; it goes back to this control (the button that opened the dialog)
+    private focusBeforeDialog: HTMLElement | null = null;
+
+    @HostListener('document:focusin', ['$event'])
+    onFocusIn(event: FocusEvent): void {
+        let target = event.target as HTMLElement | null;
+        if (target instanceof HTMLElement && !target.closest('.p-dialog, .p-overlay-mask, .p-popover, .p-menu-overlay, [role="dialog"]')) {
+            this.focusBeforeDialog = target;
+        }
+    }
+
+    private restoreFocusAfterDialogs(): void {
+        let observer = new MutationObserver(records => {
+            let dialogClosed = records.some(record => Array.from(record.removedNodes)
+                .some(node => node instanceof HTMLElement && (node.matches('.p-dialog-mask, .p-overlay-mask') || !!node.querySelector('.p-dialog'))));
+            if (!dialogClosed) {
+                return;
+            }
+            // After the dialog is gone: only when focus fell back to the body, and the control is still on the page
+            setTimeout(() => {
+                if (document.activeElement !== document.body && document.activeElement) {
+                    return;
+                }
+                // Another dialog is still open (Edit time entry closed over Time entries): focus stays in it, not on the
+                // page behind its mask
+                let openDialogs = document.querySelectorAll('.p-dialog');
+                if (openDialogs.length) {
+                    openDialogs[openDialogs.length - 1].querySelector<HTMLElement>(DIALOG_FOCUSABLE)?.focus();
+                    return;
+                }
+                let target = this.focusBeforeDialog;
+                if (target?.isConnected) {
+                    target.focus();
+                }
+            });
+        });
+        observer.observe(document.body, {childList: true});
+        inject(DestroyRef).onDestroy(() => observer.disconnect());
     }
 
     ngOnInit(): void {

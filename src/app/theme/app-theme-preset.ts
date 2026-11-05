@@ -41,12 +41,13 @@ export const AppThemePreset = definePreset(Aura, {
   semantic: {
     primary: brand,
 
-    // TailAdmin focus: soft 4px brand halo
+    // Keyboard focus: a 2px brand ring 2px away from the control, so it is clearly visible (WCAG 2.4.7).
+    // shadow-focus-ring in styles.css draws the same ring on custom elements.
     focusRing: {
-      width: '4px',
+      width: '2px',
       style: 'solid',
       color: 'var(--app-focus-ring)',
-      offset: '0',
+      offset: '2px',
       shadow: 'none',
     },
 
@@ -89,8 +90,11 @@ export const AppThemePreset = definePreset(Aura, {
           background: white,
           borderColor: gray[300],
           hoverBorderColor: gray[400],
-          focusBorderColor: brandTint[300],
+          // Inputs show focus with their border, so it has to be a clear brand-500
+          focusBorderColor: brandTint[500],
           invalidBorderColor: 'var(--color-error-600)',
+          // Aura turns the placeholder red too, which reads like a typed value
+          invalidPlaceholderColor: gray[400],
           disabledBackground: gray[50],
           disabledColor: gray[500],
           placeholderColor: gray[400],

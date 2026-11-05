@@ -32,7 +32,7 @@ export class UpcomingEventsComponent {
     @Input()
     emptyTitle = 'No upcoming events';
     @Input()
-    emptyText = 'Events you add to the calendar show up here.';
+    emptyText = '';
     // Grey date tiles instead of brand ones, for events that already happened
     @Input()
     muted = false;

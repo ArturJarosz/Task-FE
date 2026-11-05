@@ -1,7 +1,8 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
 import {ButtonModule} from "primeng/button";
 
-// Footer under a list table: "Showing 1–10 of N" with Previous / Next (DESIGN_GUIDELINES.md, "List page").
+// Footer under a list table: "Showing 1–10 of N" with Previous / Next once there is more than one page
+// (DESIGN_GUIDELINES.md, "List page").
 // The parent owns the page index and slices its rows with pageSize.
 @Component({
     selector: 'app-table-footer',

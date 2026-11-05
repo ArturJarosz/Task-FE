@@ -10,7 +10,7 @@ import {GoogleCalendarConnectionStatus} from "../../generated/models/google-cale
 import {CalendarShare} from "../../generated/models/calendar-share";
 import {GoogleCalendarConnectionRestService} from "../rest/google-calendar-connection-rest.service";
 import {GoogleCalendarShareRestService} from "../rest/google-calendar-share-rest.service";
-import {MessageSeverity} from "../../shared";
+import {MessageSeverity} from "../../shared/message";
 import {SystemParameterStore} from "./system-parameter.state";
 
 // The Google Calendar settings themselves are system parameters, saved through SystemParameterStore; this store

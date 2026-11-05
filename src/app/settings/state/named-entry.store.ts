@@ -4,7 +4,7 @@ import {AbstractType, computed, inject} from "@angular/core";
 import {MessageService} from "primeng/api";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
 import {catchError, concatMap, EMPTY, finalize, pipe, switchMap, tap} from "rxjs";
-import {MessageSeverity} from "../../shared";
+import {MessageSeverity} from "../../shared/message";
 import {ConfigurationStore} from "../../shared/configuration/state";
 import {NamedEntry} from "../named-entry";
 import {NamedEntryDto, NamedEntryRestService} from "../rest/named-entry-rest.service";

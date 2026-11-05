@@ -7,7 +7,7 @@ import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {AbstractAddEditComponent} from "../../../shared";
 import {ContractorJob} from "../../../generated/models/contractor-job";
 import {toTimeZoneString} from "../../../shared/utils/date-utils";
-import {isControlInvalid, isPaymentDateMissing} from "../../../shared/utils/form-utils";
+import {isControlInvalid, isPaymentDateMissing, showErrors} from "../../../shared/utils/form-utils";
 import {DialogModule} from "primeng/dialog";
 import {SelectModule} from "primeng/select";
 import {InputNumberModule} from "primeng/inputnumber";
@@ -59,6 +59,11 @@ export class AddContractorJobComponent implements OnInit, AbstractAddEditCompone
     }
 
     onSave(): void {
+        // Never disabled: with something missing, saving shows every error instead
+        if (!this.isSaveEnabled()) {
+            showErrors(this.addContractorJobForm);
+            return;
+        }
         this.visible = false;
         this.contractorJobStore.createContractorJob({contractorJob: this.createContractorJob()});
     }

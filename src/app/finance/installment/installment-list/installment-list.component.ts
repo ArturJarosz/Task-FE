@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {InstallmentProjectData} from "../../../generated/models/installment-project-data";
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {
@@ -7,21 +7,42 @@ import {
 } from "../../project-financial-summary/form/project-financial-summary-form-provider";
 import {isUndefinedOrEmpty} from "../../../shared/utils/data-validation-util";
 import {FinanceComponentSummaryComponent} from "../../../shared/finance-component-summary/finance-component-summary.component";
-import {TableModule} from "primeng/table";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {RouterLink} from "@angular/router";
 import {CurrencyPipe, DatePipe} from "@angular/common";
 import {EmptyStateComponent, NotSetComponent, YesNoMarkComponent} from "../../../shared";
 import {Installment} from "../../../generated/models/installment";
 import {isDeposit} from "../installment-utils";
+import {fieldValue, SortValue, TableSort, toTableSort} from "../../../shared/utils/sort-utils";
+import {SortRowsPipe} from "../../../shared/sort-rows/sort-rows.pipe";
 
 @Component({
     selector: 'installment-list',
     templateUrl: './installment-list.component.html',
     styleUrl: './installment-list.component.less',
     standalone: true,
-    imports: [FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, CurrencyPipe, DatePipe, EmptyStateComponent, NotSetComponent, YesNoMarkComponent]
+    imports: [SortRowsPipe, FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, CurrencyPipe, DatePipe, EmptyStateComponent, NotSetComponent, YesNoMarkComponent]
 })
 export class InstallmentListComponent implements OnChanges {
+    // "Add installment" under the summary figures; the shell opens the dialog
+    @Output()
+    add = new EventEmitter<void>();
+
+    // Column sort of the table: it is lazy, so it only reports the sort and the sortRows pipe sorts a copy of the rows
+    sort: TableSort | null = null;
+
+    readonly sortValue = (row: Installment, field: string): SortValue => {
+        switch (field) {
+            case 'for':
+                return isDeposit(row) ? 'Deposit' : row.stageName;
+            default:
+                return fieldValue(row, field);
+        }
+    };
+
+    onSort(event: TableLazyLoadEvent): void {
+        this.sort = toTableSort(event);
+    }
     @Input()
     installmentProjectData!: InstallmentProjectData;
     @Input()

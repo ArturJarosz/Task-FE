@@ -28,6 +28,7 @@ import {GoogleCalendarConnection} from "../../generated/models/google-calendar-c
 import {GoogleCalendarConnectionStatus} from "../../generated/models/google-calendar-connection-status";
 import {parseServiceAccountKey} from "./service-account-key";
 import {GoogleCalendarParameters} from "../google-calendar-parameters";
+import {showErrors} from "../../shared/utils/form-utils";
 
 interface ConnectionText {
     label: string;
@@ -242,7 +243,7 @@ export class GoogleCalendarSettingsComponent implements OnChanges {
 
     onSave(): void {
         if (!this.canSave) {
-            this.form.markAllAsTouched();
+            showErrors(this.form);
             return;
         }
         let value = this.form.getRawValue();

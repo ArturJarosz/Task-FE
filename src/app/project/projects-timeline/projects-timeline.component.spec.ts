@@ -76,6 +76,14 @@ describe('ProjectsTimelineComponent', () => {
         expect(scroller.scrollLeft).toBe(0);
     });
 
+    it('scrolls back to the start of the month, so the first month label is never cut', () => {
+        let scroller = {clientWidth: 920, scrollWidth: 2320, scrollLeft: 0} as HTMLElement;
+        // Today needs 600px; months start at 0, 500 and 700px of the 2000px track, so it stops at 500
+        component.scale = {todayLeft: 50, ticks: [{label: 'Mar\'26', left: 0}, {label: 'Apr\'26', left: 25}, {label: 'May\'26', left: 35}]} as any;
+        component.scrollToToday(scroller);
+        expect(scroller.scrollLeft).toBe(500);
+    });
+
     it('scrolls back to today for new rows only, not for new status labels', () => {
         let scroll = spyOn(component, 'scrollToToday');
         fixture.componentRef.setInput('contractStatuses', [{id: ContractStatus.SIGNED, label: 'Podpisana'}]);

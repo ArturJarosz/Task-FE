@@ -5,14 +5,13 @@ import {ContractorJobProjectData} from "../../../generated/models/contractor-job
 import {Contractor} from "../../../generated/models/contractor";
 import {ContractorJobListComponent} from "../contractor-job-list/contractor-job-list.component";
 import {AddContractorJobComponent} from "../add-contractor-job/add-contractor-job.component";
-import {ButtonModule} from "primeng/button";
 
 @Component({
     selector: 'contractor-job-list-shell',
     templateUrl: './contractor-job-list-shell.component.html',
     styleUrl: './contractor-job-list-shell.component.less',
     standalone: true,
-    imports: [ContractorJobListComponent, AddContractorJobComponent, ButtonModule]
+    imports: [ContractorJobListComponent, AddContractorJobComponent]
 })
 export class ContractorJobListShellComponent implements OnInit {
     @Input()

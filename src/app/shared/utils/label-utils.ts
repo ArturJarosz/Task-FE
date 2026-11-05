@@ -25,3 +25,11 @@ export function resolveKnownLabel(id: string | number | null | undefined, entrie
 export function capitalize(text: string): string {
     return text.charAt(0).toUpperCase() + text.slice(1);
 }
+
+// Avatar initials: the first letters of the first two words that start with a letter or digit, so signs such as "&"
+// or "-" are skipped: "Teodor Czerwiński" -> "TC", "Ciuba & Partnerzy" -> "CP", "IISKELO" -> "I"
+export function initials(...names: (string | null | undefined)[]): string {
+    let words = names.join(' ').split(/\s+/).filter(word => /^[\p{L}\p{N}]/u.test(word));
+    let letters = words.slice(0, 2).map(word => word.charAt(0)).join('').toUpperCase();
+    return letters || '?';
+}

@@ -1,33 +1,33 @@
-<p-table [value]="rows" [rowHover]="true" [tableStyle]="{'min-width': '40rem'}">
+<p-table [value]="rows" [rowHover]="true" tableStyleClass="sm:min-w-[40rem]"
+         [lazy]="true" [lazyLoadOnInit]="false" (onLazyLoad)="onSort($event)">
     <ng-template #header>
         <tr>
-            <th>Architect</th>
-            <th class="app-num">Projects</th>
-            <th class="app-num">Active projects</th>
-            <th class="app-num">Contract value</th>
-            <th class="w-12"><span class="sr-only">Open</span></th>
+            <th pSortableColumn="name">Architect <p-sortIcon field="name"/></th>
+            <th pSortableColumn="projects" class="app-num max-sm:hidden">Projects <p-sortIcon field="projects"/></th>
+            <th pSortableColumn="activeProjects" class="app-num max-sm:hidden">Active projects <p-sortIcon field="activeProjects"/></th>
+            <th pSortableColumn="value" class="app-num max-sm:hidden">Contract value <p-sortIcon field="value"/></th>
         </tr>
     </ng-template>
     <ng-template #body let-row>
-        <tr [routerLink]="['/architects', row.architect.id]" class="cursor-pointer">
+        <tr [routerLink]="['/architects', row.architect.id]" tabindex="-1" class="cursor-pointer">
             <td>
                 <div class="flex items-center gap-3">
                     <span class="app-avatar bg-brand-50 text-brand-600">{{ getInitials(row.architect) }}</span>
                     <div class="min-w-0">
-                        <div class="font-medium text-gray-800 truncate">{{ getName(row.architect) }}</div>
+                        <a [routerLink]="['/architects', row.architect.id]" class="app-row-link block font-medium text-gray-800 truncate"
+                           (click)="$event.stopPropagation()">{{ getName(row.architect) }}</a>
                         <div class="text-xs text-gray-500">Architect</div>
                     </div>
                 </div>
             </td>
-            <td class="app-num">{{ row.projects }}</td>
-            <td class="app-num">{{ row.activeProjects }}</td>
-            <td class="app-num">{{ row.value | currency:'PLN':'symbol':'1.2-2' }}</td>
-            <td class="text-right text-gray-400"><i class="pi pi-angle-right" aria-hidden="true"></i></td>
+            <td class="app-num max-sm:hidden">{{ row.projects }}</td>
+            <td class="app-num max-sm:hidden">{{ row.activeProjects }}</td>
+            <td class="app-num max-sm:hidden">{{ row.value | currency:'PLN':'symbol':'1.2-2' }}</td>
         </tr>
     </ng-template>
     <ng-template #emptymessage>
         <tr>
-            <td colspan="5" class="p-0">
+            <td colspan="4" class="p-0">
                 <app-empty-state icon="pi pi-id-card" title="No architects yet"
                                   text="Architects show up here once they're added to the system."/>
             </td>

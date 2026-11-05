@@ -19,5 +19,10 @@ export interface Stage {
   status?: StageStatus;
   tasks?: Array<Task>;
   tasksNumber?: number;
+
+  /**
+   * Minutes logged on the tasks of the stage
+   */
+  timeSpentMinutes?: number;
   typeId?: number;
 }

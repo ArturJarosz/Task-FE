@@ -1,9 +1,8 @@
-<p-dialog [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
+<p-dialog closeAriaLabel="Close" [(visible)]="visible" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onClose()">
     <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">New cost</span>
-            <span class="text-sm text-gray-500">Add a project cost, such as fuel or a mistake to fix, and its payment.</span>
         </div>
     </ng-template>
     <form [formGroup]="addCostForm" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -20,7 +19,7 @@
                       optionLabel="label" optionValue="id" placeholder="Select a category" appendTo="body" [fluid]="true"/>
         </div>
         <div>
-            <label for="addCostValue" class="app-form-label">Value <span class="text-error-600">*</span></label>
+            <label for="addCostValue" class="app-form-label">Net value <span class="text-error-600">*</span></label>
             <p-inputnumber inputId="addCostValue" formControlName="value" mode="decimal" locale="pl-PL"
                            [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0" suffix=" zł" [fluid]="true"/>
             @if (isFieldInvalid('value')) {
@@ -61,6 +60,6 @@
     </form>
     <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancel()"/>
-        <p-button label="Create cost" icon="pi pi-plus" [disabled]="!isSaveEnabled()" (onClick)="onSave()"/>
+        <p-button label="Create cost" icon="pi pi-plus" (onClick)="onSave()"/>
     </ng-template>
 </p-dialog>

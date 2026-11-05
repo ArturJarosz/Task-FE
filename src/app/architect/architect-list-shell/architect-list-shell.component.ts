@@ -1,8 +1,10 @@
 import {ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal, Signal} from '@angular/core';
 import {ArchitectStore} from "../state";
+import {SortValue, sortRows, TableSort} from "../../shared/utils/sort-utils";
 import {Architect} from "../../generated/models/architect";
 import {ArchitectListComponent, ArchitectRow} from "../architect-list/architect-list.component";
 import {LoadErrorComponent, KpiCardComponent, PageCrumb, PageHeaderComponent, TableFooterComponent} from "../../shared";
+import {CurrencyPipe} from "@angular/common";
 
 const PAGE_SIZE = 10;
 
@@ -11,7 +13,7 @@ const PAGE_SIZE = 10;
     templateUrl: './architect-list-shell.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [ArchitectListComponent, LoadErrorComponent, PageHeaderComponent, KpiCardComponent, TableFooterComponent]
+    imports: [CurrencyPipe, ArchitectListComponent, LoadErrorComponent, PageHeaderComponent, KpiCardComponent, TableFooterComponent]
 })
 export class ArchitectListShellComponent implements OnInit {
     readonly architectStore = inject(ArchitectStore);
@@ -33,12 +35,17 @@ export class ArchitectListShellComponent implements OnInit {
         value: architect.projectsValue ?? 0,
     })));
     readonly $pageCount = computed(() => Math.max(Math.ceil(this.$rows().length / PAGE_SIZE), 1));
-    readonly $pagedRows = computed(() => this.$rows().slice(this.$page() * PAGE_SIZE, (this.$page() + 1) * PAGE_SIZE));
+    // The table's column sort, applied to every row before paging
+    readonly $sort = signal<TableSort | null>(null);
+    readonly $sortedRows = computed(() => sortRows(this.$rows(), this.$sort(), architectSortValue));
+    readonly $pagedRows = computed(() => this.$sortedRows().slice(this.$page() * PAGE_SIZE, (this.$page() + 1) * PAGE_SIZE));
     readonly $kpis = computed(() => {
         let rows = this.$rows();
         return {
             architects: rows.length,
             withActiveProjects: rows.filter(row => row.activeProjects > 0).length,
+            activeProjects: rows.reduce((sum, row) => sum + row.activeProjects, 0),
+            value: rows.reduce((sum, row) => sum + (row.value ?? 0), 0),
         };
     });
 
@@ -62,5 +69,25 @@ export class ArchitectListShellComponent implements OnInit {
 
     onRetry(): void {
         this.architectStore.loadArchitects({});
+    }
+
+    onSortChange(sort: TableSort | null) {
+        this.$sort.set(sort);
+        this.$page.set(0);
+    }
+}
+
+function architectSortValue(row: ArchitectRow, field: string): SortValue {
+    switch (field) {
+        case 'name':
+            return `${row.architect.firstName ?? ''} ${row.architect.lastName ?? ''}`.trim();
+        case 'projects':
+            return row.projects;
+        case 'activeProjects':
+            return row.activeProjects;
+        case 'value':
+            return row.value;
+        default:
+            return null;
     }
 }

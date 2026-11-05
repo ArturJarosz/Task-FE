@@ -37,8 +37,8 @@ describe('SettingsShellComponent', () => {
         harness.detectChanges();
 
         let text = harness.routeNativeElement!.textContent;
-        expect(text).toContain('Vat tax');
-        expect(text).toContain('0,23');
+        expect(text).toContain('VAT rate');
+        expect(text).toContain('23%');
     });
 
     it('should leave the theme color out of the system parameter list', () => {
@@ -49,7 +49,7 @@ describe('SettingsShellComponent', () => {
         harness.detectChanges();
 
         let text = harness.routeNativeElement!.textContent;
-        expect(text).toContain('Vat tax');
+        expect(text).toContain('VAT rate');
         expect(text).not.toContain('Theme color');
     });
 
@@ -84,7 +84,7 @@ describe('SettingsShellComponent', () => {
 
         let rows = harness.routeNativeElement!.querySelectorAll('[aria-label="System parameters"] [role="row"]');
         let names = Array.from(rows).map(row => row.querySelector('[role="cell"]')?.textContent?.trim()).filter(name => name);
-        expect(names).toEqual(['Vat tax']);
+        expect(names).toEqual(['VAT rate']);
     });
 
     it('should list project types and block deleting a type used by projects', async () => {

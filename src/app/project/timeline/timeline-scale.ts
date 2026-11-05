@@ -258,3 +258,12 @@ export function relativeDays(date: Date, today: Date): string {
     }
     return days > 0 ? `In ${days} days` : `${-days} days ago`;
 }
+
+// What a bar's tooltip says, as one line for its aria-label, so keyboard and screen reader users get the dates too:
+// "Contract, 09.05.2026 – no end date, 181 days so far, deadline 11.10.2026"
+export function barLabel(name: string, span: {start?: Date | null, end?: Date | null, open?: boolean, label?: string},
+                         deadline?: Date | null): string {
+    let day = (date: Date) => format(date, 'dd.MM.yyyy');
+    let dates = span.start ? `${day(span.start)} – ${span.open || !span.end ? 'no end date' : day(span.end)}` : '';
+    return [name, dates, span.label, deadline ? `deadline ${day(deadline)}` : ''].filter(part => !!part).join(', ');
+}

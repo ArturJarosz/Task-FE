@@ -1,0 +1,65 @@
+<!-- The full log of a task's time, opened from "All entries" in the Time spent card. Editing an entry opens the
+     "Edit time entry" dialog over this one, and deleting it asks through the page's confirm dialog -->
+<p-dialog closeAriaLabel="Close" [visible]="visible" (visibleChange)="!$event && closed.emit()" [modal]="true" appendTo="body"
+          [draggable]="false" [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}">
+    <ng-template #header>
+        <div class="flex flex-col gap-1 min-w-0">
+            <span class="p-dialog-title">Time entries</span>
+            <span class="text-sm text-gray-500 truncate">{{ subtitle }}</span>
+        </div>
+    </ng-template>
+    @if (loadFailed) {
+        <app-empty-state icon="pi pi-exclamation-triangle" title="Couldn't load the time entries"
+                         text="Check your connection and try again.">
+            <p-button label="Try again" severity="secondary" [outlined]="true" (onClick)="reload.emit()"/>
+        </app-empty-state>
+    } @else if (loading) {
+        <div class="flex flex-col gap-3" aria-busy="true" aria-label="Loading time entries">
+            @for (row of [1, 2, 3]; track row) {
+                <p-skeleton height="2.5rem"/>
+            }
+        </div>
+    } @else {
+        <p-table [value]="timeEntries" dataKey="id" [rowHover]="true" [tableStyle]="{'min-width': '36rem'}">
+            <ng-template #header>
+                <tr>
+                    <th class="w-32">Date</th>
+                    <th>Architect</th>
+                    <th>Note</th>
+                    <th class="app-num">Time</th>
+                    <th class="w-16"><span class="sr-only">Actions</span></th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-timeEntry>
+                <tr>
+                    <td class="tabular-nums whitespace-nowrap">{{ timeEntry.workDate | date:'dd.MM.yyyy' }}</td>
+                    <td>
+                        @if (getArchitectName(timeEntry.architectId); as architectName) {
+                            <span class="text-gray-800 whitespace-nowrap">{{ architectName }}</span>
+                        } @else {
+                            <app-not-set/>
+                        }
+                    </td>
+                    <td><span class="text-gray-500">{{ timeEntry.note }}</span></td>
+                    <td class="app-num">{{ timeEntry.durationMinutes | duration }}</td>
+                    <td class="text-right">
+                        <p-button icon="pi pi-ellipsis-h" [text]="true" [rounded]="true" severity="secondary"
+                                  pTooltip="Time entry actions" tooltipPosition="left" ariaLabel="Time entry actions"
+                                  (onClick)="openRowMenu($event, timeEntry, rowMenu)"/>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template #emptymessage>
+                <tr>
+                    <td colspan="5" class="p-0">
+                        <app-empty-state icon="pi pi-clock" title="No time logged yet"/>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    }
+    <ng-template #footer>
+        <p-button label="Close" severity="secondary" [outlined]="true" (onClick)="closed.emit()"/>
+    </ng-template>
+</p-dialog>
+<p-menu #rowMenu [model]="rowMenuItems" [popup]="true" appendTo="body"/>

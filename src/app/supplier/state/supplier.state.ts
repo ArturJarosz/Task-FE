@@ -5,7 +5,7 @@ import {inject} from "@angular/core";
 import {MessageService} from "primeng/api";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
 import {catchError, EMPTY, of, pipe, switchMap, tap} from "rxjs";
-import {MessageSeverity} from "../../shared";
+import {MessageSeverity} from "../../shared/message";
 import {SupplierRestService} from "../rest/suppplier-rest.service";
 import {SupplierSuppliesData} from "../../generated/models/supplier-supplies-data";
 

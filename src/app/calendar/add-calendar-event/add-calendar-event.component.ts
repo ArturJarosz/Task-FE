@@ -11,6 +11,7 @@ import {Textarea} from "primeng/textarea";
 import {DatePickerModule} from "primeng/datepicker";
 import {ToggleSwitchModule} from "primeng/toggleswitch";
 import {ButtonModule} from "primeng/button";
+import {showErrors} from "../../shared/utils/form-utils";
 
 @Component({
     selector: 'add-calendar-event',
@@ -62,6 +63,11 @@ export class AddCalendarEventComponent implements OnChanges {
     }
 
     onSave(): void {
+        // Never disabled: with something missing, saving shows every error instead
+        if (!this.isSaveEnabled()) {
+            showErrors(this.calendarEventForm);
+            return;
+        }
         this.visible = false;
         const event = this.createCalendarEvent();
         if (this.event) {

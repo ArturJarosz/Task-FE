@@ -141,6 +141,8 @@ export type { RejectProject$Params as RejectProject$Params } from './fn/project/
 export { rejectProject as rejectProject } from './fn/project/reject-project';
 export type { ReopenProject$Params as ReopenProject$Params } from './fn/project/reopen-project';
 export { reopenProject as reopenProject } from './fn/project/reopen-project';
+export type { GetProjectTimeSummary$Params as GetProjectTimeSummary$Params } from './fn/project/get-project-time-summary';
+export { getProjectTimeSummary as getProjectTimeSummary } from './fn/project/get-project-time-summary';
 export type { GetStagesForProject$Params as GetStagesForProject$Params } from './fn/stage/get-stages-for-project';
 export { getStagesForProject as getStagesForProject } from './fn/stage/get-stages-for-project';
 export type { CreateStage$Params as CreateStage$Params } from './fn/stage/create-stage';
@@ -167,6 +169,14 @@ export type { DeleteTask$Params as DeleteTask$Params } from './fn/task/delete-ta
 export { deleteTask as deleteTask } from './fn/task/delete-task';
 export type { UpdateStatus$Params as UpdateStatus$Params } from './fn/task/update-status';
 export { updateStatus as updateStatus } from './fn/task/update-status';
+export type { GetTimeEntries$Params as GetTimeEntries$Params } from './fn/time-entry/get-time-entries';
+export { getTimeEntries as getTimeEntries } from './fn/time-entry/get-time-entries';
+export type { CreateTimeEntry$Params as CreateTimeEntry$Params } from './fn/time-entry/create-time-entry';
+export { createTimeEntry as createTimeEntry } from './fn/time-entry/create-time-entry';
+export type { UpdateTimeEntry$Params as UpdateTimeEntry$Params } from './fn/time-entry/update-time-entry';
+export { updateTimeEntry as updateTimeEntry } from './fn/time-entry/update-time-entry';
+export type { DeleteTimeEntry$Params as DeleteTimeEntry$Params } from './fn/time-entry/delete-time-entry';
+export { deleteTimeEntry as deleteTimeEntry } from './fn/time-entry/delete-time-entry';
 export type { CreateSupervision$Params as CreateSupervision$Params } from './fn/supervision/create-supervision';
 export { createSupervision as createSupervision } from './fn/supervision/create-supervision';
 export type { GetSupervision$Params as GetSupervision$Params } from './fn/supervision/get-supervision';

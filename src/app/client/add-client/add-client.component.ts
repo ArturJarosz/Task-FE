@@ -21,6 +21,7 @@ import {ConfigurationStore} from "../../shared/configuration/state";
 import {Client, ClientType, ConfigurationEntry} from "../../generated/models";
 import {DialogModule} from "primeng/dialog";
 import {ButtonModule} from "primeng/button";
+import {showErrors} from "../../shared/utils/form-utils";
 
 @Injectable({
     providedIn: 'root',
@@ -66,6 +67,11 @@ export class AddClientComponent implements OnInit {
     }
 
     onSave() {
+        // Never disabled: with something missing, saving shows every error instead
+        if (!this.isSaveEnabled()) {
+            showErrors(this.clientForm);
+            return;
+        }
         this.visible = false;
         let client: Client = this.createClient();
         this.clientStore.createClient({client: client});

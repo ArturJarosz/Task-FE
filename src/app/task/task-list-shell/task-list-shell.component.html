@@ -13,10 +13,13 @@
             [architects]="$architects()"
             [projectId]="projectId"
             [stageId]="stageId"
-            (deleteTaskEVent)="onDelete($event)"/>
+            (deleteTaskEVent)="onDelete($event)"
+            (logTimeEvent)="onLogTime($event)"/>
 </section>
 <add-task
         [visible]="showAddTaskComponent"
         [projectId]="projectId"
         [stageId]="stageId"
         (notify)="onNotify($event)"/>
+<log-time-dialog [timeEntry]="$loggedTimeEntry()" [taskName]="$loggedTask()?.name ?? ''" [architects]="$architects()"
+                 [saving]="$timeEntrySaving()" (save)="onSaveTimeEntry($event)" (closed)="onCloseLogTime()"/>

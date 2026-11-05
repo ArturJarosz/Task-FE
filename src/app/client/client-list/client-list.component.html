@@ -1,27 +1,29 @@
-<p-table [value]="rows" [rowHover]="true" [tableStyle]="{'min-width': '60rem'}">
+<p-table [value]="rows" [rowHover]="true" tableStyleClass="sm:min-w-[60rem]"
+         [lazy]="true" [lazyLoadOnInit]="false" (onLazyLoad)="onSort($event)">
     <ng-template #header>
         <tr>
-            <th>Client</th>
-            <th>Contact</th>
-            <th>City</th>
-            <th class="app-num">Projects</th>
-            <th class="app-num">Active projects</th>
-            <th class="app-num">Contract value</th>
+            <th pSortableColumn="name">Client <p-sortIcon field="name"/></th>
+            <th pSortableColumn="contact" class="max-sm:hidden">Contact <p-sortIcon field="contact"/></th>
+            <th pSortableColumn="city" class="max-sm:hidden">City <p-sortIcon field="city"/></th>
+            <th pSortableColumn="projects" class="app-num max-sm:hidden">Projects <p-sortIcon field="projects"/></th>
+            <th pSortableColumn="activeProjects" class="app-num max-sm:hidden">Active projects <p-sortIcon field="activeProjects"/></th>
+            <th pSortableColumn="value" class="app-num max-sm:hidden">Contract value <p-sortIcon field="value"/></th>
             <th class="w-16"><span class="sr-only">Actions</span></th>
         </tr>
     </ng-template>
     <ng-template #body let-row>
-        <tr [routerLink]="['/clients', row.client.id]" class="cursor-pointer">
+        <tr [routerLink]="['/clients', row.client.id]" tabindex="-1" class="cursor-pointer">
             <td>
                 <div class="flex items-center gap-3">
                     <span class="app-avatar bg-warning-50 text-warning-700">{{ getInitials(row.client) }}</span>
                     <div class="min-w-0">
-                        <div class="font-medium text-gray-800 truncate">{{ getName(row.client) }}</div>
+                        <a [routerLink]="['/clients', row.client.id]" class="app-row-link block font-medium text-gray-800 truncate"
+                           (click)="$event.stopPropagation()">{{ getName(row.client) }}</a>
                         <div class="text-xs text-gray-500">{{ getTypeLabel(row.client.clientType) }}</div>
                     </div>
                 </div>
             </td>
-            <td>
+            <td class="max-sm:hidden">
                 @if (row.client.contact?.email || row.client.contact?.telephone) {
                     <div class="min-w-0">
                         @if (row.client.contact?.email) {
@@ -35,16 +37,16 @@
                     <app-not-set/>
                 }
             </td>
-            <td>
+            <td class="max-sm:hidden">
                 @if (row.client.contact?.address?.city) {
                     <span>{{ row.client.contact.address.city }}</span>
                 } @else {
                     <app-not-set/>
                 }
             </td>
-            <td class="app-num">{{ row.projects }}</td>
-            <td class="app-num">{{ row.activeProjects }}</td>
-            <td class="app-num">{{ row.value | currency:'PLN':'symbol':'1.2-2' }}</td>
+            <td class="app-num max-sm:hidden">{{ row.projects }}</td>
+            <td class="app-num max-sm:hidden">{{ row.activeProjects }}</td>
+            <td class="app-num max-sm:hidden">{{ row.value | currency:'PLN':'symbol':'1.2-2' }}</td>
             <td class="text-right">
                 <p-button icon="pi pi-ellipsis-h" [text]="true" [rounded]="true" severity="secondary"
                           pTooltip="Client actions" tooltipPosition="left" ariaLabel="Client actions"

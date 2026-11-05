@@ -1,4 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {paidSeverity} from "../../../shared/status-severity";
+import {TagModule} from "primeng/tag";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {endOfToday, startOfToday} from "date-fns";
 import {CurrencyPipe, DatePipe} from "@angular/common";
@@ -17,7 +19,7 @@ import {InstallmentSave} from "../state/installment.state";
 import {EmptyStateComponent, FieldComponent, LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../../shared";
 import {installmentName, isDeposit} from "../installment-utils";
 import {toDateIfExists, toTimeZoneString} from "../../../shared/utils/date-utils";
-import {changedFields, isControlInvalid, isPaymentDateMissing, paymentDateRequiredWhenPaid} from "../../../shared/utils/form-utils";
+import {changedFields, isControlInvalid, isPaymentDateMissing, paymentDateRequiredWhenPaid, showErrors} from "../../../shared/utils/form-utils";
 
 type InstallmentFormValue = ReturnType<FormGroup<InstallmentForm>['getRawValue']>;
 
@@ -31,11 +33,12 @@ const DATA_FIELDS: (keyof InstallmentFormValue)[] = ['value', 'hasInvoice', 'not
     styleUrl: './installment-detail.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [LoadErrorComponent, PageHeaderComponent, FieldComponent, EmptyStateComponent, ButtonModule, DatePickerModule,
+    imports: [TagModule, LoadErrorComponent, PageHeaderComponent, FieldComponent, EmptyStateComponent, ButtonModule, DatePickerModule,
         DialogModule, InputNumberModule, SkeletonModule, Textarea, ToggleSwitchModule, ReactiveFormsModule, RouterLink,
         CurrencyPipe, DatePipe]
 })
 export class InstallmentDetailComponent implements OnChanges {
+    protected readonly paidSeverity = paidSeverity;
     @Input()
     installment!: Installment | null;
     @Input()
@@ -111,6 +114,10 @@ export class InstallmentDetailComponent implements OnChanges {
     }
 
     onSave(): void {
+        // Disabled only while nothing changed: with something missing, saving shows every error instead
+        if (showErrors(this.detailForm)) {
+            return;
+        }
         const value = this.detailForm.getRawValue();
         const alreadyPaid = this.installment?.paid ?? false;
         const paymentDate = value.paymentDate ? toTimeZoneString(value.paymentDate) : undefined;

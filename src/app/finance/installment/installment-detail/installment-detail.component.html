@@ -1,20 +1,21 @@
-<app-page-header [title]="deposit ? 'Deposit' : 'Installment'" [crumbs]="crumbs"/>
+<app-page-header title="Installment" [crumbs]="crumbs"/>
 
 @if (installment) {
     <div class="flex flex-col gap-gutter">
         <!-- Header card -->
-        <section class="app-card flex flex-wrap items-center gap-5 p-6">
-            <div class="flex items-center justify-center shrink-0 w-[72px] h-[72px] rounded-2xl bg-brand-50 text-brand-500">
+        <section class="app-card app-detail-header">
+            <div class="app-detail-icon bg-brand-50 text-brand-500">
                 <i class="pi pi-wallet text-3xl" aria-hidden="true"></i>
             </div>
             <div class="flex-1 min-w-0">
-                <h2 class="m-0 text-xl leading-[30px] font-semibold text-gray-800">{{ name }}</h2>
-                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-sm text-gray-500">
-                    <span>Installment</span>
-                    <span class="w-px h-4 bg-gray-200"></span>
-                    <span class="tabular-nums">{{ (installment.value ?? 0) | currency:'PLN':'symbol':'1.2-2' }}</span>
-                    <span class="w-px h-4 bg-gray-200"></span>
-                    <span>{{ installment.paid ? 'Paid' : 'Not paid' }}</span>
+                <div class="flex flex-wrap items-center gap-3">
+                    <h2 class="m-0 text-xl leading-[30px] font-semibold text-gray-800">{{ name }}</h2>
+                    <p-tag [value]="installment.paid ? 'Paid' : 'Not paid'" [severity]="paidSeverity(installment.paid)"/>
+                </div>
+                <div class="app-detail-meta">
+                    <span>{{ deposit ? 'Deposit' : 'Stage installment' }}</span>
+                    <span class="app-detail-meta-divider" aria-hidden="true"></span>
+                    <span class="tabular-nums">{{ (installment.value ?? 0) | currency:'PLN':'symbol':'1.2-2' }} net</span>
                 </div>
             </div>
         </section>
@@ -32,7 +33,7 @@
                         <app-field label="Stage" [value]="installment.stageName"/>
                     }
                     <div>
-                        <span class="app-field-label">Value</span>
+                        <span class="app-field-label">Net value</span>
                         <div class="app-field-value tabular-nums">{{ (installment.value ?? 0) | currency:'PLN':'symbol':'1.2-2' }}</div>
                     </div>
                     <app-field label="Invoice issued" [value]="installment.hasInvoice ? 'Yes' : 'No'"/>
@@ -86,12 +87,11 @@
 }
 
 <!-- Edit dialog -->
-<p-dialog [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
+<p-dialog closeAriaLabel="Close" [(visible)]="showEditDialog" [modal]="true" appendTo="body" [draggable]="false"
           [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}" (onHide)="onCancelEdit()">
     <ng-template #header>
         <div class="flex flex-col gap-1">
             <span class="p-dialog-title">{{ deposit ? 'Edit deposit' : 'Edit installment' }}</span>
-            <span class="text-sm text-gray-500">Change the value, invoice, payment or note.</span>
         </div>
     </ng-template>
     <form [formGroup]="detailForm" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -117,7 +117,7 @@
             }
         </div>
         <div>
-            <label for="installmentValue" class="app-form-label">Value <span class="text-error-600">*</span></label>
+            <label for="installmentValue" class="app-form-label">Net value <span class="text-error-600">*</span></label>
             <p-inputnumber inputId="installmentValue" formControlName="value" mode="decimal" locale="pl-PL"
                            [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0" suffix=" zł" [fluid]="true"/>
             @if (isFieldInvalid('value')) {
@@ -142,7 +142,7 @@
     </form>
     <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancelEdit()"/>
-        <p-button label="Save changes" [disabled]="!(dataChanged || newlyPaid) || detailForm.invalid"
+        <p-button label="Save changes" [disabled]="!(dataChanged || newlyPaid)"
                   (onClick)="onSave()"/>
     </ng-template>
 </p-dialog>

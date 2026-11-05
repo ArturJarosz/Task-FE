@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {clientTypeLabel} from "../model/client";
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {SelectModule} from "primeng/select";
 import {InputTextModule} from "primeng/inputtext";
@@ -18,7 +19,11 @@ export class ClientFormFieldsComponent {
     @Input()
     form!: FormGroup<ClientForm>;
     @Input()
-    clientTypes: ConfigurationEntry[] | null = [];
+    set clientTypes(entries: ConfigurationEntry[] | null) {
+        // "Private" or "Company", like everywhere else (the configuration's own label says "Corporate")
+        this.clientTypeOptions = (entries ?? []).map(entry => ({...entry, label: clientTypeLabel(entry.id)}));
+    }
+    clientTypeOptions: ConfigurationEntry[] = [];
 
     protected readonly ClientType = ClientType;
 

@@ -22,14 +22,28 @@ describe('EditSystemParameterComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should save a numeric value as a string', () => {
+    it('should edit a tax rate as a percentage and save the fraction as a string', () => {
         let saved: SystemParameter | undefined;
         component.save.subscribe(parameter => saved = parameter);
+        expect(component.numberValue.value).toBe(23);
 
-        component.numberValue.setValue(0.08);
+        component.numberValue.setValue(8);
         component.onSave();
 
         expect(saved).toEqual({...vatTax, value: '0.08'});
+    });
+
+    it('should save another numeric value as it is', () => {
+        let interval: SystemParameter = {id: 2, name: 'Google calendar poll interval', type: 'NUMBER', value: '5'};
+        fixture.componentRef.setInput('systemParameter', interval);
+        fixture.detectChanges();
+        let saved: SystemParameter | undefined;
+        component.save.subscribe(parameter => saved = parameter);
+
+        component.numberValue.setValue(15);
+        component.onSave();
+
+        expect(saved).toEqual({...interval, value: '15'});
     });
 
     it('should save on Enter without a native form submit', () => {
@@ -46,7 +60,7 @@ describe('EditSystemParameterComponent', () => {
     it('should reset to the default value', () => {
         component.onResetToDefault();
 
-        expect(component.numberValue.value).toBe(0.2);
+        expect(component.numberValue.value).toBe(20);
     });
 
     it('should not save an empty value', () => {

@@ -8,6 +8,7 @@ import {SupplierStore} from "../state";
 import {DialogModule} from "primeng/dialog";
 import {ButtonModule} from "primeng/button";
 import {PartnerFormFieldsComponent} from "../../shared";
+import {showErrors} from "../../shared/utils/form-utils";
 
 @Component({
     selector: 'add-supplier',
@@ -52,6 +53,11 @@ export class AddSupplierComponent implements OnInit {
     }
 
     onSave() {
+        // Never disabled: with something missing, saving shows every error instead
+        if (!this.isSaveEnabled()) {
+            showErrors(this.addSupplierForm);
+            return;
+        }
         this.visible = false;
         let supplier = this.createSupplier();
         this.supplierStore.createSupplier({supplier});
