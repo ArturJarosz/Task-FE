@@ -16,6 +16,7 @@ import {DurationPipe, EmptyStateComponent, NotSetComponent} from "../../shared";
 import {statusSeverity} from "../../shared/status-severity";
 import {fieldValue, SortValue, TableSort, toTableSort} from "../../shared/utils/sort-utils";
 import {SortRowsPipe} from "../../shared/sort-rows/sort-rows.pipe";
+import {ThreeStepSortDirective} from "../../shared/sort-rows/three-step-sort.directive";
 
 const ARCHITECT_NOT_FOUND_INITIAL = '?';
 
@@ -25,7 +26,7 @@ const ARCHITECT_NOT_FOUND_INITIAL = '?';
     styleUrl: './task-list.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [SortRowsPipe, TableModule, ButtonModule, TagModule, MenuModule, RouterLink, DatePipe, TooltipModule, EmptyStateComponent, NotSetComponent,
+    imports: [ThreeStepSortDirective, SortRowsPipe, TableModule, ButtonModule, TagModule, MenuModule, RouterLink, DatePipe, TooltipModule, EmptyStateComponent, NotSetComponent,
         DurationPipe]
 })
 export class TaskListComponent {

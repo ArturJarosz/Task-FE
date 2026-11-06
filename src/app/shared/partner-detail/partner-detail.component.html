@@ -62,12 +62,11 @@
                                 </tr>
                             </ng-template>
                             <ng-template #body let-item>
-                                <tr [routerLink]="['/projects', item.projectId, itemRouteSegment, item.id]" tabindex="-1" class="cursor-pointer">
-                                    <td class="font-medium text-gray-800"><a [routerLink]="['/projects', item.projectId, itemRouteSegment, item.id]" class="app-row-link" (click)="$event.stopPropagation()">{{ item.name }}</a></td>
+                                <tr [routerLink]="['/projects', item.projectId, itemRouteSegment, item.id]" class="cursor-pointer">
+                                    <td class="font-medium text-gray-800">{{ item.name }}</td>
                                     <td>
                                         @if (projectNames.get(item.projectId); as projectName) {
-                                            <a [routerLink]="['/projects', item.projectId]" class="app-row-link"
-                                               (click)="$event.stopPropagation()">{{ projectName }}</a>
+                                            {{ projectName }}
                                         } @else {
                                             <app-not-set/>
                                         }

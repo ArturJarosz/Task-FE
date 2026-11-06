@@ -26,6 +26,7 @@ import {YesNoMarkComponent} from "../yes-no-mark/yes-no-mark.component";
 import {fieldValue, SortValue, TableSort, toTableSort} from "../../shared/utils/sort-utils";
 import {SortRowsPipe} from "../../shared/sort-rows/sort-rows.pipe";
 import {showErrors} from "../../shared/utils/form-utils";
+import {ThreeStepSortDirective} from "../sort-rows/three-step-sort.directive";
 
 // Contractor or supplier, as shown and edited on its detail page
 export interface Partner {
@@ -60,7 +61,7 @@ export interface PartnerItemsData {
     templateUrl: 'partner-detail.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [SortRowsPipe, PageHeaderComponent, FieldComponent, EmptyStateComponent, PartnerFormFieldsComponent,
+    imports: [ThreeStepSortDirective, SortRowsPipe, PageHeaderComponent, FieldComponent, EmptyStateComponent, PartnerFormFieldsComponent,
         FinanceComponentSummaryComponent, ButtonModule, DialogModule, MenuModule, TableModule, TooltipModule,
         ReactiveFormsModule, RouterLink, CurrencyPipe, DatePipe, NotSetComponent, YesNoMarkComponent]
 })

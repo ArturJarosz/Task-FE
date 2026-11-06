@@ -11,10 +11,9 @@
         </tr>
     </ng-template>
     <ng-template #body let-task>
-        <tr [routerLink]="['/projects', projectId, 'stages', stageId, 'tasks', task.id]" tabindex="-1" class="cursor-pointer">
+        <tr [routerLink]="['/projects', projectId, 'stages', stageId, 'tasks', task.id]" class="cursor-pointer">
             <td>
-                <a [routerLink]="['/projects', projectId, 'stages', stageId, 'tasks', task.id]"
-                   class="app-row-link font-medium text-gray-800" (click)="$event.stopPropagation()">{{ task.name }}</a>
+                <div class="font-medium text-gray-800">{{ task.name }}</div>
                 <div class="text-xs text-gray-500">{{ getTypeLabel(task.typeId) }}</div>
                 <p-tag class="sm:hidden mt-2 inline-flex" [value]="getStatusLabel(task.status)" [severity]="statusSeverity(task.status)"/>
             </td>

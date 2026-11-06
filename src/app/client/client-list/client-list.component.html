@@ -12,13 +12,12 @@
         </tr>
     </ng-template>
     <ng-template #body let-row>
-        <tr [routerLink]="['/clients', row.client.id]" tabindex="-1" class="cursor-pointer">
+        <tr [routerLink]="['/clients', row.client.id]" class="cursor-pointer">
             <td>
                 <div class="flex items-center gap-3">
                     <span class="app-avatar bg-warning-50 text-warning-700">{{ getInitials(row.client) }}</span>
                     <div class="min-w-0">
-                        <a [routerLink]="['/clients', row.client.id]" class="app-row-link block font-medium text-gray-800 truncate"
-                           (click)="$event.stopPropagation()">{{ getName(row.client) }}</a>
+                        <div class="font-medium text-gray-800 truncate">{{ getName(row.client) }}</div>
                         <div class="text-xs text-gray-500">{{ getTypeLabel(row.client.clientType) }}</div>
                     </div>
                 </div>

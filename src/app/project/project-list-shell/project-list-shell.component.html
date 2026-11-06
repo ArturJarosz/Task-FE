@@ -13,12 +13,9 @@
     <section class="app-card overflow-hidden">
         <div class="app-card-header">
             <div>
-                @if ($view() === 'timeline') {
-                    <h2 class="app-card-title">Projects timeline</h2>
-                } @else {
-                    <h2 class="app-card-title">All projects</h2>
-                    <p class="app-card-subtitle m-0">{{ $filteredProjects().length }} {{ $filteredProjects().length === 1 ? 'project' : 'projects' }}</p>
-                }
+                <h2 class="app-card-title">{{ $view() === 'timeline' ? 'Projects timeline' : 'All projects' }}</h2>
+                <!-- In both views, so the header keeps its height and nothing moves when switching -->
+                <p class="app-card-subtitle m-0">{{ $filteredProjects().length }} {{ $filteredProjects().length === 1 ? 'project' : 'projects' }}</p>
             </div>
             <div class="flex flex-wrap items-center gap-3">
                 <div class="app-seg" role="group" aria-label="View">

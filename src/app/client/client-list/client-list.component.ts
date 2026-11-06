@@ -11,6 +11,7 @@ import {MenuItem} from "primeng/api";
 import {TooltipModule} from "primeng/tooltip";
 import {Router, RouterLink} from "@angular/router";
 import {CurrencyPipe} from "@angular/common";
+import {ThreeStepSortDirective} from "../../shared/sort-rows/three-step-sort.directive";
 
 export interface ClientRow {
     client: Client;
@@ -25,7 +26,7 @@ export interface ClientRow {
     styleUrls: ['./client-list.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [TableModule, ButtonModule, MenuModule, TooltipModule, RouterLink, CurrencyPipe, EmptyStateComponent, NotSetComponent]
+    imports: [ThreeStepSortDirective, TableModule, ButtonModule, MenuModule, TooltipModule, RouterLink, CurrencyPipe, EmptyStateComponent, NotSetComponent]
 })
 export class ClientListComponent {
     @Input()

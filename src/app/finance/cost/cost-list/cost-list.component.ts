@@ -17,13 +17,14 @@ import {CurrencyPipe, DatePipe} from "@angular/common";
 import {EmptyStateComponent, YesNoMarkComponent} from "../../../shared";
 import {fieldValue, SortValue, TableSort, toTableSort} from "../../../shared/utils/sort-utils";
 import {SortRowsPipe} from "../../../shared/sort-rows/sort-rows.pipe";
+import {ThreeStepSortDirective} from "../../../shared/sort-rows/three-step-sort.directive";
 
 @Component({
     selector: 'cost-list',
     templateUrl: './cost-list.component.html',
     styleUrl: './cost-list.component.less',
     standalone: true,
-    imports: [SortRowsPipe, FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, CurrencyPipe, DatePipe, EmptyStateComponent, YesNoMarkComponent]
+    imports: [ThreeStepSortDirective, SortRowsPipe, FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, CurrencyPipe, DatePipe, EmptyStateComponent, YesNoMarkComponent]
 })
 export class CostListComponent implements OnChanges {
     // "Add cost" under the summary figures; the shell opens the dialog

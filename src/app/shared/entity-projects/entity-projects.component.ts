@@ -11,6 +11,7 @@ import {EmptyStateComponent} from "../empty-state/empty-state.component";
 import {NotSetComponent} from "../not-set/not-set.component";
 import {fieldValue, SortValue, TableSort, toTableSort} from "../../shared/utils/sort-utils";
 import {SortRowsPipe} from "../../shared/sort-rows/sort-rows.pipe";
+import {ThreeStepSortDirective} from "../sort-rows/three-step-sort.directive";
 
 // "Projects" section card on person detail pages (architect, client): the projects from an EntityProjectsSummary.
 @Component({
@@ -18,7 +19,7 @@ import {SortRowsPipe} from "../../shared/sort-rows/sort-rows.pipe";
     templateUrl: 'entity-projects.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [SortRowsPipe, TableModule, TagModule, RouterLink, CurrencyPipe, DatePipe, EmptyStateComponent, NotSetComponent]
+    imports: [ThreeStepSortDirective, SortRowsPipe, TableModule, TagModule, RouterLink, CurrencyPipe, DatePipe, EmptyStateComponent, NotSetComponent]
 })
 export class EntityProjectsComponent {
 

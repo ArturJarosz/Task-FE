@@ -9,6 +9,7 @@ import {MenuItem} from "primeng/api";
 import {EmptyStateComponent} from "../empty-state/empty-state.component";
 import {NotSetComponent} from "../not-set/not-set.component";
 import {capitalize, initials} from "../utils/label-utils";
+import {ThreeStepSortDirective} from "../sort-rows/three-step-sort.directive";
 
 // A business partner row: contractors and suppliers share the same shape
 export interface PartnerRow {
@@ -31,7 +32,7 @@ export interface PartnerRef {
     templateUrl: 'partner-list.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [TableModule, ButtonModule, MenuModule, TooltipModule, RouterLink, EmptyStateComponent, NotSetComponent]
+    imports: [ThreeStepSortDirective, TableModule, ButtonModule, MenuModule, TooltipModule, RouterLink, EmptyStateComponent, NotSetComponent]
 })
 export class PartnerListComponent {
     @Input()

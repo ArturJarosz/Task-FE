@@ -15,13 +15,14 @@ import {EmptyStateComponent, YesNoMarkComponent} from "../../../shared";
 import {fieldValue, SortValue, TableSort, toTableSort} from "../../../shared/utils/sort-utils";
 import {Supply} from "../../../generated/models/supply";
 import {SortRowsPipe} from "../../../shared/sort-rows/sort-rows.pipe";
+import {ThreeStepSortDirective} from "../../../shared/sort-rows/three-step-sort.directive";
 
 @Component({
     selector: 'supply-list',
     templateUrl: './supply-list.component.html',
     styleUrl: './supply-list.component.less',
     standalone: true,
-    imports: [SortRowsPipe, FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, CurrencyPipe, EmptyStateComponent, YesNoMarkComponent]
+    imports: [ThreeStepSortDirective, SortRowsPipe, FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, CurrencyPipe, EmptyStateComponent, YesNoMarkComponent]
 })
 export class SupplyListComponent implements OnChanges{
     // "Add supply" under the summary figures; the shell opens the dialog
