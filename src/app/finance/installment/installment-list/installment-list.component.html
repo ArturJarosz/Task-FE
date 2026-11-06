@@ -12,10 +12,9 @@
                 </tr>
             </ng-template>
             <ng-template #body let-installment>
-                <tr [routerLink]="['/projects', projectId, 'installments', installment.id]" tabindex="-1" class="cursor-pointer">
+                <tr [routerLink]="['/projects', projectId, 'installments', installment.id]" class="cursor-pointer">
                     <td>
-                        <a [routerLink]="['/projects', projectId, 'installments', installment.id]" class="app-row-link font-medium text-gray-800"
-                           (click)="$event.stopPropagation()">{{ isDeposit(installment) ? 'Deposit' : installment.stageName }}</a>
+                        <span class="font-medium text-gray-800">{{ isDeposit(installment) ? 'Deposit' : installment.stageName }}</span>
                     </td>
                     <td>
                         @if (installment.paymentDate) {

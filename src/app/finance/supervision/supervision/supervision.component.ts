@@ -9,13 +9,14 @@ import {EmptyStateComponent, YesNoMarkComponent} from "../../../shared";
 import {FinanceStat} from "../../../shared/finance-component-summary/finance-component-summary.component";
 import {fieldValue, SortValue, TableSort, toTableSort} from "../../../shared/utils/sort-utils";
 import {SortRowsPipe} from "../../../shared/sort-rows/sort-rows.pipe";
+import {ThreeStepSortDirective} from "../../../shared/sort-rows/three-step-sort.directive";
 
 @Component({
     selector: 'supervision',
     templateUrl: './supervision.component.html',
     styleUrl: './supervision.component.less',
     standalone: true,
-    imports: [SortRowsPipe, TableModule, RouterLink, ButtonModule, DatePipe, CurrencyPipe, EmptyStateComponent, YesNoMarkComponent]
+    imports: [ThreeStepSortDirective, SortRowsPipe, TableModule, RouterLink, ButtonModule, DatePipe, CurrencyPipe, EmptyStateComponent, YesNoMarkComponent]
 })
 export class SupervisionComponent implements OnChanges {
 

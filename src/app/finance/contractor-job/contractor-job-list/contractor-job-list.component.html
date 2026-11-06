@@ -12,8 +12,8 @@
                 </tr>
             </ng-template>
             <ng-template #body let-contractorjob>
-                <tr [routerLink]="['/projects', projectId, 'contractorJob', contractorjob.id]" tabindex="-1" class="cursor-pointer">
-                    <td class="font-medium text-gray-800"><a [routerLink]="['/projects', projectId, 'contractorJob', contractorjob.id]" class="app-row-link" (click)="$event.stopPropagation()">{{ contractorjob.name }}</a></td>
+                <tr [routerLink]="['/projects', projectId, 'contractorJob', contractorjob.id]" class="cursor-pointer">
+                    <td class="font-medium text-gray-800">{{ contractorjob.name }}</td>
                     <td>{{ contractorIdToContractorName.get(contractorjob.contractorId) }}</td>
                     <td class="app-num">{{ contractorjob.value | currency:'PLN':'symbol':'1.2-2' }}</td>
                     <td class="w-24 text-center"><app-yes-no-mark [value]="contractorjob.hasInvoice" label="Invoice"/></td>

@@ -15,13 +15,14 @@ import {EmptyStateComponent, YesNoMarkComponent} from "../../../shared";
 import {fieldValue, SortValue, TableSort, toTableSort} from "../../../shared/utils/sort-utils";
 import {ContractorJob} from "../../../generated/models/contractor-job";
 import {SortRowsPipe} from "../../../shared/sort-rows/sort-rows.pipe";
+import {ThreeStepSortDirective} from "../../../shared/sort-rows/three-step-sort.directive";
 
 @Component({
     selector: 'contractor-job-list',
     templateUrl: './contractor-job-list.component.html',
     styleUrl: './contractor-job-list.component.less',
     standalone: true,
-    imports: [SortRowsPipe, FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, CurrencyPipe, EmptyStateComponent, YesNoMarkComponent]
+    imports: [ThreeStepSortDirective, SortRowsPipe, FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, CurrencyPipe, EmptyStateComponent, YesNoMarkComponent]
 })
 export class ContractorJobListComponent implements OnChanges {
     // "Add contractor job" under the summary figures; the shell opens the dialog

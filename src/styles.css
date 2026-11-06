@@ -336,6 +336,27 @@ body {
     white-space: nowrap;
   }
 
+  /* Sort icons of every table: PrimeIcons' solid carets instead of PrimeNG's own svgs (DESIGN_GUIDELINES.md, "List page").
+     The svg PrimeNG renders tells the state: a neutral double caret, then one caret in the brand colour once sorted */
+  p-sorticon svg[data-p-icon] {
+    /* Important: wherever PrimeNG's styles load outside the layers, its .p-icon would otherwise win over this layer */
+    display: none !important;
+  }
+  p-sorticon::before {
+    @apply text-xs leading-none text-brand-600;
+    font-family: "primeicons";
+  }
+  p-sorticon:has(svg[data-p-icon="sort-alt"])::before {
+    @apply text-gray-400;
+    content: "\e915" / "";
+  }
+  p-sorticon:has(svg[data-p-icon="sort-amount-up-alt"])::before {
+    content: "\ea30" / "";
+  }
+  p-sorticon:has(svg[data-p-icon="sort-amount-down"])::before {
+    content: "\ea33" / "";
+  }
+
   /* Finance tables on a phone (styleClass="app-table-phone"): the first column and the money (.app-num) only, so they
      fit without scrolling sideways (DESIGN_GUIDELINES.md, "List page") */
   @media (width < 40rem) {
@@ -350,11 +371,6 @@ body {
     @apply outline-none shadow-focus-ring;
   }
 
-  /* The row's own name in a table: a real link (new tab, screen readers) that looks like the name. The row around it
-     stays clickable with the mouse; the link stops its click from reaching the row */
-  .app-row-link {
-    @apply text-inherit no-underline rounded-sm hover:underline focus-visible:outline-none focus-visible:shadow-focus-ring;
-  }
   .app-kpi-label {
     @apply text-sm text-gray-500;
   }

@@ -12,10 +12,9 @@
             </tr>
         </ng-template>
         <ng-template #body let-stage>
-            <tr [routerLink]="['/projects', projectId, 'stages', stage.id]" tabindex="-1" class="cursor-pointer">
+            <tr [routerLink]="['/projects', projectId, 'stages', stage.id]" class="cursor-pointer">
                 <td>
-                    <a [routerLink]="['/projects', projectId, 'stages', stage.id]" class="app-row-link font-medium text-gray-800"
-                       (click)="$event.stopPropagation()">{{ stage.name }}</a>
+                    <div class="font-medium text-gray-800">{{ stage.name }}</div>
                     <div class="text-xs text-gray-500">{{ getStageLabelType(stage.typeId) }}</div>
                     <p-tag class="sm:hidden mt-2 inline-flex" [value]="getStageStatusLabel(stage.status)" [severity]="statusSeverity(stage.status)"/>
                 </td>

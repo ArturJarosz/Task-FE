@@ -15,6 +15,7 @@ import {CurrencyPipe} from "@angular/common";
 import {EmptyStateComponent, NotSetComponent} from "../../shared";
 import {statusSeverity} from "../../shared/status-severity";
 import {architectName, clientName} from "../project-filter/project-filter";
+import {ThreeStepSortDirective} from "../../shared/sort-rows/three-step-sort.directive";
 
 const NOT_FOUND_INITIAL = '?';
 
@@ -24,7 +25,7 @@ const NOT_FOUND_INITIAL = '?';
     styleUrls: ['./project-list.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [TableModule, ButtonModule, TagModule, MenuModule, RouterLink, TooltipModule, CurrencyPipe, EmptyStateComponent, NotSetComponent]
+    imports: [ThreeStepSortDirective, TableModule, ButtonModule, TagModule, MenuModule, RouterLink, TooltipModule, CurrencyPipe, EmptyStateComponent, NotSetComponent]
 })
 export class ProjectListComponent {
     @Input()

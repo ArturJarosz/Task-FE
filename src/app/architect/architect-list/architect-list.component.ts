@@ -6,6 +6,7 @@ import {TableSort, toTableSort} from "../../shared/utils/sort-utils";
 import {RouterLink} from "@angular/router";
 import {CurrencyPipe} from "@angular/common";
 import {EmptyStateComponent} from "../../shared";
+import {ThreeStepSortDirective} from "../../shared/sort-rows/three-step-sort.directive";
 
 export interface ArchitectRow {
     architect: Architect;
@@ -20,7 +21,7 @@ export interface ArchitectRow {
     styleUrls: ['./architect-list.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [TableModule, RouterLink, CurrencyPipe, EmptyStateComponent]
+    imports: [ThreeStepSortDirective, TableModule, RouterLink, CurrencyPipe, EmptyStateComponent]
 })
 export class ArchitectListComponent {
     @Input()

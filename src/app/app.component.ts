@@ -16,6 +16,7 @@ import {BreadcrumbModule} from "primeng/breadcrumb";
 import {ButtonModule} from "primeng/button";
 import {TooltipModule} from "primeng/tooltip";
 import {NgClass, AsyncPipe} from "@angular/common";
+import {endsTextSelectionInRow} from "./shared/utils/row-click";
 
 export interface NavItem {
     label: string;
@@ -106,6 +107,7 @@ export class AppComponent implements OnInit {
     constructor(protected authorizationService: AuthorizationService, private router: Router,
                 private activatedRoute: ActivatedRoute, private breadcrumbService: BreadcrumbService) {
         this.restoreFocusAfterDialogs();
+        this.keepRowOpenFromTextSelection();
     }
 
     private readonly appRef = inject(ApplicationRef);
@@ -128,6 +130,17 @@ export class AppComponent implements OnInit {
         if (target instanceof HTMLElement && !target.closest('.p-dialog, .p-overlay-mask, .p-popover, .p-menu-overlay, [role="dialog"]')) {
             this.focusBeforeDialog = target;
         }
+    }
+
+    // Copying text from a table row: the click that ends the selection stops here, before it reaches the row's routerLink
+    private keepRowOpenFromTextSelection(): void {
+        let listener = (event: MouseEvent) => {
+            if (endsTextSelectionInRow(event)) {
+                event.stopPropagation();
+            }
+        };
+        document.addEventListener('click', listener, true);
+        inject(DestroyRef).onDestroy(() => document.removeEventListener('click', listener, true));
     }
 
     private restoreFocusAfterDialogs(): void {

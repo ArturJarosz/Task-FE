@@ -15,13 +15,14 @@ import {Installment} from "../../../generated/models/installment";
 import {isDeposit} from "../installment-utils";
 import {fieldValue, SortValue, TableSort, toTableSort} from "../../../shared/utils/sort-utils";
 import {SortRowsPipe} from "../../../shared/sort-rows/sort-rows.pipe";
+import {ThreeStepSortDirective} from "../../../shared/sort-rows/three-step-sort.directive";
 
 @Component({
     selector: 'installment-list',
     templateUrl: './installment-list.component.html',
     styleUrl: './installment-list.component.less',
     standalone: true,
-    imports: [SortRowsPipe, FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, CurrencyPipe, DatePipe, EmptyStateComponent, NotSetComponent, YesNoMarkComponent]
+    imports: [ThreeStepSortDirective, SortRowsPipe, FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, CurrencyPipe, DatePipe, EmptyStateComponent, NotSetComponent, YesNoMarkComponent]
 })
 export class InstallmentListComponent implements OnChanges {
     // "Add installment" under the summary figures; the shell opens the dialog
