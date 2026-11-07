@@ -5,9 +5,12 @@ import {MessageService} from "primeng/api";
 import {environment} from "../../../environments/environment";
 import {Injectable} from "@angular/core";
 import {CalendarEvent} from "../../generated/models/calendar-event";
+import {EventConnection} from "../model/calendar.model";
 
 export abstract class CalendarRestService {
-    abstract getCalendarEvents(startDate: string, endDate: string): Observable<CalendarEvent[]>;
+    abstract getCalendarEvents(startDate: string, endDate?: string): Observable<CalendarEvent[]>;
+
+    abstract getConnectedCalendarEvents(connection: EventConnection): Observable<CalendarEvent[]>;
 
     abstract createCalendarEvent(event: CalendarEvent): Observable<CalendarEvent>;
 
@@ -26,8 +29,24 @@ export class CalendarRestServiceImpl extends AbstractRestService implements Cale
         super();
     }
 
-    getCalendarEvents(startDate: string, endDate: string): Observable<CalendarEvent[]> {
-        const params = new HttpParams().set('startDate', startDate).set('endDate', endDate);
+    getCalendarEvents(startDate: string, endDate?: string): Observable<CalendarEvent[]> {
+        let params = new HttpParams().set('startDate', startDate);
+        if (endDate) {
+            params = params.set('endDate', endDate);
+        }
+        return this.httpClient.get<CalendarEvent[]>(this.calendarEventsUrl, {params})
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService, `Error loading calendar events`))
+            );
+    }
+
+    getConnectedCalendarEvents(connection: EventConnection): Observable<CalendarEvent[]> {
+        let params = new HttpParams();
+        if (connection.projectId) {
+            params = params.set('projectId', connection.projectId);
+        } else if (connection.clientId) {
+            params = params.set('clientId', connection.clientId);
+        }
         return this.httpClient.get<CalendarEvent[]>(this.calendarEventsUrl, {params})
             .pipe(
                 catchError(error => this.handleError(error, this.messageService, `Error loading calendar events`))

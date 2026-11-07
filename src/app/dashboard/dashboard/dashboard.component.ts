@@ -24,7 +24,7 @@ import {
     rebuildOnThemeChange
 } from "../../shared/utils/chart-utils";
 import {updateAtMidnight} from "../../shared/utils/date-utils";
-import {eventDay, eventMonth, eventWhen} from "../../shared/utils/event-date-utils";
+import {eventCountLabel, eventDay, eventMonth, eventWhen} from "../../shared/utils/event-date-utils";
 import {isActiveProject} from "../../shared/utils/project-status-utils";
 import {
     addRow,
@@ -57,7 +57,7 @@ import {
 } from "../layout/dashboard-layout";
 import {AddWidgetComponent} from "../add-widget/add-widget.component";
 
-// Rows shown in the "Upcoming events" and "Active projects" cards; "See all" opens the full page
+// Rows shown in the "Active projects" card, "See all" opens the full page; events follow their own setting
 const LIST_SIZE = 5;
 
 // From xl a row is a 4-column grid, so a stack spans a quarter of it per 25%
@@ -116,6 +116,8 @@ export class DashboardComponent implements OnChanges {
     activeProjectStatuses: ProjectStatus[] | null = [];
     @Input()
     upcomingEvents: CalendarEvent[] = [];
+    @Input()
+    upcomingEventsShown = 10;
     // The saved layout
     @Input()
     layout: DashboardLayout = {rows: []};
@@ -148,6 +150,7 @@ export class DashboardComponent implements OnChanges {
     protected readonly eventDay = eventDay;
     protected readonly eventMonth = eventMonth;
     protected readonly eventWhen = eventWhen;
+    protected readonly eventCountLabel = eventCountLabel;
     protected readonly widgetWidths = WIDGET_WIDTHS;
     protected readonly maxStackSize = MAX_STACK_SIZE;
     protected readonly widgetDefinition = widgetDefinition;
@@ -194,7 +197,7 @@ export class DashboardComponent implements OnChanges {
         updateAtMidnight(() => this.buildChartData());
     }
 
-    ngOnChanges({report, projects, activeProjectStatuses, upcomingEvents, draftLayout}: SimpleChanges): void {
+    ngOnChanges({report, projects, activeProjectStatuses, upcomingEvents, upcomingEventsShown, draftLayout}: SimpleChanges): void {
         if (report) {
             this.yearTotals = this.computeYearTotals();
             this.buildChartData();
@@ -206,8 +209,8 @@ export class DashboardComponent implements OnChanges {
                 .filter(project => isActiveProject(project, this.activeProjectStatuses))
                 .sort((a, b) => (b.lastModifiedDateTime ?? '').localeCompare(a.lastModifiedDateTime ?? ''));
         }
-        if (upcomingEvents) {
-            this.nextEvents = (this.upcomingEvents ?? []).slice(0, LIST_SIZE);
+        if (upcomingEvents || upcomingEventsShown) {
+            this.nextEvents = (this.upcomingEvents ?? []).slice(0, this.upcomingEventsShown);
         }
         if (draftLayout) {
             if (!this.draftLayout) {

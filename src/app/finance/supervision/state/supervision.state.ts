@@ -98,6 +98,7 @@ export const SupervisionStore = signalStore(
                     return supervisionRestService.createSupervision(supervision)
                         .pipe(
                             tap(supervision => {
+                                financialDataStore.setProjectFinancialDataNeedsUpdate();
                                 patchState(store, {supervision: supervision, supervisionNeedsRefresh: true});
                                 messageService.add({
                                     severity: MessageSeverity.INFO,

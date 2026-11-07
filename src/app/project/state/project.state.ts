@@ -9,6 +9,8 @@ import {MessageService} from "primeng/api";
 import {MessageSeverity} from "../../shared/message";
 import {ProjectCreate} from "../../generated/models/project-create";
 import {FinancialDataStore} from "../../finance/project-financial-summary/state/financial-data.state";
+import {ClientStore} from "../../client/state/client.state";
+import {ArchitectStore} from "../../architect/state/architect.state";
 
 export interface ProjectState extends AppState {
     error: string,
@@ -46,20 +48,25 @@ export const ProjectStore = signalStore(
     withComputed(({project}) => ({
         projectHasSupervision: computed(() => project()?.supervision != null)
     })),
+    // The client and architect lists show project counts and values, so they go stale with the projects
+    withMethods((store, clientStore = inject(ClientStore), architectStore = inject(ArchitectStore)) => ({
+        setProjectsNeedRefresh(): void {
+            patchState(store, {projectsNeedRefresh: true});
+            clientStore.setClientsNeedRefresh();
+            architectStore.setArchitectsNeedRefresh();
+        },
+    })),
     withMethods((store, projectRestService = inject(ProjectRestService), messageService = inject(MessageService),
                  financialDataStore = inject(FinancialDataStore)) => ({
         setProjectId(projectId: number) {
             if (store.projectId() != projectId) {
-                financialDataStore.setProjectFinancialDataNeedsUpdate();
+                financialDataStore.setProjectSummaryNeedsRefresh();
                 this.setProjectNeedsRefresh();
             }
             patchState(store, {projectId: projectId});
         },
         setProjectNeedsRefresh(): void {
             patchState(store, {projectNeedsRefresh: true})
-        },
-        setProjectsNeedRefresh(): void {
-            patchState(store, {projectsNeedRefresh: true})
         },
         loadProject: rxMethod<{}>(
             pipe(
@@ -105,7 +112,7 @@ export const ProjectStore = signalStore(
                     return projectRestService.createProject(projectCreate)
                         .pipe(
                             tap(project => {
-                                patchState(store, {projectsNeedRefresh: true});
+                                store.setProjectsNeedRefresh();
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
                                     summary: `Project created.`,
@@ -123,8 +130,9 @@ export const ProjectStore = signalStore(
                     return projectRestService.updateProject(store.projectId()!, project)
                         .pipe(
                             tap(project => {
+                                store.setProjectsNeedRefresh();
                                 patchState(store,
-                                    {projectsNeedRefresh: true, projectNeedsRefresh: true, project: project});
+                                    {projectNeedsRefresh: true, project: project});
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
                                     summary: `Project updated.`,
@@ -142,7 +150,9 @@ export const ProjectStore = signalStore(
                     return projectRestService.removeProject(store.projectId()!)
                         .pipe(
                             tap(() => {
-                                patchState(store, {projectsNeedRefresh: true});
+                                store.setProjectsNeedRefresh();
+                                // Its finances are removed with it
+                                financialDataStore.setProjectFinancialDataNeedsUpdate();
                                 messageService.add({
                                     severity: MessageSeverity.SUCCESS,
                                     summary: `Project removed.`,

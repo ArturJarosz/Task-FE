@@ -27,33 +27,22 @@ describe('CalendarStore', () => {
 
     afterEach(() => httpTesting.verify());
 
-    it('should load past events from the last 90 days up to yesterday, newest first', () => {
-        store.loadPastEvents({});
+    it('should load upcoming events from today without an end date, soonest first', () => {
+        store.loadUpcomingEvents({});
 
         const request = httpTesting.expectOne(request => request.url.endsWith('/calendars/events'));
-        expect(request.request.params.get('startDate')).toBe(daysFromToday(-90));
-        expect(request.request.params.get('endDate')).toBe(daysFromToday(-1));
-        request.flush([older, newer]);
+        expect(request.request.params.get('startDate')).toBe(daysFromToday(0));
+        expect(request.request.params.has('endDate')).toBeFalse();
+        request.flush([newer, older]);
 
-        expect(store.pastEvents()).toEqual([newer, older]);
-        expect(store.pastEventsNeedRefresh()).toBeFalse();
+        expect(store.upcomingEvents()).toEqual([older, newer]);
     });
 
-    it('should load past events again after a failed load', () => {
-        store.loadPastEvents({});
-        httpTesting.expectOne(request => request.url.endsWith('/calendars/events'))
-            .flush('', {status: 500, statusText: 'Server error'});
-        expect(store.pastEventsNeedRefresh()).toBeTrue();
-
-        store.loadPastEvents({});
-        httpTesting.expectOne(request => request.url.endsWith('/calendars/events')).flush([older]);
-        expect(store.pastEvents()).toEqual([older]);
-    });
-
-    it('should refresh past events after an event is deleted', () => {
+    it('should refresh event lists after an event is deleted', () => {
         store.deleteCalendarEvent({eventId: 1});
         httpTesting.expectOne(request => request.url.endsWith('/calendars/events/1')).flush(null);
 
-        expect(store.pastEventsNeedRefresh()).toBeTrue();
+        expect(store.upcomingEventsNeedRefresh()).toBeTrue();
+        expect(store.connectedEventsNeedRefresh()).toBeTrue();
     });
 });

@@ -33,3 +33,24 @@ export function eventWhen(event: CalendarEvent): string {
         ? `${formatDay(start)} · ${formatTime(start)}–${formatTime(end)}`
         : `${formatDay(start)} ${formatTime(start)} – ${formatDay(end)} ${formatTime(end)}`;
 }
+
+// For rows with a date badge, which already shows the start day: "09:00–17:00", "All day",
+// or with the end date when the event spans several days
+export function eventTime(event: CalendarEvent): string {
+    if (!event.startDateTime) {
+        return '';
+    }
+    const start = new Date(event.startDateTime);
+    const end = event.endDateTime ? new Date(event.endDateTime) : start;
+    if (event.allDay) {
+        return isSameDay(start, end) ? 'All day' : `All day, until ${formatDay(end)}`;
+    }
+    return isSameDay(start, end)
+        ? `${formatTime(start)}–${formatTime(end)}`
+        : `${formatTime(start)}, until ${formatDay(end)} ${formatTime(end)}`;
+}
+
+// "3 events", or "10 of 23 events" when the list is limited
+export function eventCountLabel(shown: number, total: number): string {
+    return total > shown ? `${shown} of ${total} events` : `${shown} ${shown === 1 ? 'event' : 'events'}`;
+}

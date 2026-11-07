@@ -63,7 +63,6 @@ export class ArchitectListShellComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.architectStore.setArchitectsNeedRefresh();
         this.architectStore.loadArchitects({});
     }
 

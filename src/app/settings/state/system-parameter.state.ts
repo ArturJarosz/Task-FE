@@ -1,7 +1,7 @@
 import {parameterLabel} from "../system-parameter-format";
 import {AppState} from "../../state/app.store";
-import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
-import {inject} from "@angular/core";
+import {patchState, signalStore, withComputed, withMethods, withState} from "@ngrx/signals";
+import {computed, inject} from "@angular/core";
 import {MessageService} from "primeng/api";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
 import {catchError, concatMap, EMPTY, finalize, from, of, pipe, switchMap, tap, toArray} from "rxjs";
@@ -24,9 +24,23 @@ export const initialState: SystemParameterState = {
     systemParametersSaving: false,
 }
 
+export const UPCOMING_EVENTS_SHOWN_PARAMETER = 'Upcoming events shown';
+export const PAST_EVENTS_SHOWN_PARAMETER = 'Past events shown';
+// Until the parameters load, and the backend's own default
+const DEFAULT_EVENTS_SHOWN = 10;
+
+function eventsShown(systemParameters: SystemParameter[], name: string): number {
+    const value = Number(systemParameters.find(parameter => parameter.name === name)?.value);
+    return value > 0 ? value : DEFAULT_EVENTS_SHOWN;
+}
+
 export const SystemParameterStore = signalStore(
     {providedIn: 'root'},
     withState(initialState),
+    withComputed(({systemParameters}) => ({
+        upcomingEventsShown: computed(() => eventsShown(systemParameters(), UPCOMING_EVENTS_SHOWN_PARAMETER)),
+        pastEventsShown: computed(() => eventsShown(systemParameters(), PAST_EVENTS_SHOWN_PARAMETER)),
+    })),
     withMethods((store, systemParameterRestService = inject(SystemParameterRestService),
                  messageService = inject(MessageService)) => {
         let replaceSystemParameter = (updated: SystemParameter) => patchState(store, {

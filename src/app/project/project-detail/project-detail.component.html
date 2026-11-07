@@ -34,6 +34,7 @@
             <a class="app-seg-item" [routerLink]="['/projects', project.id, 'stages']" routerLinkActive="active" ariaCurrentWhenActive="page">Stages</a>
             <a class="app-seg-item" [routerLink]="['/projects', project.id, 'timeline']" routerLinkActive="active" ariaCurrentWhenActive="page">Timeline</a>
             <a class="app-seg-item" [routerLink]="['/projects', project.id, 'finance']" routerLinkActive="active" ariaCurrentWhenActive="page">Finance</a>
+            <a class="app-seg-item" [routerLink]="['/projects', project.id, 'events']" routerLinkActive="active" ariaCurrentWhenActive="page">Events</a>
         </nav>
         @switch (view) {
             @case ('overview') {
@@ -151,6 +152,9 @@
             }
             @case ('finance') {
                 <project-financial-detail-shell/>
+            }
+            @case ('events') {
+                <connected-events [projectId]="project.id" [clientId]="project.client?.id" addButton="primary"/>
             }
         }
     </div>

@@ -1,0 +1,59 @@
+@if (calendarStore.connectedEventsLoadFailed()) {
+    <section class="app-card">
+        <div class="app-card-header">
+            <h2 class="app-card-title">Events</h2>
+        </div>
+        <app-empty-state icon="pi pi-exclamation-triangle" title="Couldn't load the events">
+            <p-button label="Try again" severity="secondary" [outlined]="true" (onClick)="reload()"/>
+        </app-empty-state>
+    </section>
+} @else if (calendarStore.connectedEventsLoading()) {
+    <section class="app-card">
+        <div class="app-card-header">
+            <h2 class="app-card-title">Events</h2>
+        </div>
+        <div class="flex flex-col gap-4 px-6 pb-6">
+            <p-skeleton height="3rem"/>
+            <p-skeleton height="3rem"/>
+        </div>
+    </section>
+} @else {
+    <upcoming-events title="Events"
+                     [emptyTitle]="period() === 'upcoming' ? 'No upcoming events' : 'No past events'"
+                     [muted]="period() === 'past'"
+                     [events]="period() === 'upcoming' ? shownUpcomingEvents() : shownPastEvents()"
+                     [totalEvents]="period() === 'upcoming' ? upcomingEvents().length : pastEvents().length"
+                     [clients]="projectId || clientId ? [] : clientStore.clients()"
+                     [projects]="projectId ? [] : projectStore.projects()"
+                     (editEvent)="onEditEvent($event)"
+                     (deleteEvent)="onDeleteEvent($event)">
+        <div eventListActions class="flex flex-wrap items-center gap-3">
+            <div class="app-seg" role="group" aria-label="Period">
+                <button type="button" class="app-seg-item gap-2" [class.active]="period() === 'upcoming'"
+                        [attr.aria-pressed]="period() === 'upcoming'" (click)="period.set('upcoming')">
+                    Upcoming
+                    <span class="text-xs text-gray-500 tabular-nums">{{ upcomingEvents().length }}</span>
+                </button>
+                <button type="button" class="app-seg-item gap-2" [class.active]="period() === 'past'"
+                        [attr.aria-pressed]="period() === 'past'" (click)="period.set('past')">
+                    Past
+                    <span class="text-xs text-gray-500 tabular-nums">{{ pastEvents().length }}</span>
+                </button>
+            </div>
+            @if (addButton === 'primary') {
+                <p-button label="New event" icon="pi pi-plus" (onClick)="onAddEvent()"/>
+            } @else if (addButton === 'outline') {
+                <p-button label="New event" icon="pi pi-plus" severity="secondary" [outlined]="true" (onClick)="onAddEvent()"/>
+            }
+        </div>
+    </upcoming-events>
+}
+
+<add-calendar-event [visible]="dialogVisible"
+                    [event]="selectedEvent"
+                    [clients]="clientStore.clients()"
+                    [projects]="projectStore.projects()"
+                    [fixedClientId]="clientId"
+                    [fixedProjectId]="projectId"
+                    (notify)="onDialogNotify()"
+                    (deleteRequested)="onDeleteEvent($event)"></add-calendar-event>

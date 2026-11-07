@@ -48,7 +48,6 @@ export const ClientStore = signalStore(
         setClientNeedRefresh() {
             patchState(store, {clientNeedsRefresh: true});
         },
-        // Project counts on clients change with every project, so the list reloads each time it is opened
         setClientsNeedRefresh() {
             patchState(store, {clientsNeedRefresh: true});
         },

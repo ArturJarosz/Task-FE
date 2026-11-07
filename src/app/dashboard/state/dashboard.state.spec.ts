@@ -1,3 +1,5 @@
+import {PeriodType} from '../../generated/models/period-type';
+import {FinancialDataStore} from '../../finance/project-financial-summary/state/financial-data.state';
 import {TestBed} from '@angular/core/testing';
 import {HttpTestingController} from '@angular/common/http/testing';
 
@@ -101,5 +103,40 @@ describe('DashboardStore', () => {
         retry.flush(retry.request.body);
 
         expect(store.layout()).toEqual(saved);
+    });
+
+    describe('report', () => {
+        const isReportRequest = (request: {url: string}) => request.url.endsWith('/financial-data');
+
+        function loadReport(): void {
+            store.loadReport({});
+            httpTesting.expectOne(isReportRequest).flush({periods: []});
+        }
+
+        it('should not call the backend again while nothing changed', () => {
+            loadReport();
+
+            store.loadReport({});
+
+            httpTesting.expectNone(isReportRequest);
+            expect(store.loading()).toBeFalse();
+        });
+
+        it('should load again when the period changes or money changes', () => {
+            loadReport();
+            store.setPeriodType(PeriodType.YEARLY);
+            loadReport();
+
+            TestBed.inject(FinancialDataStore).setProjectFinancialDataNeedsUpdate();
+            loadReport();
+        });
+
+        it('should load again after a failed load', () => {
+            store.loadReport({});
+            httpTesting.expectOne(isReportRequest).flush('', {status: 500, statusText: 'Server error'});
+
+            loadReport();
+            expect(store.loadFailed()).toBeFalse();
+        });
     });
 });

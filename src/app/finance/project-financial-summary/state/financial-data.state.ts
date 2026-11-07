@@ -1,6 +1,8 @@
 import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {TotalProjectFinancialSummary} from "../../../generated/models/total-project-financial-summary";
 import {FinancialRestService} from "../rest/financial-rest.service";
+import {FinancialReportStore} from "../../../financial-report/state/financial-report.state";
+import {DashboardStore} from "../../../dashboard/state/dashboard.state";
 import {inject} from "@angular/core";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
 import {catchError, EMPTY, of, pipe, switchMap, tap} from "rxjs";
@@ -20,15 +22,23 @@ export const initialState: FinancialDataState = {
 export const FinancialDataStore = signalStore(
     {providedIn: 'root'},
     withState(initialState),
-    withMethods((store, financialRestService = inject(FinancialRestService)) => ({
+    withMethods((store, financialRestService = inject(FinancialRestService),
+                 financialReportStore = inject(FinancialReportStore), dashboardStore = inject(DashboardStore)) => ({
         setProjectId(projectId: number) {
             if (store.projectId() != projectId) {
-                this.setProjectFinancialDataNeedsUpdate();
+                this.setProjectSummaryNeedsRefresh();
             }
             patchState(store, {projectId: projectId})
         },
-        setProjectFinancialDataNeedsUpdate() {
+        // Another project is shown: its summary is needed, but nothing changed
+        setProjectSummaryNeedsRefresh() {
             patchState(store, {projectFinancialSummaryNeedsRefresh: true})
+        },
+        // Money changed: the project's summary and both financial reports no longer match it
+        setProjectFinancialDataNeedsUpdate() {
+            this.setProjectSummaryNeedsRefresh();
+            financialReportStore.setReportNeedsRefresh();
+            dashboardStore.setReportNeedsRefresh();
         },
         loadProjectFinancialSummary: rxMethod<{}>(
             pipe(

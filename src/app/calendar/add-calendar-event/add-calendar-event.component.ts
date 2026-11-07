@@ -2,6 +2,9 @@ import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {CalendarEventForm, CalendarEventFormProvider} from "../form/calendar-event-form-provider";
 import {CalendarEvent} from "../../generated/models/calendar-event";
+import {Client} from "../../generated/models/client";
+import {Project} from "../../generated/models/project";
+import {clientDisplayName} from "../../client/model/client";
 import {CalendarStore} from "../state";
 import {EventSelection} from "../model/calendar.model";
 import {toDateIfExists, toLocalDateTimeString} from "../../shared/utils/date-utils";
@@ -9,6 +12,7 @@ import {DialogModule} from "primeng/dialog";
 import {InputTextModule} from "primeng/inputtext";
 import {Textarea} from "primeng/textarea";
 import {DatePickerModule} from "primeng/datepicker";
+import {SelectModule} from "primeng/select";
 import {ToggleSwitchModule} from "primeng/toggleswitch";
 import {ButtonModule} from "primeng/button";
 import {showErrors} from "../../shared/utils/form-utils";
@@ -18,7 +22,8 @@ import {showErrors} from "../../shared/utils/form-utils";
     templateUrl: './add-calendar-event.component.html',
     styleUrl: './add-calendar-event.component.less',
     standalone: true,
-    imports: [DialogModule, InputTextModule, Textarea, DatePickerModule, ToggleSwitchModule, ButtonModule, ReactiveFormsModule]
+    imports: [DialogModule, InputTextModule, Textarea, DatePickerModule, SelectModule, ToggleSwitchModule, ButtonModule,
+        ReactiveFormsModule]
 })
 export class AddCalendarEventComponent implements OnChanges {
     @Input()
@@ -27,6 +32,15 @@ export class AddCalendarEventComponent implements OnChanges {
     event: CalendarEvent | null = null;
     @Input()
     prefillSelection: EventSelection | null = null;
+    @Input()
+    clients: Client[] = [];
+    @Input()
+    projects: Project[] = [];
+    // A new event opened from a client's or project's page belongs to it, so these are preselected and locked
+    @Input()
+    fixedClientId?: number;
+    @Input()
+    fixedProjectId?: number;
 
     @Output()
     notify: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -36,6 +50,9 @@ export class AddCalendarEventComponent implements OnChanges {
     readonly calendarStore = inject(CalendarStore);
 
     calendarEventForm!: FormGroup<CalendarEventForm>;
+    clientOptions: {id?: number, name: string}[] = [];
+    // Only projects of the selected client
+    projectOptions: Project[] = [];
 
     constructor(private formProvider: CalendarEventFormProvider) {
         this.calendarEventForm = this.formProvider.getCalendarEventFormGroup();
@@ -49,6 +66,31 @@ export class AddCalendarEventComponent implements OnChanges {
         if (changes['visible'] && this.visible) {
             this.resetFields();
         }
+        if (changes['clients']) {
+            this.clientOptions = this.clients.map(client => ({id: client.id, name: clientDisplayName(client)}));
+        }
+        if (changes['projects']) {
+            this.updateProjectOptions();
+        }
+    }
+
+    // A project stays selected only when it belongs to the new client
+    onClientChange(): void {
+        const clientId = this.calendarEventForm.controls.clientId.value;
+        const project = this.projects.find(project => project.id === this.calendarEventForm.controls.projectId.value);
+        if (project && project.client?.id !== clientId) {
+            this.calendarEventForm.controls.projectId.setValue(null);
+        }
+        this.updateProjectOptions();
+    }
+
+    // A project has one client, so selecting the project selects its client too
+    onProjectChange(): void {
+        const project = this.projects.find(project => project.id === this.calendarEventForm.controls.projectId.value);
+        if (project?.client?.id) {
+            this.calendarEventForm.controls.clientId.setValue(project.client.id);
+        }
+        this.updateProjectOptions();
     }
 
     onClose(): void {
@@ -109,6 +151,8 @@ export class AddCalendarEventComponent implements OnChanges {
             startDateTime: toLocalDateTimeString(start),
             endDateTime: toLocalDateTimeString(end),
             allDay: allDay,
+            clientId: this.calendarEventForm.controls.clientId.value ?? undefined,
+            projectId: this.calendarEventForm.controls.projectId.value ?? undefined,
         };
     }
 
@@ -120,6 +164,8 @@ export class AddCalendarEventComponent implements OnChanges {
                 startDateTime: toDateIfExists(this.event.startDateTime) ?? new Date(),
                 endDateTime: toDateIfExists(this.event.endDateTime) ?? new Date(),
                 allDay: this.event.allDay,
+                clientId: this.event.clientId,
+                projectId: this.event.projectId,
             });
         } else if (this.prefillSelection) {
             this.calendarEventForm = this.formProvider.getCalendarEventFormGroup({
@@ -128,7 +174,24 @@ export class AddCalendarEventComponent implements OnChanges {
                 allDay: this.prefillSelection.allDay,
             });
         } else {
-            this.calendarEventForm = this.formProvider.getCalendarEventFormGroup();
+            this.calendarEventForm = this.formProvider.getCalendarEventFormGroup({
+                clientId: this.fixedClientId,
+                projectId: this.fixedProjectId,
+            });
+            if (this.fixedClientId) {
+                this.calendarEventForm.controls.clientId.disable();
+            }
+            if (this.fixedProjectId) {
+                this.calendarEventForm.controls.projectId.disable();
+            }
         }
+        this.updateProjectOptions();
+    }
+
+    private updateProjectOptions(): void {
+        const clientId = this.calendarEventForm.controls.clientId.value;
+        this.projectOptions = clientId
+            ? this.projects.filter(project => project.client?.id === clientId)
+            : this.projects;
     }
 }

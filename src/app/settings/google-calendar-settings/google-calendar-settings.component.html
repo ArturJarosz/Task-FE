@@ -138,7 +138,10 @@
                         @if (form.controls.calendarName.invalid) {
                             Enter a name of up to 255 characters
                         } @else {
-                            Used when the app creates its calendar in Google; renaming later doesn't rename it
+                            The app's calendar in Google has this name; changing it renames the calendar there
+                            @if (parameters?.calendarName?.defaultValue; as defaultValue) {
+                                <span class="block">Default value: {{ defaultValue }}</span>
+                            }
                         }
                     </p>
                 </div>
@@ -156,6 +159,9 @@
                             Enter a name of up to 255 characters
                         } @else {
                             Sent to Google with every request, so it shows in the Cloud project's logs
+                            @if (parameters?.applicationName?.defaultValue; as defaultValue) {
+                                <span class="block">Default value: {{ defaultValue }}</span>
+                            }
                         }
                     </p>
                 </div>

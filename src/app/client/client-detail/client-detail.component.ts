@@ -1,3 +1,4 @@
+import {ConnectedEventsComponent} from "../../calendar/connected-events/connected-events.component";
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {Client, ClientType, ConfigurationEntry, Contact} from "../../generated/models";
 import {EntityProjectsSummary} from "../../generated/models/entity-projects-summary";
@@ -21,7 +22,7 @@ import {showErrors} from "../../shared/utils/form-utils";
     styleUrls: ['./client-detail.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [PageHeaderComponent, FieldComponent, EntityProjectsComponent, ClientFormFieldsComponent, ButtonModule,
+    imports: [ConnectedEventsComponent, PageHeaderComponent, FieldComponent, EntityProjectsComponent, ClientFormFieldsComponent, ButtonModule,
         DialogModule, MenuModule, TooltipModule, ReactiveFormsModule, CurrencyPipe, NotSetComponent]
 })
 export class ClientDetailComponent implements OnChanges {

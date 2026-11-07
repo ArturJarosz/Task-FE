@@ -106,6 +106,8 @@ export const StageStore = signalStore(
                     return stageRestService.removeStage(store.projectId()!, store.stageId()!)
                         .pipe(
                             tap(() => {
+                                // Its installment is removed with it
+                                financialDataStore.setProjectFinancialDataNeedsUpdate();
                                 projectStore.setProjectNeedsRefresh();
                                 projectStore.setProjectsNeedRefresh();
                                 messageService.add({

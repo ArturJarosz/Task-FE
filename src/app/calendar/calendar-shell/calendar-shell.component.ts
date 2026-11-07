@@ -1,33 +1,37 @@
-import {Component, effect, inject, OnInit, Signal} from '@angular/core';
+import {Component, effect, inject, Signal} from '@angular/core';
 import {CalendarStore} from "../state";
 import {CalendarEvent} from "../../generated/models/calendar-event";
 import {CalendarViewComponent} from "../calendar-view/calendar-view.component";
-import {UpcomingEventsComponent} from "../upcoming-events/upcoming-events.component";
+import {ConnectedEventsComponent} from "../connected-events/connected-events.component";
 import {AddCalendarEventComponent} from "../add-calendar-event/add-calendar-event.component";
 import {ConfirmationService} from "primeng/api";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ButtonModule} from "primeng/button";
 import {DateRange, EventSelection} from "../model/calendar.model";
 import {PageCrumb, PageHeaderComponent} from "../../shared";
+import {ClientStore} from "../../client/state/client.state";
+import {ProjectStore} from "../../project/state/project.state";
+import {Client} from "../../generated/models/client";
+import {Project} from "../../generated/models/project";
 
 @Component({
     selector: 'calendar-shell',
     templateUrl: './calendar-shell.component.html',
     styleUrl: './calendar-shell.component.less',
     standalone: true,
-    imports: [CalendarViewComponent, UpcomingEventsComponent, AddCalendarEventComponent, ConfirmDialogModule, ButtonModule, PageHeaderComponent]
+    imports: [CalendarViewComponent, ConnectedEventsComponent, AddCalendarEventComponent, ConfirmDialogModule, ButtonModule, PageHeaderComponent]
 })
-export class CalendarShellComponent implements OnInit {
+export class CalendarShellComponent {
 
     readonly calendarStore = inject(CalendarStore);
+    readonly clientStore = inject(ClientStore);
+    readonly projectStore = inject(ProjectStore);
     readonly crumbs: PageCrumb[] = [{label: 'Home', route: ['/home']}, {label: 'Calendar'}];
 
     $events: Signal<CalendarEvent[]> = this.calendarStore.events;
-    $upcomingEvents: Signal<CalendarEvent[]> = this.calendarStore.upcomingEvents;
-    $pastEvents: Signal<CalendarEvent[]> = this.calendarStore.pastEvents;
+    $clients: Signal<Client[]> = this.clientStore.clients;
+    $projects: Signal<Project[]> = this.projectStore.projects;
     $eventsNeedRefresh: Signal<boolean> = this.calendarStore.eventsNeedRefresh;
-    $upcomingEventsNeedRefresh: Signal<boolean> = this.calendarStore.upcomingEventsNeedRefresh;
-    $pastEventsNeedRefresh: Signal<boolean> = this.calendarStore.pastEventsNeedRefresh;
 
     showAddEventComponent = false;
     selectedEvent: CalendarEvent | null = null;
@@ -39,21 +43,6 @@ export class CalendarShellComponent implements OnInit {
                 this.calendarStore.loadEvents({});
             }
         });
-        effect(() => {
-            if (this.$upcomingEventsNeedRefresh()) {
-                this.calendarStore.loadUpcomingEvents({});
-            }
-        });
-        effect(() => {
-            if (this.$pastEventsNeedRefresh()) {
-                this.calendarStore.loadPastEvents({});
-            }
-        });
-    }
-
-    ngOnInit(): void {
-        this.calendarStore.loadUpcomingEvents({});
-        this.calendarStore.loadPastEvents({});
     }
 
     onRangeChange(range: DateRange): void {
@@ -79,10 +68,6 @@ export class CalendarShellComponent implements OnInit {
         this.selectedEvent = null;
         this.calendarStore.setSelectedEvent(null);
         this.showAddEventComponent = true;
-    }
-
-    onEditEvent(event: CalendarEvent): void {
-        this.openEditDialog(event);
     }
 
     onDialogNotify(): void {

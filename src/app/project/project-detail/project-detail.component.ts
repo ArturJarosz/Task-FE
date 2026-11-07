@@ -1,3 +1,4 @@
+import {ConnectedEventsComponent} from "../../calendar/connected-events/connected-events.component";
 import {
     ChangeDetectionStrategy,
     Component,
@@ -48,7 +49,7 @@ import {RouterLink, RouterLinkActive} from "@angular/router";
 import {TooltipModule} from "primeng/tooltip";
 import {MenuItem} from "primeng/api";
 
-export type ProjectDetailView = 'overview' | 'stages' | 'timeline' | 'finance';
+export type ProjectDetailView = 'overview' | 'stages' | 'timeline' | 'finance' | 'events';
 
 export interface ProjectPerson {
     initials: string;
@@ -69,7 +70,7 @@ const GAUGE_ARC_LENGTH = Math.PI * 80;
     styleUrls: ['./project-detail.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [LoadErrorComponent, FieldComponent, PageHeaderComponent, StageListShellComponent, ProjectTimelineComponent, ProjectTimeSummaryComponent, ProjectFinancialDetailShellComponent, SelectModule, DatePickerModule, ButtonModule, InputTextModule, Textarea, TagModule, DialogModule, MenuModule, SkeletonModule, ReactiveFormsModule, RouterLink, RouterLinkActive, CurrencyPipe, DatePipe, TooltipModule, InstallmentPaymentFieldsComponent]
+    imports: [ConnectedEventsComponent, LoadErrorComponent, FieldComponent, PageHeaderComponent, StageListShellComponent, ProjectTimelineComponent, ProjectTimeSummaryComponent, ProjectFinancialDetailShellComponent, SelectModule, DatePickerModule, ButtonModule, InputTextModule, Textarea, TagModule, DialogModule, MenuModule, SkeletonModule, ReactiveFormsModule, RouterLink, RouterLinkActive, CurrencyPipe, DatePipe, TooltipModule, InstallmentPaymentFieldsComponent]
 })
 export class ProjectDetailComponent implements OnChanges {
     @Input()

@@ -18,6 +18,7 @@ const ANNUAL_RANGE_YEARS = 5;
 
 export interface DashboardState {
     report: FinancialReport | null;
+    reportNeedsRefresh: boolean;
     periodType: PeriodType;
     loading: boolean;
     loadFailed: boolean;
@@ -28,6 +29,7 @@ export interface DashboardState {
 
 export const initialState: DashboardState = {
     report: null,
+    reportNeedsRefresh: true,
     periodType: PeriodType.MONTHLY,
     loading: false,
     loadFailed: false,
@@ -36,7 +38,7 @@ export const initialState: DashboardState = {
 }
 
 // Kept apart from FinancialReportStore so the dashboard never changes the report page's filters.
-// The report is reloaded every time the dashboard opens, because any finance change elsewhere affects it.
+// Its report is cached like the report page's and marked stale by the same changes (FinancialDataStore, tax rates).
 export const DashboardStore = signalStore(
     {providedIn: 'root'},
     withState(initialState),
@@ -53,12 +55,18 @@ export const DashboardStore = signalStore(
                  userRestService = inject(UserRestService), userStore = inject(UserStore),
                  messageService = inject(MessageService)) => ({
         setPeriodType(periodType: PeriodType) {
-            patchState(store, {periodType});
+            patchState(store, {periodType, reportNeedsRefresh: true});
+        },
+        setReportNeedsRefresh() {
+            patchState(store, {reportNeedsRefresh: true});
         },
         loadReport: rxMethod<{}>(
             pipe(
-                tap(() => patchState(store, {loading: true, loadFailed: false})),
+                tap(() => patchState(store, {loading: store.reportNeedsRefresh(), loadFailed: false})),
                 switchMap(() => {
+                    if (!store.reportNeedsRefresh()) {
+                        return EMPTY;
+                    }
                     const today = new Date();
                     const firstYear = store.periodType() === PeriodType.YEARLY
                         ? today.getFullYear() - ANNUAL_RANGE_YEARS + 1
@@ -66,7 +74,7 @@ export const DashboardStore = signalStore(
                     return financialReportRestService.getFinancialReport(toTimeZoneString(new Date(firstYear, 0, 1))!,
                         toTimeZoneString(today)!, store.periodType())
                         .pipe(
-                            tap(report => patchState(store, {report, loading: false})),
+                            tap(report => patchState(store, {report, reportNeedsRefresh: false, loading: false})),
                             // The REST service already shows the error toast; keep the stream alive for the next load
                             catchError(() => {
                                 patchState(store, {loading: false, loadFailed: true});
