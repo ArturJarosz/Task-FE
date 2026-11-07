@@ -33,6 +33,18 @@
         @if (calendarEventForm.errors?.['endBeforeStart']) {
             <small class="sm:col-span-2 -mt-3 text-xs text-error-600">End must be after the start</small>
         }
+        <div>
+            <label for="eventClient" class="app-form-label">Client</label>
+            <p-select inputId="eventClient" formControlName="clientId" [options]="clientOptions" optionLabel="name"
+                      optionValue="id" [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a client"
+                      appendTo="body" [fluid]="true" (onChange)="onClientChange()"/>
+        </div>
+        <div>
+            <label for="eventProject" class="app-form-label">Project</label>
+            <p-select inputId="eventProject" formControlName="projectId" [options]="projectOptions" optionLabel="name"
+                      optionValue="id" [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a project"
+                      appendTo="body" [fluid]="true" (onChange)="onProjectChange()"/>
+        </div>
         <div class="sm:col-span-2">
             <label for="description" class="app-form-label">Description</label>
             <textarea id="description" formControlName="description" pTextarea rows="3" [autoResize]="true" class="w-full"></textarea>

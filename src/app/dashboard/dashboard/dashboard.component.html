@@ -263,7 +263,7 @@
                     <div class="app-card-header">
                         <div>
                             <h2 class="app-card-title">Upcoming events</h2>
-                            <p class="app-card-subtitle m-0">Next 90 days</p>
+                            <p class="app-card-subtitle m-0">{{ eventCountLabel(nextEvents.length, upcomingEvents.length) }}</p>
                         </div>
                         <p-button label="See all" severity="secondary" [outlined]="true" routerLink="/calendar"/>
                     </div>

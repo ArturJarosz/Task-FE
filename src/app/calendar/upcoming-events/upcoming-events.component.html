@@ -2,28 +2,54 @@
     <div class="app-card-header">
         <div>
             <h2 class="app-card-title">{{ title }}</h2>
-            <p class="app-card-subtitle m-0">{{ events.length }} {{ events.length === 1 ? 'event' : 'events' }}</p>
+            <p class="app-card-subtitle m-0">{{ countLabel }}</p>
         </div>
+        <ng-content select="[eventListActions]"></ng-content>
     </div>
     @if (events.length === 0) {
         <app-empty-state icon="pi pi-calendar" [title]="emptyTitle" [text]="emptyText"/>
     } @else {
-        <ul class="list-none m-0 px-6 pb-4">
+        <!-- Wide lists (project and client pages) keep each row short; the calendar's narrow side column stacks it -->
+        <ul class="@container list-none m-0 px-6 pb-4">
             @for (event of events; track event.id) {
-                <li class="flex items-start gap-3 py-3 border-b border-gray-100 last:border-b-0">
-                    <div class="flex flex-col items-center justify-center shrink-0 w-12 h-12 rounded-xl"
-                         [class]="muted ? 'bg-gray-100 text-gray-500' : 'bg-brand-50 text-brand-600'">
-                        <span class="text-base leading-5 font-semibold">{{ eventDay(event.startDateTime) }}</span>
-                        <span class="text-[12px] leading-4 uppercase">{{ eventMonth(event.startDateTime) }}</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="font-medium text-gray-800 truncate">{{ event.name }}</div>
-                        <div class="text-xs text-gray-500">{{ eventWhen(event) }}</div>
+                <li class="flex items-start @lg:items-center gap-3 py-3 border-b border-gray-100 last:border-b-0">
+                    <div class="flex flex-col items-center gap-1.5 shrink-0 w-[4.5rem] @lg:w-auto">
+                        <div class="flex flex-col items-center justify-center shrink-0 w-12 h-12 rounded-xl"
+                             [class]="muted ? 'bg-gray-100 text-gray-500' : 'bg-brand-50 text-brand-600'">
+                            <span class="text-base leading-5 font-semibold">{{ eventDay(event.startDateTime) }}</span>
+                            <span class="text-[12px] leading-4 uppercase">{{ eventMonth(event.startDateTime) }}</span>
+                        </div>
                         @if (event.syncStatus) {
-                            <p-tag class="mt-1.5 inline-block" [value]="getSyncLabel(event.syncStatus)"
+                            <p-tag class="@lg:hidden" [value]="getSyncLabel(event.syncStatus)"
                                    [severity]="statusSeverity(event.syncStatus)"/>
                         }
                     </div>
+                    <div class="flex-1 min-w-0">
+                        <button type="button" class="block max-w-full p-0 border-0 bg-transparent text-left font-medium text-gray-800 truncate cursor-pointer hover:text-brand-600"
+                                (click)="editEvent.emit(event)">{{ event.name }}</button>
+                        <div class="flex flex-wrap gap-x-4 text-xs text-gray-500">
+                            <span class="inline-flex items-center gap-1.5 max-w-full min-w-0">
+                                <i class="pi pi-clock text-xs" aria-hidden="true"></i>
+                                <span class="truncate">{{ eventTime(event) }}</span>
+                            </span>
+                            @if (clientName(event); as client) {
+                                <span class="inline-flex items-center gap-1.5 max-w-full min-w-0">
+                                    <i class="pi pi-user text-xs" aria-hidden="true"></i>
+                                    <span class="truncate">{{ client }}</span>
+                                </span>
+                            }
+                            @if (projectName(event); as project) {
+                                <span class="inline-flex items-center gap-1.5 max-w-full min-w-0">
+                                    <i class="pi pi-folder text-xs" aria-hidden="true"></i>
+                                    <span class="truncate">{{ project }}</span>
+                                </span>
+                            }
+                        </div>
+                    </div>
+                    @if (event.syncStatus) {
+                        <p-tag class="hidden @lg:inline-block shrink-0" [value]="getSyncLabel(event.syncStatus)"
+                               [severity]="statusSeverity(event.syncStatus)"/>
+                    }
                     <p-button icon="pi pi-ellipsis-h" [text]="true" [rounded]="true" severity="secondary"
                               pTooltip="Event actions" tooltipPosition="left" ariaLabel="Event actions"
                               (onClick)="openRowMenu($event, event, rowMenu)"/>

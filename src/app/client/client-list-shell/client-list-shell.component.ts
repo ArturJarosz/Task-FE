@@ -105,7 +105,6 @@ export class ClientListShellComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.clientStore.setClientsNeedRefresh();
         this.clientStore.loadClients({});
         this.configurationStore.loadConfiguration({});
     }

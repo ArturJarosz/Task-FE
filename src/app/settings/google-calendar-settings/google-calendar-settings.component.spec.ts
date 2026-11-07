@@ -121,6 +121,25 @@ describe('GoogleCalendarSettingsComponent', () => {
         expect(component.form.controls.applicationName.enabled).toBeTrue();
     });
 
+    it('should show the default calendar and application names from the configuration', () => {
+        let parameters = prepareParameters(false, true);
+        setParameters({
+            ...parameters,
+            calendarName: {...parameters.calendarName!, value: 'Office', defaultValue: 'Task'},
+            applicationName: {...parameters.applicationName!, defaultValue: 'Task-test'},
+        });
+
+        let element = fixture.nativeElement;
+        expect(element.querySelector('#calendarNameHint').textContent).toContain('Default value: Task');
+        expect(element.querySelector('#applicationNameHint').textContent).toContain('Default value: Task-test');
+    });
+
+    it('should not show a default value when the parameter has none', () => {
+        setParameters(prepareParameters(false, true));
+
+        expect(fixture.nativeElement.querySelector('#calendarNameHint').textContent).not.toContain('Default value');
+    });
+
     it('should warn when a new key is for another service account', () => {
         setParameters(prepareParameters(true, true));
         fixture.componentRef.setInput('connection', {status: GoogleCalendarConnectionStatus.CONNECTED,

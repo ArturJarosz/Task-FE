@@ -1,5 +1,9 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {CalendarEvent} from "../../generated/models/calendar-event";
+import {Client} from "../../generated/models/client";
+import {Project} from "../../generated/models/project";
+import {clientDisplayName} from "../../client/model/client";
+import {SYNC_LABELS} from "../model/calendar.model";
 import {CalendarEventSyncStatus} from "../../generated/models/calendar-event-sync-status";
 import {TagModule} from "primeng/tag";
 import {ButtonModule} from "primeng/button";
@@ -8,13 +12,7 @@ import {TooltipModule} from "primeng/tooltip";
 import {MenuItem} from "primeng/api";
 import {EmptyStateComponent} from "../../shared";
 import {statusSeverity} from "../../shared/status-severity";
-import {eventDay, eventMonth, eventWhen} from "../../shared/utils/event-date-utils";
-
-const SYNC_LABELS: Record<CalendarEventSyncStatus, string> = {
-    [CalendarEventSyncStatus.SYNCED]: 'Synced',
-    [CalendarEventSyncStatus.PENDING]: 'Sync pending',
-    [CalendarEventSyncStatus.DELETE_PENDING]: 'Removing',
-};
+import {eventCountLabel, eventDay, eventMonth, eventTime} from "../../shared/utils/event-date-utils";
 
 @Component({
     selector: 'upcoming-events',
@@ -36,6 +34,13 @@ export class UpcomingEventsComponent {
     // Grey date tiles instead of brand ones, for events that already happened
     @Input()
     muted = false;
+    // Events there are before the list's limit, when it has one
+    @Input()
+    totalEvents?: number;
+    @Input()
+    clients: Client[] = [];
+    @Input()
+    projects: Project[] = [];
 
     @Output()
     editEvent: EventEmitter<CalendarEvent> = new EventEmitter<CalendarEvent>();
@@ -45,8 +50,20 @@ export class UpcomingEventsComponent {
     protected readonly statusSeverity = statusSeverity;
     protected readonly eventDay = eventDay;
     protected readonly eventMonth = eventMonth;
-    protected readonly eventWhen = eventWhen;
+    protected readonly eventTime = eventTime;
     rowMenuItems: MenuItem[] = [];
+
+    get countLabel(): string {
+        return eventCountLabel(this.events.length, this.totalEvents ?? this.events.length);
+    }
+
+    clientName(event: CalendarEvent): string {
+        return clientDisplayName(this.clients.find(client => client.id === event.clientId));
+    }
+
+    projectName(event: CalendarEvent): string {
+        return this.projects.find(project => project.id === event.projectId)?.name ?? '';
+    }
 
     getSyncLabel(status?: CalendarEventSyncStatus): string {
         return status ? SYNC_LABELS[status] : '';

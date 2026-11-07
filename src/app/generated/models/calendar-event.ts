@@ -4,6 +4,7 @@
 import { CalendarEventSyncStatus } from '../models/calendar-event-sync-status';
 export interface CalendarEvent {
   allDay?: boolean;
+  clientId?: number;
   createdDateTime?: string;
   description?: string;
   endDateTime?: string;
@@ -11,6 +12,7 @@ export interface CalendarEvent {
   id?: number;
   lastModifiedDateTime?: string;
   name?: string;
+  projectId?: number;
   startDateTime?: string;
   syncStatus?: CalendarEventSyncStatus;
 }

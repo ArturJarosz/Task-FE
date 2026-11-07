@@ -12,6 +12,7 @@ export interface FinancialReportState {
     startDate: Date;
     endDate: Date;
     periodType: PeriodType;
+    reportNeedsRefresh: boolean;
     loading: boolean;
     loadFailed: boolean;
 }
@@ -23,6 +24,7 @@ export const initialState: FinancialReportState = {
     startDate: new Date(currentYear, 0, 1),
     endDate: new Date(),
     periodType: PeriodType.MONTHLY,
+    reportNeedsRefresh: true,
     loading: false,
     loadFailed: false,
 }
@@ -32,15 +34,21 @@ export const FinancialReportStore = signalStore(
     withState(initialState),
     withMethods((store, financialReportRestService = inject(FinancialReportRestService)) => ({
         setDateRange(startDate: Date, endDate: Date) {
-            patchState(store, {startDate, endDate});
+            patchState(store, {startDate, endDate, reportNeedsRefresh: true});
         },
         setPeriodType(periodType: PeriodType) {
-            patchState(store, {periodType});
+            patchState(store, {periodType, reportNeedsRefresh: true});
+        },
+        setReportNeedsRefresh() {
+            patchState(store, {reportNeedsRefresh: true});
         },
         loadReport: rxMethod<{}>(
             pipe(
-                tap(() => patchState(store, {loading: true, loadFailed: false})),
+                tap(() => patchState(store, {loading: store.reportNeedsRefresh(), loadFailed: false})),
                 switchMap(() => {
+                    if (!store.reportNeedsRefresh()) {
+                        return EMPTY;
+                    }
                     const startDate = toTimeZoneString(store.startDate())!;
                     const endDate = toTimeZoneString(store.endDate())!;
                     return financialReportRestService.getFinancialReport(startDate, endDate, store.periodType())
@@ -48,6 +56,7 @@ export const FinancialReportStore = signalStore(
                             tap(financialReport => {
                                 patchState(store, {
                                     financialReport,
+                                    reportNeedsRefresh: false,
                                     loading: false
                                 });
                             }),

@@ -45,7 +45,6 @@ export const ArchitectStore = signalStore(
     withState(initialState),
     withMethods(
         (store, architectRestService = inject(ArchitectRestService), messageService = inject(MessageService)) => ({
-            // Project counts on architects change with every project, so the list reloads each time it is opened
             setArchitectsNeedRefresh() {
                 patchState(store, {architectsNeedRefresh: true});
             },

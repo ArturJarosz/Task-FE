@@ -1,3 +1,6 @@
+import {FinancialReportStore} from "../../financial-report/state/financial-report.state";
+import {DashboardStore} from "../../dashboard/state/dashboard.state";
+import {isRateParameter} from "../system-parameter-format";
 import {ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked} from '@angular/core';
 import {SelectModule} from "primeng/select";
 import {FormsModule} from "@angular/forms";
@@ -69,6 +72,8 @@ export class SettingsShellComponent {
     readonly systemParameterStore = inject(SystemParameterStore);
     readonly googleCalendarSettingsStore = inject(GoogleCalendarSettingsStore);
     readonly architectStore = inject(ArchitectStore);
+    readonly financialReportStore = inject(FinancialReportStore);
+    readonly dashboardStore = inject(DashboardStore);
     readonly userStore = inject(UserStore);
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
@@ -180,6 +185,11 @@ export class SettingsShellComponent {
 
     onSave(systemParameter: SystemParameter): void {
         this.systemParameterStore.updateSystemParameter({systemParameter: systemParameter});
+        // The report's net values and taxes are calculated with the tax rates
+        if (isRateParameter(systemParameter.name)) {
+            this.financialReportStore.setReportNeedsRefresh();
+            this.dashboardStore.setReportNeedsRefresh();
+        }
         this.$editedParameter.set(null);
     }
 

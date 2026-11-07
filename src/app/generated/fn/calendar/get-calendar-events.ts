@@ -20,6 +20,16 @@ export interface GetCalendarEvents$Params {
  * End date of the displayed calendar range
  */
   endDate?: string;
+
+/**
+ * Only events connected with this client or one of its projects
+ */
+  clientId?: number;
+
+/**
+ * Only events connected with this project
+ */
+  projectId?: number;
 }
 
 export function getCalendarEvents(http: HttpClient, rootUrl: string, params?: GetCalendarEvents$Params, context?: HttpContext): Observable<StrictHttpResponse<CalendarEvents>> {
@@ -27,6 +37,8 @@ export function getCalendarEvents(http: HttpClient, rootUrl: string, params?: Ge
   if (params) {
     rb.query('startDate', params.startDate, {});
     rb.query('endDate', params.endDate, {});
+    rb.query('clientId', params.clientId, {});
+    rb.query('projectId', params.projectId, {});
   }
 
   return http.request(

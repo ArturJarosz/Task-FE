@@ -1,3 +1,4 @@
+import {SystemParameterStore} from "../../settings/state/system-parameter.state";
 import {ChangeDetectionStrategy, Component, effect, inject, OnDestroy, OnInit, Signal} from '@angular/core';
 import {DashboardStore} from "../state/dashboard.state";
 import {ProjectStore} from "../../project/state";
@@ -19,6 +20,7 @@ export class DashboardShellComponent implements OnInit, OnDestroy {
     readonly dashboardStore = inject(DashboardStore);
     readonly projectStore = inject(ProjectStore);
     readonly calendarStore = inject(CalendarStore);
+    readonly systemParameterStore = inject(SystemParameterStore);
     readonly configurationStore = inject(ConfigurationStore);
 
     $report: Signal<FinancialReport | null> = this.dashboardStore.report;

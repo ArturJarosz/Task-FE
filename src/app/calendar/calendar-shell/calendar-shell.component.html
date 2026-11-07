@@ -1,6 +1,6 @@
 <app-page-header title="Calendar" [crumbs]="crumbs"/>
 
-<div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_var(--spacing-gutter)/4)_minmax(0,1fr)] gap-gutter items-start">
+<div class="flex flex-col gap-gutter">
     <section class="app-card min-w-0">
         <div class="app-card-header">
             <div>
@@ -11,30 +11,22 @@
         </div>
         <div class="px-6 pb-6">
             <calendar-view [events]="$events()"
+                           [clients]="$clients()"
+                           [projects]="$projects()"
                            (rangeChange)="onRangeChange($event)"
                            (slotSelected)="onSlotSelected($event)"
                            (eventSelected)="onEventSelected($event)"></calendar-view>
         </div>
     </section>
 
-    <div class="flex flex-col gap-gutter min-w-0">
-        <upcoming-events [events]="$upcomingEvents()"
-                         (editEvent)="onEditEvent($event)"
-                         (deleteEvent)="onDeleteEvent($event)"></upcoming-events>
-
-        <upcoming-events title="Past events"
-                         emptyTitle="No past events"
-                         emptyText="Events from the last 90 days show up here."
-                         [muted]="true"
-                         [events]="$pastEvents()"
-                         (editEvent)="onEditEvent($event)"
-                         (deleteEvent)="onDeleteEvent($event)"></upcoming-events>
-    </div>
+    <connected-events addButton="none"/>
 </div>
 
 <add-calendar-event [visible]="showAddEventComponent"
                     [event]="selectedEvent"
                     [prefillSelection]="prefillSelection"
+                    [clients]="$clients()"
+                    [projects]="$projects()"
                     (notify)="onDialogNotify()"
                     (deleteRequested)="onDeleteEvent($event)"></add-calendar-event>
 <p-confirmdialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>

@@ -38,6 +38,8 @@ export const ContractStore = signalStore(
                             .pipe(
                                 tap(savedContract => {
                                     projectStore.setProjectNeedsRefresh();
+                                    // The list shows the contract's status and value too
+                                    projectStore.setProjectsNeedRefresh();
                                     // The rates per hour divide the contract value and the net value
                                     timeSummaryStore.setTimeSummaryNeedsRefresh();
                                     messageService.add({

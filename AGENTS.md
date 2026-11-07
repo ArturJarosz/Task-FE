@@ -115,6 +115,12 @@ export const FeatureStore = signalStore(
 Key patterns:
 
 - `xxxNeedsRefresh` flags control when data is fetched
+- A store whose list shows data owned by another store is marked stale by that store: `ProjectStore.setProjectsNeedRefresh()`
+  also marks the client and architect lists, which show project counts and values. Pages call `loadX()` on open and
+  never set the flag themselves, so an unchanged list comes from the store
+- `FinancialDataStore.setProjectFinancialDataNeedsUpdate()` means money changed, and also marks the financial report
+  and the dashboard's report stale (so does saving a tax rate in Settings), so every store change affecting income or expenses calls it. Opening another project uses
+  `setProjectSummaryNeedsRefresh()` instead, which leaves the report cached
 - `patchState()` for state updates
 - `rxMethod()` for async operations with RxJS
 - **All data shown in the app is loaded through a store**: components and shells never call REST services or
