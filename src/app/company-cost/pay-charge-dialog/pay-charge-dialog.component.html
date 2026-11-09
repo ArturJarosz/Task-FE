@@ -1,0 +1,28 @@
+<p-dialog closeAriaLabel="Close" [visible]="visible" (visibleChange)="!$event && closed.emit()" [modal]="true"
+          appendTo="body" [draggable]="false" [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}">
+    <ng-template #header>
+        <div class="flex flex-col gap-1">
+            <span class="p-dialog-title">{{ isEdit ? 'Edit payment' : 'Mark as paid' }}</span>
+            <span class="text-sm text-gray-500">{{ companyCostName }} · charge of {{ charge?.chargeDate | date:'dd.MM.yyyy' }}</span>
+        </div>
+    </ng-template>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div>
+            <label for="payChargePaymentDate" class="app-form-label">Payment date <span class="text-error-600">*</span></label>
+            <p-datepicker inputId="payChargePaymentDate" [formControl]="paymentDate" dateFormat="dd.mm.yy"
+                          [maxDate]="today" [showIcon]="true" appendTo="body" [fluid]="true"/>
+            @if (paymentDate.invalid && paymentDate.touched) {
+                <small class="block mt-1.5 text-xs text-error-600">Select the payment date</small>
+            }
+        </div>
+        <div>
+            <span class="app-field-label">Net value</span>
+            <div class="app-field-value tabular-nums leading-10">{{ charge?.netValue ?? 0 | currency:'PLN':'symbol':'1.2-2' }}</div>
+        </div>
+        <small class="sm:col-span-2 -mt-2 text-xs text-gray-500">The financial report counts it on the payment date.</small>
+    </div>
+    <ng-template #footer>
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="closed.emit()"/>
+        <p-button [label]="isEdit ? 'Save changes' : 'Mark as paid'" [loading]="saving" (onClick)="onSave()"/>
+    </ng-template>
+</p-dialog>

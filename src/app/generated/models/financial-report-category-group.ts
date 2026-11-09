@@ -3,6 +3,7 @@
 
 import { FinancialPartialData } from '../models/financial-partial-data';
 export interface FinancialReportCategoryGroup {
+  companyCost?: FinancialPartialData;
   contractorJob?: FinancialPartialData;
   cost?: FinancialPartialData;
   installment?: FinancialPartialData;

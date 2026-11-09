@@ -1,0 +1,45 @@
+<p-dialog closeAriaLabel="Close" [visible]="visible" (visibleChange)="!$event && closed.emit()" [modal]="true"
+          appendTo="body" [draggable]="false" [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}">
+    <ng-template #header>
+        <div class="flex flex-col gap-1">
+            <span class="p-dialog-title">{{ isEdit ? 'Edit amount' : 'Change amount' }}</span>
+            <span class="text-sm text-gray-500">
+                {{ companyCost?.name }} · now {{ companyCost?.netValue ?? 0 | currency:'PLN':'symbol':'1.2-2' }}
+            </span>
+        </div>
+    </ng-template>
+    <form [formGroup]="form" class="grid grid-cols-1 sm:grid-cols-2 gap-5" (ngSubmit)="onSave()">
+        <div>
+            <label for="amountNetValue" class="app-form-label">
+                {{ isEdit ? 'Net value' : 'New net value' }} <span class="text-error-600">*</span>
+            </label>
+            <p-inputnumber inputId="amountNetValue" formControlName="netValue" mode="decimal" locale="pl-PL"
+                           [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0" suffix=" zł" [fluid]="true"/>
+            @if (isFieldInvalid('netValue')) {
+                <small class="block mt-1.5 text-xs text-error-600">Enter a value greater than 0 zł</small>
+            }
+        </div>
+        <div>
+            <label for="amountValidFrom" class="app-form-label">From month <span class="text-error-600">*</span></label>
+            <p-datepicker inputId="amountValidFrom" formControlName="validFrom" view="month" dateFormat="mm.yy"
+                          [minDate]="minMonth" [maxDate]="maxMonth" [showIcon]="true" appendTo="body" [fluid]="true"/>
+            @if (isFieldInvalid('validFrom')) {
+                <small class="block mt-1.5 text-xs text-error-600">Select the month</small>
+            }
+        </div>
+        <small class="sm:col-span-2 -mt-2 text-xs text-gray-500">
+            @if (isFirst) {
+                The first amount always starts with the cost. Paid charges never change.
+            } @else if (previousAmount(); as previous) {
+                Charges before {{ validFromLabel() }} keep {{ previous.netValue ?? 0 | currency:'PLN':'symbol':'1.2-2' }}.
+                Paid charges never change.
+            } @else {
+                Paid charges never change.
+            }
+        </small>
+    </form>
+    <ng-template #footer>
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="closed.emit()"/>
+        <p-button [label]="isEdit ? 'Save changes' : 'Save'" [loading]="saving" (onClick)="onSave()"/>
+    </ng-template>
+</p-dialog>

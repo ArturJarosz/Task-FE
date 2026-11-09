@@ -34,6 +34,9 @@ export const appRoutes: Routes = [
     {path: 'suppliers/:supplierId', loadComponent: () => import('./supplier/supplier-detail-shell/supplier-detail-shell.component').then(m => m.SupplierDetailShellComponent), canActivate: [loggedInGuardGuard], data: {ownPageHeader: true}},
     // Financial report
     {path: 'financial-report', loadComponent: () => import('./financial-report/financial-report-shell/financial-report-shell.component').then(m => m.FinancialReportShellComponent), canActivate: [loggedInGuardGuard], data: {ownPageHeader: true}},
+    // Company cost routes
+    {path: 'company-costs', loadComponent: () => import('./company-cost/company-cost-list-shell/company-cost-list-shell.component').then(m => m.CompanyCostListShellComponent), canActivate: [loggedInGuardGuard], data: {ownPageHeader: true}},
+    {path: 'company-costs/:companyCostId', loadComponent: () => import('./company-cost/company-cost-detail-shell/company-cost-detail-shell.component').then(m => m.CompanyCostDetailShellComponent), canActivate: [loggedInGuardGuard], data: {ownPageHeader: true}},
     // Calendar routes
     {path: 'calendar', loadComponent: () => import('./calendar/calendar-shell/calendar-shell.component').then(m => m.CalendarShellComponent), canActivate: [loggedInGuardGuard], data: {ownPageHeader: true}},
     // Settings routes

@@ -1,4 +1,11 @@
-import {currentPeriodIndex, expenseAmount, periodLabel, stackedSegmentShapes} from './chart-utils';
+import {
+    currentPeriodIndex,
+    expenseAmount,
+    periodLabel,
+    periodTitle,
+    stackedSegmentShapes,
+    stackLabelLines
+} from './chart-utils';
 import {PeriodType} from '../../generated/models/period-type';
 
 describe('periodLabel', () => {
@@ -97,5 +104,45 @@ describe('stackedSegmentShapes', () => {
         ]);
         expect(first.borderRadius({dataIndex: 1})).toEqual(roundTop);
         expect(second.borderRadius({dataIndex: 0})).toEqual(roundTop);
+    });
+});
+
+describe('periodTitle', () => {
+    it('should name the whole period', () => {
+        expect(periodTitle('2026-10-01', PeriodType.MONTHLY)).toBe('October 2026');
+        expect(periodTitle('2026-10-01', PeriodType.QUARTERLY)).toBe('Q4 2026');
+        expect(periodTitle('2026-01-01', PeriodType.YEARLY)).toBe('2026');
+        expect(periodTitle(undefined, PeriodType.MONTHLY)).toBe('');
+    });
+});
+
+describe('stackLabelLines', () => {
+    // Period 0 has every value, period 1 has no installments and no income at all in period 2
+    const chart = {
+        data: {
+            datasets: [
+                {stack: 'income', data: [100, null, null]},
+                {stack: 'income', data: [50, 20, null]},
+                {stack: 'expense', data: [30, 10, 5]},
+                {stack: 'expense', data: [40, null, 6]},
+            ]
+        }
+    };
+    const lines = (datasetIndex: number, dataIndex: number) => stackLabelLines({chart, datasetIndex, dataIndex});
+
+    it('should label the first item of each stack, with an empty line before the second stack', () => {
+        expect(lines(0, 0)).toEqual(['INCOME']);
+        expect(lines(1, 0)).toEqual([]);
+        expect(lines(2, 0)).toEqual(['', 'EXPENSES']);
+        expect(lines(3, 0)).toEqual([]);
+    });
+
+    it('should skip items without a value when finding the first item of a stack', () => {
+        expect(lines(1, 1)).toEqual(['INCOME']);
+        expect(lines(2, 2)).toEqual(['EXPENSES']);
+    });
+
+    it('should add nothing for datasets without a stack', () => {
+        expect(stackLabelLines({chart: {data: {datasets: [{data: [1]}]}}, datasetIndex: 0, dataIndex: 0})).toEqual([]);
     });
 });

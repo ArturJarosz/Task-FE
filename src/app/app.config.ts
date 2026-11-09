@@ -21,6 +21,7 @@ import {TimeEntryRestService, TimeEntryRestServiceImpl} from './time-entry/rest/
 import {ContractorRestService, ContractorRestServiceImpl} from './contractor/rest/contractor-rest.service';
 import {SupplierRestService, SupplierRestServiceImpl} from './supplier/rest/suppplier-rest.service';
 import {CostRestService, CostRestServiceImpl} from './finance/cost/rest/cost-rest.service';
+import {CompanyCostRestService, CompanyCostRestServiceImpl} from './company-cost/rest/company-cost-rest.service';
 import {FinancialRestService, FinancialRestServiceImpl} from './finance/project-financial-summary/rest/financial-rest.service';
 import {InstallmentRestService, InstallmentRestServiceImpl} from './finance/installment/rest/installment-rest.service';
 import {SupplyRestService, SupplyRestServiceImpl} from './finance/supply/rest/supply-rest.service';
@@ -41,6 +42,10 @@ import {ProjectTypeRestService, ProjectTypeRestServiceImpl} from './settings/res
 import {ContractorCategoryRestService, ContractorCategoryRestServiceImpl} from './settings/rest/contractor-category-rest.service';
 import {SupplierCategoryRestService, SupplierCategoryRestServiceImpl} from './settings/rest/supplier-category-rest.service';
 import {CostCategoryRestService, CostCategoryRestServiceImpl} from './settings/rest/cost-category-rest.service';
+import {
+    CompanyCostCategoryRestService,
+    CompanyCostCategoryRestServiceImpl
+} from './settings/rest/company-cost-category-rest.service';
 import {StageTypeRestService, StageTypeRestServiceImpl} from './settings/rest/stage-type-rest.service';
 import {TaskTypeRestService, TaskTypeRestServiceImpl} from './settings/rest/task-type-rest.service';
 
@@ -81,6 +86,7 @@ export const appConfig: ApplicationConfig = {
         {provide: ContractorRestService, useClass: ContractorRestServiceImpl},
         {provide: SupplierRestService, useClass: SupplierRestServiceImpl},
         {provide: CostRestService, useClass: CostRestServiceImpl},
+        {provide: CompanyCostRestService, useClass: CompanyCostRestServiceImpl},
         {provide: FinancialRestService, useClass: FinancialRestServiceImpl},
         {provide: InstallmentRestService, useClass: InstallmentRestServiceImpl},
         {provide: SupplyRestService, useClass: SupplyRestServiceImpl},
@@ -101,6 +107,7 @@ export const appConfig: ApplicationConfig = {
         {provide: ContractorCategoryRestService, useClass: ContractorCategoryRestServiceImpl},
         {provide: SupplierCategoryRestService, useClass: SupplierCategoryRestServiceImpl},
         {provide: CostCategoryRestService, useClass: CostCategoryRestServiceImpl},
+        {provide: CompanyCostCategoryRestService, useClass: CompanyCostCategoryRestServiceImpl},
         {provide: StageTypeRestService, useClass: StageTypeRestServiceImpl},
         {provide: TaskTypeRestService, useClass: TaskTypeRestServiceImpl},
     ]

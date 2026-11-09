@@ -14,6 +14,7 @@ import {SystemParameter} from "../../generated/models/system-parameter";
 import {
     ContractorCategoryStore,
     CostCategoryStore,
+    CompanyCostCategoryStore,
     GoogleCalendarSettingsStore,
     NamedEntryStore,
     ProjectTypeStore,
@@ -37,6 +38,7 @@ import {EditNamedEntryComponent} from "../edit-named-entry/edit-named-entry.comp
 import {
     CONTRACTOR_CATEGORY_TEXTS,
     COST_CATEGORY_TEXTS,
+    COMPANY_COST_CATEGORY_TEXTS,
     NamedEntry,
     NamedEntryTexts,
     PROJECT_TYPE_TEXTS,
@@ -114,6 +116,7 @@ export class SettingsShellComponent {
         'contractor-categories': {texts: CONTRACTOR_CATEGORY_TEXTS, store: inject(ContractorCategoryStore)},
         'supplier-categories': {texts: SUPPLIER_CATEGORY_TEXTS, store: inject(SupplierCategoryStore)},
         'cost-categories': {texts: COST_CATEGORY_TEXTS, store: inject(CostCategoryStore)},
+        'company-cost-categories': {texts: COMPANY_COST_CATEGORY_TEXTS, store: inject(CompanyCostCategoryStore)},
     };
     readonly $namedEntrySection = computed(() => this.namedEntrySections[this.$section()?.key ?? '']);
     // An entry without an id is a new one

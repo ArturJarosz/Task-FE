@@ -6,6 +6,7 @@ import { ProjectStatus } from '../models/project-status';
 export interface ApplicationConfiguration {
   activeProjectStatuses?: Array<ProjectStatus>;
   clientTypes?: Array<ConfigurationEntry>;
+  companyCostCategories?: Array<ConfigurationEntry>;
   contractStatuses?: Array<ConfigurationEntry>;
   contractorTypes?: Array<ConfigurationEntry>;
   costCategories?: Array<ConfigurationEntry>;

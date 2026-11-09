@@ -94,6 +94,8 @@
   --color-chart-4: #eda100;
   --color-chart-5: #e34948;
   --color-chart-6: #d6409f; /* pink: a violet read as the brand blue next to it */
+  /* Company costs, stacked on the red project costs: the validator passes it against that red (light and dark) */
+  --color-chart-7: #2f8fb8;
 
   --shadow-theme-xs: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
   /* Cards: a thin contact shadow plus a wide, blurred one under the card that lifts it off the grey page */

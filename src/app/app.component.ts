@@ -49,6 +49,7 @@ const NAV_GROUPS: NavGroup[] = [
     {
         label: 'Finance', items: [
             {label: 'Financial report', icon: 'pi pi-chart-bar', route: '/financial-report'},
+            {label: 'Company costs', icon: 'pi pi-briefcase', route: '/company-costs'},
         ]
     },
     {

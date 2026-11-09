@@ -1,0 +1,30 @@
+<p-dialog closeAriaLabel="Close" [visible]="visible" (visibleChange)="!$event && closed.emit()" [modal]="true"
+          appendTo="body" [draggable]="false" [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}">
+    <ng-template #header>
+        <div class="flex flex-col gap-1">
+            <span class="p-dialog-title">End cost</span>
+            <span class="text-sm text-gray-500">{{ companyCost?.name }}</span>
+        </div>
+    </ng-template>
+    <div>
+        <label for="endCostLastMonth" class="app-form-label">Last month <span class="text-error-600">*</span></label>
+        <p-datepicker inputId="endCostLastMonth" [formControl]="lastMonth" view="month" dateFormat="mm.yy"
+                      [minDate]="minMonth" [showIcon]="true" appendTo="body" [fluid]="true"/>
+        @if (lastMonth.invalid && lastMonth.touched) {
+            <small class="block mt-1.5 text-xs text-error-600">Select the last month</small>
+        } @else if (droppedAmounts()) {
+            <small class="block mt-1.5 text-xs text-warning-700">
+                {{ droppedAmounts() === 1 ? 'The amount' : 'The ' + droppedAmounts() + ' amounts' }} starting after
+                {{ lastMonthLabel() }} will be deleted.
+            </small>
+        } @else {
+            <small class="block mt-1.5 text-xs text-gray-500">
+                No charges after {{ lastMonthLabel() }}. Payments and amounts stay as they are.
+            </small>
+        }
+    </div>
+    <ng-template #footer>
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="closed.emit()"/>
+        <p-button label="End cost" [loading]="saving" (onClick)="onSave()"/>
+    </ng-template>
+</p-dialog>

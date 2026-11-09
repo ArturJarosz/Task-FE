@@ -121,6 +121,8 @@ Key patterns:
 - `FinancialDataStore.setProjectFinancialDataNeedsUpdate()` means money changed, and also marks the financial report
   and the dashboard's report stale (so does saving a tax rate in Settings), so every store change affecting income or expenses calls it. Opening another project uses
   `setProjectSummaryNeedsRefresh()` instead, which leaves the report cached
+- `CompanyCostStore` marks the financial report and the dashboard's report stale itself after every change, as company
+  costs never change project figures
 - `patchState()` for state updates
 - `rxMethod()` for async operations with RxJS
 - **All data shown in the app is loaded through a store**: components and shells never call REST services or

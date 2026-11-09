@@ -1,0 +1,232 @@
+<app-page-header title="Company cost" [crumbs]="crumbs"/>
+
+@if (companyCost) {
+    <div class="flex flex-col gap-gutter">
+        <!-- Header card -->
+        <section class="app-card app-detail-header">
+            <div class="app-detail-icon bg-brand-50 text-brand-500">
+                <i [class]="recurring ? 'pi pi-replay' : 'pi pi-calendar'" class="text-3xl" aria-hidden="true"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex flex-wrap items-center gap-3">
+                    <h2 class="m-0 text-xl leading-[30px] font-semibold text-gray-800">{{ companyCost.name }}</h2>
+                    @if (recurring) {
+                        <p-tag [value]="ended ? 'Ended' : 'Active'" [severity]="ended ? 'secondary' : 'success'"/>
+                    } @else {
+                        <p-tag [value]="companyCost.nextCharge ? 'Not paid' : 'Paid'" [severity]="paidSeverity(!companyCost.nextCharge)"/>
+                    }
+                </div>
+                <div class="app-detail-meta">
+                    <span>{{ categoryLabel || 'Not set' }}</span>
+                    <span class="app-detail-meta-divider" aria-hidden="true"></span>
+                    <span>{{ schedule }}</span>
+                    <span class="app-detail-meta-divider" aria-hidden="true"></span>
+                    <span>{{ companyCost.hasInvoice ? 'Has invoice' : 'No invoice' }}</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <p-button icon="pi pi-ellipsis-h" severity="secondary" [outlined]="true"
+                          pTooltip="More actions" tooltipPosition="bottom" ariaLabel="More actions"
+                          (onClick)="actionsMenu.toggle($event)"/>
+                <p-menu #actionsMenu [model]="actions" [popup]="true" appendTo="body"/>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_var(--spacing-gutter)/4)_minmax(0,1fr)] gap-gutter items-start">
+            <!-- Main column -->
+            <div class="flex flex-col gap-gutter min-w-0">
+                <section class="app-card">
+                    <div class="app-card-header">
+                        <h3 class="app-card-title">Details</h3>
+                        <p-button label="Edit" icon="pi pi-pencil" severity="secondary" [outlined]="true"
+                                  (onClick)="edit.emit()"/>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 px-6 pb-6">
+                        <app-field label="Name" [value]="companyCost.name"/>
+                        <app-field label="Category" [value]="categoryLabel"/>
+                        <app-field label="Repeats" [value]="repeats"/>
+                        @if (recurring) {
+                            <app-field label="Start month" [value]="companyCost.startMonth | date:'MM.yyyy'"/>
+                            <app-field label="End month" [value]="companyCost.endMonth | date:'MM.yyyy'"/>
+                            <app-field label="Charge day" [value]="companyCost.chargeDay?.toString()"/>
+                        } @else {
+                            <app-field label="Date" [value]="companyCost.date | date:'dd.MM.yyyy'"/>
+                            <div>
+                                <span class="app-field-label">Net value</span>
+                                <div class="app-field-value tabular-nums">{{ companyCost.netValue ?? 0 | currency:'PLN':'symbol':'1.2-2' }}</div>
+                            </div>
+                        }
+                        <app-field label="Has invoice" [value]="companyCost.hasInvoice ? 'Yes' : 'No'"/>
+                        <app-field class="sm:col-span-2" label="Note" [value]="companyCost.note" emptyText="No note yet"/>
+                    </div>
+                </section>
+
+                <section class="app-card overflow-hidden">
+                    <div class="app-card-header">
+                        <h3 class="app-card-title">Charges</h3>
+                        @if (years.length > 1) {
+                            <p-select [options]="years" optionLabel="label" optionValue="value" [ngModel]="chargesYear"
+                                      (ngModelChange)="chargesYearChange.emit($event)" ariaLabel="Year of the charges"
+                                      appendTo="body" class="w-32"/>
+                        }
+                    </div>
+                    @if (chargesLoadFailed) {
+                        <app-empty-state icon="pi pi-exclamation-triangle" title="Couldn't load the charges"
+                                         text="Check your connection and try again.">
+                            <p-button label="Try again" severity="secondary" [outlined]="true" (onClick)="reloadCharges.emit()"/>
+                        </app-empty-state>
+                    } @else if (!charges) {
+                        <div class="flex flex-col gap-3 px-6 pb-6">
+                            @for (row of [1, 2, 3]; track row) {
+                                <p-skeleton height="2.5rem"/>
+                            }
+                        </div>
+                    } @else {
+                        <p-table [value]="charges" styleClass="app-table-phone" tableStyleClass="sm:min-w-[40rem]">
+                            <ng-template #header>
+                                <tr>
+                                    <th>Charge date</th>
+                                    <th>Status</th>
+                                    <th>Payment date</th>
+                                    <th class="app-num">Net value</th>
+                                    <th class="w-16"><span class="sr-only">Actions</span></th>
+                                </tr>
+                            </ng-template>
+                            <ng-template #body let-charge>
+                                <tr>
+                                    <td>{{ charge.chargeDate | date:'dd.MM.yyyy' }}</td>
+                                    <td>
+                                        @if (charge.paid) {
+                                            <p-tag value="Paid" severity="success"/>
+                                        } @else if (charge.overdue) {
+                                            <p-tag value="Overdue" severity="danger"/>
+                                        } @else {
+                                            <p-tag value="Not paid" severity="secondary"/>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (charge.paymentDate) {
+                                            {{ charge.paymentDate | date:'dd.MM.yyyy' }}
+                                        } @else {
+                                            <span class="text-gray-500">Not set</span>
+                                        }
+                                    </td>
+                                    <td class="app-num">{{ charge.netValue ?? 0 | currency:'PLN':'symbol':'1.2-2' }}</td>
+                                    <td class="text-right">
+                                        <p-button icon="pi pi-ellipsis-h" [text]="true" [rounded]="true" severity="secondary"
+                                                  pTooltip="Charge actions" tooltipPosition="left" ariaLabel="Charge actions"
+                                                  (onClick)="openChargeMenu($event, charge, rowMenu)"/>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template #emptymessage>
+                                <tr>
+                                    <td colspan="5" class="p-0">
+                                        <app-empty-state icon="pi pi-calendar" [title]="'No charges in ' + chargesYear"/>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    }
+                </section>
+
+                @if (recurring) {
+                    <section class="app-card overflow-hidden">
+                        <div class="app-card-header">
+                            <h3 class="app-card-title">Amount history</h3>
+                            @if (!ended) {
+                                <p-button label="Change amount" icon="pi pi-plus" severity="secondary" [outlined]="true"
+                                          (onClick)="changeAmount.emit()"/>
+                            }
+                        </div>
+                        <p-table [value]="amountRows" styleClass="app-table-phone" tableStyleClass="sm:min-w-[32rem]">
+                            <ng-template #header>
+                                <tr>
+                                    <th>From</th>
+                                    <th>Until</th>
+                                    <th class="app-num">Net value</th>
+                                    <th class="w-16"><span class="sr-only">Actions</span></th>
+                                </tr>
+                            </ng-template>
+                            <ng-template #body let-row>
+                                <tr>
+                                    <td>
+                                        <span class="flex items-center gap-2">
+                                            {{ row.from }}
+                                            @if (row.current && !ended) {
+                                                <p-tag value="Current" severity="info"/>
+                                            }
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (row.until) {
+                                            {{ row.until }}
+                                        } @else {
+                                            <span class="text-gray-500">No end month</span>
+                                        }
+                                    </td>
+                                    <td class="app-num">{{ row.amount.netValue ?? 0 | currency:'PLN':'symbol':'1.2-2' }}</td>
+                                    <td class="text-right">
+                                        <p-button icon="pi pi-ellipsis-h" [text]="true" [rounded]="true" severity="secondary"
+                                                  pTooltip="Amount actions" tooltipPosition="left" ariaLabel="Amount actions"
+                                                  (onClick)="openAmountMenu($event, row, rowMenu)"/>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </section>
+                }
+            </div>
+
+            <!-- Side column -->
+            <section class="@container rounded-2xl border border-gray-200 bg-gray-100 shadow-card">
+                <div class="rounded-2xl bg-white p-6 shadow-theme-xs">
+                    <h3 class="app-card-title">Next charge</h3>
+                    @if (companyCost.nextCharge; as nextCharge) {
+                        <div class="mt-3 app-kpi-value">{{ nextCharge.netValue ?? 0 | currency:'PLN':'symbol':'1.2-2' }}</div>
+                        <div class="mt-1 flex flex-wrap items-center gap-2 text-sm text-gray-500">
+                            {{ nextCharge.chargeDate | date:'dd.MM.yyyy' }}
+                            @if (nextCharge.overdue) {
+                                <p-tag value="Overdue" severity="danger"/>
+                            }
+                        </div>
+                        <p-button class="block mt-4" label="Mark as paid" icon="pi pi-check" (onClick)="payCharge.emit(nextCharge)"/>
+                    } @else {
+                        <p class="m-0 mt-2 text-sm text-gray-500">Every charge is paid.</p>
+                    }
+                </div>
+                <dl class="app-card-figures">
+                    <div class="app-card-figure">
+                        <dt class="app-card-figure-label">Paid this year</dt>
+                        <dd class="app-card-figure-value">{{ companyCost.paidThisYear ?? 0 | currency:'PLN':'symbol':'1.0-0' }}</dd>
+                    </div>
+                    <div class="app-card-figure">
+                        <dt class="app-card-figure-label">Paid to date</dt>
+                        <dd class="app-card-figure-value">{{ companyCost.paidToDate ?? 0 | currency:'PLN':'symbol':'1.0-0' }}</dd>
+                    </div>
+                    @if (companyCost.overdueCharges) {
+                        <div class="app-card-figure">
+                            <dt class="app-card-figure-label">Overdue</dt>
+                            <dd class="app-card-figure-value">{{ companyCost.overdueNetValue ?? 0 | currency:'PLN':'symbol':'1.0-0' }}</dd>
+                        </div>
+                    }
+                </dl>
+            </section>
+        </div>
+    </div>
+    <p-menu #rowMenu [model]="rowMenuItems" [popup]="true" appendTo="body"/>
+} @else if (loadFailed) {
+    <app-load-error title="Couldn't load this company cost" backLabel="Back to company costs"
+                    [backRoute]="['/company-costs']" (retry)="reload.emit()"/>
+} @else {
+    <div class="flex flex-col gap-gutter">
+        <div class="app-card flex items-center gap-5 p-6">
+            <p-skeleton width="72px" height="72px" borderRadius="16px"/>
+            <div class="flex flex-col gap-2 flex-1">
+                <p-skeleton width="16rem" height="1.5rem"/>
+                <p-skeleton width="12rem" height="1rem"/>
+            </div>
+        </div>
+        <div class="app-card p-6"><p-skeleton height="12rem"/></div>
+    </div>
+}

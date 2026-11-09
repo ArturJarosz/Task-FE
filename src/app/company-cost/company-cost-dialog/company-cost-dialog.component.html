@@ -1,0 +1,141 @@
+<p-dialog closeAriaLabel="Close" [visible]="visible" (visibleChange)="!$event && onHide()" [modal]="true"
+          appendTo="body" [draggable]="false" [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}">
+    <ng-template #header>
+        <span class="p-dialog-title">{{ isEdit ? 'Edit company cost' : 'New company cost' }}</span>
+    </ng-template>
+    <form [formGroup]="form" class="grid grid-cols-1 sm:grid-cols-2 gap-5" (ngSubmit)="onSave()">
+        @if (!isEdit) {
+            <div class="sm:col-span-2">
+                <span class="app-form-label" id="companyCostKindLabel">Type</span>
+                <div class="app-seg" role="group" aria-labelledby="companyCostKindLabel">
+                    @for (kind of kinds; track kind.value) {
+                        <button type="button" class="app-seg-item" [class.active]="form.controls.kind.value === kind.value"
+                                [attr.aria-pressed]="form.controls.kind.value === kind.value"
+                                (click)="onSelectKind(kind.value)">{{ kind.label }}</button>
+                    }
+                </div>
+            </div>
+        }
+        <div>
+            <label for="companyCostName" class="app-form-label">Name <span class="text-error-600">*</span></label>
+            <input id="companyCostName" type="text" formControlName="name" pInputText class="w-full"
+                   placeholder="e.g. Adobe Creative Cloud"/>
+            @if (isFieldInvalid('name')) {
+                <small class="block mt-1.5 text-xs text-error-600">Enter a name of at most 255 characters</small>
+            }
+        </div>
+        <div>
+            <label for="companyCostCategory" class="app-form-label">Category <span class="text-error-600">*</span></label>
+            <p-select inputId="companyCostCategory" formControlName="category" [options]="categories"
+                      optionLabel="label" optionValue="id" placeholder="Select a category" appendTo="body" [fluid]="true"
+                      emptyMessage="Add categories under Settings, Company cost categories"/>
+            @if (isFieldInvalid('category')) {
+                <small class="block mt-1.5 text-xs text-error-600">Select a category</small>
+            }
+        </div>
+        @if (!(isRecurring && isEdit)) {
+            <div>
+                <label for="companyCostNetValue" class="app-form-label">
+                    {{ isRecurring ? 'Net value per charge' : 'Net value' }} <span class="text-error-600">*</span>
+                </label>
+                <p-inputnumber inputId="companyCostNetValue" formControlName="netValue" mode="decimal" locale="pl-PL"
+                               [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0" suffix=" zł" [fluid]="true"/>
+                @if (isFieldInvalid('netValue')) {
+                    <small class="block mt-1.5 text-xs text-error-600">Enter a value greater than 0 zł</small>
+                }
+            </div>
+        }
+        @if (isRecurring) {
+            <div>
+                <label for="companyCostRepeats" class="app-form-label">Repeats <span class="text-error-600">*</span></label>
+                <p-select inputId="companyCostRepeats" formControlName="repeats" [options]="repeatsOptions"
+                          optionLabel="label" optionValue="value" appendTo="body" [fluid]="true"/>
+            </div>
+        } @else {
+            <div>
+                <label for="companyCostDate" class="app-form-label">Date <span class="text-error-600">*</span></label>
+                <p-datepicker inputId="companyCostDate" formControlName="date" dateFormat="dd.mm.yy"
+                              [showIcon]="true" appendTo="body" [fluid]="true"/>
+                @if (isFieldInvalid('date')) {
+                    <small class="block mt-1.5 text-xs text-error-600">Select the date</small>
+                }
+            </div>
+        }
+        <div class="flex items-center gap-3 sm:col-span-2">
+            <p-toggleswitch inputId="companyCostHasInvoice" formControlName="hasInvoice"/>
+            <label for="companyCostHasInvoice" class="text-sm font-medium text-gray-700 cursor-pointer">Has invoice</label>
+        </div>
+        @if (isRecurring) {
+            <div>
+                <label for="companyCostStartMonth" class="app-form-label">Start month <span class="text-error-600">*</span></label>
+                <p-datepicker inputId="companyCostStartMonth" formControlName="startMonth" view="month" dateFormat="mm.yy"
+                              [showIcon]="true" appendTo="body" [fluid]="true"/>
+                @if (isFieldInvalid('startMonth')) {
+                    <small class="block mt-1.5 text-xs text-error-600">Select the start month</small>
+                }
+            </div>
+            <div>
+                <label for="companyCostEndMonth" class="app-form-label">End month</label>
+                <p-datepicker inputId="companyCostEndMonth" formControlName="endMonth" view="month" dateFormat="mm.yy"
+                              [showIcon]="true" [showClear]="true" placeholder="mm.yyyy" appendTo="body" [fluid]="true"/>
+                @if (isEndBeforeStart()) {
+                    <small class="block mt-1.5 text-xs text-error-600">End month must not be before the start month</small>
+                } @else {
+                    <small class="block mt-1.5 text-xs text-gray-500">Leave empty to keep adding it until you end it.</small>
+                }
+            </div>
+            <div>
+                <label for="companyCostChargeDay" class="app-form-label">Charge day <span class="text-error-600">*</span></label>
+                <p-inputnumber inputId="companyCostChargeDay" formControlName="chargeDay" [min]="1" [max]="31"
+                               [useGrouping]="false" [fluid]="true"/>
+                @if (isFieldInvalid('chargeDay')) {
+                    <small class="block mt-1.5 text-xs text-error-600">Enter a day from 1 to 31</small>
+                } @else {
+                    <small class="block mt-1.5 text-xs text-gray-500">In shorter months it falls on the last day.</small>
+                }
+            </div>
+            @if (!isEdit && $pastCharges().length) {
+                <div class="sm:col-span-2 flex items-start gap-3">
+                    <p-toggleswitch inputId="companyCostMarkPastPaid" formControlName="markPastChargesAsPaid"/>
+                    <div>
+                        <label for="companyCostMarkPastPaid" class="block text-sm font-medium text-gray-700 cursor-pointer">
+                            Mark past charges as paid
+                        </label>
+                        <span class="block text-xs text-gray-500">{{ pastChargesHint() }}</span>
+                    </div>
+                </div>
+            }
+        } @else if (!isEdit) {
+            <div class="flex items-start gap-3">
+                <p-toggleswitch inputId="companyCostPaid" formControlName="paid"/>
+                <div>
+                    <label for="companyCostPaid" class="block text-sm font-medium text-gray-700 cursor-pointer">Paid</label>
+                    <span class="block text-xs text-gray-500">Turn on to add the payment date</span>
+                </div>
+            </div>
+            <div>
+                @if (form.controls.paid.value) {
+                    <label for="companyCostPaymentDate" class="app-form-label">Payment date <span class="text-error-600">*</span></label>
+                    <p-datepicker inputId="companyCostPaymentDate" formControlName="paymentDate" dateFormat="dd.mm.yy"
+                                  [maxDate]="today" [showIcon]="true" appendTo="body" [fluid]="true"
+                                  (onClose)="form.controls.paymentDate.markAsTouched()"/>
+                    @if (isPaymentDateMissing()) {
+                        <small class="block mt-1.5 text-xs text-error-600">Select the payment date</small>
+                    }
+                }
+            </div>
+        }
+        <div class="sm:col-span-2">
+            <label for="companyCostNote" class="app-form-label">Note</label>
+            <input id="companyCostNote" type="text" formControlName="note" pInputText class="w-full"/>
+            @if (isFieldInvalid('note')) {
+                <small class="block mt-1.5 text-xs text-error-600">Keep the note to 255 characters</small>
+            }
+        </div>
+    </form>
+    <ng-template #footer>
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onHide()"/>
+        <p-button [label]="isEdit ? 'Save changes' : 'Create cost'" [icon]="isEdit ? '' : 'pi pi-plus'"
+                  [loading]="saving" [disabled]="isEdit && !form.dirty" (onClick)="onSave()"/>
+    </ng-template>
+</p-dialog>
