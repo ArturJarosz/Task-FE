@@ -7,7 +7,11 @@ import {toTimeZoneString} from "./date-utils";
 // Shared look of the income/expense bar charts on the dashboard and the financial report
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October',
+    'November', 'December'];
 const QUARTERS = ['Q1', 'Q2', 'Q3', 'Q4'];
+// Tooltip lines that start each stack of a stacked chart (the dataset's `stack`), so income and expenses read apart
+const STACK_LABELS: Record<string, string> = {income: 'INCOME', expense: 'EXPENSES'};
 
 const PLN = new Intl.NumberFormat('pl-PL', {style: 'currency', currency: 'PLN', minimumFractionDigits: 2});
 const PLN_SHORT = new Intl.NumberFormat('pl-PL', {maximumFractionDigits: 0});
@@ -44,6 +48,39 @@ export function periodLabel(startDate: string | undefined, periodType: PeriodTyp
         return `${QUARTERS[Math.ceil(month / 3) - 1]}${suffix}`;
     }
     return `${year}`;
+}
+
+// Tooltip title of a report period that starts on `startDate` (yyyy-mm-dd): "October 2026", "Q4 2026" or "2026".
+// Charts put these in their data as `titles`, next to the short axis `labels`
+export function periodTitle(startDate: string | undefined, periodType: PeriodType | undefined): string {
+    if (!startDate) {
+        return '';
+    }
+    const [year, month] = startDate.split('-').map(Number);
+    if (periodType === PeriodType.MONTHLY) {
+        return `${MONTH_NAMES[month - 1]} ${year}`;
+    }
+    if (periodType === PeriodType.QUARTERLY) {
+        return `${QUARTERS[Math.ceil(month / 3) - 1]} ${year}`;
+    }
+    return `${year}`;
+}
+
+// The line(s) a tooltip shows before an item: the label of its stack when it is the first item of that stack the
+// tooltip lists (items with no value are left out of it), after an empty line when another stack came before
+export function stackLabelLines(context: any): string[] {
+    const datasets = context.chart.data.datasets;
+    const stack = datasets[context.datasetIndex]?.stack;
+    const label = stack && STACK_LABELS[stack];
+    if (!label) {
+        return [];
+    }
+    const shown = (dataset: any) => dataset.data[context.dataIndex] !== null;
+    const earlier = datasets.slice(0, context.datasetIndex).filter(shown);
+    if (earlier.some((dataset: any) => dataset.stack === stack)) {
+        return [];
+    }
+    return earlier.length ? ['', label] : [label];
 }
 
 // The index of the period that contains today, or -1; `periods` have yyyy-mm-dd start and end dates. Today is the
@@ -136,6 +173,10 @@ export function barChartOptions(stacked: boolean, currentIndex: () => number = (
                 usePointStyle: true,
                 filter: (item: any) => item.raw !== null,
                 callbacks: {
+                    // The full period name ("October 2026") when the chart gives it, else the axis label
+                    title: (items: any[]) => items.length
+                        ? items[0].chart.data.titles?.[items[0].dataIndex] ?? items[0].label : '',
+                    beforeLabel: (context: any) => stackLabelLines(context),
                     // As drawn: expenses are already positive (expenseAmount), a correction stays negative
                     label: (context: any) => `${context.dataset.label}: ${PLN.format(context.raw as number)}`
                 }

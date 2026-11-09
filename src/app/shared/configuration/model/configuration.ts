@@ -13,5 +13,6 @@ export interface ApplicationConfiguration {
     taskTypes: ConfigurationEntry[],
     taskStatuses: ConfigurationEntry[],
     clientTypes: ConfigurationEntry[],
-    costCategories: ConfigurationEntry[]
+    costCategories: ConfigurationEntry[],
+    companyCostCategories: ConfigurationEntry[]
 }

@@ -40,6 +40,8 @@ export const SETTINGS_SECTION_GROUPS: SettingsSectionGroup[] = [
     {
         label: 'Finance', sections: [
             {key: 'cost-categories', label: 'Cost categories', icon: 'pi pi-wallet', showsSystemParameters: false},
+            {key: 'company-cost-categories', label: 'Company cost categories', icon: 'pi pi-briefcase',
+                showsSystemParameters: false},
         ]
     },
     {

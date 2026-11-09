@@ -28,7 +28,8 @@ export const initialState: ConfigurationState = {
         taskStatuses: [],
         taskTypes: [],
         clientTypes: [],
-        costCategories: []
+        costCategories: [],
+        companyCostCategories: []
     },
     needRefresh: true,
     configurationLoadFailed: false,

@@ -1,0 +1,122 @@
+<app-page-header title="Company costs" [crumbs]="crumbs"/>
+
+<!-- With a period the page stays, so the filter can still be changed or cleared -->
+@if ($loadFailed() && !$period()) {
+    <app-load-error title="Couldn't load company costs" text="Check your connection and try again." (retry)="onRetry()"/>
+} @else {
+    <div class="flex flex-col gap-gutter">
+        <!-- No figures after a failed load, as zeros would read as real; the card below says what failed -->
+        @if ($period() && !$loadFailed()) {
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter">
+                <app-kpi-card icon="pi pi-briefcase" label="Costs in period" [loading]="$loading()">
+                    {{ $periodKpis().costs }}
+                </app-kpi-card>
+                <app-kpi-card icon="pi pi-wallet" label="Charges in period (net)" [loading]="$loading()">
+                    {{ $periodKpis().chargesNetValue | currency:'PLN':'symbol':'1.2-2' }}
+                    <span class="app-kpi-context">{{ $periodKpis().charges }} {{ $periodKpis().charges === 1 ? 'charge' : 'charges' }}</span>
+                </app-kpi-card>
+                <app-kpi-card icon="pi pi-chart-bar" label="Paid in period (net)" [loading]="$loading()">
+                    {{ $periodKpis().paid | currency:'PLN':'symbol':'1.2-2' }}
+                </app-kpi-card>
+                <app-kpi-card icon="pi pi-clock" label="Overdue in period" [loading]="$loading()">
+                    {{ $periodKpis().overdueCharges }}
+                    @if ($periodKpis().overdueCharges) {
+                        <span class="app-kpi-context">{{ $periodKpis().overdueNetValue | currency:'PLN':'symbol':'1.2-2' }}</span>
+                    }
+                </app-kpi-card>
+            </div>
+        } @else if (!$loadFailed()) {
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter">
+                <app-kpi-card icon="pi pi-replay" label="Recurring costs" [loading]="$loading()">
+                    {{ $kpis().recurring }}<span class="app-kpi-context">active</span>
+                </app-kpi-card>
+                <app-kpi-card icon="pi pi-wallet" label="Monthly total (net)" [loading]="$loading()">
+                    {{ $kpis().monthlyTotal | currency:'PLN':'symbol':'1.2-2' }}
+                </app-kpi-card>
+                <app-kpi-card icon="pi pi-chart-bar" label="Paid this year (net)" [loading]="$loading()">
+                    {{ $kpis().paidThisYear | currency:'PLN':'symbol':'1.2-2' }}
+                </app-kpi-card>
+                <app-kpi-card icon="pi pi-clock" label="Overdue charges" [loading]="$loading()">
+                    {{ $kpis().overdueCharges }}
+                    @if ($kpis().overdueCharges) {
+                        <span class="app-kpi-context">{{ $kpis().overdueNetValue | currency:'PLN':'symbol':'1.2-2' }}</span>
+                    }
+                </app-kpi-card>
+            </div>
+        }
+
+        <section class="app-card overflow-hidden">
+            <div class="app-card-header">
+                <div>
+                    <h2 class="app-card-title">Company costs</h2>
+                    <p class="app-card-subtitle m-0">{{ $rows().length }} {{ $rows().length === 1 ? 'cost' : 'costs' }}</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="app-seg" role="group" aria-label="Filter company costs">
+                        @for (segment of segments; track segment.key) {
+                            <button type="button" class="app-seg-item gap-2"
+                                    [class.active]="segment.key === $segmentKey()" [attr.aria-pressed]="segment.key === $segmentKey()"
+                                    (click)="onSelectSegment(segment.key)">
+                                {{ segment.label }}
+                                <span class="text-xs text-gray-500 tabular-nums min-w-[2ch]">{{ $segmentCounts()[segment.key] }}</span>
+                            </button>
+                        }
+                    </div>
+                    <!-- As wide as "Filter · 1", so the controls before it don't move when the period goes on -->
+                    <p-button [label]="$period() ? 'Filter · 1' : 'Filter'" icon="pi pi-filter" severity="secondary"
+                              [outlined]="true" styleClass="min-w-30 tabular-nums" aria-haspopup="dialog"
+                              (onClick)="filterPopover.toggle($event)"/>
+                    <p-button label="New company cost" icon="pi pi-plus" (onClick)="$showNewCost.set(true)"/>
+                </div>
+            </div>
+            @if ($period()) {
+                <div class="flex flex-wrap items-center gap-2 px-6 pb-4 -mt-1" aria-label="Filters on">
+                    <p-chip [label]="'Period: ' + $periodLabel()" [removable]="true" (onRemove)="onPeriodChange(null)"/>
+                    <p-button label="Clear filters" [text]="true" severity="secondary" (onClick)="onPeriodChange(null)"/>
+                </div>
+            }
+            @if ($loadFailed()) {
+                <app-empty-state icon="pi pi-exclamation-triangle" title="Couldn't load company costs"
+                                 text="Check your connection and try again.">
+                    <p-button label="Try again" severity="secondary" [outlined]="true" (onClick)="onRetry()"/>
+                </app-empty-state>
+            } @else if ($loading()) {
+                <div class="flex flex-col gap-3 px-6 pb-6">
+                    @for (row of [1, 2, 3, 4]; track row) {
+                        <p-skeleton height="3rem"/>
+                    }
+                </div>
+            } @else {
+                <company-cost-list [rows]="$pagedRows()" [emptyTitle]="$emptyTitle()" [emptyText]="$emptyText()"
+                                   [paidLabel]="$period() ? 'Paid in period' : 'Paid this year'"
+                                   (sortChange)="onSortChange($event)" (payNextCharge)="$payingCost.set($event)"
+                                   (deleteCompanyCost)="onDelete($event)"/>
+                <app-table-footer [total]="$filteredRows().length" [page]="$page()" [pageSize]="pageSize"
+                                  (pageChange)="$page.set($event)"/>
+            }
+        </section>
+    </div>
+}
+
+<p-popover #filterPopover appendTo="body" styleClass="w-[min(360px,calc(100vw-2rem))]">
+    <div class="flex flex-col gap-4 p-2">
+        <div>
+            <label for="companyCostFilterPeriod" class="app-form-label">Period</label>
+            <p-datepicker inputId="companyCostFilterPeriod" selectionMode="range" view="month" dateFormat="mm.yy"
+                          [ngModel]="$periodRange()" (ngModelChange)="onPeriodChange($event)"
+                          [showIcon]="true" [showOnFocus]="false" [showClear]="true" [readonlyInput]="true"
+                          placeholder="Any time" appendTo="body" [fluid]="true"/>
+            <small class="block mt-1.5 text-xs text-gray-500">Keeps the costs charged or paid in these months.</small>
+        </div>
+        <div class="flex justify-end">
+            <p-button label="Clear filters" [text]="true" severity="secondary" [disabled]="!$period()"
+                      (onClick)="onPeriodChange(null)"/>
+        </div>
+    </div>
+</p-popover>
+<p-confirmdialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>
+<company-cost-dialog [visible]="$showNewCost()" [categories]="$categories()"
+                     [saving]="companyCostStore.saving()" (save)="onCreate($event)" (closed)="$showNewCost.set(false)"/>
+<pay-charge-dialog [visible]="!!$payingCost()" [companyCostName]="$payingCost()?.name ?? ''"
+                   [charge]="$payingCost()?.nextCharge ?? null" [saving]="companyCostStore.saving()"
+                   (save)="onPay($event)" (closed)="$payingCost.set(null)"/>

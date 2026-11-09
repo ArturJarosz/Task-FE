@@ -17,6 +17,11 @@ import {TimeEntryRestService, TimeEntryRestServiceImpl} from '../app/time-entry/
 import {ContractorRestService, ContractorRestServiceImpl} from '../app/contractor/rest/contractor-rest.service';
 import {SupplierRestService, SupplierRestServiceImpl} from '../app/supplier/rest/suppplier-rest.service';
 import {CostRestService, CostRestServiceImpl} from '../app/finance/cost';
+import {CompanyCostRestService, CompanyCostRestServiceImpl} from '../app/company-cost/rest/company-cost-rest.service';
+import {
+    CompanyCostCategoryRestService,
+    CompanyCostCategoryRestServiceImpl
+} from '../app/settings/rest/company-cost-category-rest.service';
 import {FinancialRestService, FinancialRestServiceImpl} from '../app/finance/project-financial-summary/rest/financial-rest.service';
 import {InstallmentRestService, InstallmentRestServiceImpl} from '../app/finance/installment/rest/installment-rest.service';
 import {SupplyRestService, SupplyRestServiceImpl} from '../app/finance/supply/rest/supply-rest.service';
@@ -70,6 +75,8 @@ export function provideTestDependencies(): (Provider | EnvironmentProviders)[] {
         {provide: ContractorRestService, useClass: ContractorRestServiceImpl},
         {provide: SupplierRestService, useClass: SupplierRestServiceImpl},
         {provide: CostRestService, useClass: CostRestServiceImpl},
+        {provide: CompanyCostRestService, useClass: CompanyCostRestServiceImpl},
+        {provide: CompanyCostCategoryRestService, useClass: CompanyCostCategoryRestServiceImpl},
         {provide: FinancialRestService, useClass: FinancialRestServiceImpl},
         {provide: InstallmentRestService, useClass: InstallmentRestServiceImpl},
         {provide: SupplyRestService, useClass: SupplyRestServiceImpl},

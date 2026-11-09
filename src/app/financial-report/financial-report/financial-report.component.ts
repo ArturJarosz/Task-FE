@@ -18,6 +18,7 @@ import {
     currentPeriodIndex,
     expenseAmount,
     periodLabel,
+    periodTitle,
     rebuildOnThemeChange,
     stackedSegmentShapes
 } from "../../shared/utils/chart-utils";
@@ -55,7 +56,9 @@ const INCOME_CATEGORIES: CategoryDef[] = [
 ];
 
 const EXPENSE_CATEGORIES: CategoryDef[] = [
-    {key: 'cost', label: 'Costs', colorVar: '--color-chart-5', dotClass: 'bg-chart-5'},
+    {key: 'cost', label: 'Project costs', colorVar: '--color-chart-5', dotClass: 'bg-chart-5'},
+    // Paid company costs outside projects, by payment date; the backend sends them in expense.companyCost
+    {key: 'companyCost', label: 'Company costs', colorVar: '--color-chart-7', dotClass: 'bg-chart-7'},
 ];
 
 @Component({
@@ -181,6 +184,7 @@ export class FinancialReportComponent implements OnInit, OnChanges {
 
         this.chartData = {
             labels: this.periods.map(period => periodLabel(period.startDate, this.periodType, true)),
+            titles: this.periods.map(period => periodTitle(period.startDate, this.periodType)),
             datasets: series.map(({category, stack, values}, index) => {
                 const color = cssColor(category.colorVar);
                 return {

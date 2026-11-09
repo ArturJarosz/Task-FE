@@ -21,6 +21,7 @@ import {
     currentPeriodIndex,
     expenseAmount,
     periodLabel,
+    periodTitle,
     rebuildOnThemeChange
 } from "../../shared/utils/chart-utils";
 import {updateAtMidnight} from "../../shared/utils/date-utils";
@@ -534,6 +535,7 @@ export class DashboardComponent implements OnChanges {
         };
         this.chartData = {
             labels: periods.map(period => periodLabel(period.startDate, this.report?.periodType, false)),
+            titles: periods.map(period => periodTitle(period.startDate, this.report?.periodType)),
             datasets: [
                 dataset('Income', '--color-chart-1', 'income'),
                 dataset('Expenses', '--color-chart-5', 'expense'),

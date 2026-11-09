@@ -1,0 +1,24 @@
+<company-cost-detail [companyCost]="$companyCost()" [loadFailed]="companyCostStore.companyCostLoadFailed()"
+                     [categoryLabel]="$categoryLabel()" [charges]="$charges()"
+                     [chargesLoadFailed]="companyCostStore.chargesLoadFailed()"
+                     [chargesYear]="companyCostStore.chargesYear()"
+                     (reload)="onRetry()" (reloadCharges)="companyCostStore.loadCharges()"
+                     (chargesYearChange)="companyCostStore.setChargesYear($event)"
+                     (edit)="$editing.set(true)" (deleteCost)="onDelete()"
+                     (changeAmount)="$editedAmount.set({})" (editAmount)="$editedAmount.set($event)"
+                     (deleteAmount)="onDeleteAmount($event)"
+                     (endCost)="$endingCost.set(true)" (restartCost)="onRestartCost()"
+                     (payCharge)="$payingCharge.set($event)" (editPayment)="$payingCharge.set($event)"
+                     (unpayCharge)="onUnpay($event)"/>
+
+<p-confirmdialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>
+<company-cost-dialog [visible]="$editing()" [companyCost]="$companyCost()" [categories]="$categories()"
+                     [saving]="companyCostStore.saving()" (save)="onSave($event)" (closed)="$editing.set(false)"/>
+<pay-charge-dialog [visible]="!!$payingCharge()" [companyCostName]="$companyCost()?.name ?? ''"
+                   [charge]="$payingCharge()" [saving]="companyCostStore.saving()"
+                   (save)="onPay($event)" (closed)="$payingCharge.set(null)"/>
+<amount-dialog [visible]="!!$editedAmount()" [companyCost]="$companyCost()"
+               [amount]="$editedAmount()?.id ? $editedAmount() : null" [saving]="companyCostStore.saving()"
+               (save)="onSaveAmount($event)" (closed)="$editedAmount.set(null)"/>
+<end-cost-dialog [visible]="$endingCost()" [companyCost]="$companyCost()" [saving]="companyCostStore.saving()"
+                 (save)="onEndCost($event)" (closed)="$endingCost.set(false)"/>

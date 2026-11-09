@@ -1,5 +1,5 @@
-// Configurable lists that are only a name each (project, stage and task types, contractor, supplier and cost
-// categories). They share the settings list and the create/rename dialog, which take their words from NamedEntryTexts.
+// Configurable lists that are only a name each (project, stage and task types, contractor, supplier, cost and company
+// cost categories). They share the settings list and the create/rename dialog, which take their words from NamedEntryTexts.
 
 // Same limit as the NAME column of their tables
 export const NAMED_ENTRY_NAME_MAX_LENGTH = 100;
@@ -90,6 +90,17 @@ export const COST_CATEGORY_TEXTS: NamedEntryTexts = {
     placeholder: 'e.g. Parking',
     emptyIcon: 'pi pi-wallet',
     emptyText: 'Add the kinds of costs your projects have, such as fuel or parking.',
+};
+
+export const COMPANY_COST_CATEGORY_TEXTS: NamedEntryTexts = {
+    title: 'Company cost categories',
+    singular: 'company cost category',
+    plural: 'company cost categories',
+    usageSingular: 'company cost',
+    usagePlural: 'company costs',
+    placeholder: 'e.g. Software',
+    emptyIcon: 'pi pi-briefcase',
+    emptyText: 'Add the kinds of costs the company has outside projects, such as salaries or software.',
 };
 
 export function usageText(entry: NamedEntry, texts: NamedEntryTexts): string {
