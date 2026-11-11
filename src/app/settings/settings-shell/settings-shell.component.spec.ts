@@ -5,6 +5,8 @@ import {RouterTestingHarness} from '@angular/router/testing';
 
 import {SettingsShellComponent} from './settings-shell.component';
 import {provideTestDependencies} from '../../../testing/test-providers';
+import {PermissionAction} from '../../generated/models/permission-action';
+import {PermissionResource} from '../../generated/models/permission-resource';
 
 describe('SettingsShellComponent', () => {
     let harness: RouterTestingHarness;
@@ -218,6 +220,112 @@ describe('SettingsShellComponent', () => {
         expect(element.textContent).toContain('Connected');
         expect(element.textContent).toContain('Saved for task@project.iam.gserviceaccount.com');
         expect((element.querySelector('#calendarName') as HTMLInputElement).value).toBe('Task');
+    });
+
+    describe('roles', () => {
+        beforeEach(async () => {
+            httpTesting.expectOne(request => request.url.endsWith('/system-parameters')).flush([]);
+            await harness.navigateByUrl('/settings/roles', SettingsShellComponent);
+            httpTesting.expectOne(request => request.url.endsWith('/permissions')).flush([
+                {resource: 'PROJECT', actions: ['READ', 'CREATE', 'EDIT', 'DELETE']},
+                {resource: 'CONTRACT', actions: ['READ', 'EDIT']}
+            ]);
+        });
+
+        it('should list roles and block changing the administrator role and deleting a role given to users', () => {
+            httpTesting.expectOne(request => request.url.endsWith('/roles')).flush([
+                {id: 100, name: 'Administrator', administrator: true, permissions: [], numberOfUsers: 1},
+                {id: 101, name: 'Architect', numberOfUsers: 2,
+                    permissions: [{resource: 'PROJECT', action: 'READ'}, {resource: 'PROJECT', action: 'EDIT'}]},
+                {id: 102, name: 'Viewer', permissions: [], numberOfUsers: 0}
+            ]);
+            harness.detectChanges();
+
+            let rows = Array.from(harness.routeNativeElement!.querySelectorAll('[aria-label="Roles"] [role="row"]')).slice(1);
+            expect(rows.map(row => row.querySelector('[role="cell"]')?.textContent?.trim()))
+                .toEqual(['Administrator', 'Architect', 'Viewer']);
+            expect(rows[0].textContent).toContain('All');
+            expect(rows[1].textContent).toContain('2 of 6');
+            expect(rows[1].textContent).toContain('2 users');
+            let button = (row: Element, icon: string) =>
+                row.querySelector(`p-button[icon="pi pi-${icon}"] button`) as HTMLButtonElement;
+            expect(button(rows[0], 'pencil').disabled).toBeTrue();
+            expect(button(rows[0], 'trash').disabled).toBeTrue();
+            expect(button(rows[1], 'pencil').disabled).toBeFalse();
+            expect(button(rows[1], 'trash').disabled).toBeTrue();
+            expect(button(rows[2], 'trash').disabled).toBeFalse();
+        });
+
+        it('should create a role and reload the list', () => {
+            httpTesting.expectOne(request => request.url.endsWith('/roles')).flush([]);
+            let shell = harness.routeDebugElement!.componentInstance as SettingsShellComponent;
+
+            shell.onAddRole();
+            shell.onSaveRole({name: 'Accountant', permissions: [{resource: PermissionResource.PROJECT_FINANCE, action: PermissionAction.READ}]});
+            let request = httpTesting.expectOne(request => request.url.endsWith('/roles') && request.method === 'POST');
+            expect(request.request.body).toEqual({name: 'Accountant', permissions: [{resource: PermissionResource.PROJECT_FINANCE, action: PermissionAction.READ}]});
+            request.flush({id: 103, name: 'Accountant', permissions: [{resource: PermissionResource.PROJECT_FINANCE, action: PermissionAction.READ}], numberOfUsers: 0});
+
+            expect(shell.$editedRole()).toBeNull();
+            httpTesting.expectOne(request => request.url.endsWith('/roles') && request.method === 'GET').flush([]);
+        });
+
+        it('should keep the dialog open when saving a role fails', () => {
+            httpTesting.expectOne(request => request.url.endsWith('/roles')).flush([]);
+            let shell = harness.routeDebugElement!.componentInstance as SettingsShellComponent;
+            let role = {id: 101, name: 'Architect', permissions: []};
+
+            shell.$editedRole.set(role);
+            shell.onSaveRole({...role, name: 'Designer'});
+            httpTesting.expectOne(request => request.url.endsWith('/roles/101'))
+                .flush({message: 'Role with name Designer already exists.'}, {status: 400, statusText: 'Bad Request'});
+
+            expect(shell.$editedRole()).toEqual(role);
+        });
+    });
+
+    describe('users', () => {
+        beforeEach(async () => {
+            httpTesting.expectOne(request => request.url.endsWith('/system-parameters')).flush([]);
+            await harness.navigateByUrl('/settings/users', SettingsShellComponent);
+        });
+
+        it('should list users with the names of their roles', () => {
+            httpTesting.expectOne(request => request.url.endsWith('/roles')).flush([
+                {id: 100, name: 'Administrator', administrator: true},
+                {id: 101, name: 'Architect'}
+            ]);
+            httpTesting.expectOne(request => request.url.endsWith('/users')).flush([
+                {id: 5, username: 'Maria Kowalska', email: 'maria@example.com', roleIds: [101, 100]},
+                {id: 6, username: 'Jan Nowak', roleIds: []}
+            ]);
+            harness.detectChanges();
+
+            let rows = Array.from(harness.routeNativeElement!.querySelectorAll('[aria-label="Users"] [role="row"]')).slice(1);
+            expect(rows[0].textContent).toContain('Maria Kowalska');
+            expect(rows[0].textContent).toContain('Administrator, Architect');
+            expect(rows[1].textContent).toContain('Not set');
+        });
+
+        it('should save the picked roles and reload the roles', () => {
+            httpTesting.expectOne(request => request.url.endsWith('/roles')).flush([{id: 101, name: 'Architect'}]);
+            let user = {id: 6, username: 'Jan Nowak', roleIds: []};
+            httpTesting.expectOne(request => request.url.endsWith('/users')).flush([user]);
+            let shell = harness.routeDebugElement!.componentInstance as SettingsShellComponent;
+
+            shell.$editedUser.set(user);
+            shell.onSaveUserRoles([101]);
+            let request = httpTesting.expectOne(request => request.url.endsWith('/users/6/roles'));
+            expect(request.request.method).toBe('PUT');
+            expect(request.request.body).toEqual({roleIds: [101]});
+            request.flush({...user, roleIds: [101]});
+            harness.detectChanges();
+
+            expect(shell.$editedUser()).toBeNull();
+            httpTesting.expectOne(request => request.url.endsWith('/roles')).flush([{id: 101, name: 'Architect'}]);
+            harness.detectChanges();
+            expect(harness.routeNativeElement!.querySelector('[aria-label="Users"]')?.textContent).toContain('Architect');
+        });
     });
 
     describe('architect account dialog', () => {

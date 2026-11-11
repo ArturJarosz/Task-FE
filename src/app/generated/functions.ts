@@ -297,6 +297,18 @@ export type { AddGoogleCalendarShare$Params as AddGoogleCalendarShare$Params } f
 export { addGoogleCalendarShare as addGoogleCalendarShare } from './fn/calendar/add-google-calendar-share';
 export type { RemoveGoogleCalendarShare$Params as RemoveGoogleCalendarShare$Params } from './fn/calendar/remove-google-calendar-share';
 export { removeGoogleCalendarShare as removeGoogleCalendarShare } from './fn/calendar/remove-google-calendar-share';
+export type { GetRoles$Params as GetRoles$Params } from './fn/role/get-roles';
+export { getRoles as getRoles } from './fn/role/get-roles';
+export type { CreateRole$Params as CreateRole$Params } from './fn/role/create-role';
+export { createRole as createRole } from './fn/role/create-role';
+export type { GetAvailablePermissions$Params as GetAvailablePermissions$Params } from './fn/role/get-available-permissions';
+export { getAvailablePermissions as getAvailablePermissions } from './fn/role/get-available-permissions';
+export type { GetRole$Params as GetRole$Params } from './fn/role/get-role';
+export { getRole as getRole } from './fn/role/get-role';
+export type { UpdateRole$Params as UpdateRole$Params } from './fn/role/update-role';
+export { updateRole as updateRole } from './fn/role/update-role';
+export type { DeleteRole$Params as DeleteRole$Params } from './fn/role/delete-role';
+export { deleteRole as deleteRole } from './fn/role/delete-role';
 export type { GetUsers$Params as GetUsers$Params } from './fn/user/get-users';
 export { getUsers as getUsers } from './fn/user/get-users';
 export type { GetCurrentUser$Params as GetCurrentUser$Params } from './fn/user/get-current-user';
@@ -305,6 +317,8 @@ export type { GetCurrentUserConfigurations$Params as GetCurrentUserConfiguration
 export { getCurrentUserConfigurations as getCurrentUserConfigurations } from './fn/user/get-current-user-configurations';
 export type { UpdateCurrentUserConfiguration$Params as UpdateCurrentUserConfiguration$Params } from './fn/user/update-current-user-configuration';
 export { updateCurrentUserConfiguration as updateCurrentUserConfiguration } from './fn/user/update-current-user-configuration';
+export type { UpdateUserRoles$Params as UpdateUserRoles$Params } from './fn/user/update-user-roles';
+export { updateUserRoles as updateUserRoles } from './fn/user/update-user-roles';
 export type { GetReleaseNotes$Params as GetReleaseNotes$Params } from './fn/release-note/get-release-notes';
 export { getReleaseNotes as getReleaseNotes } from './fn/release-note/get-release-notes';
 export type { GetUnseenReleaseNotes$Params as GetUnseenReleaseNotes$Params } from './fn/release-note/get-unseen-release-notes';

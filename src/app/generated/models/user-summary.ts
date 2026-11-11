@@ -4,5 +4,6 @@
 export interface UserSummary {
   email?: string;
   id?: number;
+  roleIds?: Array<number>;
   username?: string;
 }

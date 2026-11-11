@@ -47,6 +47,35 @@
                                      (retry)="onRetry()"/>
             </section>
         }
+        @case ('users') {
+            <section class="app-card overflow-hidden min-w-0">
+                <div class="px-5 py-4">
+                    <h2 class="m-0 text-base font-semibold text-gray-800">Users</h2>
+                </div>
+                <user-role-list [users]="userStore.users() ?? []"
+                                [roles]="roleStore.roles()"
+                                [loading]="$usersLoading()"
+                                [loadFailed]="userStore.usersLoadFailed() || roleStore.rolesLoadFailed()"
+                                (editRoles)="$editedUser.set($event)"
+                                (retry)="loadUsersWithRoles()"/>
+            </section>
+        }
+        @case ('roles') {
+            <section class="app-card overflow-hidden min-w-0">
+                <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
+                    <h2 class="m-0 text-base font-semibold text-gray-800">Roles</h2>
+                    <p-button label="New role" icon="pi pi-plus" (onClick)="onAddRole()"/>
+                </div>
+                <role-list [roles]="roleStore.roles()"
+                           [permissionsCount]="roleStore.permissionsCount()"
+                           [loading]="roleStore.rolesLoading()"
+                           [loadFailed]="roleStore.rolesLoadFailed()"
+                           [deleting]="roleStore.roleDeleting()"
+                           (edit)="$editedRole.set($event)"
+                           (delete)="onDeleteRole($event)"
+                           (retry)="roleStore.loadRoles()"/>
+            </section>
+        }
         @case ('architect-accounts') {
             <section class="app-card overflow-hidden min-w-0">
                 <div class="px-5 py-4">
@@ -130,5 +159,14 @@
               (unlink)="onUnlinkAccount()"
               (retry)="loadAccounts()"
               (closed)="$editedArchitect.set(null)"/>
+
+<edit-role [role]="$editedRole()" [roles]="roleStore.roles()" [saving]="roleStore.roleSaving()"
+           [resources]="roleStore.availablePermissions()"
+           [resourcesLoadFailed]="roleStore.availablePermissionsLoadFailed()"
+           (save)="onSaveRole($event)" (retry)="roleStore.loadAvailablePermissions()"
+           (closed)="$editedRole.set(null)"/>
+
+<edit-user-roles [user]="$editedUser()" [roles]="roleStore.roles()" [saving]="userStore.userRolesSaving()"
+                 (save)="onSaveUserRoles($event)" (closed)="$editedUser.set(null)"/>
 
 <p-confirmdialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>

@@ -1,0 +1,50 @@
+@if (loadFailed) {
+    <app-empty-state icon="pi pi-exclamation-triangle" title="Couldn't load roles"
+                     text="Check your connection and try again.">
+        <p-button label="Try again" icon="pi pi-refresh" severity="secondary" [outlined]="true" (onClick)="retry.emit()"/>
+    </app-empty-state>
+} @else {
+    <div role="table" aria-label="Roles" class="text-sm">
+        <div role="row" class="app-table-head grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_5rem]">
+            <span role="columnheader">Name</span>
+            <span role="columnheader">Permissions</span>
+            <span role="columnheader">Users</span>
+            <span role="columnheader"><span class="sr-only">Actions</span></span>
+        </div>
+        @if (loading) {
+            @for (row of skeletonRows; track row) {
+                <div role="row" class="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_5rem] gap-3 items-center px-5 py-3 border-b border-gray-100 last:border-b-0">
+                    <p-skeleton width="9rem" height="1rem"/>
+                    <p-skeleton width="4rem" height="1rem"/>
+                    <p-skeleton width="4rem" height="1rem"/>
+                    <span></span>
+                </div>
+            }
+        } @else {
+            @for (role of roles; track role.id) {
+                <div role="row" class="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_5rem] gap-3 items-center px-5 py-1.5 border-b border-gray-100 last:border-b-0 hover:bg-gray-50">
+                    <span role="cell" class="min-w-0 break-words font-medium text-gray-800">{{ role.name }}</span>
+                    <span role="cell" class="app-num text-left text-gray-500">{{ permissionsText(role) }}</span>
+                    <span role="cell" class="app-num text-left text-gray-500">{{ getUsersText(role.numberOfUsers) }}</span>
+                    <span role="cell" class="flex justify-end">
+                        <!-- The tooltips sit on spans, because a disabled button gets no pointer events -->
+                        <span [pTooltip]="editLabel(role)" tooltipPosition="left">
+                            <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" severity="secondary"
+                                      [ariaLabel]="editLabel(role)" [disabled]="!!role.administrator"
+                                      (onClick)="edit.emit(role)"/>
+                        </span>
+                        <span [pTooltip]="deleteLabel(role)" tooltipPosition="left">
+                            <p-button icon="pi pi-trash" [text]="true" [rounded]="true" severity="secondary"
+                                      [ariaLabel]="deleteLabel(role)"
+                                      [disabled]="!canDelete(role) || deleting !== null"
+                                      [loading]="deleting === role.id"
+                                      (onClick)="delete.emit(role)"/>
+                        </span>
+                    </span>
+                </div>
+            } @empty {
+                <app-empty-state icon="pi pi-shield" title="No roles yet"/>
+            }
+        }
+    </div>
+}

@@ -48,6 +48,7 @@ import {
 } from './settings/rest/company-cost-category-rest.service';
 import {StageTypeRestService, StageTypeRestServiceImpl} from './settings/rest/stage-type-rest.service';
 import {TaskTypeRestService, TaskTypeRestServiceImpl} from './settings/rest/task-type-rest.service';
+import {RoleRestService, RoleRestServiceImpl} from './settings/rest/role-rest.service';
 
 registerLocaleData(localePl); // money as "50 000,00 zł", dates as "15.10.2026"
 
@@ -110,5 +111,6 @@ export const appConfig: ApplicationConfig = {
         {provide: CompanyCostCategoryRestService, useClass: CompanyCostCategoryRestServiceImpl},
         {provide: StageTypeRestService, useClass: StageTypeRestServiceImpl},
         {provide: TaskTypeRestService, useClass: TaskTypeRestServiceImpl},
+        {provide: RoleRestService, useClass: RoleRestServiceImpl},
     ]
 };
