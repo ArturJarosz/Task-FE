@@ -1,0 +1,17 @@
+<p-dialog closeAriaLabel="Close" [visible]="visible" (visibleChange)="!$event && closed.emit()" [modal]="true" appendTo="body" [draggable]="false"
+          [style]="{width: '700px'}" [breakpoints]="{'768px': '95vw'}">
+    <ng-template #header>
+        <div class="flex flex-col gap-1">
+            <span class="p-dialog-title">Edit roles</span>
+            <span class="text-sm text-gray-500">{{ name }} gets the permissions of every role chosen here.</span>
+        </div>
+    </ng-template>
+    <label for="userRoles" class="app-form-label">Roles</label>
+    <p-multiselect inputId="userRoles" [formControl]="roleIds" [options]="roles" optionLabel="name" optionValue="id"
+                   display="chip" [showToggleAll]="false" [filter]="roles.length > 5" placeholder="No roles"
+                   emptyMessage="No roles yet" appendTo="body" [fluid]="true"/>
+    <ng-template #footer>
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="closed.emit()"/>
+        <p-button label="Save changes" [disabled]="saving || !changed" [loading]="saving" (onClick)="onSave()"/>
+    </ng-template>
+</p-dialog>

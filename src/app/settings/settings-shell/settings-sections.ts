@@ -28,6 +28,8 @@ export const SETTINGS_SECTION_GROUPS: SettingsSectionGroup[] = [
     },
     {
         label: 'People', sections: [
+            {key: 'users', label: 'Users', icon: 'pi pi-users', showsSystemParameters: false},
+            {key: 'roles', label: 'Roles', icon: 'pi pi-shield', showsSystemParameters: false},
             {key: 'architect-accounts', label: 'Architect accounts', icon: 'pi pi-id-card', showsSystemParameters: false},
         ]
     },

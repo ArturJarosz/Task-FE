@@ -44,6 +44,7 @@ import {SupplierCategoryRestService, SupplierCategoryRestServiceImpl} from '../a
 import {CostCategoryRestService, CostCategoryRestServiceImpl} from '../app/settings/rest/cost-category-rest.service';
 import {StageTypeRestService, StageTypeRestServiceImpl} from '../app/settings/rest/stage-type-rest.service';
 import {TaskTypeRestService, TaskTypeRestServiceImpl} from '../app/settings/rest/task-type-rest.service';
+import {RoleRestService, RoleRestServiceImpl} from '../app/settings/rest/role-rest.service';
 
 registerLocaleData(localePl);
 
@@ -99,5 +100,6 @@ export function provideTestDependencies(): (Provider | EnvironmentProviders)[] {
         {provide: CostCategoryRestService, useClass: CostCategoryRestServiceImpl},
         {provide: StageTypeRestService, useClass: StageTypeRestServiceImpl},
         {provide: TaskTypeRestService, useClass: TaskTypeRestServiceImpl},
+        {provide: RoleRestService, useClass: RoleRestServiceImpl},
     ];
 }

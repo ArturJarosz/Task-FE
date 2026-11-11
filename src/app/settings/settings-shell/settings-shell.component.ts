@@ -18,6 +18,7 @@ import {
     GoogleCalendarSettingsStore,
     NamedEntryStore,
     ProjectTypeStore,
+    RoleStore,
     StageTypeStore,
     SupplierCategoryStore,
     SystemParameterStore,
@@ -53,6 +54,12 @@ import {ArchitectStore} from "../../architect/state";
 import {Architect} from "../../generated/models/architect";
 import {UserStore} from "../../shared/user/state";
 import {architectName} from "../../project/project-filter/project-filter";
+import {RoleListComponent} from "../role-list/role-list.component";
+import {EditRoleComponent} from "../edit-role/edit-role.component";
+import {UserRoleListComponent} from "../user-role-list/user-role-list.component";
+import {EditUserRolesComponent} from "../edit-user-roles/edit-user-roles.component";
+import {Role} from "../../generated/models/role";
+import {UserSummary} from "../../generated/models/user-summary";
 
 // What the shell needs from the store of one list of named entries (project types, contractor categories...)
 interface NamedEntrySection {
@@ -68,7 +75,8 @@ interface NamedEntrySection {
     imports: [PageHeaderComponent, SystemParameterListComponent, EditSystemParameterComponent,
         AppearanceSettingsComponent, GoogleCalendarSettingsComponent, GoogleCalendarSharesComponent, ConfirmDialogModule,
         RouterLink, RouterLinkActive, NamedEntryListComponent, EditNamedEntryComponent, ButtonModule,
-        ArchitectAccountListComponent, LinkAccountComponent, SelectModule, FormsModule]
+        ArchitectAccountListComponent, LinkAccountComponent, SelectModule, FormsModule, RoleListComponent,
+        EditRoleComponent, UserRoleListComponent, EditUserRolesComponent]
 })
 export class SettingsShellComponent {
     readonly systemParameterStore = inject(SystemParameterStore);
@@ -77,6 +85,7 @@ export class SettingsShellComponent {
     readonly financialReportStore = inject(FinancialReportStore);
     readonly dashboardStore = inject(DashboardStore);
     readonly userStore = inject(UserStore);
+    readonly roleStore = inject(RoleStore);
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
     private readonly confirmationService = inject(ConfirmationService);
@@ -121,6 +130,14 @@ export class SettingsShellComponent {
     readonly $namedEntrySection = computed(() => this.namedEntrySections[this.$section()?.key ?? '']);
     // An entry without an id is a new one
     readonly $editedEntry = signal<NamedEntry | null>(null);
+
+    // The role being created (no id) or edited; the dialog is open while it is set
+    readonly $editedRole = signal<Role | null>(null);
+    // The user whose roles are being edited; the dialog is open while it is set
+    readonly $editedUser = signal<UserSummary | null>(null);
+    // The table keeps its rows during a reload; it needs the roles too, to name them
+    readonly $usersLoading = computed(() => (this.userStore.users() === null && !this.userStore.usersLoadFailed())
+        || this.roleStore.rolesLoading());
 
     readonly $googleCalendarParameters = computed(() =>
         toGoogleCalendarParameters(this.systemParameterStore.systemParameters()));
@@ -167,6 +184,24 @@ export class SettingsShellComponent {
                 if (isArchitectAccounts) {
                     this.architectStore.setArchitectsNeedRefresh();
                     this.architectStore.loadArchitects({});
+                }
+            });
+        });
+        effect(() => {
+            let sectionKey = this.$section()?.key;
+            untracked(() => {
+                // A dialog left open (e.g. by going back in the browser) belongs to the previous section
+                this.$editedRole.set(null);
+                this.$editedUser.set(null);
+                // Every visit: roles and their users change as people get roles
+                if (sectionKey === 'roles' || sectionKey === 'users') {
+                    this.roleStore.loadRoles();
+                }
+                if (sectionKey === 'roles') {
+                    this.roleStore.loadAvailablePermissions();
+                }
+                if (sectionKey === 'users') {
+                    this.userStore.loadUsers({});
                 }
             });
         });
@@ -287,6 +322,52 @@ export class SettingsShellComponent {
         if (this.$editedArchitect()?.id === architectId) {
             this.$editedArchitect.set(null);
         }
+    }
+
+    onAddRole(): void {
+        this.$editedRole.set({name: '', permissions: []});
+    }
+
+    onSaveRole(role: Role): void {
+        this.roleStore.saveRole({role, afterSave: () => this.$editedRole.set(null)});
+    }
+
+    onDeleteRole(role: Role): void {
+        this.confirmationService.confirm({
+            header: 'Delete role',
+            message: `Delete ${role.name}? This can't be undone.`,
+            icon: 'pi pi-exclamation-triangle',
+            acceptButtonProps: {label: 'Delete', severity: 'danger'},
+            rejectButtonProps: {label: 'Cancel', severity: 'secondary', outlined: true},
+            accept: () => {
+                this.roleStore.deleteRole(role);
+                this.confirmationService.close();
+            },
+            reject: () => {
+                this.confirmationService.close();
+            }
+        });
+    }
+
+    loadUsersWithRoles(): void {
+        this.userStore.loadUsers({});
+        this.roleStore.loadRoles();
+    }
+
+    onSaveUserRoles(roleIds: number[]): void {
+        let user = this.$editedUser()!;
+        this.userStore.updateUserRoles({
+            user: user,
+            roleIds: roleIds,
+            afterSave: () => {
+                // A save can finish after its dialog was cancelled and another user's was opened; that one stays open
+                if (this.$editedUser()?.id === user.id) {
+                    this.$editedUser.set(null);
+                }
+                // The number of users of each role changed
+                this.roleStore.loadRoles();
+            }
+        });
     }
 
     onGoogleCalendarSave(systemParameters: SystemParameter[]): void {

@@ -7,7 +7,9 @@ import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
 import {UserRestService} from "../rest/user-rest.service";
 import {inject} from "@angular/core";
-import {catchError, EMPTY, of, pipe, switchMap, tap} from "rxjs";
+import {MessageService} from "primeng/api";
+import {catchError, concatMap, EMPTY, finalize, of, pipe, switchMap, tap} from "rxjs";
+import {MessageSeverity} from "../../message";
 
 export interface UserState extends AppState {
     currentUser: User | null;
@@ -17,6 +19,8 @@ export interface UserState extends AppState {
     // Everyone who has logged in at least once; null until loaded
     users: UserSummary[] | null;
     usersLoadFailed: boolean;
+    // The roles of a user are being saved
+    userRolesSaving: boolean;
 }
 
 export const initialState: UserState = {
@@ -24,7 +28,8 @@ export const initialState: UserState = {
     configurations: null,
     configurationsLoadFailed: false,
     users: null,
-    usersLoadFailed: false
+    usersLoadFailed: false,
+    userRolesSaving: false
 }
 
 export const UserStore = signalStore(
@@ -83,7 +88,29 @@ export const UserStore = signalStore(
             });
         },
     })),
-    withMethods((store, userRestService = inject(UserRestService)) => ({
+    withMethods((store, userRestService = inject(UserRestService), messageService = inject(MessageService)) => ({
+        // afterSave runs only when the save worked, so the dialog stays open with what was picked after an error
+        updateUserRoles: rxMethod<{ user: UserSummary, roleIds: number[], afterSave?: () => void }>(
+            pipe(
+                concatMap(({user, roleIds, afterSave}) => {
+                    patchState(store, {userRolesSaving: true});
+                    return userRestService.updateUserRoles(user.id!, roleIds).pipe(
+                        tap(saved => {
+                            patchState(store, {
+                                users: (store.users() ?? []).map(other => other.id === saved.id ? saved : other)
+                            });
+                            messageService.add({
+                                severity: MessageSeverity.INFO,
+                                summary: `Roles of ${saved.username || saved.email || 'the account'} saved`
+                            });
+                            afterSave?.();
+                        }),
+                        catchError(() => EMPTY),
+                        finalize(() => patchState(store, {userRolesSaving: false}))
+                    );
+                })
+            )
+        ),
         // The REST service shows the error toast; the setting then just stays in this browser
         updateConfiguration: rxMethod<{ name: UserConfigurationName, value: string }>(
             pipe(

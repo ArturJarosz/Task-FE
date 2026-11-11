@@ -1,0 +1,63 @@
+<p-dialog closeAriaLabel="Close" [visible]="visible" (visibleChange)="!$event && onHide()" [modal]="true" appendTo="body" [draggable]="false"
+          [style]="{width: '760px'}" [breakpoints]="{'768px': '95vw'}">
+    <ng-template #header>
+        <span class="p-dialog-title">{{ isNew ? 'New role' : 'Edit role' }}</span>
+    </ng-template>
+    <!-- No form directive here, so Enter would submit natively and reload the page -->
+    <form (submit)="$event.preventDefault(); onSave()">
+        <label for="roleName" class="app-form-label">Name <span class="text-error-600">*</span></label>
+        <input id="roleName" type="text" [formControl]="name" pInputText class="w-full" placeholder="e.g. Office manager"
+               [attr.maxlength]="maxLength" (blur)="name.markAsDirty()" aria-describedby="roleNameHint"
+               [attr.aria-invalid]="(name.invalid && name.dirty) || nameTaken"/>
+        @if (nameTaken) {
+            <small id="roleNameHint" class="block mt-1.5 text-xs text-error-600">A role with this name already exists</small>
+        } @else if (name.invalid && name.dirty) {
+            <small id="roleNameHint" class="block mt-1.5 text-xs text-error-600">Enter a name</small>
+        }
+
+        @if (resourcesLoadFailed) {
+            <app-empty-state icon="pi pi-exclamation-triangle" title="Couldn't load permissions"
+                             text="Check your connection and try again.">
+                <p-button label="Try again" icon="pi pi-refresh" severity="secondary" [outlined]="true" (onClick)="retry.emit()"/>
+            </app-empty-state>
+        } @else {
+            <div role="table" aria-label="Permissions" class="mt-6 text-sm">
+                <div role="row" class="app-table-head grid grid-cols-[minmax(0,1fr)_repeat(4,4.5rem)] max-sm:grid-cols-[minmax(0,1fr)_repeat(4,3.25rem)]">
+                    <span role="columnheader">Permissions</span>
+                    @for (column of actions; track column.action) {
+                        <span role="columnheader" class="text-center">{{ column.label }}</span>
+                    }
+                </div>
+                @if (resources === null) {
+                    @for (row of skeletonRows; track row) {
+                        <div role="row" class="px-5 py-3 border-b border-gray-100 last:border-b-0">
+                            <p-skeleton width="9rem" height="1rem"/>
+                        </div>
+                    }
+                } @else {
+                    @for (resource of resources; track resource.resource) {
+                        <div role="row" class="grid grid-cols-[minmax(0,1fr)_repeat(4,4.5rem)] max-sm:grid-cols-[minmax(0,1fr)_repeat(4,3.25rem)] gap-3 items-center px-5 py-2 border-b border-gray-100 last:border-b-0">
+                            <span role="cell" class="min-w-0 text-gray-800">{{ resourceTexts[resource.resource!].label }}</span>
+                            @for (column of actions; track column.action) {
+                                <span role="cell" class="flex justify-center">
+                                    @if (offers(resource, column.action)) {
+                                        <p-checkbox [binary]="true" [ngModel]="has(resource, column.action)"
+                                                    [ngModelOptions]="{standalone: true}"
+                                                    [ariaLabel]="checkboxLabel(resource, column.label)"
+                                                    (ngModelChange)="toggle(resource, column.action, $event)"/>
+                                    }
+                                </span>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        }
+    </form>
+    <ng-template #footer>
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onHide()"/>
+        <p-button [label]="isNew ? 'Create role' : 'Save changes'"
+                  [disabled]="saving || resources === null || (!isNew && !changed)" [loading]="saving"
+                  (onClick)="onSave()"/>
+    </ng-template>
+</p-dialog>

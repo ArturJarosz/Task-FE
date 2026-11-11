@@ -17,6 +17,8 @@ export abstract class UserRestService {
     abstract getCurrentUserConfigurations(): Observable<UserConfiguration[]>;
 
     abstract updateCurrentUserConfiguration(name: UserConfigurationName, value: string): Observable<UserConfiguration>;
+
+    abstract updateUserRoles(userId: number, roleIds: number[]): Observable<UserSummary>;
 }
 
 @Injectable()
@@ -56,6 +58,13 @@ export class UserRestServiceImpl extends AbstractRestService implements UserRest
             .pipe(
                 catchError(error => this.handleError(error, this.messageService,
                     "Error saving your settings"))
+            );
+    }
+
+    updateUserRoles(userId: number, roleIds: number[]): Observable<UserSummary> {
+        return this.httpClient.put<UserSummary>(`${this.usersUrl}/${userId}/roles`, {roleIds})
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService, "Error saving roles"))
             );
     }
 }
