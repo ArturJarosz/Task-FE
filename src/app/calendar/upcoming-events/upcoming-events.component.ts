@@ -3,15 +3,13 @@ import {CalendarEvent} from "../../generated/models/calendar-event";
 import {Client} from "../../generated/models/client";
 import {Project} from "../../generated/models/project";
 import {clientDisplayName} from "../../client/model/client";
-import {SYNC_LABELS} from "../model/calendar.model";
-import {CalendarEventSyncStatus} from "../../generated/models/calendar-event-sync-status";
-import {TagModule} from "primeng/tag";
+import {GoogleSyncIssue, isWaitingForGoogle} from "../model/calendar.model";
+import {GoogleSyncTagComponent} from "../google-sync-tag/google-sync-tag.component";
 import {ButtonModule} from "primeng/button";
 import {Menu, MenuModule} from "primeng/menu";
 import {TooltipModule} from "primeng/tooltip";
 import {MenuItem} from "primeng/api";
 import {EmptyStateComponent} from "../../shared";
-import {statusSeverity} from "../../shared/status-severity";
 import {eventCountLabel, eventDay, eventMonth, eventTime} from "../../shared/utils/event-date-utils";
 
 @Component({
@@ -20,7 +18,7 @@ import {eventCountLabel, eventDay, eventMonth, eventTime} from "../../shared/uti
     styleUrl: './upcoming-events.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [TagModule, ButtonModule, MenuModule, TooltipModule, EmptyStateComponent]
+    imports: [ButtonModule, MenuModule, TooltipModule, EmptyStateComponent, GoogleSyncTagComponent]
 })
 export class UpcomingEventsComponent {
     @Input()
@@ -41,13 +39,22 @@ export class UpcomingEventsComponent {
     clients: Client[] = [];
     @Input()
     projects: Project[] = [];
+    // Shown next to the title, and events not sent to Google say so, while sync has an issue
+    @Input()
+    syncIssue: GoogleSyncIssue | null = null;
+    @Input()
+    syncTag = true;
+    @Input()
+    syncChecking = false;
 
     @Output()
     editEvent: EventEmitter<CalendarEvent> = new EventEmitter<CalendarEvent>();
     @Output()
     deleteEvent: EventEmitter<CalendarEvent> = new EventEmitter<CalendarEvent>();
+    @Output()
+    recheckSync = new EventEmitter<void>();
 
-    protected readonly statusSeverity = statusSeverity;
+    protected readonly isWaitingForGoogle = isWaitingForGoogle;
     protected readonly eventDay = eventDay;
     protected readonly eventMonth = eventMonth;
     protected readonly eventTime = eventTime;
@@ -63,10 +70,6 @@ export class UpcomingEventsComponent {
 
     projectName(event: CalendarEvent): string {
         return this.projects.find(project => project.id === event.projectId)?.name ?? '';
-    }
-
-    getSyncLabel(status?: CalendarEventSyncStatus): string {
-        return status ? SYNC_LABELS[status] : '';
     }
 
     openRowMenu($event: MouseEvent, event: CalendarEvent, menu: Menu) {

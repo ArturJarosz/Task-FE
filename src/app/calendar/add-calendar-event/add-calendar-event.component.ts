@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, computed, inject} from '@angular/core';
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {CalendarEventForm, CalendarEventFormProvider} from "../form/calendar-event-form-provider";
 import {CalendarEvent} from "../../generated/models/calendar-event";
@@ -6,7 +6,7 @@ import {Client} from "../../generated/models/client";
 import {Project} from "../../generated/models/project";
 import {clientDisplayName} from "../../client/model/client";
 import {CalendarStore} from "../state";
-import {EventSelection} from "../model/calendar.model";
+import {EventSelection, GOOGLE_SYNC_ISSUES} from "../model/calendar.model";
 import {toDateIfExists, toLocalDateTimeString} from "../../shared/utils/date-utils";
 import {DialogModule} from "primeng/dialog";
 import {InputTextModule} from "primeng/inputtext";
@@ -48,6 +48,11 @@ export class AddCalendarEventComponent implements OnChanges {
     deleteRequested: EventEmitter<CalendarEvent> = new EventEmitter<CalendarEvent>();
 
     readonly calendarStore = inject(CalendarStore);
+    // Where the event goes while Google Calendar sync has an issue
+    readonly syncIssueText = computed(() => {
+        const issue = this.calendarStore.googleSyncIssue();
+        return issue ? GOOGLE_SYNC_ISSUES[issue] : null;
+    });
 
     calendarEventForm!: FormGroup<CalendarEventForm>;
     clientOptions: {id?: number, name: string}[] = [];

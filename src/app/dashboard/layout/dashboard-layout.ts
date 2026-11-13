@@ -116,9 +116,17 @@ export function freeWidth(row: DashboardRow): number {
     return ROW_WIDTH - row.stacks.reduce((sum, stack) => sum + stack.width, 0);
 }
 
+function placedWidgets(layout: DashboardLayout): Set<DashboardWidgetType> {
+    return new Set(layout.rows.flatMap(row => row.stacks.flatMap(stack => stack.widgets.map(widget => widget.type))));
+}
+
+export function hasWidget(layout: DashboardLayout, type: DashboardWidgetType): boolean {
+    return placedWidgets(layout).has(type);
+}
+
 // Widgets not on the dashboard yet
 export function availableWidgets(layout: DashboardLayout): DashboardWidgetDefinition[] {
-    const placed = new Set(layout.rows.flatMap(row => row.stacks.flatMap(stack => stack.widgets.map(widget => widget.type))));
+    const placed = placedWidgets(layout);
     return DASHBOARD_WIDGETS.filter(definition => !placed.has(definition.type));
 }
 

@@ -1,5 +1,5 @@
 import {SystemParameterStore} from "../../settings/state/system-parameter.state";
-import {ChangeDetectionStrategy, Component, effect, inject, OnDestroy, OnInit, Signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect, inject, OnDestroy, OnInit, Signal, untracked} from '@angular/core';
 import {DashboardStore} from "../state/dashboard.state";
 import {ProjectStore} from "../../project/state";
 import {CalendarStore} from "../../calendar/state";
@@ -7,7 +7,7 @@ import {ConfigurationStore} from "../../shared/configuration/state";
 import {CalendarEvent, ConfigurationEntry, FinancialReport, Project, ProjectStatus} from "../../generated/models";
 import {PeriodType} from "../../generated/models/period-type";
 import {DashboardComponent} from "../dashboard/dashboard.component";
-import {DashboardLayout} from "../layout/dashboard-layout";
+import {DashboardLayout, hasWidget} from "../layout/dashboard-layout";
 
 @Component({
     selector: 'dashboard-shell',
@@ -49,6 +49,13 @@ export class DashboardShellComponent implements OnInit, OnDestroy {
         effect(() => {
             if (this.$upcomingEventsNeedRefresh()) {
                 this.calendarStore.loadUpcomingEvents({});
+            }
+        });
+        // Only a dashboard that shows events needs to know whether they reach Google
+        effect(() => {
+            const layout = this.$draftLayout() ?? this.$layout();
+            if (hasWidget(layout, 'upcoming-events')) {
+                untracked(() => this.calendarStore.loadGoogleConnection());
             }
         });
     }

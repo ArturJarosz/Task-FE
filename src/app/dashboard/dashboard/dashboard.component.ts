@@ -57,6 +57,8 @@ import {
     WidgetWidth
 } from "../layout/dashboard-layout";
 import {AddWidgetComponent} from "../add-widget/add-widget.component";
+import {GoogleSyncTagComponent} from "../../calendar/google-sync-tag/google-sync-tag.component";
+import {GoogleSyncIssue, isWaitingForGoogle} from "../../calendar/model/calendar.model";
 
 // Rows shown in the "Active projects" card, "See all" opens the full page; events follow their own setting
 const LIST_SIZE = 5;
@@ -94,7 +96,8 @@ interface YearKpi {
     standalone: true,
     imports: [PageHeaderComponent, EmptyStateComponent, KpiCardComponent, AddWidgetComponent, ButtonModule, ChartModule,
         MenuModule, SkeletonModule, TableModule, TagModule, TooltipModule, CdkDropList, CdkDrag,
-        CdkDragHandle, CdkDragPlaceholder, CdkDragPreview, RouterLink, CurrencyPipe, NgTemplateOutlet, NotSetComponent]
+        CdkDragHandle, CdkDragPlaceholder, CdkDragPreview, RouterLink, CurrencyPipe, NgTemplateOutlet, NotSetComponent,
+        GoogleSyncTagComponent]
 })
 export class DashboardComponent implements OnChanges {
     @Input()
@@ -119,6 +122,10 @@ export class DashboardComponent implements OnChanges {
     upcomingEvents: CalendarEvent[] = [];
     @Input()
     upcomingEventsShown = 10;
+    @Input()
+    googleSyncIssue: GoogleSyncIssue | null = null;
+    @Input()
+    googleSyncChecking = false;
     // The saved layout
     @Input()
     layout: DashboardLayout = {rows: []};
@@ -132,6 +139,8 @@ export class DashboardComponent implements OnChanges {
 
     @Output()
     periodTypeChange = new EventEmitter<PeriodType>();
+    @Output()
+    recheckGoogleSync = new EventEmitter<void>();
     @Output()
     reloadReport = new EventEmitter<void>();
     @Output()
@@ -152,6 +161,7 @@ export class DashboardComponent implements OnChanges {
     protected readonly eventMonth = eventMonth;
     protected readonly eventWhen = eventWhen;
     protected readonly eventCountLabel = eventCountLabel;
+    protected readonly isWaitingForGoogle = isWaitingForGoogle;
     protected readonly widgetWidths = WIDGET_WIDTHS;
     protected readonly maxStackSize = MAX_STACK_SIZE;
     protected readonly widgetDefinition = widgetDefinition;

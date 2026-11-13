@@ -1,0 +1,23 @@
+<ng-template #tag>
+    <!-- The label is projected so the arrow can follow it; p-tag's own empty label is hidden -->
+    <p-tag [severity]="severity" styleClass="[&_.p-tag-label:empty]:hidden">
+        <i [class]="text.icon + ' text-xs'" aria-hidden="true"></i>
+        <span class="group-hover:underline">{{ text.label }}</span>
+        <i [class]="(checking ? 'pi pi-spinner pi-spin' : 'pi pi-arrow-right') + ' text-[10px]'" aria-hidden="true"></i>
+    </p-tag>
+</ng-template>
+@if (text.action === 'settings') {
+    <a routerLink="/settings/google-calendar" [attr.aria-describedby]="hintId"
+       class="inline-flex rounded-md no-underline group focus-visible:outline-none focus-visible:shadow-focus-ring"
+       [pTooltip]="text.hint" tooltipPosition="bottom" tooltipEvent="both" tooltipStyleClass="max-w-xs">
+        <ng-container [ngTemplateOutlet]="tag"/>
+    </a>
+} @else {
+    <button type="button" [attr.aria-describedby]="hintId" [attr.aria-busy]="checking"
+            class="inline-flex p-0 border-0 bg-transparent rounded-md cursor-pointer font-[inherit] group focus-visible:outline-none focus-visible:shadow-focus-ring"
+            [pTooltip]="text.hint" tooltipPosition="bottom" tooltipEvent="both" tooltipStyleClass="max-w-xs"
+            (click)="onRecheck()">
+        <ng-container [ngTemplateOutlet]="tag"/>
+    </button>
+}
+<span [id]="hintId" class="sr-only">{{ text.hint }} {{ text.actionLabel }}.</span>

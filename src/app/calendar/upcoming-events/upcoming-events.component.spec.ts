@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UpcomingEventsComponent } from './upcoming-events.component';
+import {provideTestDependencies} from '../../../testing/test-providers';
 
 describe('UpcomingEventsComponent', () => {
   let component: UpcomingEventsComponent;
@@ -8,7 +9,8 @@ describe('UpcomingEventsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UpcomingEventsComponent]
+      imports: [UpcomingEventsComponent],
+      providers: provideTestDependencies()
     })
     .compileComponents();
 
@@ -55,5 +57,48 @@ describe('UpcomingEventsComponent', () => {
     const text = fixture.nativeElement.textContent;
     expect(text).toContain('Past events');
     expect(text).toContain('No past events');
+  });
+
+  describe('Google Calendar sync', () => {
+    beforeEach(() => {
+      fixture.componentRef.setInput('events', [
+        {id: 1, name: 'Sent', syncStatus: 'SYNCED', startDateTime: '2026-11-06T09:00:00'},
+        {id: 2, name: 'Not sent', syncStatus: 'PENDING', startDateTime: '2026-11-07T09:00:00'},
+      ]);
+    });
+
+    it('should say nothing about sync while it works', () => {
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('google-sync-tag')).toBeNull();
+      expect(fixture.nativeElement.textContent).not.toContain('sync');
+    });
+
+    it('should name the issue and mark the events Google does not have yet', () => {
+      fixture.componentRef.setInput('syncIssue', 'NOT_CONFIGURED');
+      fixture.detectChanges();
+
+      const rows: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('li'));
+      expect(fixture.nativeElement.querySelector('google-sync-tag').textContent).toContain('Google Calendar not set up');
+      expect(rows[0].textContent).not.toContain('Waiting to sync');
+      expect(rows[1].textContent).toContain('Waiting to sync');
+    });
+
+    it('should not mark events as waiting when the sync status is unknown', () => {
+      fixture.componentRef.setInput('syncIssue', 'UNKNOWN');
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('google-sync-tag').textContent).toContain('Sync status unknown');
+      expect(fixture.nativeElement.textContent).not.toContain('Waiting to sync');
+    });
+
+    it('should leave the tag to another card of the page', () => {
+      fixture.componentRef.setInput('syncIssue', 'NOT_CONFIGURED');
+      fixture.componentRef.setInput('syncTag', false);
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('google-sync-tag')).toBeNull();
+      expect(fixture.nativeElement.textContent).toContain('Waiting to sync');
+    });
   });
 });

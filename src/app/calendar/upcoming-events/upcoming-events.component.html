@@ -1,7 +1,12 @@
 <section class="app-card">
     <div class="app-card-header">
         <div>
-            <h2 class="app-card-title">{{ title }}</h2>
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <h2 class="app-card-title">{{ title }}</h2>
+                @if (syncIssue && syncTag) {
+                    <google-sync-tag [issue]="syncIssue" [checking]="syncChecking" (recheck)="recheckSync.emit()"/>
+                }
+            </div>
             <p class="app-card-subtitle m-0">{{ countLabel }}</p>
         </div>
         <ng-content select="[eventListActions]"></ng-content>
@@ -9,20 +14,13 @@
     @if (events.length === 0) {
         <app-empty-state icon="pi pi-calendar" [title]="emptyTitle" [text]="emptyText"/>
     } @else {
-        <!-- Wide lists (project and client pages) keep each row short; the calendar's narrow side column stacks it -->
-        <ul class="@container list-none m-0 px-6 pb-4">
+        <ul class="list-none m-0 px-6 pb-4">
             @for (event of events; track event.id) {
-                <li class="flex items-start @lg:items-center gap-3 py-3 border-b border-gray-100 last:border-b-0">
-                    <div class="flex flex-col items-center gap-1.5 shrink-0 w-[4.5rem] @lg:w-auto">
-                        <div class="flex flex-col items-center justify-center shrink-0 w-12 h-12 rounded-xl"
-                             [class]="muted ? 'bg-gray-100 text-gray-500' : 'bg-brand-50 text-brand-600'">
-                            <span class="text-base leading-5 font-semibold">{{ eventDay(event.startDateTime) }}</span>
-                            <span class="text-[12px] leading-4 uppercase">{{ eventMonth(event.startDateTime) }}</span>
-                        </div>
-                        @if (event.syncStatus) {
-                            <p-tag class="@lg:hidden" [value]="getSyncLabel(event.syncStatus)"
-                                   [severity]="statusSeverity(event.syncStatus)"/>
-                        }
+                <li class="flex items-center gap-3 py-3 border-b border-gray-100 last:border-b-0">
+                    <div class="flex flex-col items-center justify-center shrink-0 w-12 h-12 rounded-xl"
+                         [class]="muted ? 'bg-gray-100 text-gray-500' : 'bg-brand-50 text-brand-600'">
+                        <span class="text-base leading-5 font-semibold">{{ eventDay(event.startDateTime) }}</span>
+                        <span class="text-[12px] leading-4 uppercase">{{ eventMonth(event.startDateTime) }}</span>
                     </div>
                     <div class="flex-1 min-w-0">
                         <button type="button" class="block max-w-full p-0 border-0 bg-transparent text-left font-medium text-gray-800 truncate cursor-pointer hover:text-brand-600"
@@ -44,12 +42,14 @@
                                     <span class="truncate">{{ project }}</span>
                                 </span>
                             }
+                            @if (isWaitingForGoogle(event, syncIssue)) {
+                                <span class="inline-flex items-center gap-1.5">
+                                    <i class="pi pi-sync text-xs" aria-hidden="true"></i>
+                                    Waiting to sync
+                                </span>
+                            }
                         </div>
                     </div>
-                    @if (event.syncStatus) {
-                        <p-tag class="hidden @lg:inline-block shrink-0" [value]="getSyncLabel(event.syncStatus)"
-                               [severity]="statusSeverity(event.syncStatus)"/>
-                    }
                     <p-button icon="pi pi-ellipsis-h" [text]="true" [rounded]="true" severity="secondary"
                               pTooltip="Event actions" tooltipPosition="left" ariaLabel="Event actions"
                               (onClick)="openRowMenu($event, event, rowMenu)"/>

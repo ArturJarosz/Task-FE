@@ -262,7 +262,13 @@
                 <section class="app-card flex-1 min-w-0 flex flex-col">
                     <div class="app-card-header">
                         <div>
-                            <h2 class="app-card-title">Upcoming events</h2>
+                            <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                                <h2 class="app-card-title">Upcoming events</h2>
+                                @if (googleSyncIssue) {
+                                    <google-sync-tag [issue]="googleSyncIssue" [checking]="googleSyncChecking"
+                                                     (recheck)="recheckGoogleSync.emit()"/>
+                                }
+                            </div>
                             <p class="app-card-subtitle m-0">{{ eventCountLabel(nextEvents.length, upcomingEvents.length) }}</p>
                         </div>
                         <p-button label="See all" severity="secondary" [outlined]="true" routerLink="/calendar"/>
@@ -280,7 +286,15 @@
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <div class="font-medium text-gray-800 truncate">{{ event.name }}</div>
-                                        <div class="text-xs text-gray-500">{{ eventWhen(event) }}</div>
+                                        <div class="flex flex-wrap gap-x-4 text-xs text-gray-500">
+                                            <span>{{ eventWhen(event) }}</span>
+                                            @if (isWaitingForGoogle(event, googleSyncIssue)) {
+                                                <span class="inline-flex items-center gap-1.5">
+                                                    <i class="pi pi-sync text-xs" aria-hidden="true"></i>
+                                                    Waiting to sync
+                                                </span>
+                                            }
+                                        </div>
                                     </div>
                                 </li>
                             }

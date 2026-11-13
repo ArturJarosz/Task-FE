@@ -75,6 +75,7 @@ describe('CalendarViewComponent', () => {
 
     function hover(): void {
       fixture.componentRef.setInput('events', [event]);
+      fixture.componentRef.setInput('syncIssue', 'CONNECTION_FAILED');
       fixture.componentRef.setInput('clients', [{id: 1, firstName: 'Anna', lastName: 'Nowak'}]);
       fixture.componentRef.setInput('projects', [{id: 10, name: 'House'}]);
       (component.calendarOptions.eventMouseEnter as (arg: EventHoveringArg) => void)(
@@ -86,8 +87,18 @@ describe('CalendarViewComponent', () => {
       hover();
 
       const text = fixture.nativeElement.querySelector('[role=tooltip]').textContent;
-      ['Site visit', '06.11.2026 · 09:00–17:00', 'Anna Nowak', 'House', 'Bring samples', 'Pending']
+      ['Site visit', '06.11.2026 · 09:00–17:00', 'Anna Nowak', 'House', 'Bring samples', 'Waiting to sync']
         .forEach(detail => expect(text).toContain(detail));
+    });
+
+    it('should not mention sync while it works', () => {
+      hover();
+      fixture.componentRef.setInput('syncIssue', null);
+      (component.calendarOptions.eventMouseEnter as (arg: EventHoveringArg) => void)(
+        {event: {id: '5'}, el: document.createElement('div')} as unknown as EventHoveringArg);
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('[role=tooltip]').textContent).not.toContain('sync');
     });
 
     it('should leave out details the event does not have', () => {

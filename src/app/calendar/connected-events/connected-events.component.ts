@@ -32,6 +32,9 @@ export class ConnectedEventsComponent implements OnChanges {
     // The page's primary button, an outline one next to other primary actions, or none when the page has its own
     @Input()
     addButton: 'primary' | 'outline' | 'none' = 'outline';
+    // Off where another card of the page already shows a Google Calendar sync issue
+    @Input()
+    syncTag = true;
 
     readonly calendarStore = inject(CalendarStore);
     readonly clientStore = inject(ClientStore);
@@ -67,6 +70,7 @@ export class ConnectedEventsComponent implements OnChanges {
 
     ngOnChanges(): void {
         this.reload();
+        this.calendarStore.loadGoogleConnection();
         this.clientStore.loadClients({});
         this.projectStore.loadProjects({});
     }

@@ -240,7 +240,7 @@ describe('GoogleCalendarSettingsComponent', () => {
         fixture.detectChanges();
 
         let text = fixture.nativeElement.textContent;
-        expect(text).toContain('No access');
+        expect(text).toContain('No access to Google Calendar');
         expect(text).toContain('Google Calendar API has not been used in project 123');
     });
 
