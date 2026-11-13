@@ -1,4 +1,13 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    Output,
+    SimpleChanges,
+    viewChild
+} from '@angular/core';
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {DatePipe} from "@angular/common";
 import {RouterLink} from "@angular/router";
@@ -22,6 +31,7 @@ import {statusSeverity} from "../../shared/status-severity";
 import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
 import {changedFields, showErrors} from "../../shared/utils/form-utils";
 import {QuickLog, TaskTimeCardComponent} from "../../time-entry/task-time-card/task-time-card.component";
+import {ProjectHistoryComponent} from "../../project/project-history/project-history.component";
 
 type TaskFormValue = ReturnType<FormGroup<TaskForm>['getRawValue']>;
 
@@ -34,7 +44,7 @@ const DATA_FIELDS: (keyof TaskFormValue)[] = ['name', 'type', 'startDate', 'endD
     styleUrl: './task-detail.component.less',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [LoadErrorComponent, PageHeaderComponent, FieldComponent, EmptyStateComponent,
+    imports: [ProjectHistoryComponent, LoadErrorComponent, PageHeaderComponent, FieldComponent, EmptyStateComponent,
         TaskTimeCardComponent, ButtonModule, DatePickerModule, DialogModule, InputTextModule, MenuModule, SelectModule,
         SkeletonModule, TagModule, Textarea, TooltipModule, ReactiveFormsModule, RouterLink, DatePipe]
 })
@@ -90,6 +100,7 @@ export class TaskDetailComponent implements OnChanges {
     showEditDialog = false;
 
     crumbs: PageCrumb[] = [];
+    readonly history = viewChild.required(ProjectHistoryComponent);
     actions: MenuItem[] = [];
     availableTaskStatuses: ConfigurationEntry[] = [];
     architectOptions: { id: number, name: string }[] = [];
@@ -109,6 +120,7 @@ export class TaskDetailComponent implements OnChanges {
         if (changes['task'] && this.task) {
             this.resetForm();
             this.actions = [
+                {label: 'History', icon: 'pi pi-history', command: () => this.history().open()},
                 {label: 'Log time', icon: 'pi pi-clock', command: () => this.logTimeEvent.emit()},
                 {separator: true},
                 {label: 'Delete task', icon: 'pi pi-trash',

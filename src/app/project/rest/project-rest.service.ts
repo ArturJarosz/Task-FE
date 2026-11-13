@@ -1,12 +1,13 @@
 import {catchError, Observable} from "rxjs";
 import {Injectable} from "@angular/core";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {MessageService} from "primeng/api";
 import {AbstractRestService} from "../../shared/rest/abstract-rest.service";
 import {environment} from "../../../environments/environment";
 import {ProjectCreate} from "../../generated/models/project-create";
 import {Project} from "../../generated/models/project";
 import {ProjectTimeSummary} from "../../generated/models/project-time-summary";
+import {HistoryEntry} from "../../generated/models/history-entry";
 
 export abstract class ProjectRestService {
     abstract getProjects(): Observable<Project[]>;
@@ -20,6 +21,8 @@ export abstract class ProjectRestService {
     abstract removeProject(projectId: number): Observable<void>;
 
     abstract getProjectTimeSummary(projectId: number): Observable<ProjectTimeSummary>;
+
+    abstract getProjectHistory(projectId: number, stageId?: number, taskId?: number): Observable<HistoryEntry[]>;
 }
 
 @Injectable()
@@ -74,6 +77,22 @@ export class ProjectRestServiceImpl extends AbstractRestService implements Proje
             .pipe(
                 catchError(error => this.handleError(error, this.messageService,
                     `Error loading time summary of project with id: ${projectId}`))
+            );
+    }
+
+    // With a stage, only the changes of the stage and its tasks; with a task, only those of the task
+    getProjectHistory(projectId: number, stageId?: number, taskId?: number): Observable<HistoryEntry[]> {
+        let params = new HttpParams();
+        if (stageId !== undefined) {
+            params = params.set('stageId', stageId);
+        }
+        if (taskId !== undefined) {
+            params = params.set('taskId', taskId);
+        }
+        return this.httpClient.get<HistoryEntry[]>(`${this.projectUrl}/${projectId}/history`, {params})
+            .pipe(
+                catchError(error => this.handleError(error, this.messageService,
+                    `Error loading history of project with id: ${projectId}`))
             );
     }
 }

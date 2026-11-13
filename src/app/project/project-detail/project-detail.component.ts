@@ -1,4 +1,5 @@
 import {ConnectedEventsComponent} from "../../calendar/connected-events/connected-events.component";
+import {ProjectHistoryComponent} from "../project-history/project-history.component";
 import {
     ChangeDetectionStrategy,
     Component,
@@ -7,7 +8,8 @@ import {
     Input,
     OnChanges,
     Output,
-    SimpleChanges
+    SimpleChanges,
+    viewChild
 } from '@angular/core';
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {startOfToday} from "date-fns";
@@ -70,7 +72,7 @@ const GAUGE_ARC_LENGTH = Math.PI * 80;
     styleUrls: ['./project-detail.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [ConnectedEventsComponent, LoadErrorComponent, FieldComponent, PageHeaderComponent, StageListShellComponent, ProjectTimelineComponent, ProjectTimeSummaryComponent, ProjectFinancialDetailShellComponent, SelectModule, DatePickerModule, ButtonModule, InputTextModule, Textarea, TagModule, DialogModule, MenuModule, SkeletonModule, ReactiveFormsModule, RouterLink, RouterLinkActive, CurrencyPipe, DatePipe, TooltipModule, InstallmentPaymentFieldsComponent]
+    imports: [ConnectedEventsComponent, ProjectHistoryComponent, LoadErrorComponent, FieldComponent, PageHeaderComponent, StageListShellComponent, ProjectTimelineComponent, ProjectTimeSummaryComponent, ProjectFinancialDetailShellComponent, SelectModule, DatePickerModule, ButtonModule, InputTextModule, Textarea, TagModule, DialogModule, MenuModule, SkeletonModule, ReactiveFormsModule, RouterLink, RouterLinkActive, CurrencyPipe, DatePipe, TooltipModule, InstallmentPaymentFieldsComponent]
 })
 export class ProjectDetailComponent implements OnChanges {
     @Input()
@@ -148,7 +150,10 @@ export class ProjectDetailComponent implements OnChanges {
     latestPaymentDate: Date = startOfToday();
     showProjectDialog: boolean = false;
 
+    readonly history = viewChild.required(ProjectHistoryComponent);
     readonly actions: MenuItem[] = [
+        {label: 'History', icon: 'pi pi-history', command: () => this.history().open()},
+        {separator: true},
         {label: 'Delete project', icon: 'pi pi-trash', command: () => this.onDelete()}
     ];
 
