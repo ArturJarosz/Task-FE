@@ -8,7 +8,7 @@ import {CalendarEvent} from "../../generated/models/calendar-event";
 import {Client} from "../../generated/models/client";
 import {Project} from "../../generated/models/project";
 import {clientDisplayName} from "../../client/model/client";
-import {DateRange, EventSelection, SYNC_LABELS} from "../model/calendar.model";
+import {DateRange, EventSelection, GoogleSyncIssue, isWaitingForGoogle} from "../model/calendar.model";
 import {eventWhen} from "../../shared/utils/event-date-utils";
 import {toTimeZoneString} from "../../shared/utils/date-utils";
 
@@ -44,6 +44,9 @@ export class CalendarViewComponent implements OnChanges {
     clients: Client[] = [];
     @Input()
     projects: Project[] = [];
+    // Events not sent to Google say so in their tooltip while sync has an issue
+    @Input()
+    syncIssue: GoogleSyncIssue | null = null;
 
     readonly tooltip = signal<EventTooltip | null>(null);
     // The app returns focus to this event when its dialog closes, which must not open the tooltip
@@ -139,7 +142,7 @@ export class CalendarViewComponent implements OnChanges {
             client: clientDisplayName(this.clients.find(client => client.id === event.clientId)),
             project: this.projects.find(project => project.id === event.projectId)?.name,
             description: event.description,
-            sync: event.syncStatus ? SYNC_LABELS[event.syncStatus] : undefined,
+            sync: isWaitingForGoogle(event, this.syncIssue) ? 'Waiting to sync' : undefined,
             left: Math.max(TOOLTIP_GAP, Math.min(box.left, window.innerWidth - TOOLTIP_WIDTH - TOOLTIP_GAP)),
             top: below ? box.bottom + TOOLTIP_GAP : undefined,
             bottom: below ? undefined : window.innerHeight - box.top + TOOLTIP_GAP,

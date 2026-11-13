@@ -25,6 +25,10 @@
                      [totalEvents]="period() === 'upcoming' ? upcomingEvents().length : pastEvents().length"
                      [clients]="projectId || clientId ? [] : clientStore.clients()"
                      [projects]="projectId ? [] : projectStore.projects()"
+                     [syncIssue]="calendarStore.googleSyncIssue()"
+                     [syncTag]="syncTag"
+                     [syncChecking]="calendarStore.googleConnectionChecking()"
+                     (recheckSync)="calendarStore.checkGoogleConnection()"
                      (editEvent)="onEditEvent($event)"
                      (deleteEvent)="onDeleteEvent($event)">
         <div eventListActions class="flex flex-wrap items-center gap-3">

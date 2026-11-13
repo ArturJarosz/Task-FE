@@ -12,6 +12,7 @@ import {GoogleCalendarConnectionRestService} from "../rest/google-calendar-conne
 import {GoogleCalendarShareRestService} from "../rest/google-calendar-share-rest.service";
 import {MessageSeverity} from "../../shared/message";
 import {SystemParameterStore} from "./system-parameter.state";
+import {CalendarStore} from "../../calendar/state/calendar.state";
 
 // The Google Calendar settings themselves are system parameters, saved through SystemParameterStore; this store
 // checks whether Google can be reached with them and manages who the calendar is shared with
@@ -121,7 +122,8 @@ export const GoogleCalendarSettingsStore = signalStore(
             ),
         };
     }),
-    withMethods((store, connectionRestService = inject(GoogleCalendarConnectionRestService)) => ({
+    withMethods((store, connectionRestService = inject(GoogleCalendarConnectionRestService),
+                 calendarStore = inject(CalendarStore)) => ({
         // Asks the backend to reach Google with the saved settings; a newer check replaces a running one
         checkConnection: rxMethod<{}>(
             pipe(
@@ -130,6 +132,8 @@ export const GoogleCalendarSettingsStore = signalStore(
                     .pipe(
                         tap(connection => {
                             patchState(store, {connection: connection, connectionChecking: false});
+                            // The event pages show sync problems from the same check
+                            calendarStore.setGoogleConnection(connection);
                             // Shares can be read only from a reachable calendar
                             if (connection.status === GoogleCalendarConnectionStatus.CONNECTED) {
                                 store.loadShares();

@@ -4,6 +4,7 @@ import {CalendarEvent} from "../../generated/models/calendar-event";
 import {CalendarViewComponent} from "../calendar-view/calendar-view.component";
 import {ConnectedEventsComponent} from "../connected-events/connected-events.component";
 import {AddCalendarEventComponent} from "../add-calendar-event/add-calendar-event.component";
+import {GoogleSyncTagComponent} from "../google-sync-tag/google-sync-tag.component";
 import {ConfirmationService} from "primeng/api";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ButtonModule} from "primeng/button";
@@ -19,7 +20,8 @@ import {Project} from "../../generated/models/project";
     templateUrl: './calendar-shell.component.html',
     styleUrl: './calendar-shell.component.less',
     standalone: true,
-    imports: [CalendarViewComponent, ConnectedEventsComponent, AddCalendarEventComponent, ConfirmDialogModule, ButtonModule, PageHeaderComponent]
+    imports: [CalendarViewComponent, ConnectedEventsComponent, AddCalendarEventComponent, ConfirmDialogModule, ButtonModule, PageHeaderComponent,
+        GoogleSyncTagComponent]
 })
 export class CalendarShellComponent {
 
@@ -43,6 +45,7 @@ export class CalendarShellComponent {
                 this.calendarStore.loadEvents({});
             }
         });
+        this.calendarStore.loadGoogleConnection();
     }
 
     onRangeChange(range: DateRange): void {

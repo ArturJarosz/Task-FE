@@ -53,6 +53,37 @@ describe('DashboardComponent', () => {
         expect(element().textContent).toContain('Your dashboard is empty');
     });
 
+    describe('Google Calendar sync in Upcoming events', () => {
+        beforeEach(() => {
+            fixture.componentRef.setInput('upcomingEvents', [
+                {id: 1, name: 'Sent', syncStatus: 'SYNCED', startDateTime: '2026-11-06T09:00:00'},
+                {id: 2, name: 'Not sent', syncStatus: 'PENDING', startDateTime: '2026-11-07T09:00:00'},
+            ]);
+        });
+
+        it('should say nothing about sync while it works', () => {
+            fixture.detectChanges();
+
+            expect(element().querySelector('google-sync-tag')).toBeNull();
+            expect(element().textContent).not.toContain('Waiting to sync');
+        });
+
+        it('should name the issue, mark waiting events and pass on a recheck', () => {
+            let rechecks = 0;
+            component.recheckGoogleSync.subscribe(() => rechecks++);
+            fixture.componentRef.setInput('googleSyncIssue', 'CONNECTION_FAILED');
+            fixture.detectChanges();
+
+            const rows: HTMLElement[] = Array.from(element().querySelectorAll('li'));
+            element().querySelector<HTMLButtonElement>('google-sync-tag button')!.click();
+
+            expect(element().querySelector('google-sync-tag')!.textContent).toContain('Can\'t reach Google');
+            expect(rows.find(row => row.textContent?.includes('Not sent'))!.textContent).toContain('Waiting to sync');
+            expect(rows.find(row => row.textContent?.includes('Sent'))!.textContent).not.toContain('Waiting to sync');
+            expect(rechecks).toBe(1);
+        });
+    });
+
     describe('in edit mode', () => {
         let drafts: DashboardLayout[];
 

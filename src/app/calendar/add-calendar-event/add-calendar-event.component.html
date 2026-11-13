@@ -49,6 +49,12 @@
             <label for="description" class="app-form-label">Description</label>
             <textarea id="description" formControlName="description" pTextarea rows="3" [autoResize]="true" class="w-full"></textarea>
         </div>
+        @if (syncIssueText(); as issue) {
+            <p class="sm:col-span-2 flex items-center gap-2 m-0 text-xs text-gray-500">
+                <i [class]="issue.icon + ' text-xs'" aria-hidden="true"></i>
+                {{ issue.eventHint }}
+            </p>
+        }
     </form>
     <ng-template #footer>
         <div class="flex flex-1 items-center justify-between gap-3">

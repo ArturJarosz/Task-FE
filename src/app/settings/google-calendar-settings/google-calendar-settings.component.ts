@@ -29,29 +29,23 @@ import {GoogleCalendarConnectionStatus} from "../../generated/models/google-cale
 import {parseServiceAccountKey} from "./service-account-key";
 import {GoogleCalendarParameters} from "../google-calendar-parameters";
 import {showErrors} from "../../shared/utils/form-utils";
+import {GOOGLE_SYNC_ISSUES} from "../../calendar/model/calendar.model";
 
 interface ConnectionText {
     label: string;
     hint: string;
 }
 
-const CONNECTION_TEXTS: Record<GoogleCalendarConnectionStatus, ConnectionText> = {
-    CONNECTED: {label: 'Connected', hint: 'Google Calendar accepts the saved key'},
-    DISABLED: {label: 'Off', hint: 'Sync is turned off, so the connection is not checked'},
-    NOT_CONFIGURED: {label: 'Not configured', hint: 'Add a service account key and turn sync on to connect'},
-    INVALID_CREDENTIALS: {
-        label: 'Invalid key',
-        hint: 'Google rejected the service account key. It may have been deleted or revoked, so add a new one'
-    },
-    PERMISSION_DENIED: {
-        label: 'No access',
-        hint: 'Google refused access. Check that the Google Calendar API is enabled in the key\'s Cloud project'
-    },
-    CALENDAR_NOT_FOUND: {
-        label: 'Calendar missing',
-        hint: 'The synced calendar was deleted or the service account lost access to it'
-    },
-    CONNECTION_FAILED: {label: 'Unreachable', hint: 'The server couldn\'t reach Google. Try again in a moment'},
+// What to do on this page; the labels are the event pages' own (GOOGLE_SYNC_ISSUES), so a tag that led here reads
+// the same as this page's status
+const CONNECTION_HINTS: Record<GoogleCalendarConnectionStatus, string> = {
+    CONNECTED: 'Google Calendar accepts the saved key',
+    DISABLED: 'Sync is turned off, so the connection is not checked',
+    NOT_CONFIGURED: 'Add a service account key and turn sync on to connect',
+    INVALID_CREDENTIALS: 'Google rejected the service account key. It may have been deleted or revoked, so add a new one',
+    PERMISSION_DENIED: 'Google refused access. Check that the Google Calendar API is enabled in the key\'s Cloud project',
+    CALENDAR_NOT_FOUND: 'The synced calendar was deleted or the service account lost access to it',
+    CONNECTION_FAILED: 'The server couldn\'t reach Google. Try again in a moment',
 };
 
 const MAX_NAME_LENGTH = 255;
@@ -189,7 +183,10 @@ export class GoogleCalendarSettingsComponent implements OnChanges {
 
     get connectionText(): ConnectionText | null {
         let status = this.connection?.status;
-        return status ? CONNECTION_TEXTS[status] : null;
+        return status ? {
+            label: status === GoogleCalendarConnectionStatus.CONNECTED ? 'Connected' : GOOGLE_SYNC_ISSUES[status].label,
+            hint: CONNECTION_HINTS[status]
+        } : null;
     }
 
     get showConnectionMessage(): boolean {

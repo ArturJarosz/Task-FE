@@ -4,7 +4,13 @@
     <section class="app-card min-w-0">
         <div class="app-card-header">
             <div>
-                <h2 class="app-card-title">Schedule</h2>
+                <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <h2 class="app-card-title">Schedule</h2>
+                    @if (calendarStore.googleSyncIssue(); as issue) {
+                        <google-sync-tag [issue]="issue" [checking]="calendarStore.googleConnectionChecking()"
+                                         (recheck)="calendarStore.checkGoogleConnection()"/>
+                    }
+                </div>
                 <p class="app-card-subtitle m-0">Select a day or a time range to add an event</p>
             </div>
             <p-button label="New event" icon="pi pi-plus" (onClick)="onAddEvent()"/>
@@ -13,13 +19,15 @@
             <calendar-view [events]="$events()"
                            [clients]="$clients()"
                            [projects]="$projects()"
+                           [syncIssue]="calendarStore.googleSyncIssue()"
                            (rangeChange)="onRangeChange($event)"
                            (slotSelected)="onSlotSelected($event)"
                            (eventSelected)="onEventSelected($event)"></calendar-view>
         </div>
     </section>
 
-    <connected-events addButton="none"/>
+    <!-- The Schedule card already shows a sync issue -->
+    <connected-events addButton="none" [syncTag]="false"/>
 </div>
 
 <add-calendar-event [visible]="showAddEventComponent"
