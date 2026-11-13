@@ -1,6 +1,9 @@
 <app-page-header title="Stage" [crumbs]="crumbs"/>
 
 @if (stage) {
+    <!-- Shown over the page, so kept out of the header, where they would add to its gaps -->
+    <p-menu #actionsMenu [model]="actions" [popup]="true" appendTo="body"/>
+    <project-history [projectId]="projectId" [stageId]="stage.id!"/>
     <div class="flex flex-col gap-gutter">
         <!-- Header card -->
         <section class="app-card app-detail-header">
@@ -29,7 +32,6 @@
             <p-button icon="pi pi-ellipsis-h" severity="secondary" [outlined]="true"
                       pTooltip="More actions" tooltipPosition="bottom" ariaLabel="More actions"
                       (onClick)="actionsMenu.toggle($event)"/>
-            <p-menu #actionsMenu [model]="actions" [popup]="true" appendTo="body"/>
         </section>
 
         <div class="grid grid-cols-1 xl:grid-cols-[calc(75%_-_var(--spacing-gutter)/4)_minmax(0,1fr)] gap-gutter items-start">

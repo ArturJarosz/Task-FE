@@ -1,0 +1,128 @@
+<!-- Opens from the right over the page, and loads the history each time it opens, so it is never out of date -->
+<p-drawer header="History" position="right" appendTo="body" [visible]="shown()" (visibleChange)="shown.set($event)"
+          ariaCloseLabel="Close" [style]="{width: '40rem'}" styleClass="max-w-full">
+    <!-- A template, so the list is built when the panel opens and stays until it has closed -->
+    <ng-template #content>
+        @if (!scoped()) {
+            <div class="app-seg mb-4 max-w-full overflow-x-auto" role="group" aria-label="Part of the project">
+                @for (item of parts; track item.part) {
+                    <button type="button" class="app-seg-item gap-2" [class.active]="part() === item.part"
+                            [attr.aria-pressed]="part() === item.part" (click)="onPartChange(item.part)">
+                        {{ item.label }}
+                        <span class="text-xs text-gray-500 tabular-nums">{{ partCount(item.part) }}</span>
+                    </button>
+                }
+            </div>
+        }
+
+        <!-- A failed reload keeps the history already on screen -->
+        @if (historyStore.history() === null) {
+            @if (historyStore.historyLoadFailed()) {
+                <app-empty-state icon="pi pi-exclamation-triangle" title="Couldn't load the history">
+                    <p-button label="Try again" severity="secondary" [outlined]="true" (onClick)="reload()"/>
+                </app-empty-state>
+            } @else {
+                <div class="flex flex-col gap-4" aria-busy="true" aria-label="Loading the history">
+                    <p-skeleton height="3rem"/>
+                    <p-skeleton height="3rem"/>
+                </div>
+            }
+        } @else if (entries().length === 0) {
+            <app-empty-state icon="pi pi-history" title="No changes yet"/>
+        } @else {
+            <div>
+                @for (day of days(); track day.date) {
+                    <p class="m-0 pt-2 text-xs font-medium text-gray-500">
+                        {{ day.date === today() ? 'Today' : (day.date | date:'dd.MM.yyyy') }}
+                    </p>
+                    <ul class="list-none m-0 p-0">
+                        @for (entry of day.entries; track entryKey(entry)) {
+                            <li class="flex gap-3 py-2">
+                                <span class="app-avatar w-7 h-7 text-[0.6875rem] bg-brand-50 text-brand-600" aria-hidden="true">
+                                    {{ entry.author ? initials(entry.author.username) : '?' }}
+                                </span>
+                                <div class="flex-1 min-w-0">
+                                    <p class="m-0 pt-1 text-sm text-gray-800">
+                                        <span class="font-medium">{{ entry.author?.username ?? 'Someone' }}</span>
+                                        {{ actionText(entry) }}
+                                        @if (hasRecordName(entry)) {
+                                            @if (recordRoute(entry); as route) {
+                                                <a [routerLink]="route" class="app-meta-link">{{ entry.recordName }}</a>
+                                            } @else {
+                                                {{ entry.recordName }}
+                                            }
+                                        }
+                                        @if (entry.recordType === 'TASK' && !scoped()) {
+                                            <!-- The space is inside: the one between the tags is removed with the others -->
+                                            <span class="text-gray-500"> in {{ entry.stageName }}</span>
+                                        }
+                                    </p>
+
+                                    <!-- All changes on one line, wrapping when they don't fit -->
+                                    @if (entry.changes?.length) {
+                                        <dl class="flex flex-wrap items-center gap-x-2 gap-y-1 m-0 mt-1 text-xs text-gray-500">
+                                            @for (change of entry.changes; track change.field; let first = $first) {
+                                                <div class="inline-flex flex-wrap items-center gap-x-1.5 gap-y-1 min-w-0">
+                                                    @if (!first) {
+                                                        <span class="text-gray-300" aria-hidden="true">·</span>
+                                                    }
+                                                    <dt class="font-medium">{{ fieldLabels[change.field!] }}</dt>
+                                                    <dd class="inline-flex flex-wrap items-center gap-1.5 m-0 min-w-0 text-gray-800">
+                                                        @if (change.field === 'NOTE') {
+                                                            Changed
+                                                            <button type="button" class="app-card-link"
+                                                                    [attr.aria-expanded]="noteShown(entry)"
+                                                                    (click)="toggleNote(entry)">{{ noteShown(entry) ? 'Hide' : 'Show' }}</button>
+                                                        } @else {
+                                                            <ng-container *ngTemplateOutlet="value; context: {$implicit: change.oldValue, entry: entry, change: change, old: true}"/>
+                                                            <i class="pi pi-arrow-right text-[0.625rem] text-gray-400" aria-hidden="true"></i>
+                                                            <span class="sr-only">changed to</span>
+                                                            <ng-container *ngTemplateOutlet="value; context: {$implicit: change.newValue, entry: entry, change: change, old: false}"/>
+                                                        }
+                                                    </dd>
+                                                </div>
+                                            }
+                                        </dl>
+                                        <!-- A note is too long for the line, so its text goes under it -->
+                                        @for (change of entry.changes; track change.field) {
+                                            @if (change.field === 'NOTE' && noteShown(entry)) {
+                                                <div class="mt-2 px-3 py-2 rounded-lg bg-gray-50 text-xs">
+                                                    <p class="m-0 whitespace-pre-line text-gray-500 line-through">
+                                                        <span class="sr-only">Before: </span>{{ change.oldValue ?? 'Not set' }}</p>
+                                                    <p class="m-0 mt-1 whitespace-pre-line text-gray-800">
+                                                        <span class="sr-only">After: </span>{{ change.newValue ?? 'Not set' }}</p>
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                                <span class="shrink-0 pt-1 text-xs text-gray-500 tabular-nums">{{ entry.dateTime | date:'HH:mm' }}</span>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+            <app-table-footer [total]="entries().length" [page]="page()" [pageSize]="pageSize"
+                              (pageChange)="page.set($event)"/>
+        }
+    </ng-template>
+</p-drawer>
+
+<!-- One value of a change; an old value that is text is struck through -->
+<ng-template #value let-value let-entry="entry" let-change="change" let-old="old">
+    @if (change.field === 'STATUS' && value != null) {
+        <p-tag [value]="statusLabel(entry, value)" [severity]="statusSeverity(value)"/>
+    } @else {
+        <span [class.line-through]="old" [class.text-gray-500]="old || value == null">
+            @if (value == null) {
+                Not set
+            } @else if (isDate(change)) {
+                {{ value | date:'dd.MM.yyyy' }}
+            } @else if (change.field === 'OFFER_VALUE') {
+                {{ +value | currency:'PLN':'symbol':'1.2-2' }}
+            } @else {
+                {{ value }}
+            }
+        </span>
+    }
+</ng-template>

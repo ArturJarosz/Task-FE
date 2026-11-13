@@ -195,6 +195,18 @@ code completion and should not be edited manually. Also they are used in API ser
 
 - A story or bugfix that changes what users see or can do also adds a "What's new" note in the backend repo, even
   when only the frontend changes (see "Release Notes" in `../Task/AGENTS.md`)
+- Before building any UI piece, look for an existing one and use it; write a custom component only when none fits.
+  Check in this order: the app's own shared components (`src/app/shared/`: `page-header`, `kpi-card`, `empty-state`,
+  `load-error`, `field`, `table-footer`...), PrimeNG components (https://v21.primeng.org/), PrimeBlocks for whole
+  sections and layouts, then the other component sources. If a custom component is still needed, build it from PrimeNG
+  parts and the design tokens, and put it in `src/app/shared/` when more than one feature can use it
+- Use only the Tailwind version of PrimeBlocks; never take a block written with PrimeFlex classes, as PrimeFlex is not
+  used here. Read a block's code at https://primeblocks.dev in the user's Chrome (Claude in Chrome), where they are
+  signed in with a licence: open the block group (e.g. `/application/stats`), switch the block to "Code" with "Angular"
+  selected and read it from screenshots (reading the code by script is blocked); for a long block, ask the user to paste
+  it. Blocks are standalone components styled with `tailwindcss-primeui` classes, so when taking one, replace
+  `surface-*`/`primary-*` colors with our `gray-*`/`brand-*` tokens and `.app-*` classes, drop the `dark:` variants and
+  replace the demo image URLs
 - Always make all components **standalone** (`standalone: true`) — never create NgModule files
 - Declare all dependencies explicitly in each component's `imports: [...]` array
 - Load every piece of displayed data through a signal store, with loading/failure flags in the store and

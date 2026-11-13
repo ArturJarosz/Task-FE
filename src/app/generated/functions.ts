@@ -177,6 +177,8 @@ export type { ReopenProject$Params as ReopenProject$Params } from './fn/project/
 export { reopenProject as reopenProject } from './fn/project/reopen-project';
 export type { GetProjectTimeSummary$Params as GetProjectTimeSummary$Params } from './fn/project/get-project-time-summary';
 export { getProjectTimeSummary as getProjectTimeSummary } from './fn/project/get-project-time-summary';
+export type { GetProjectHistory$Params as GetProjectHistory$Params } from './fn/project/get-project-history';
+export { getProjectHistory as getProjectHistory } from './fn/project/get-project-history';
 export type { GetStagesForProject$Params as GetStagesForProject$Params } from './fn/stage/get-stages-for-project';
 export { getStagesForProject as getStagesForProject } from './fn/stage/get-stages-for-project';
 export type { CreateStage$Params as CreateStage$Params } from './fn/stage/create-stage';

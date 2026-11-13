@@ -1,4 +1,13 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    Output,
+    SimpleChanges,
+    viewChild
+} from '@angular/core';
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {CurrencyPipe, DatePipe} from "@angular/common";
 import {RouterLink} from "@angular/router";
@@ -30,6 +39,7 @@ import {statusSeverity} from "../../shared/status-severity";
 import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
 import {changedFields, showErrors} from "../../shared/utils/form-utils";
 import {TaskListShellComponent} from "../../task/task-list-shell/task-list-shell.component";
+import {ProjectHistoryComponent} from "../../project/project-history/project-history.component";
 
 type StageFormValue = ReturnType<FormGroup<StageForm>['getRawValue']>;
 
@@ -46,7 +56,7 @@ export interface ArchitectOption {
     styleUrls: ['./stage-detail.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [PageHeaderComponent, FieldComponent, EmptyStateComponent, KpiCardComponent, LoadErrorComponent, TaskListShellComponent,
+    imports: [ProjectHistoryComponent, PageHeaderComponent, FieldComponent, EmptyStateComponent, KpiCardComponent, LoadErrorComponent, TaskListShellComponent,
         ButtonModule, DatePickerModule, DialogModule, InputTextModule, MenuModule, SelectModule, SkeletonModule, TagModule,
         Textarea, TooltipModule, ReactiveFormsModule, RouterLink, CurrencyPipe, DatePipe, DurationPipe]
 })
@@ -84,6 +94,7 @@ export class StageDetailComponent implements OnChanges {
     showEditDialog = false;
 
     crumbs: PageCrumb[] = [];
+    readonly history = viewChild.required(ProjectHistoryComponent);
     actions: MenuItem[] = [];
     architectOptions: ArchitectOption[] = [];
     resolvedStatusLabel = '';
@@ -191,6 +202,8 @@ export class StageDetailComponent implements OnChanges {
             ? {label: 'Reopen stage', icon: 'pi pi-replay', command: () => this.reopenEvent.emit(stageDto)}
             : {label: 'Reject stage', icon: 'pi pi-ban', command: () => this.rejectEvent.emit(stageDto)};
         return [
+            {label: 'History', icon: 'pi pi-history', command: () => this.history().open()},
+            {separator: true},
             statusAction,
             {separator: true},
             {label: 'Delete stage', icon: 'pi pi-trash', command: () => this.deleteStageEvent.emit(stageDto)},

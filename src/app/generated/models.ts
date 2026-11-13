@@ -48,6 +48,11 @@ export type { FinancialReportCategoryGroup } from './models/financial-report-cat
 export type { FinancialReportPeriod } from './models/financial-report-period';
 export type { GoogleCalendarConnection } from './models/google-calendar-connection';
 export { GoogleCalendarConnectionStatus } from './models/google-calendar-connection-status';
+export { HistoryAction } from './models/history-action';
+export type { HistoryChange } from './models/history-change';
+export type { HistoryEntry } from './models/history-entry';
+export { HistoryField } from './models/history-field';
+export { HistoryRecordType } from './models/history-record-type';
 export type { Installment } from './models/installment';
 export type { InstallmentProjectData } from './models/installment-project-data';
 export type { Installments } from './models/installments';
