@@ -1,7 +1,7 @@
 import {inject} from "@angular/core";
 import {patchState, signalStore, withMethods, withState} from "@ngrx/signals";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {catchError, concatMap, EMPTY, finalize, Observable, pipe, switchMap, tap} from "rxjs";
+import {catchError, concatMap, EMPTY, Observable, pipe, switchMap, tap} from "rxjs";
 import {MessageService} from "primeng/api";
 import {AppState} from "../../state/app.store";
 import {CompanyCost} from "../../generated/models/company-cost";
@@ -10,6 +10,7 @@ import {CompanyCostCharge} from "../../generated/models/company-cost-charge";
 import {CompanyCostPayment} from "../../generated/models/company-cost-payment";
 import {CompanyCostPeriod, CompanyCostRestService} from "../rest/company-cost-rest.service";
 import {MessageSeverity} from "../../shared/message";
+import {runSave} from "../../shared/utils/save-utils";
 import {chargeYearRange} from "../model/company-cost";
 import {FinancialReportStore} from "../../financial-report/state/financial-report.state";
 import {DashboardStore} from "../../dashboard/state/dashboard.state";
@@ -147,18 +148,8 @@ export const CompanyCostStore = signalStore(
             financialReportStore.setReportNeedsRefresh();
             dashboardStore.setReportNeedsRefresh();
         };
-        // Runs a save; afterSave runs only when it worked, so a dialog stays open with what was typed after an error
-        const save = <T>(request: Observable<T>, onSaved: (saved: T) => void, afterSave?: () => void) => {
-            patchState(store, {saving: true});
-            return request.pipe(
-                tap(saved => {
-                    onSaved(saved);
-                    afterSave?.();
-                }),
-                catchError(() => EMPTY),
-                finalize(() => patchState(store, {saving: false}))
-            );
-        };
+        const save = <T>(request: Observable<T>, onSaved: (saved: T) => void, afterSave?: () => void) =>
+            runSave(request, saving => patchState(store, {saving}), onSaved, afterSave);
         const success = (summary: string, detail: string) =>
             messageService.add({severity: MessageSeverity.SUCCESS, summary, detail});
 

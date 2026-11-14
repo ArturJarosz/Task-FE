@@ -8,8 +8,10 @@ import {
     Input,
     OnChanges,
     Output,
+    signal,
     SimpleChanges,
-    viewChild
+    viewChild,
+    WritableSignal
 } from '@angular/core';
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {startOfToday} from "date-fns";
@@ -61,7 +63,26 @@ export interface ProjectPerson {
     avatarClass: string;
 }
 
+// afterSave closes the dialog, so it stays open with what was typed when saving fails
+export interface ProjectUpdate {
+    project: Project;
+    afterSave: () => void;
+}
+
 type ProjectFormValue = ReturnType<FormGroup<ProjectCreateForm>['getRawValue']>;
+
+export type ContractDateField = 'signingDate' | 'startDate' | 'endDate' | 'deadline';
+
+// The dates the backend keeps for each status: an offer isn't signed yet, and a finished contract only gets its end
+// date. The contract dialog shows and sends only these
+export const CONTRACT_DATE_FIELDS: Record<ContractStatus, ContractDateField[]> = {
+    [ContractStatus.OFFER]: ['deadline'],
+    [ContractStatus.REJECTED]: [],
+    [ContractStatus.ACCEPTED]: [],
+    [ContractStatus.SIGNED]: ['signingDate', 'startDate', 'deadline'],
+    [ContractStatus.TERMINATED]: ['endDate'],
+    [ContractStatus.COMPLETED]: ['endDate'],
+};
 
 // Semicircle gauge in the Payments card: arc of radius 80, so its length is PI * 80
 const GAUGE_ARC_LENGTH = Math.PI * 80;
@@ -104,6 +125,9 @@ export class ProjectDetailComponent implements OnChanges {
     timeSummaryLoading: boolean = false;
     @Input()
     timeSummaryLoadFailed: boolean = false;
+    // The project's details are being saved
+    @Input()
+    saving: boolean = false;
     @Output()
     reloadEvent: EventEmitter<void> = new EventEmitter<void>();
     @Output()
@@ -111,7 +135,7 @@ export class ProjectDetailComponent implements OnChanges {
     @Output()
     reloadInstallmentsEvent: EventEmitter<void> = new EventEmitter<void>();
     @Output()
-    updateProjectEvent: EventEmitter<Project> = new EventEmitter<Project>();
+    updateProjectEvent: EventEmitter<ProjectUpdate> = new EventEmitter<ProjectUpdate>();
     @Output()
     removeProjectEvent: EventEmitter<void> = new EventEmitter<void>();
 
@@ -142,13 +166,17 @@ export class ProjectDetailComponent implements OnChanges {
 
     formInitialized: boolean = false;
 
-    showContractDialog: boolean = false;
+    // Signals, as a save closes the dialogs once the backend answers, outside of any event of this OnPush component
+    readonly showContractDialog = signal(false);
     // The deposit, required to sign the contract in the dialog
     depositForm: FormGroup<InstallmentForm> = this.createDepositForm();
     // The backend refuses payment dates in the future. Set when the dialog opens, so a page left open overnight
     // still allows today
     latestPaymentDate: Date = startOfToday();
-    showProjectDialog: boolean = false;
+    readonly showProjectDialog = signal(false);
+    // Counts the openings of the dialogs: a save sent from an earlier opening (cancelled while saving) must not close
+    // the dialog opened after it
+    private dialogOpening = 0;
 
     readonly history = viewChild.required(ProjectHistoryComponent);
     readonly actions: MenuItem[] = [
@@ -303,9 +331,16 @@ export class ProjectDetailComponent implements OnChanges {
         if (this.projectDetailsForm.get('contract')?.pristine) {
             return false;
         }
-        const initialContract = this.initialProjectValue.contract;
-        const fields = Object.keys(initialContract) as (keyof ProjectFormValue['contract'])[];
-        return changedFields(initialContract, this.projectDetailsForm.getRawValue().contract, fields).length > 0;
+        // Dates the selected status doesn't keep aren't sent, so changing them changes nothing
+        const fields: (keyof ProjectFormValue['contract'])[] = ['status', 'offerValue', ...this.contractDateFields];
+        return changedFields(this.initialProjectValue.contract, this.projectDetailsForm.getRawValue().contract, fields)
+            .length > 0;
+    }
+
+    // The dates the status selected in the contract dialog keeps
+    get contractDateFields(): ContractDateField[] {
+        const status: ContractStatus | undefined = this.projectDetailsForm.get('contract.status')?.value;
+        return status ? CONTRACT_DATE_FIELDS[status] : [];
     }
 
     shouldUpdateProject(): boolean {
@@ -327,7 +362,8 @@ export class ProjectDetailComponent implements OnChanges {
         this.resetForm();
         this.depositForm = this.createDepositForm();
         this.latestPaymentDate = startOfToday();
-        this.showContractDialog = true;
+        this.dialogOpening++;
+        this.showContractDialog.set(true);
     }
 
     // Signing in this dialog needs the deposit, unless the project already has one (a reopened contract). While that
@@ -353,12 +389,13 @@ export class ProjectDetailComponent implements OnChanges {
 
     onEditProject(): void {
         this.resetForm();
-        this.showProjectDialog = true;
+        this.dialogOpening++;
+        this.showProjectDialog.set(true);
     }
 
     onCancelEdit(): void {
-        this.showContractDialog = false;
-        this.showProjectDialog = false;
+        this.showContractDialog.set(false);
+        this.showProjectDialog.set(false);
         this.resetForm();
     }
 
@@ -368,8 +405,12 @@ export class ProjectDetailComponent implements OnChanges {
             return;
         }
         let contract: Contract = {...this.createContract(), deposit: this.depositRequired ? this.createDeposit() : undefined};
-        this.contractStore.changeStatus({contract: contract});
-        this.showContractDialog = false;
+        const afterSave = this.closeAfterSave(this.showContractDialog);
+        if (contract.status === this.project?.contract?.status) {
+            this.contractStore.updateContract({contract, afterSave});
+        } else {
+            this.contractStore.changeStatus({contract, afterSave});
+        }
     }
 
     onProjectUpdate(): void {
@@ -377,22 +418,33 @@ export class ProjectDetailComponent implements OnChanges {
         if (showErrors(this.projectDetailsForm)) {
             return;
         }
-        let project = this.createProject();
-        this.updateProjectEvent.emit(project);
-        this.showProjectDialog = false;
+        this.updateProjectEvent.emit({project: this.createProject(), afterSave: this.closeAfterSave(this.showProjectDialog)});
+    }
+
+    // Closes the dialog once its save worked, unless it was closed and opened again in the meantime
+    private closeAfterSave(dialog: WritableSignal<boolean>): () => void {
+        const opening = this.dialogOpening;
+        return () => {
+            if (opening === this.dialogOpening) {
+                dialog.set(false);
+            }
+        };
     }
 
     createContract(): Contract {
         let contractForm: FormGroup<ProjectContractForm> = this.projectDetailsForm.get(
             'contract') as FormGroup<ProjectContractForm>;
+        const fields = this.contractDateFields;
+        const date = (field: ContractDateField) =>
+            fields.includes(field) ? toTimeZoneString(contractForm.get(field)?.value) : undefined;
         return {
             id: contractForm.get('id')?.value,
             offerValue: contractForm.get('offerValue')!.value,
             status: contractForm.get('status')!.value,
-            signingDate: toTimeZoneString(contractForm.get('signingDate')?.value),
-            startDate: toTimeZoneString(contractForm.get('startDate')?.value),
-            deadline: toTimeZoneString(contractForm.get('deadline')?.value),
-            endDate: toTimeZoneString(contractForm.get("endDate")?.value),
+            signingDate: date('signingDate'),
+            startDate: date('startDate'),
+            deadline: date('deadline'),
+            endDate: date('endDate'),
         };
     }
 
@@ -416,7 +468,9 @@ export class ProjectDetailComponent implements OnChanges {
             // backend rejects, instead of as id 0
             typeId: this.projectDetailsForm.value.type ? Number(this.projectDetailsForm.value.type) : undefined,
             architect: {...this.project?.architect!, id: this.projectDetailsForm.value.architectId},
-            note: this.projectDetailsForm.value.note!
+            note: this.projectDetailsForm.value.note!,
+            // not edited here, but the backend sets it from the request and refuses removing it once the project has one
+            startDate: this.project?.startDate
         }
         return project;
     }

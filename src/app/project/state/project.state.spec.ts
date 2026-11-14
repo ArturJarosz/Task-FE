@@ -71,4 +71,21 @@ describe('ProjectStore', () => {
         expect(clientStore.clientsNeedRefresh()).toBeFalse();
         expect(architectStore.architectsNeedRefresh()).toBeFalse();
     });
+
+    it('should run afterSave only when the project update worked', () => {
+        const afterSave = jasmine.createSpy('afterSave');
+        store.updateProject({project: {name: 'House'}, afterSave});
+        expect(store.saving()).toBeTrue();
+        httpTesting.expectOne(request => request.method === 'PUT').flush('', {status: 400, statusText: 'Bad Request'});
+
+        expect(afterSave).not.toHaveBeenCalled();
+        expect(store.saving()).toBeFalse();
+
+        store.updateProject({project: {name: 'House'}, afterSave});
+        httpTesting.expectOne(request => request.method === 'PUT').flush({id: 1, name: 'House'});
+        httpTesting.match(request => request.method === 'GET');
+
+        expect(afterSave).toHaveBeenCalled();
+        expect(store.saving()).toBeFalse();
+    });
 });
