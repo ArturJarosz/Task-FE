@@ -11,6 +11,7 @@
                 [timeSummary]="$timeSummary()"
                 [timeSummaryLoading]="$timeSummaryLoading()"
                 [timeSummaryLoadFailed]="$timeSummaryLoadFailed()"
+                [saving]="projectStore.saving()"
                 (updateProjectEvent)="onUpdateProject($event)"
                 (removeProjectEvent)="onRemoveProject($event)" (reloadEvent)="onReload()"
                 (reloadInstallmentsEvent)="onReloadInstallments()"

@@ -2,11 +2,12 @@ import {AppState} from "../../state/app.store";
 import {Project} from "../../generated/models/project";
 import {patchState, signalStore, withComputed, withMethods, withState} from "@ngrx/signals";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {catchError, EMPTY, of, pipe, switchMap, tap} from "rxjs";
+import {catchError, concatMap, EMPTY, of, pipe, switchMap, tap} from "rxjs";
 import {ProjectRestService} from "../rest/project-rest.service";
 import {computed, inject} from "@angular/core";
 import {MessageService} from "primeng/api";
 import {MessageSeverity} from "../../shared/message";
+import {runSave} from "../../shared/utils/save-utils";
 import {ProjectCreate} from "../../generated/models/project-create";
 import {FinancialDataStore} from "../../finance/project-financial-summary/state/financial-data.state";
 import {ClientStore} from "../../client/state/client.state";
@@ -21,6 +22,8 @@ export interface ProjectState extends AppState {
     projectNeedsRefresh: boolean,
     projectLoadFailed: boolean,
     projectsLoadFailed: boolean,
+    // The project's details are being saved
+    saving: boolean,
 }
 
 export const initialState: ProjectState = {
@@ -32,6 +35,7 @@ export const initialState: ProjectState = {
     projectNeedsRefresh: true,
     projectLoadFailed: false,
     projectsLoadFailed: false,
+    saving: false,
 }
 
 export const ProjectStore = signalStore(
@@ -124,24 +128,20 @@ export const ProjectStore = signalStore(
                 })
             )
         ),
-        updateProject: rxMethod<{ project: Project }>(
+        updateProject: rxMethod<{ project: Project, afterSave?: () => void }>(
             pipe(
-                switchMap(({project}) => {
-                    return projectRestService.updateProject(store.projectId()!, project)
-                        .pipe(
-                            tap(project => {
-                                store.setProjectsNeedRefresh();
-                                patchState(store,
-                                    {projectNeedsRefresh: true, project: project});
-                                messageService.add({
-                                    severity: MessageSeverity.SUCCESS,
-                                    summary: `Project updated.`,
-                                    detail: `Project ${project.name} was updated.`
-                                });
-                            }),
-                            catchError(() => EMPTY)
-                        )
-                })
+                concatMap(({project, afterSave}) => runSave(
+                    projectRestService.updateProject(store.projectId()!, project),
+                    saving => patchState(store, {saving}), project => {
+                        store.setProjectsNeedRefresh();
+                        patchState(store,
+                            {projectNeedsRefresh: true, project: project});
+                        messageService.add({
+                            severity: MessageSeverity.SUCCESS,
+                            summary: `Project updated.`,
+                            detail: `Project ${project.name} was updated.`
+                        });
+                    }, afterSave))
             )
         ),
         removeProject: rxMethod<{}>(

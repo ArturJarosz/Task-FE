@@ -58,4 +58,46 @@ describe('ContractStore', () => {
         store.changeStatus({contract: {status: ContractStatus.SIGNED}});
         httpTesting.expectOne(isStatusChange).flush({id: 4, status: ContractStatus.SIGNED});
     });
+
+    it('should update the contract without changing its status and mark the time summary stale', () => {
+        const timeSummaryStore = TestBed.inject(ProjectTimeSummaryStore);
+        timeSummaryStore.setProjectId(1);
+        timeSummaryStore.loadTimeSummary();
+        httpTesting.expectOne(request => request.url.endsWith('/projects/1/time-summary')).flush({totalMinutes: 60});
+
+        store.updateContract({contract: {status: ContractStatus.OFFER, deadline: '2027-01-15'}});
+
+        const request = httpTesting.expectOne(request => request.method === 'PUT' && request.url.endsWith('/contracts/4'));
+        expect(request.request.body.deadline).toBe('2027-01-15');
+        request.flush({id: 4, status: ContractStatus.OFFER, deadline: '2027-01-15'});
+        expect(timeSummaryStore.timeSummaryNeedsRefresh()).toBeTrue();
+    });
+
+    it('should run afterSave only when the save worked', () => {
+        const isUpdate = (request: { method: string, url: string }) =>
+            request.method === 'PUT' && request.url.endsWith('/contracts/4');
+        const afterSave = jasmine.createSpy('afterSave');
+        store.updateContract({contract: {status: ContractStatus.OFFER}, afterSave});
+        expect(store.saving()).toBeTrue();
+        httpTesting.expectOne(isUpdate).flush({message: 'Contract deadline has to be future date.'},
+            {status: 400, statusText: 'Bad Request'});
+
+        expect(afterSave).not.toHaveBeenCalled();
+        expect(store.saving()).toBeFalse();
+
+        store.updateContract({contract: {status: ContractStatus.OFFER}, afterSave});
+        httpTesting.expectOne(isUpdate).flush({id: 4, status: ContractStatus.OFFER});
+
+        expect(afterSave).toHaveBeenCalled();
+    });
+
+    it('should keep saving after a failed update', () => {
+        const isUpdate = (request: { method: string, url: string }) =>
+            request.method === 'PUT' && request.url.endsWith('/contracts/4');
+        store.updateContract({contract: {status: ContractStatus.OFFER}});
+        httpTesting.expectOne(isUpdate).flush('Bad request', {status: 400, statusText: 'Bad Request'});
+
+        store.updateContract({contract: {status: ContractStatus.OFFER}});
+        httpTesting.expectOne(isUpdate).flush({id: 4, status: ContractStatus.OFFER});
+    });
 });

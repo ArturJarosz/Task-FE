@@ -7,7 +7,7 @@ import {Architect} from "../../generated/models/architect";
 import {Project} from "../../generated/models/project";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {ConfirmationService} from "primeng/api";
-import {ProjectDetailComponent, ProjectDetailView} from "../project-detail/project-detail.component";
+import {ProjectDetailComponent, ProjectDetailView, ProjectUpdate} from "../project-detail/project-detail.component";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {InstallmentStore} from "../../finance/installment/state/installment.state";
 import {Installment} from "../../generated/models/installment";
@@ -89,8 +89,8 @@ export class ProjectDetailShellComponent implements OnInit {
         this.architectStore.loadArchitects({});
     }
 
-    onUpdateProject($event: Project) {
-        this.projectStore.updateProject({project: $event});
+    onUpdateProject({project, afterSave}: ProjectUpdate) {
+        this.projectStore.updateProject({project, afterSave});
     }
 
     onRemoveProject($event: void) {

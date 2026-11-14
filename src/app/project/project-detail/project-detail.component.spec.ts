@@ -78,6 +78,96 @@ describe('ProjectDetailComponent edit forms', () => {
     expect(component.shouldUpdateContract()).toBeTrue();
   });
 
+  it('should update the contract without a status change when the status stays the same', () => {
+    const contractStore = TestBed.inject(ContractStore);
+    spyOn(contractStore, 'updateContract');
+    spyOn(contractStore, 'changeStatus');
+    const contract = component.projectDetailsForm.controls.contract;
+    contract.controls.deadline!.setValue(new Date('2027-01-15'));
+    contract.markAsDirty();
+
+    component.onContractUpdate();
+
+    expect(contractStore.updateContract).toHaveBeenCalledWith(jasmine.objectContaining({
+      contract: jasmine.objectContaining({status: ContractStatus.SIGNED, deadline: '2027-01-15'})
+    }));
+    expect(contractStore.changeStatus).not.toHaveBeenCalled();
+  });
+
+  it('should keep the contract dialog open until the save worked', () => {
+    const contractStore = TestBed.inject(ContractStore);
+    const updateContract = spyOn(contractStore, 'updateContract');
+    const contract = component.projectDetailsForm.controls.contract;
+    contract.controls.deadline!.setValue(new Date('2027-01-15'));
+    contract.markAsDirty();
+
+    component.onContractUpdate();
+
+    expect(component.showContractDialog()).toBeTrue();
+    (updateContract.calls.mostRecent().args[0] as {afterSave: () => void}).afterSave();
+    expect(component.showContractDialog()).toBeFalse();
+  });
+
+  it('should keep the project dialog open until the save worked', () => {
+    let afterSave: (() => void) | undefined;
+    component.updateProjectEvent.subscribe(update => afterSave = update.afterSave);
+    component.onEditProject();
+    component.projectDetailsForm.controls.name.setValue('Lublin 02');
+
+    component.onProjectUpdate();
+
+    expect(component.showProjectDialog()).toBeTrue();
+    afterSave!();
+    expect(component.showProjectDialog()).toBeFalse();
+  });
+
+  it('should keep the dialog open when a save from an earlier opening ends', () => {
+    let afterSave: (() => void) | undefined;
+    component.updateProjectEvent.subscribe(update => afterSave = update.afterSave);
+    component.onEditProject();
+    component.projectDetailsForm.controls.name.setValue('Lublin 02');
+    component.onProjectUpdate();
+    component.onCancelEdit();
+    component.onEditProject();
+
+    afterSave!();
+
+    expect(component.showProjectDialog()).toBeTrue();
+  });
+
+  it('should offer and send only the dates the selected status keeps', () => {
+    const contract = component.projectDetailsForm.controls.contract;
+    contract.controls.status.setValue(ContractStatus.OFFER);
+
+    expect(component.contractDateFields).toEqual(['deadline']);
+    expect(component.createContract()).toEqual(jasmine.objectContaining({
+      status: ContractStatus.OFFER, deadline: '2026-12-31', signingDate: undefined, startDate: undefined,
+      endDate: undefined
+    }));
+
+    contract.controls.status.setValue(ContractStatus.TERMINATED);
+
+    expect(component.contractDateFields).toEqual(['endDate']);
+    expect(component.createContract()).toEqual(jasmine.objectContaining({
+      endDate: '2026-12-20', signingDate: undefined, deadline: undefined
+    }));
+  });
+
+  it('should keep contract save off when only a date the status does not keep changes', () => {
+    const contract = component.projectDetailsForm.controls.contract;
+    contract.controls.endDate!.setValue(new Date('2027-02-01'));
+    contract.markAsDirty();
+
+    // A signed contract keeps no end date
+    expect(component.shouldUpdateContract()).toBeFalse();
+  });
+
+  it('should send the stored start date with the project, as the backend refuses removing it', () => {
+    const projectStartDate = component.createProject().startDate;
+
+    expect(projectStartDate).toBe('2026-01-10');
+  });
+
   it('should keep project save off after an edit is reverted', () => {
     const name = component.projectDetailsForm.controls.name;
     name.setValue('Lublin 02');
@@ -179,11 +269,11 @@ describe('ProjectDetailComponent deposit on signing', () => {
 
     component.onContractUpdate();
 
-    expect(contractStore.changeStatus).toHaveBeenCalledWith({
+    expect(contractStore.changeStatus).toHaveBeenCalledWith(jasmine.objectContaining({
       contract: jasmine.objectContaining({
         status: ContractStatus.SIGNED,
         deposit: jasmine.objectContaining({type: InstallmentType.DEPOSIT, value: 3000, hasInvoice: true, paid: false})
       })
-    });
+    }));
   });
 });

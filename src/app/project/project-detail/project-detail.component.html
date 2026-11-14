@@ -196,26 +196,35 @@
                 <p-select inputId="contractStatus" formControlName="status" [options]="availableContractStatuses"
                           optionLabel="label" optionValue="id" appendTo="body" [fluid]="true"/>
             </div>
-            <div>
-                <label for="signingDate" class="app-form-label">Signing date</label>
-                <p-datepicker inputId="signingDate" formControlName="signingDate" dateFormat="dd.mm.yy"
-                              [showIcon]="true" appendTo="body" [fluid]="true"/>
-            </div>
-            <div>
-                <label for="contractStartDate" class="app-form-label">Start date</label>
-                <p-datepicker inputId="contractStartDate" formControlName="startDate" dateFormat="dd.mm.yy"
-                              [showIcon]="true" appendTo="body" [fluid]="true"/>
-            </div>
-            <div>
-                <label for="contractEndDate" class="app-form-label">End date</label>
-                <p-datepicker inputId="contractEndDate" formControlName="endDate" dateFormat="dd.mm.yy"
-                              [showIcon]="true" appendTo="body" [fluid]="true"/>
-            </div>
-            <div>
-                <label for="deadline" class="app-form-label">Deadline</label>
-                <p-datepicker inputId="deadline" formControlName="deadline" dateFormat="dd.mm.yy"
-                              [showIcon]="true" appendTo="body" [fluid]="true"/>
-            </div>
+            @let dateFields = contractDateFields;
+            @if (dateFields.includes('signingDate')) {
+                <div>
+                    <label for="signingDate" class="app-form-label">Signing date</label>
+                    <p-datepicker inputId="signingDate" formControlName="signingDate" dateFormat="dd.mm.yy"
+                                  [showIcon]="true" appendTo="body" [fluid]="true"/>
+                </div>
+            }
+            @if (dateFields.includes('startDate')) {
+                <div>
+                    <label for="contractStartDate" class="app-form-label">Start date</label>
+                    <p-datepicker inputId="contractStartDate" formControlName="startDate" dateFormat="dd.mm.yy"
+                                  [showIcon]="true" appendTo="body" [fluid]="true"/>
+                </div>
+            }
+            @if (dateFields.includes('endDate')) {
+                <div>
+                    <label for="contractEndDate" class="app-form-label">End date</label>
+                    <p-datepicker inputId="contractEndDate" formControlName="endDate" dateFormat="dd.mm.yy"
+                                  [showIcon]="true" appendTo="body" [fluid]="true"/>
+                </div>
+            }
+            @if (dateFields.includes('deadline')) {
+                <div>
+                    <label for="deadline" class="app-form-label">Deadline</label>
+                    <p-datepicker inputId="deadline" formControlName="deadline" dateFormat="dd.mm.yy"
+                                  [showIcon]="true" appendTo="body" [fluid]="true"/>
+                </div>
+            }
         </div>
     </form>
     @if (depositRequired) {
@@ -228,7 +237,8 @@
     }
     <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancelEdit()"/>
-        <p-button label="Save changes" [disabled]="!shouldUpdateContract()" (onClick)="onContractUpdate()"/>
+        <p-button label="Save changes" [loading]="contractStore.saving()" [disabled]="!shouldUpdateContract()"
+                  (onClick)="onContractUpdate()"/>
     </ng-template>
 </p-dialog>
 
@@ -261,6 +271,7 @@
     </form>
     <ng-template #footer>
         <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="onCancelEdit()"/>
-        <p-button label="Save changes" [disabled]="!shouldUpdateProject()" (onClick)="onProjectUpdate()"/>
+        <p-button label="Save changes" [loading]="saving" [disabled]="!shouldUpdateProject()"
+                  (onClick)="onProjectUpdate()"/>
     </ng-template>
 </p-dialog>

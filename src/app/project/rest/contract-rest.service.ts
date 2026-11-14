@@ -9,6 +9,8 @@ import {Contract} from "../../generated/models/contract";
 export abstract class ContractRestService {
 
     abstract changeStatus(contractId: number, contract: Contract): Observable<Contract>;
+
+    abstract updateContract(contractId: number, contract: Contract): Observable<Contract>;
 }
 
 @Injectable()
@@ -24,6 +26,15 @@ export class ContractRestServiceImpl extends AbstractRestService implements Cont
             .pipe(
                 catchError(
                     error => this.handleError(error, this.messageService, `Error changing contract status`))
+            );
+    }
+
+    // Keeps the status; the backend changes only the fields its current status allows
+    updateContract(contractId: number, contract: Contract): Observable<Contract> {
+        return this.httpClient.put<Contract>(`${this.contractUrl}/${contractId}`, contract)
+            .pipe(
+                catchError(
+                    error => this.handleError(error, this.messageService, `Error updating contract`))
             );
     }
 
