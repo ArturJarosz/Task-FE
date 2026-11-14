@@ -7,7 +7,7 @@ import {ClientForm, ClientFormProvider} from "../form/client-form-provider";
 import {ClientDto, clientTypeLabel} from "../model/client";
 import {ClientFormFieldsComponent} from "../client-form-fields/client-form-fields.component";
 import {EntityProjectsComponent, FieldComponent, PageCrumb, PageHeaderComponent, NotSetComponent} from "../../shared";
-import {initials, resolveLabel} from "../../shared/utils/label-utils";
+import {avatarColor, initials, resolveLabel} from "../../shared/utils/label-utils";
 import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
 import {MenuModule} from "primeng/menu";
@@ -26,6 +26,7 @@ import {showErrors} from "../../shared/utils/form-utils";
         DialogModule, MenuModule, TooltipModule, ReactiveFormsModule, CurrencyPipe, NotSetComponent]
 })
 export class ClientDetailComponent implements OnChanges {
+    readonly avatarColor = avatarColor;
     @Input()
     client!: Client;
     @Input()

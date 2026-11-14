@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges} from '@angular/core';
-import {initials} from "../../shared/utils/label-utils";
+import {avatarColor, initials} from "../../shared/utils/label-utils";
 import {Architect} from "../../generated/models/architect";
 import {EntityProjectsSummary} from "../../generated/models/entity-projects-summary";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
@@ -16,6 +16,7 @@ import {EntityProjectsComponent, FieldComponent, PageCrumb, PageHeaderComponent}
     imports: [PageHeaderComponent, FieldComponent, EntityProjectsComponent, CurrencyPipe, DatePipe]
 })
 export class ArchitectDetailComponent implements OnChanges {
+    readonly avatarColor = avatarColor;
     @Input()
     architect!: Architect;
     @Input()

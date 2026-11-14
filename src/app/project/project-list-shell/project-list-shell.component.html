@@ -40,7 +40,7 @@
                 <project-filter [filter]="$filter()" [clients]="$clients()" [architects]="$architects()"
                                 [projectTypes]="$projectTypes()" [contractStatuses]="$contractStatuses()"
                                 (filterChange)="onFilterChange($event)"/>
-                <p-button label="New project" icon="pi pi-plus" (onClick)="onClick()"/>
+                <p-button label="New" ariaLabel="New project" icon="pi pi-plus" (onClick)="onClick()"/>
             </div>
         </div>
 

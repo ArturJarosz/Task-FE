@@ -13,7 +13,7 @@
     </div>
     <!-- Under the figures, right above the table it adds to -->
     <div class="flex flex-wrap items-center justify-end gap-4 px-6 pb-4">
-        <p-button label="Add visit" icon="pi pi-plus" (onClick)="onAddVisitClick()"/>
+        <p-button label="New" ariaLabel="New visit" icon="pi pi-plus" (onClick)="onAddVisitClick()"/>
     </div>
     <p-table [value]="(supervisionVisits) | sortRows:sort:sortValue"
              [lazy]="true" [lazyLoadOnInit]="false" (onLazyLoad)="onSort($event)" tableStyleClass="sm:min-w-[30rem]" styleClass="app-table-phone">
@@ -43,6 +43,6 @@
     </p-table>
 } @else {
     <app-empty-state icon="pi pi-eye" title="No supervision yet" text="Add author's supervision to track its rates and visits.">
-        <p-button label="Add supervision" icon="pi pi-plus" (onClick)="onAddSupervisionClick()"/>
+        <p-button label="New" ariaLabel="New supervision" icon="pi pi-plus" (onClick)="onAddSupervisionClick()"/>
     </app-empty-state>
 }

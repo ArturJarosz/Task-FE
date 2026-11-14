@@ -13,7 +13,7 @@ import {TooltipModule} from "primeng/tooltip";
 import {CalendarEvent, Client, ClientType, ConfigurationEntry, FinancialReport, FinancialReportPeriod, Project, ProjectStatus} from "../../generated/models";
 import {PeriodType} from "../../generated/models/period-type";
 import {EmptyStateComponent, KpiCardComponent, PageCrumb, PageHeaderComponent, NotSetComponent} from "../../shared";
-import {initials, resolveLabel} from "../../shared/utils/label-utils";
+import {avatarColor, initials, resolveLabel} from "../../shared/utils/label-utils";
 import {statusSeverity} from "../../shared/status-severity";
 import {
     barChartOptions,
@@ -100,6 +100,7 @@ interface YearKpi {
         GoogleSyncTagComponent]
 })
 export class DashboardComponent implements OnChanges {
+    readonly avatarColor = avatarColor;
     @Input()
     report: FinancialReport | null = null;
     @Input()

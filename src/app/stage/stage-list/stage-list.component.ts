@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
-import {initials, resolveKnownLabel, resolveLabel} from "../../shared/utils/label-utils";
+import {avatarColor, initials, resolveKnownLabel, resolveLabel} from "../../shared/utils/label-utils";
 import {Stage} from "../../generated/models/stage";
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
 import {StageDto} from "../model/stage";
@@ -31,6 +31,7 @@ const ARCHITECT_NOT_FOUND_INITIAL = '?';
         DurationPipe]
 })
 export class StageListComponent {
+    readonly avatarColor = avatarColor;
 
     // Column sort of the table: it is lazy, so it only reports the sort and the sortRows pipe sorts a copy of the rows
     sort: TableSort | null = null;

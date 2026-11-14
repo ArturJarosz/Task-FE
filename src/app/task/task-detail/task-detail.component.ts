@@ -26,7 +26,7 @@ import {Architect, ConfigurationEntry, Task, TaskStatus, TimeEntry} from "../../
 import {TaskForm, TaskFormProvider} from "../form/task-form-provider";
 import {DeleteTaskDto, UpdateTaskDto} from "../model/task";
 import {EmptyStateComponent, FieldComponent, LoadErrorComponent, PageCrumb, PageHeaderComponent} from "../../shared";
-import {initials, resolveKnownLabel, resolveLabel} from "../../shared/utils/label-utils";
+import {avatarColor, initials, resolveKnownLabel, resolveLabel} from "../../shared/utils/label-utils";
 import {statusSeverity} from "../../shared/status-severity";
 import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
 import {changedFields, showErrors} from "../../shared/utils/form-utils";
@@ -49,6 +49,7 @@ const DATA_FIELDS: (keyof TaskFormValue)[] = ['name', 'type', 'startDate', 'endD
         SkeletonModule, TagModule, Textarea, TooltipModule, ReactiveFormsModule, RouterLink, DatePipe]
 })
 export class TaskDetailComponent implements OnChanges {
+    readonly avatarColor = avatarColor;
     @Input()
     task!: Task | null;
     @Input()

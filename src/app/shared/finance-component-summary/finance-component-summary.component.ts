@@ -29,9 +29,9 @@ export class FinanceComponentSummaryComponent implements OnChanges {
     @Input()
     averageFinanceComponentDataForm!: FormGroup<FinanceObjectSummaryForm>;
 
-    // The add button of the list ("Add cost"): under the figures, right above the table it adds to. None without a label
+    // Screen reader name of the list's "New" button ("New cost"): under the figures, right above the table it adds to. None without one
     @Input()
-    addLabel: string = '';
+    addAriaLabel: string = '';
     @Output()
     add = new EventEmitter<void>();
 

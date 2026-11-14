@@ -30,7 +30,7 @@
                             </button>
                         }
                     </div>
-                    <p-button label="New client" icon="pi pi-plus" (onClick)="onAddClient()"/>
+                    <p-button label="New" ariaLabel="New client" icon="pi pi-plus" (onClick)="onAddClient()"/>
                 </div>
             </div>
             <client-list [rows]="$pagedRows()"

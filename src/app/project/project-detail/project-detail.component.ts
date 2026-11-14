@@ -16,7 +16,8 @@ import {
 import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {startOfToday} from "date-fns";
 import {ProjectContractForm, ProjectCreateForm, ProjectFormProvider} from "../form/project-form-provider";
-import {initials, resolveLabel} from "../../shared/utils/label-utils";
+import {avatarColor, initials, resolveLabel} from "../../shared/utils/label-utils";
+import {clientDisplayName} from "../../client/model/client";
 import {Architect} from "../../generated/models/architect";
 import {Project} from "../../generated/models/project";
 import {Installment} from "../../generated/models/installment";
@@ -271,17 +272,17 @@ export class ProjectDetailComponent implements OnChanges {
         let architect = this.project?.architect;
         this.people = [];
         if (architect) {
-            let name = `${architect.firstName} ${architect.lastName}`;
+            let name = [architect.firstName, architect.lastName].filter(Boolean).join(' ');
             this.people.push({
                 initials: initials(name), name: name, role: 'Architect', route: ['/architects', architect.id!],
-                avatarClass: 'bg-brand-50 text-brand-600'
+                avatarClass: avatarColor('architect', architect.id)
             });
         }
         if (client) {
-            let name = client.firstName ? `${client.firstName} ${client.lastName}` : `${client.companyName}`;
+            let name = clientDisplayName(client);
             this.people.push({
                 initials: initials(name), name: name, role: 'Client', route: ['/clients', client.id!],
-                avatarClass: 'bg-warning-50 text-warning-700'
+                avatarClass: avatarColor('client', client.id)
             });
         }
     }

@@ -1,4 +1,4 @@
-<finance-component-summary [financeComponentDataForm]="installmentsDetailForm" addLabel="Add installment" (add)="add.emit()">
+<finance-component-summary [financeComponentDataForm]="installmentsDetailForm" addAriaLabel="New installment" (add)="add.emit()">
     <div wrapper-list>
         <p-table [value]="(installments) | sortRows:sort:sortValue"
              [lazy]="true" [lazyLoadOnInit]="false" (onLazyLoad)="onSort($event)" tableStyleClass="sm:min-w-[40rem]" styleClass="app-table-phone">

@@ -13,7 +13,7 @@
                 </div>
                 <p class="app-card-subtitle m-0">Select a day or a time range to add an event</p>
             </div>
-            <p-button label="New event" icon="pi pi-plus" (onClick)="onAddEvent()"/>
+            <p-button label="New" ariaLabel="New event" icon="pi pi-plus" (onClick)="onAddEvent()"/>
         </div>
         <div class="px-6 pb-6">
             <calendar-view [events]="$events()"

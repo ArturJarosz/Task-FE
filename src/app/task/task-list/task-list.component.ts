@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {ConfigurationEntry} from "../../generated/models/configuration-entry";
-import {resolveKnownLabel, resolveLabel} from "../../shared/utils/label-utils";
+import {avatarColor, resolveKnownLabel, resolveLabel} from "../../shared/utils/label-utils";
 import {Task} from "../../generated/models/task";
 import {DeleteTaskDto} from "../model/task";
 import {Architect} from "../../generated/models/architect";
@@ -30,6 +30,7 @@ const ARCHITECT_NOT_FOUND_INITIAL = '?';
         DurationPipe]
 })
 export class TaskListComponent {
+    readonly avatarColor = avatarColor;
 
     // Column sort of the table: it is lazy, so it only reports the sort and the sortRows pipe sorts a copy of the rows
     sort: TableSort | null = null;

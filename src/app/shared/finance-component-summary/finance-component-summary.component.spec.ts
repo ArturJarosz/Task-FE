@@ -12,7 +12,7 @@ describe('FinanceComponentSummaryComponent', () => {
       imports: [FinanceComponentSummaryComponent]
     })
     .compileComponents();
-    
+
     fixture = TestBed.createComponent(FinanceComponentSummaryComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -45,12 +45,13 @@ describe('FinanceComponentSummaryComponent', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('p-button')).toBeNull();
 
-    fixture.componentRef.setInput('addLabel', 'Add cost');
+    fixture.componentRef.setInput('addAriaLabel', 'New cost');
     fixture.detectChanges();
     const add = jasmine.createSpy('add');
     component.add.subscribe(add);
     const button: HTMLButtonElement = fixture.nativeElement.querySelector('p-button button');
-    expect(button.textContent?.trim()).toBe('Add cost');
+    expect(button.textContent?.trim()).toBe('New');
+    expect(button.getAttribute('aria-label')).toBe('New cost');
     // The figures come first, then the button
     const figures: HTMLElement = fixture.nativeElement.querySelector('dl');
     expect(figures.compareDocumentPosition(button) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();

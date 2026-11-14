@@ -21,7 +21,7 @@
             <td class="max-sm:hidden">
                 @if (getClientName(project.client); as clientName) {
                     <div class="flex items-center gap-3">
-                        <span class="app-avatar bg-warning-50 text-warning-700">{{ getInitials(clientName) }}</span>
+                        <span class="app-avatar" [class]="avatarColor('client', project.client?.id)">{{ getInitials(clientName) }}</span>
                         <div class="min-w-0">
                             <div class="text-gray-800 truncate">{{ clientName }}</div>
                             <div class="text-xs text-gray-500">{{ getClientKind(project.client) }}</div>
@@ -34,7 +34,7 @@
             <td class="max-sm:hidden">
                 @if (getArchitectName(project.architect); as architectName) {
                     <div class="flex items-center gap-3">
-                        <span class="app-avatar bg-brand-50 text-brand-600">{{ getInitials(architectName) }}</span>
+                        <span class="app-avatar" [class]="avatarColor('architect', project.architect?.id)">{{ getInitials(architectName) }}</span>
                         <span class="text-gray-800">{{ architectName }}</span>
                     </div>
                 } @else {

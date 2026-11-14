@@ -86,6 +86,25 @@
   --color-error-600: #d92d20;
   --color-error-700: #b42318;
 
+  /* Avatar tints (avatarColor() in label-utils.ts): four depths of one orange for clients and one blue for architects.
+     The text darkens as the tint deepens, keeping 4.5:1 with the avatar's 8% mix. Never green or red: status colours */
+  --color-avatar-client-1: #fef3e6;
+  --color-avatar-client-1-ink: #915108;
+  --color-avatar-client-2: #fce2c5;
+  --color-avatar-client-2-ink: #834907;
+  --color-avatar-client-3: #f9cf9f;
+  --color-avatar-client-3-ink: #743d06;
+  --color-avatar-client-4: #f4b976;
+  --color-avatar-client-4-ink: #613005;
+  --color-avatar-architect-1: #ecf2fe;
+  --color-avatar-architect-1-ink: #1f4ead;
+  --color-avatar-architect-2: #d0e0fb;
+  --color-avatar-architect-2-ink: #1b4498;
+  --color-avatar-architect-3: #b1caf6;
+  --color-avatar-architect-3-ink: #173b82;
+  --color-avatar-architect-4: #8fb2ef;
+  --color-avatar-architect-4-ink: #103070;
+
   /* Chart series, in fixed order (validated with the dataviz palette validator: CVD and normal-vision pass on light).
      1 follows the brand colour; 2-4 follow the reference categorical order; 5 is reserved for expenses. */
   --color-chart-1: var(--color-brand-500);
@@ -154,6 +173,26 @@
   --color-error-50: #371a1b;
   --color-error-600: #f97066;
   --color-error-700: #fda29b;
+
+  /* Avatar tints: 12-36% of the hue on the dark surface, with lighter text as the tint deepens */
+  --app-avatar-client-hue: #f08c19;
+  --app-avatar-architect-hue: #3e7dea;
+  --color-avatar-client-1: color-mix(in srgb, var(--app-avatar-client-hue) 12%, var(--color-white));
+  --color-avatar-client-1-ink: #f8ca96;
+  --color-avatar-client-2: color-mix(in srgb, var(--app-avatar-client-hue) 20%, var(--color-white));
+  --color-avatar-client-2-ink: #f9d4a9;
+  --color-avatar-client-3: color-mix(in srgb, var(--app-avatar-client-hue) 28%, var(--color-white));
+  --color-avatar-client-3-ink: #fbddbc;
+  --color-avatar-client-4: color-mix(in srgb, var(--app-avatar-client-hue) 36%, var(--color-white));
+  --color-avatar-client-4-ink: #fce7cf;
+  --color-avatar-architect-1: color-mix(in srgb, var(--app-avatar-architect-hue) 12%, var(--color-white));
+  --color-avatar-architect-1-ink: #97baf7;
+  --color-avatar-architect-2: color-mix(in srgb, var(--app-avatar-architect-hue) 20%, var(--color-white));
+  --color-avatar-architect-2-ink: #aac7f8;
+  --color-avatar-architect-3: color-mix(in srgb, var(--app-avatar-architect-hue) 28%, var(--color-white));
+  --color-avatar-architect-3-ink: #bdd3fa;
+  --color-avatar-architect-4: color-mix(in srgb, var(--app-avatar-architect-hue) 36%, var(--color-white));
+  --color-avatar-architect-4-ink: #d0e0fb;
 
   --app-focus-ring: var(--app-brand-400);
   --shadow-theme-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
@@ -455,8 +494,8 @@ body {
     @apply flex items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-gray-300 bg-transparent cursor-pointer font-[inherit] text-sm font-medium text-gray-500 hover:border-brand-300 hover:text-brand-500 focus-visible:outline-none focus-visible:shadow-focus-ring;
   }
 
-  /* Initials avatar; pick a tint and the text shade status tags use with it: bg-brand-50 + text-brand-600,
-     bg-warning-50 + text-warning-700, bg-gray-100 + text-gray-700 */
+  /* Initials avatar. Clients and architects take their shade from avatarColor() in label-utils.ts; others pick a tint
+     and the text shade status tags use with it: bg-brand-50 + text-brand-600 (the user), bg-gray-100 + text-gray-700 */
   .app-avatar {
     @apply inline-flex items-center justify-center shrink-0 w-10 h-10 rounded-full text-sm font-medium;
   }

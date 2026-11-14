@@ -34,7 +34,7 @@ import {
     PageCrumb,
     PageHeaderComponent
 } from "../../shared";
-import {initials, resolveKnownLabel, resolveLabel} from "../../shared/utils/label-utils";
+import {avatarColor, initials, resolveKnownLabel, resolveLabel} from "../../shared/utils/label-utils";
 import {statusSeverity} from "../../shared/status-severity";
 import {toDateIfExists, toTimeZoneString} from "../../shared/utils/date-utils";
 import {changedFields, showErrors} from "../../shared/utils/form-utils";
@@ -61,6 +61,7 @@ export interface ArchitectOption {
         Textarea, TooltipModule, ReactiveFormsModule, RouterLink, CurrencyPipe, DatePipe, DurationPipe]
 })
 export class StageDetailComponent implements OnChanges {
+    readonly avatarColor = avatarColor;
     @Input()
     projectId: number = 0;
     @Input()

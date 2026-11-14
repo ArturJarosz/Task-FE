@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
-import {initials} from "../../shared/utils/label-utils";
+import {avatarColor, initials} from "../../shared/utils/label-utils";
 import {TableSort, toTableSort} from "../../shared/utils/sort-utils";
 import {Client, ClientType, ConfigurationEntry} from "../../generated/models";
 import {clientDisplayName, ClientDto, clientTypeLabel} from "../model/client";
@@ -29,6 +29,7 @@ export interface ClientRow {
     imports: [ThreeStepSortDirective, TableModule, ButtonModule, MenuModule, TooltipModule, RouterLink, CurrencyPipe, EmptyStateComponent, NotSetComponent]
 })
 export class ClientListComponent {
+    readonly avatarColor = avatarColor;
     @Input()
     rows: ClientRow[] = [];
     @Input()

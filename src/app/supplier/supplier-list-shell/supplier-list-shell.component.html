@@ -16,7 +16,7 @@
                 <h2 class="app-card-title">All suppliers</h2>
                 <p class="app-card-subtitle m-0">{{ $kpis().total }} {{ $kpis().total === 1 ? 'supplier' : 'suppliers' }}</p>
             </div>
-            <p-button label="New supplier" icon="pi pi-plus" (onClick)="onAdd()"/>
+            <p-button label="New" ariaLabel="New supplier" icon="pi pi-plus" (onClick)="onAdd()"/>
         </div>
         <app-partner-list [rows]="$pagedRows()" routeBase="/suppliers" entityLabel="supplier" countLabel="Supplies"
                            icon="pi pi-truck" emptyText="Add the shops you buy materials and furniture from."
