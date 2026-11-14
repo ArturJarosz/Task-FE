@@ -16,7 +16,7 @@
                 <h2 class="app-card-title">All contractors</h2>
                 <p class="app-card-subtitle m-0">{{ $kpis().total }} {{ $kpis().total === 1 ? 'contractor' : 'contractors' }}</p>
             </div>
-            <p-button label="New contractor" icon="pi pi-plus" (onClick)="onAdd()"/>
+            <p-button label="New" ariaLabel="New contractor" icon="pi pi-plus" (onClick)="onAdd()"/>
         </div>
         <app-partner-list [rows]="$pagedRows()" routeBase="/contractors" entityLabel="contractor" countLabel="Jobs"
                            icon="pi pi-wrench" emptyText="Add the electricians, plumbers and other trades you work with."

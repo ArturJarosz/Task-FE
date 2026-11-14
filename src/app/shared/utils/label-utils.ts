@@ -33,3 +33,29 @@ export function initials(...names: (string | null | undefined)[]): string {
     let letters = words.slice(0, 2).map(word => word.charAt(0)).join('').toUpperCase();
     return letters || '?';
 }
+
+// Avatar tints: four depths of one orange for clients and of one blue for architects, so the colour still tells them
+// apart. The record's id picks the shade, so a person has the same one on every page and keeps it after a rename;
+// without an id (a deleted architect) the avatar is grey. The classes are written out in full so Tailwind finds them
+const AVATAR_COLORS = {
+    client: [
+        'bg-avatar-client-1 text-avatar-client-1-ink',
+        'bg-avatar-client-2 text-avatar-client-2-ink',
+        'bg-avatar-client-3 text-avatar-client-3-ink',
+        'bg-avatar-client-4 text-avatar-client-4-ink'
+    ],
+    architect: [
+        'bg-avatar-architect-1 text-avatar-architect-1-ink',
+        'bg-avatar-architect-2 text-avatar-architect-2-ink',
+        'bg-avatar-architect-3 text-avatar-architect-3-ink',
+        'bg-avatar-architect-4 text-avatar-architect-4-ink'
+    ]
+};
+
+export function avatarColor(kind: 'client' | 'architect', id: number | null | undefined): string {
+    if (id == null) {
+        return 'bg-gray-100 text-gray-700';
+    }
+    let colors = AVATAR_COLORS[kind];
+    return colors[Math.abs(id) % colors.length];
+}

@@ -64,7 +64,7 @@
             <section class="app-card overflow-hidden min-w-0">
                 <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
                     <h2 class="m-0 text-base font-semibold text-gray-800">Roles</h2>
-                    <p-button label="New role" icon="pi pi-plus" (onClick)="onAddRole()"/>
+                    <p-button label="New" ariaLabel="New role" icon="pi pi-plus" (onClick)="onAddRole()"/>
                 </div>
                 <role-list [roles]="roleStore.roles()"
                            [permissionsCount]="roleStore.permissionsCount()"
@@ -126,7 +126,7 @@
                     <h2 class="m-0 text-base font-semibold text-gray-800">{{ section.texts.title }}</h2>
                 </div>
                 @if (section.store.entries().length) {
-                    <p-button [label]="'New ' + section.texts.singular" icon="pi pi-plus" (onClick)="onAddEntry()"/>
+                    <p-button label="New" [ariaLabel]="'New ' + section.texts.singular" icon="pi pi-plus" (onClick)="onAddEntry()"/>
                 }
             </div>
             <named-entry-list [texts]="section.texts"

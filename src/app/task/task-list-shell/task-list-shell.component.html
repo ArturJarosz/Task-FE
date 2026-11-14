@@ -4,7 +4,7 @@
             <h3 class="app-card-title">Tasks</h3>
             <p class="app-card-subtitle m-0">{{ taskCountLabel }}</p>
         </div>
-        <p-button label="Add task" icon="pi pi-plus" (onClick)="onAddTask()"/>
+        <p-button label="New" ariaLabel="New task" icon="pi pi-plus" (onClick)="onAddTask()"/>
     </div>
     <task-list
             [tasks]="tasks"

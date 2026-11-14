@@ -45,9 +45,9 @@
                 </button>
             </div>
             @if (addButton === 'primary') {
-                <p-button label="New event" icon="pi pi-plus" (onClick)="onAddEvent()"/>
+                <p-button label="New" ariaLabel="New event" icon="pi pi-plus" (onClick)="onAddEvent()"/>
             } @else if (addButton === 'outline') {
-                <p-button label="New event" icon="pi pi-plus" severity="secondary" [outlined]="true" (onClick)="onAddEvent()"/>
+                <p-button label="New" ariaLabel="New event" icon="pi pi-plus" severity="secondary" [outlined]="true" (onClick)="onAddEvent()"/>
             }
         </div>
     </upcoming-events>

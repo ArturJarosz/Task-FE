@@ -21,7 +21,7 @@
                 <td class="max-sm:hidden">
                     @if (getArchitectName(stage.architectId); as architectName) {
                         <div class="flex items-center gap-3">
-                            <span class="app-avatar bg-brand-50 text-brand-600">{{ getArchitectInitials(stage.architectId) }}</span>
+                            <span class="app-avatar" [class]="avatarColor('architect', stage.architectId)">{{ getArchitectInitials(stage.architectId) }}</span>
                             <span class="text-gray-800">{{ architectName }}</span>
                         </div>
                     } @else {

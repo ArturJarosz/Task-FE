@@ -3,7 +3,7 @@
 <div class="flex flex-col gap-gutter">
     <!-- Header card -->
     <section class="app-card app-detail-header">
-        <div class="app-detail-icon bg-brand-50 text-brand-500 text-2xl font-semibold">
+        <div class="app-detail-icon text-2xl font-semibold" [class]="avatarColor('architect', architect.id)">
             {{ initials }}
         </div>
         <div class="flex-1 min-w-0">

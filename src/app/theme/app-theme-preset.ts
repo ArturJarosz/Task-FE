@@ -226,7 +226,7 @@ export const AppThemePreset = definePreset(Aura, {
       columnTitle: { fontWeight: '500' },
       bodyCell: {
         borderColor: gray[100],
-        padding: '1rem 1.5rem',
+        padding: '0.75rem 1.5rem', // the header band's 12px, so a two-line row with an avatar is 69px
       },
     },
   },

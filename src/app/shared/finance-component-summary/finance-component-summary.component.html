@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-3 px-6" [class.pb-4]="addLabel" [class.pb-6]="!addLabel">
+<div class="flex flex-col gap-3 px-6" [class.pb-4]="addAriaLabel" [class.pb-6]="!addAriaLabel">
     <dl class="m-0 grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-px overflow-hidden rounded-xl border border-gray-200 bg-gray-200">
         @for (stat of stats; track stat.label) {
             <div class="bg-gray-50 px-4 py-3">
@@ -17,9 +17,9 @@
     </dl>
 </div>
 <!-- Under the figures, right above the table it adds to -->
-@if (addLabel) {
+@if (addAriaLabel) {
     <div class="flex flex-wrap items-center justify-end gap-4 px-6 pb-4">
-        <p-button [label]="addLabel" icon="pi pi-plus" (onClick)="add.emit()"/>
+        <p-button label="New" [ariaLabel]="addAriaLabel" icon="pi pi-plus" (onClick)="add.emit()"/>
     </div>
 }
 <ng-content select="[wrapper-list]"></ng-content>

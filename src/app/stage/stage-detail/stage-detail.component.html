@@ -103,7 +103,7 @@
                     </div>
                     @if (architectName) {
                         <a [routerLink]="['/architects', stage.architectId]" class="flex items-center gap-3 px-6 pb-6 no-underline group">
-                            <span class="app-avatar bg-brand-50 text-brand-600">{{ architectInitials }}</span>
+                            <span class="app-avatar" [class]="avatarColor('architect', stage.architectId)">{{ architectInitials }}</span>
                             <span class="flex flex-col min-w-0">
                                 <span class="text-sm font-medium text-gray-800 truncate group-hover:text-brand-500">{{ architectName }}</span>
                                 <span class="text-xs text-gray-500">Architect</span>

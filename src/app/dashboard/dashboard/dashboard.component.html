@@ -330,7 +330,7 @@
                                 <td class="max-sm:hidden">
                                     @if (getClientName(project.client); as clientName) {
                                         <div class="flex items-center gap-3">
-                                            <span class="app-avatar bg-warning-50 text-warning-700">{{ getInitials(clientName) }}</span>
+                                            <span class="app-avatar" [class]="avatarColor('client', project.client?.id)">{{ getInitials(clientName) }}</span>
                                             <span class="text-gray-800 truncate">{{ clientName }}</span>
                                         </div>
                                     } @else {

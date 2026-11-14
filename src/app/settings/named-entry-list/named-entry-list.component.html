@@ -39,7 +39,7 @@
                 </div>
             } @empty {
                 <app-empty-state [icon]="texts.emptyIcon" [title]="'No ' + texts.plural + ' yet'" [text]="texts.emptyText">
-                    <p-button [label]="'New ' + texts.singular" icon="pi pi-plus" (onClick)="add.emit()"/>
+                    <p-button label="New" [ariaLabel]="'New ' + texts.singular" icon="pi pi-plus" (onClick)="add.emit()"/>
                 </app-empty-state>
             }
         }

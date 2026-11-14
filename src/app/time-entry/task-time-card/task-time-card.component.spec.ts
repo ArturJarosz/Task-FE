@@ -3,6 +3,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {QuickLog, TaskTimeCardComponent} from './task-time-card.component';
 import {provideTestDependencies} from '../../../testing/test-providers';
 import {TimeEntry} from '../../generated/models/time-entry';
+import {avatarColor} from '../../shared/utils/label-utils';
 
 const ARCHITECTS = [
     {id: 7, firstName: 'Anna', lastName: 'Nowak'},
@@ -74,6 +75,18 @@ describe('TaskTimeCardComponent', () => {
 
         expect(text()).toContain('6 h 30 min');
         expect(peopleTexts()).toEqual(['PL Piotr Lis 5 h', 'AN Anna Nowak 1 h 30 min']);
+    });
+
+    it('should give each architect their own shade, and a deleted one a grey avatar', () => {
+        show([
+            {id: 1, architectId: 8, durationMinutes: 60},
+            {id: 2, architectId: 99, durationMinutes: 30},
+        ], 90);
+
+        const avatars = Array.from(fixture.nativeElement.querySelectorAll('li .app-avatar') as NodeListOf<HTMLElement>);
+        expect(avatars[0].className).toContain(avatarColor('architect', 8).split(' ')[0]);
+        expect(avatars[1].textContent?.trim()).toBe('U');
+        expect(avatars[1].className).toContain('bg-gray-100');
     });
 
     it('should open the entries from the link in the top right corner', () => {

@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
-import {initials, resolveLabel} from "../../shared/utils/label-utils";
+import {avatarColor, initials, resolveLabel} from "../../shared/utils/label-utils";
 import {Architect, Client, ClientType, ConfigurationEntry, Project} from "../../generated/models";
 import {ProjectDto} from "../model/project.model";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
@@ -28,6 +28,7 @@ const NOT_FOUND_INITIAL = '?';
     imports: [ThreeStepSortDirective, TableModule, ButtonModule, TagModule, MenuModule, RouterLink, TooltipModule, CurrencyPipe, EmptyStateComponent, NotSetComponent]
 })
 export class ProjectListComponent {
+    readonly avatarColor = avatarColor;
     @Input()
     projects: Project[] | null = [];
     @Input()

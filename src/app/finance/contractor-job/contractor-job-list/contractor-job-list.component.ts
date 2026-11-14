@@ -25,7 +25,7 @@ import {ThreeStepSortDirective} from "../../../shared/sort-rows/three-step-sort.
     imports: [ThreeStepSortDirective, SortRowsPipe, FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, CurrencyPipe, EmptyStateComponent, YesNoMarkComponent]
 })
 export class ContractorJobListComponent implements OnChanges {
-    // "Add contractor job" under the summary figures; the shell opens the dialog
+    // The "New" button under the summary figures; the shell opens the dialog
     @Output()
     add = new EventEmitter<void>();
 

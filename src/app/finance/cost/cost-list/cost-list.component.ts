@@ -27,7 +27,7 @@ import {ThreeStepSortDirective} from "../../../shared/sort-rows/three-step-sort.
     imports: [ThreeStepSortDirective, SortRowsPipe, FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, CurrencyPipe, DatePipe, EmptyStateComponent, YesNoMarkComponent]
 })
 export class CostListComponent implements OnChanges {
-    // "Add cost" under the summary figures; the shell opens the dialog
+    // The "New" button under the summary figures; the shell opens the dialog
     @Output()
     add = new EventEmitter<void>();
 

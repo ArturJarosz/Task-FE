@@ -119,7 +119,7 @@ describe('SettingsShellComponent', () => {
 
         let element = harness.routeNativeElement!;
         expect(element.querySelector('nav .app-nav-item.active')?.textContent).toContain('Contractor categories');
-        expect(element.textContent).toContain('New contractor category');
+        expect(element.querySelector('button[aria-label="New contractor category"]')?.textContent?.trim()).toBe('New');
         let rows = Array.from(element.querySelectorAll('[aria-label="Contractor categories"] [role="row"]'));
         expect(rows[0].textContent).toContain('Contractors');
         expect(rows[1].textContent).toContain('1 contractor');
@@ -137,7 +137,7 @@ describe('SettingsShellComponent', () => {
         let element = harness.routeNativeElement!;
         expect(element.querySelector('nav .app-nav-item.active')?.textContent).toContain('Supplier categories');
         expect(element.textContent).toContain('No supplier categories yet');
-        expect(element.textContent).toContain('New supplier category');
+        expect(element.querySelector('button[aria-label="New supplier category"]')?.textContent?.trim()).toBe('New');
     });
 
     it('should list cost categories and block deleting a category used by costs', async () => {
@@ -151,7 +151,7 @@ describe('SettingsShellComponent', () => {
 
         let element = harness.routeNativeElement!;
         expect(element.querySelector('nav .app-nav-item.active')?.textContent).toContain('Cost categories');
-        expect(element.textContent).toContain('New cost category');
+        expect(element.querySelector('button[aria-label="New cost category"]')?.textContent?.trim()).toBe('New');
         let rows = Array.from(element.querySelectorAll('[aria-label="Cost categories"] [role="row"]'));
         expect(rows[0].textContent).toContain('Costs');
         expect(rows[1].textContent).toContain('3 costs');
@@ -171,7 +171,7 @@ describe('SettingsShellComponent', () => {
 
         let element = harness.routeNativeElement!;
         expect(element.querySelector('nav .app-nav-item.active')?.textContent).toContain('Stage types');
-        expect(element.textContent).toContain('New stage type');
+        expect(element.querySelector('button[aria-label="New stage type"]')?.textContent?.trim()).toBe('New');
         let rows = Array.from(element.querySelectorAll('[aria-label="Stage types"] [role="row"]'));
         expect(rows[0].textContent).toContain('Stages');
         expect(rows[1].textContent).toContain('3 stages');
@@ -191,7 +191,7 @@ describe('SettingsShellComponent', () => {
 
         let element = harness.routeNativeElement!;
         expect(element.querySelector('nav .app-nav-item.active')?.textContent).toContain('Task types');
-        expect(element.textContent).toContain('New task type');
+        expect(element.querySelector('button[aria-label="New task type"]')?.textContent?.trim()).toBe('New');
         let rows = Array.from(element.querySelectorAll('[aria-label="Task types"] [role="row"]'));
         expect(rows[0].textContent).toContain('Tasks');
         expect(rows[1].textContent).toContain('3 tasks');

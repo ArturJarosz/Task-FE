@@ -1,4 +1,4 @@
-import {initials} from "../../shared/utils/label-utils";
+import {avatarColor, initials} from "../../shared/utils/label-utils";
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
@@ -25,6 +25,7 @@ export interface PersonTime {
     architectId: number;
     name: string;
     initials: string;
+    avatarClass: string;
     minutes: number;
 }
 
@@ -137,8 +138,8 @@ function toPeople(timeEntries: TimeEntry[], architects: Architect[]): PersonTime
     return [...minutesByArchitect.entries()]
         .map(([architectId, minutes]) => {
             const architect = architectsById.get(architectId);
-            const name = architect ? `${architect.firstName} ${architect.lastName}` : 'Unknown';
-            return {architectId, name, initials: initials(name), minutes};
+            const name = architect ? [architect.firstName, architect.lastName].filter(Boolean).join(' ') : 'Unknown';
+            return {architectId, name, initials: initials(name), avatarClass: avatarColor('architect', architect?.id), minutes};
         })
         .sort((a, b) => b.minutes - a.minutes || a.name.localeCompare(b.name));
 }

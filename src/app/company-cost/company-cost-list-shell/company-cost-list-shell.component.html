@@ -66,7 +66,7 @@
                     <p-button [label]="$period() ? 'Filter · 1' : 'Filter'" icon="pi pi-filter" severity="secondary"
                               [outlined]="true" styleClass="min-w-30 tabular-nums" aria-haspopup="dialog"
                               (onClick)="filterPopover.toggle($event)"/>
-                    <p-button label="New company cost" icon="pi pi-plus" (onClick)="$showNewCost.set(true)"/>
+                    <p-button label="New" ariaLabel="New company cost" icon="pi pi-plus" (onClick)="$showNewCost.set(true)"/>
                 </div>
             </div>
             @if ($period()) {

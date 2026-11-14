@@ -1,4 +1,4 @@
-<finance-component-summary [financeComponentDataForm]="contractorsJobsSummaryForm" addLabel="Add contractor job" (add)="add.emit()">
+<finance-component-summary [financeComponentDataForm]="contractorsJobsSummaryForm" addAriaLabel="New contractor job" (add)="add.emit()">
     <div wrapper-list>
         <p-table [value]="(contractorsJobsProjectData.contractorJobs ?? []) | sortRows:sort:sortValue"
              [lazy]="true" [lazyLoadOnInit]="false" (onLazyLoad)="onSort($event)" tableStyleClass="sm:min-w-[44rem]" styleClass="app-table-phone">

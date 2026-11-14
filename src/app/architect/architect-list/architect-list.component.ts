@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
-import {initials} from "../../shared/utils/label-utils";
+import {avatarColor, initials} from "../../shared/utils/label-utils";
 import {Architect} from "../../generated/models/architect";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TableSort, toTableSort} from "../../shared/utils/sort-utils";
@@ -24,6 +24,7 @@ export interface ArchitectRow {
     imports: [ThreeStepSortDirective, TableModule, RouterLink, CurrencyPipe, EmptyStateComponent]
 })
 export class ArchitectListComponent {
+    readonly avatarColor = avatarColor;
     @Input()
     rows: ArchitectRow[] = [];
     @Output()
