@@ -1,4 +1,4 @@
-import {ApplicationRef, Component, computed, DestroyRef, HostListener, inject, OnInit, ViewChild} from '@angular/core';
+import {ApplicationRef, Component, computed, DestroyRef, HostListener, inject, OnInit, Signal, ViewChild} from '@angular/core';
 import {toSignal} from "@angular/core/rxjs-interop";
 import {MenuItem} from "primeng/api";
 import {ConfigurationStore} from "./shared/configuration/state";
@@ -16,6 +16,7 @@ import {BreadcrumbModule} from "primeng/breadcrumb";
 import {ButtonModule} from "primeng/button";
 import {TooltipModule} from "primeng/tooltip";
 import {NgClass, AsyncPipe} from "@angular/common";
+import {ThemeService} from "./theme/theme.service";
 import {endsTextSelectionInRow} from "./shared/utils/row-click";
 
 export interface NavItem {
@@ -59,6 +60,27 @@ const NAV_GROUPS: NavGroup[] = [
     },
 ];
 
+// User menu items are commands only: its item template draws an icon and a label, not links, badges or submenus
+type UserMenuItem = Required<Pick<MenuItem, 'label' | 'icon'>> & Pick<MenuItem, 'id' | 'command'>;
+
+const DARK_THEME_ITEM_ID = 'dark-theme';
+const DARK_THEME_LABEL = 'Dark theme';
+
+// The user menu's dark theme item. It has no command, as menu commands close the menu: its row toggles the theme
+// itself (AppComponent.toggleDarkTheme), so the switch slides in view. The label is what screen readers read, so it says
+// whether the theme is on; as a getter it keeps the item, and so its row, the same object when the theme changes
+class DarkThemeMenuItem implements UserMenuItem {
+    readonly id = DARK_THEME_ITEM_ID;
+    readonly icon = 'pi pi-moon';
+
+    constructor(private readonly $dark: Signal<boolean>) {
+    }
+
+    get label(): string {
+        return `${DARK_THEME_LABEL}, ${this.$dark() ? 'on' : 'off'}`;
+    }
+}
+
 // Below this width the sidebar is an overlay opened from the top bar instead of a collapsible column
 const DESKTOP_MEDIA_QUERY = '(min-width: 64rem)';
 
@@ -83,8 +105,12 @@ export class AppComponent implements OnInit {
     breadcrumbItems: MenuItem[] = [];
     // Pages migrated to DESIGN_GUIDELINES.md render their own title + breadcrumb header
     ownPageHeader = false;
+    readonly darkThemeItemId = DARK_THEME_ITEM_ID;
+    readonly darkThemeLabel = DARK_THEME_LABEL;
+    readonly themeService = inject(ThemeService);
     // The name and email sit in the menu's start template; items are actions only
-    readonly userMenuItems: MenuItem[] = [
+    readonly userMenuItems: UserMenuItem[] = [
+        new DarkThemeMenuItem(this.themeService.$dark),
         {label: "What's new", icon: 'pi pi-megaphone', command: () => this.releaseNoteStore.openHistory({})},
         {label: 'Log out', icon: 'pi pi-sign-out', command: () => this.logout()}
     ];
@@ -240,6 +266,19 @@ export class AppComponent implements OnInit {
                 container.style.left = (targetRect.right + window.scrollX - container.offsetWidth) + 'px';
             }
         });
+    }
+
+    toggleDarkTheme(event: Event): void {
+        // The menu closes when a click reaches its item; stopping it here keeps the menu open, so the switch slides in view
+        event.stopPropagation();
+        this.themeService.toggleMode();
+        // Enter and Space move focus to the avatar before clicking the item: bring it back to the item, so the keyboard
+        // keeps working in the open menu (app.component.spec.ts checks this against PrimeNG's menu)
+        let list = this.userMenu.listViewChild()?.nativeElement;
+        if (list && document.activeElement !== list) {
+            list.focus();
+            this.userMenu.focusedOptionIndex.set(DARK_THEME_ITEM_ID);
+        }
     }
 
     toggleSidebar(): void {

@@ -112,9 +112,11 @@ export const UserStore = signalStore(
             )
         ),
         // The REST service shows the error toast; the setting then just stays in this browser
+        // One save at a time, in order: switchMap would only stop waiting for an earlier save, and the server could still
+        // apply it after a later one (dark theme toggled twice quickly would end up saved as dark)
         updateConfiguration: rxMethod<{ name: UserConfigurationName, value: string }>(
             pipe(
-                switchMap(({name, value}) => userRestService.updateCurrentUserConfiguration(name, value)
+                concatMap(({name, value}) => userRestService.updateCurrentUserConfiguration(name, value)
                     .pipe(
                         tap(saved => store.setConfiguration(saved)),
                         catchError(() => EMPTY)

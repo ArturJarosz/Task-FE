@@ -48,7 +48,7 @@ export class AppearanceSettingsComponent implements OnChanges, OnDestroy {
     @Output()
     retry = new EventEmitter<void>();
 
-    readonly $darkMode = computed(() => this.themeService.$mode() === 'dark');
+    readonly $darkMode = this.themeService.$dark;
 
     // What the user typed or picked; shown across the app as a preview until saved or cancelled
     readonly $draftColor = signal('');
