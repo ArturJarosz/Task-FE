@@ -83,6 +83,21 @@
                                 </div>
                             </div>
                         </ng-template>
+                        <!-- The dark theme item shows its state as a switch; the whole row toggles it -->
+                        <ng-template #item let-item>
+                            @if (item.id === darkThemeItemId) {
+                                <a class="p-menu-item-link" tabindex="-1" (click)="toggleDarkTheme($event)">
+                                    <span class="p-menu-item-icon" [class]="item.icon"></span>
+                                    <span class="p-menu-item-label">{{ darkThemeLabel }}</span>
+                                    <span class="app-switch ml-auto" [class.app-switch-on]="themeService.$dark()" aria-hidden="true"></span>
+                                </a>
+                            } @else {
+                                <a class="p-menu-item-link" tabindex="-1">
+                                    <span class="p-menu-item-icon" [class]="item.icon"></span>
+                                    <span class="p-menu-item-label">{{ item.label }}</span>
+                                </a>
+                            }
+                        </ng-template>
                     </p-menu>
                 </div>
             }

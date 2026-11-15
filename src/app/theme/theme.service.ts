@@ -1,4 +1,4 @@
-import {effect, inject, Injectable, signal, untracked, DOCUMENT} from '@angular/core';
+import {computed, effect, inject, Injectable, signal, untracked, DOCUMENT} from '@angular/core';
 import {SystemParameterStore} from '../settings/state';
 import {UserStore} from '../shared/user/state';
 import {ThemeMode as ThemeModeDto} from '../generated/models/theme-mode';
@@ -34,6 +34,7 @@ export class ThemeService {
     private readonly userStore = inject(UserStore);
 
     readonly $mode = signal<ThemeMode>('light');
+    readonly $dark = computed(() => this.$mode() === 'dark');
     // Saved brand color; a preview may show another one until it is saved or reset
     readonly $brandColor = signal(DEFAULT_BRAND_COLOR);
     // What is painted right now (including a preview); charts copy colors, so they rebuild when this changes
@@ -92,6 +93,10 @@ export class ThemeService {
         this.modeChosenHere = true;
         this.applyMode(mode);
         this.saveMode(mode);
+    }
+
+    toggleMode(): void {
+        this.setMode(this.$dark() ? 'light' : 'dark');
     }
 
     setBrandColor(color: string): void {

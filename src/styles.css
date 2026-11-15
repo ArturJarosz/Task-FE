@@ -143,11 +143,11 @@
 .app-dark {
   color-scheme: dark;
 
-  --color-white: #161d2b;
-  --color-gray-50: #0f1520;
-  --color-gray-100: #1d2534;
-  --color-gray-200: #273244;
-  --color-gray-300: #344054;
+  --color-white: #1c1e22;
+  --color-gray-50: #0e0f11;
+  --color-gray-100: #25272d;
+  --color-gray-200: #30343b;
+  --color-gray-300: #3e434c;
   --color-gray-400: #667085;
   --color-gray-500: #98a2b3;
   --color-gray-600: #a9b3c2;
@@ -289,7 +289,7 @@ body {
     @apply bg-white border border-gray-200 rounded-2xl shadow-card;
   }
   .app-card-header {
-    @apply flex flex-wrap items-center justify-between gap-4 px-6 py-5;
+    @apply flex flex-wrap items-center justify-between gap-4 px-6 py-4;
   }
   .app-card-title {
     @apply m-0 text-xl leading-7 font-semibold text-gray-800;
@@ -505,6 +505,24 @@ body {
      tint, which blends the same as color-mix(in srgb, text 8%, tint) */
   .app-avatar {
     background-image: linear-gradient(color-mix(in srgb, currentColor 8%, transparent), color-mix(in srgb, currentColor 8%, transparent));
+  }
+
+  /* A switch that only shows a state, in a row that toggles it (the user menu's "Dark theme"). Drawn like p-toggleswitch,
+     whose form control would load the forms package with the app shell. The handle is white in both modes, as in the
+     preset */
+  .app-switch {
+    @apply relative inline-block shrink-0 w-10 h-6 rounded-full bg-gray-300 shadow-theme-xs transition-colors duration-200 motion-reduce:transition-none;
+  }
+  .app-switch::before {
+    content: '';
+    background-color: #ffffff;
+    @apply absolute top-1 left-1 size-4 rounded-full transition-[left] duration-200 motion-reduce:transition-none;
+  }
+  .app-switch.app-switch-on {
+    background-color: var(--app-brand-500);
+  }
+  .app-switch.app-switch-on::before {
+    @apply left-5;
   }
 
   /* Money and numbers line up */
