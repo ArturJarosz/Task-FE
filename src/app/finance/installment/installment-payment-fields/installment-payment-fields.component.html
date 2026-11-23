@@ -30,4 +30,10 @@
             }
         }
     </div>
+    <div>
+        <label [for]="idPrefix + 'DueDate'" class="app-form-label">Due date</label>
+        <p-datepicker [inputId]="idPrefix + 'DueDate'" formControlName="dueDate" dateFormat="dd.mm.yy" [showIcon]="true"
+                      [showClear]="true" appendTo="body" [fluid]="true"/>
+        <small class="block mt-1.5 text-xs text-gray-500">When the client should pay; you get notified before it</small>
+    </div>
 </div>

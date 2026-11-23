@@ -18,7 +18,8 @@ export class InstallmentFormProvider {
             hasInvoice: this.formBuilder.nonNullable.control<boolean>(false, [Validators.required]),
             note: this.formBuilder.control<string>(''),
             paid: this.formBuilder.nonNullable.control<boolean>(false, [Validators.required]),
-            paymentDate: this.formBuilder.control<Date | null>(new Date(), [])
+            paymentDate: this.formBuilder.control<Date | null>(new Date(), []),
+            dueDate: this.formBuilder.control<Date | null>(null)
         })
     }
 
@@ -41,4 +42,5 @@ export interface InstallmentForm {
     note: FormControl<string | null>
     paid: FormControl<boolean>,
     paymentDate: FormControl<Date | null>,
+    dueDate: FormControl<Date | null>,
 }

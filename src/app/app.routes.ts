@@ -39,6 +39,8 @@ export const appRoutes: Routes = [
     {path: 'company-costs/:companyCostId', loadComponent: () => import('./company-cost/company-cost-detail-shell/company-cost-detail-shell.component').then(m => m.CompanyCostDetailShellComponent), canActivate: [loggedInGuardGuard], data: {ownPageHeader: true}},
     // Calendar routes
     {path: 'calendar', loadComponent: () => import('./calendar/calendar-shell/calendar-shell.component').then(m => m.CalendarShellComponent), canActivate: [loggedInGuardGuard], data: {ownPageHeader: true}},
+    // Notification routes
+    {path: 'notifications', loadComponent: () => import('./notification/notification-list-shell/notification-list-shell.component').then(m => m.NotificationListShellComponent), canActivate: [loggedInGuardGuard], data: {ownPageHeader: true}},
     // Settings routes
     {path: 'settings', redirectTo: 'settings/system-parameters', pathMatch: 'full'},
     {path: 'settings/:section', loadComponent: () => import('./settings/settings-shell/settings-shell.component').then(m => m.SettingsShellComponent), canActivate: [loggedInGuardGuard], data: {ownPageHeader: true}},

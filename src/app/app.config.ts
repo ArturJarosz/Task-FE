@@ -31,6 +31,7 @@ import {FinancialReportRestService, FinancialReportRestServiceImpl} from './fina
 import {ConfigurationRestService, ConfigurationRestServiceImpl} from './shared/configuration/rest/configuration.rest';
 import {UserRestService, UserRestServiceImpl} from './shared/user/rest/user-rest.service';
 import {ReleaseNoteRestService, ReleaseNoteRestServiceImpl} from './shared/release-note/rest/release-note-rest.service';
+import {NotificationRestService, NotificationRestServiceImpl} from './notification/rest/notification-rest.service';
 import {BreadcrumbService, BreadcrumbServiceImpl} from './shared/breadcrumb/breadcrumb.service';
 import {ClientRestService, ClientRestServiceImpl} from './client/rest/client-rest.service';
 import {ArchitectRestService, ArchitectRestServiceImpl} from './architect/rest/architect-rest.service';
@@ -97,6 +98,7 @@ export const appConfig: ApplicationConfig = {
         {provide: ConfigurationRestService, useClass: ConfigurationRestServiceImpl},
         {provide: UserRestService, useClass: UserRestServiceImpl},
         {provide: ReleaseNoteRestService, useClass: ReleaseNoteRestServiceImpl},
+        {provide: NotificationRestService, useClass: NotificationRestServiceImpl},
         {provide: BreadcrumbService, useClass: BreadcrumbServiceImpl},
         {provide: ClientRestService, useClass: ClientRestServiceImpl},
         {provide: ArchitectRestService, useClass: ArchitectRestServiceImpl},

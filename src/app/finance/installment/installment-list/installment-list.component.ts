@@ -12,7 +12,9 @@ import {RouterLink} from "@angular/router";
 import {CurrencyPipe, DatePipe} from "@angular/common";
 import {EmptyStateComponent, NotSetComponent, YesNoMarkComponent} from "../../../shared";
 import {Installment} from "../../../generated/models/installment";
-import {isDeposit} from "../installment-utils";
+import {isDeposit, isInstallmentOverdue} from "../installment-utils";
+import {TagModule} from "primeng/tag";
+import {startOfToday} from "date-fns";
 import {fieldValue, SortValue, TableSort, toTableSort} from "../../../shared/utils/sort-utils";
 import {SortRowsPipe} from "../../../shared/sort-rows/sort-rows.pipe";
 import {ThreeStepSortDirective} from "../../../shared/sort-rows/three-step-sort.directive";
@@ -22,7 +24,7 @@ import {ThreeStepSortDirective} from "../../../shared/sort-rows/three-step-sort.
     templateUrl: './installment-list.component.html',
     styleUrl: './installment-list.component.less',
     standalone: true,
-    imports: [ThreeStepSortDirective, SortRowsPipe, FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, CurrencyPipe, DatePipe, EmptyStateComponent, NotSetComponent, YesNoMarkComponent]
+    imports: [TagModule, ThreeStepSortDirective, SortRowsPipe, FinanceComponentSummaryComponent, TableModule, RouterLink, ReactiveFormsModule, CurrencyPipe, DatePipe, EmptyStateComponent, NotSetComponent, YesNoMarkComponent]
 })
 export class InstallmentListComponent implements OnChanges {
     // The "New" button under the summary figures; the shell opens the dialog
@@ -31,6 +33,11 @@ export class InstallmentListComponent implements OnChanges {
 
     // Column sort of the table: it is lazy, so it only reports the sort and the sortRows pipe sorts a copy of the rows
     sort: TableSort | null = null;
+
+    // Not paid and due before today
+    isOverdue(installment: Installment): boolean {
+        return isInstallmentOverdue(installment, startOfToday());
+    }
 
     readonly sortValue = (row: Installment, field: string): SortValue => {
         switch (field) {

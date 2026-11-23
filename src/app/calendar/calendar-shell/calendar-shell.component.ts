@@ -12,6 +12,7 @@ import {DateRange, EventSelection} from "../model/calendar.model";
 import {PageCrumb, PageHeaderComponent} from "../../shared";
 import {ClientStore} from "../../client/state/client.state";
 import {ProjectStore} from "../../project/state/project.state";
+import {ArchitectStore} from "../../architect/state/architect.state";
 import {Client} from "../../generated/models/client";
 import {Project} from "../../generated/models/project";
 
@@ -28,6 +29,7 @@ export class CalendarShellComponent {
     readonly calendarStore = inject(CalendarStore);
     readonly clientStore = inject(ClientStore);
     readonly projectStore = inject(ProjectStore);
+    readonly architectStore = inject(ArchitectStore);
     readonly crumbs: PageCrumb[] = [{label: 'Home', route: ['/home']}, {label: 'Calendar'}];
 
     $events: Signal<CalendarEvent[]> = this.calendarStore.events;
@@ -46,6 +48,8 @@ export class CalendarShellComponent {
             }
         });
         this.calendarStore.loadGoogleConnection();
+        // The event dialog's Architect field and its hint about who is notified
+        this.architectStore.loadArchitects({});
     }
 
     onRangeChange(range: DateRange): void {

@@ -36,4 +36,19 @@ describe('InstallmentListComponent', () => {
     const firstRow: HTMLElement = fixture.nativeElement.querySelector('tbody tr');
     expect(firstRow.textContent).toContain('Deposit');
   });
+
+  it('should mark an unpaid installment past its due date as overdue', () => {
+    fixture.componentRef.setInput('installmentProjectData', {installments: [
+      {id: 1, type: InstallmentType.STAGE, stageName: 'Concept', value: 1000, paid: false, dueDate: '2020-01-10'},
+      {id: 2, type: InstallmentType.STAGE, stageName: 'Design', value: 1000, paid: true, dueDate: '2020-01-10',
+        paymentDate: '2020-01-09'},
+      {id: 3, type: InstallmentType.STAGE, stageName: 'Build', value: 1000, paid: false, dueDate: '2999-01-10'}
+    ]});
+    fixture.detectChanges();
+
+    const rows: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('tbody tr'));
+    const overdue = rows.filter(row => row.querySelector('p-tag')?.textContent?.includes('Overdue'));
+    expect(overdue.map(row => row.textContent)).toEqual([jasmine.stringContaining('Concept')]);
+    expect(rows.find(row => row.textContent?.includes('Concept'))?.textContent).toContain('10.01.2020');
+  });
 });

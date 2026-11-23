@@ -28,6 +28,8 @@ import {EditSystemParameterComponent} from "../edit-system-parameter/edit-system
 import {SystemParameterListComponent} from "../system-parameter-list/system-parameter-list.component";
 import {AppearanceSettingsComponent} from "../appearance-settings/appearance-settings.component";
 import {GoogleCalendarSettingsComponent} from "../google-calendar-settings/google-calendar-settings.component";
+import {NotificationSettingsComponent} from "../../notification/notification-settings/notification-settings.component";
+import {NotificationSettingsStore} from "../../notification/state/notification-settings.state";
 import {GoogleCalendarSharesComponent} from "../google-calendar-shares/google-calendar-shares.component";
 import {CalendarShare} from "../../generated/models/calendar-share";
 import {GoogleCalendarConnectionStatus} from "../../generated/models/google-calendar-connection-status";
@@ -76,7 +78,7 @@ interface NamedEntrySection {
         AppearanceSettingsComponent, GoogleCalendarSettingsComponent, GoogleCalendarSharesComponent, ConfirmDialogModule,
         RouterLink, RouterLinkActive, NamedEntryListComponent, EditNamedEntryComponent, ButtonModule,
         ArchitectAccountListComponent, LinkAccountComponent, SelectModule, FormsModule, RoleListComponent,
-        EditRoleComponent, UserRoleListComponent, EditUserRolesComponent]
+        EditRoleComponent, UserRoleListComponent, EditUserRolesComponent, NotificationSettingsComponent]
 })
 export class SettingsShellComponent {
     readonly systemParameterStore = inject(SystemParameterStore);
@@ -86,6 +88,7 @@ export class SettingsShellComponent {
     readonly dashboardStore = inject(DashboardStore);
     readonly userStore = inject(UserStore);
     readonly roleStore = inject(RoleStore);
+    readonly notificationSettingsStore = inject(NotificationSettingsStore);
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
     private readonly confirmationService = inject(ConfirmationService);
@@ -204,6 +207,12 @@ export class SettingsShellComponent {
                     this.userStore.loadUsers({});
                 }
             });
+        });
+        effect(() => {
+            if (this.$section()?.key === 'notifications') {
+                // Every visit, as saving them on another device changes them
+                untracked(() => this.notificationSettingsStore.loadSettings({}));
+            }
         });
         effect(() => {
             if (this.$section()?.key === 'google-calendar') {

@@ -87,6 +87,7 @@ export class AddInstallmentComponent implements OnInit, AbstractAddEditComponent
             paid: value.paid,
             // A payment date only makes sense once the installment is paid
             paymentDate: value.paid && value.paymentDate ? toTimeZoneString(value.paymentDate) : undefined,
+            dueDate: value.dueDate ? toTimeZoneString(value.dueDate) : undefined,
             note: value.note ?? undefined,
         };
     }

@@ -5,6 +5,7 @@ import {SkeletonModule} from "primeng/skeleton";
 import {CalendarStore} from "../state/calendar.state";
 import {ClientStore} from "../../client/state/client.state";
 import {ProjectStore} from "../../project/state/project.state";
+import {ArchitectStore} from "../../architect/state/architect.state";
 import {SystemParameterStore} from "../../settings/state/system-parameter.state";
 import {CalendarEvent} from "../../generated/models/calendar-event";
 import {toTimeZoneString} from "../../shared/utils/date-utils";
@@ -39,6 +40,7 @@ export class ConnectedEventsComponent implements OnChanges {
     readonly calendarStore = inject(CalendarStore);
     readonly clientStore = inject(ClientStore);
     readonly projectStore = inject(ProjectStore);
+    readonly architectStore = inject(ArchitectStore);
     readonly systemParameterStore = inject(SystemParameterStore);
     private readonly confirmationService = inject(ConfirmationService);
 
@@ -73,6 +75,7 @@ export class ConnectedEventsComponent implements OnChanges {
         this.calendarStore.loadGoogleConnection();
         this.clientStore.loadClients({});
         this.projectStore.loadProjects({});
+        this.architectStore.loadArchitects({});
     }
 
     reload(): void {

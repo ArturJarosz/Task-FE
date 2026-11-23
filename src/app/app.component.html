@@ -62,7 +62,8 @@
                       [pTooltip]="sidebarCollapsed ? 'Expand menu' : 'Collapse menu'" tooltipPosition="bottom"/>
 
             @if ((authorizationService.isAuthenticated() | async) === true) {
-                <div class="flex items-center">
+                <div class="flex items-center gap-2">
+                    <app-notification-bell/>
                     <button type="button"
                             class="flex items-center p-1 rounded-full border-0 bg-transparent cursor-pointer text-gray-700 hover:bg-gray-100"
                             aria-haspopup="menu" [attr.aria-label]="userMenuLabel" [attr.aria-expanded]="userMenuOpen"

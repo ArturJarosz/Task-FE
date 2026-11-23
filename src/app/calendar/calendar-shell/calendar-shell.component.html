@@ -35,6 +35,7 @@
                     [prefillSelection]="prefillSelection"
                     [clients]="$clients()"
                     [projects]="$projects()"
+                    [architects]="architectStore.architects()"
                     (notify)="onDialogNotify()"
                     (deleteRequested)="onDeleteEvent($event)"></add-calendar-event>
 <p-confirmdialog [style]="{width: '480px'}" [breakpoints]="{'640px': '95vw'}"/>

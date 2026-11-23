@@ -4,6 +4,11 @@
 import { CalendarEventSyncStatus } from '../models/calendar-event-sync-status';
 export interface CalendarEvent {
   allDay?: boolean;
+
+  /**
+   * Who a meeting without a project is for; never set on a meeting with a project
+   */
+  architectId?: number;
   clientId?: number;
   createdDateTime?: string;
   description?: string;

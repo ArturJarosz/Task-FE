@@ -46,6 +46,13 @@
                       appendTo="body" [fluid]="true" (onChange)="onProjectChange()"/>
         </div>
         <div class="sm:col-span-2">
+            <label for="eventArchitect" class="app-form-label">Architect</label>
+            <p-select inputId="eventArchitect" formControlName="architectId" [options]="architectOptions" optionLabel="name"
+                      optionValue="id" [filter]="true" filterBy="name" [showClear]="true" placeholder="Select an architect"
+                      appendTo="body" [fluid]="true" aria-describedby="eventArchitectHint"/>
+            <small id="eventArchitectHint" class="block mt-1.5 text-xs text-gray-500">{{ recipientHint }}</small>
+        </div>
+        <div class="sm:col-span-2">
             <label for="description" class="app-form-label">Description</label>
             <textarea id="description" formControlName="description" pTextarea rows="3" [autoResize]="true" class="w-full"></textarea>
         </div>

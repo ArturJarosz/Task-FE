@@ -1,0 +1,69 @@
+<div role="table" aria-label="Notification settings" class="text-sm">
+    <!-- Below sm the header is hidden and each row stacks: name and switch, then the reminders -->
+    <div role="row" class="app-table-head grid grid-cols-[minmax(0,1fr)_17rem_3rem] max-sm:hidden">
+        <span role="columnheader">Type</span>
+        <span role="columnheader">Days before</span>
+        <span role="columnheader">On</span>
+    </div>
+    @if (loading() && settings().length === 0) {
+        @for (row of [1, 2, 3, 4, 5]; track row) {
+            <div role="row" class="grid grid-cols-[minmax(0,1fr)_17rem_3rem] max-sm:grid-cols-[minmax(0,1fr)_3rem] gap-3 items-center px-5 py-3 border-b border-gray-100">
+                <p-skeleton width="10rem"/>
+                <p-skeleton width="8rem" height="1.75rem" styleClass="max-sm:hidden"/>
+                <p-skeleton width="2.5rem" height="1.5rem"/>
+            </div>
+        }
+    } @else if (loadFailed() && settings().length === 0) {
+        <app-empty-state icon="pi pi-exclamation-triangle" title="Couldn't load notification settings">
+            <p-button label="Try again" icon="pi pi-refresh" severity="secondary" [outlined]="true" (onClick)="retry.emit()"/>
+        </app-empty-state>
+    } @else {
+        @for (row of $rows(); track row.setting.type) {
+            <div role="row" class="grid grid-cols-[minmax(0,1fr)_17rem_3rem] max-sm:grid-cols-[minmax(0,1fr)_3rem] gap-x-3 gap-y-2 items-center px-5 py-2.5 border-b border-gray-100 hover:bg-gray-50">
+                <div role="cell" class="min-w-0">
+                    <label [for]="row.inputId" class="font-medium text-gray-800">{{ row.label }}</label>
+                    @if (row.missingReminder) {
+                        <p class="m-0 text-xs text-error-600">Add a reminder, or turn this type off</p>
+                    }
+                </div>
+                <div role="cell" class="flex flex-wrap items-center gap-1.5 max-sm:col-span-2 max-sm:row-start-2"
+                     [attr.aria-label]="row.label + ' reminders'">
+                    @if (!row.setting.enabled) {
+                        <span class="text-gray-400">Off</span>
+                    } @else {
+                        @for (days of row.setting.daysBefore; track days) {
+                            <p-chip [label]="shortLabel(days)" [removable]="true" styleClass="app-num"
+                                    (onRemove)="removeReminder(row.setting, days)"/>
+                        }
+                        @if (addingType() === row.setting.type) {
+                            <!-- Enter or leaving the field adds the days; Escape drops them -->
+                            <p-inputnumber [ngModel]="newDays(row.setting)" (ngModelChange)="setNewDays(row.setting, $event)"
+                                           [min]="0" [max]="maxDaysBefore" [autofocus]="true"
+                                           [suffix]="newDays(row.setting) === 1 ? ' day' : ' days'"
+                                           [ariaLabel]="'Days before, for ' + row.label" size="small"
+                                           inputStyleClass="w-24 app-num"
+                                           (keydown.enter)="finishAdding(row.setting)"
+                                           (keydown.escape)="cancelAdding(row.setting)"
+                                           (onBlur)="finishAdding(row.setting, true)"/>
+                        } @else if ((row.setting.daysBefore?.length ?? 0) < maxReminders) {
+                            <p-button icon="pi pi-plus" [text]="true" [rounded]="true" size="small"
+                                      [severity]="row.missingReminder ? 'danger' : 'secondary'"
+                                      [ariaLabel]="'Add a reminder for ' + row.label" pTooltip="Add reminder"
+                                      tooltipPosition="top" (onClick)="startAdding(row.setting)"/>
+                        }
+                    }
+                </div>
+                <div role="cell" class="max-sm:col-start-2 max-sm:row-start-1">
+                    <p-toggleswitch [inputId]="row.inputId" [ngModel]="row.setting.enabled"
+                                    (ngModelChange)="setEnabled(row.setting.type, $event)"/>
+                </div>
+            </div>
+        }
+        <div class="flex flex-wrap justify-end gap-3 px-5 py-4">
+            <p-button label="Cancel" severity="secondary" [outlined]="true" [disabled]="!$changed() || saving()"
+                      (onClick)="cancel()"/>
+            <p-button label="Save changes" [loading]="saving()" [disabled]="!$changed() || $invalid() || saving()"
+                      (onClick)="saveChanges()"/>
+        </div>
+    }
+</div>

@@ -4,11 +4,20 @@
 import { InstallmentType } from '../models/installment-type';
 export interface Installment {
   createdDateTime?: string;
+
+  /**
+   * The day the client should pay it
+   */
+  dueDate?: string;
   hasInvoice?: boolean;
   id?: number;
   lastModifiedDateTime?: string;
   note?: string;
   paid?: boolean;
+
+  /**
+   * The day it was paid; only set when paid
+   */
   paymentDate?: string;
   stageId?: number;
   stageName?: string;

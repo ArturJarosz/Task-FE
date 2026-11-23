@@ -5,6 +5,7 @@ import {ConfigurationStore} from "./shared/configuration/state";
 import {UserStore} from "./shared/user/state";
 import {ReleaseNoteStore} from "./shared/release-note/state";
 import {WhatsNewDialogComponent} from "./shared/release-note/whats-new-dialog/whats-new-dialog.component";
+import {NotificationBellComponent} from "./notification/notification-bell/notification-bell.component";
 import {SystemParameterStore} from "./settings/state";
 import {AuthorizationService} from "./security/authorization.service";
 import {ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
@@ -93,7 +94,7 @@ const DIALOG_FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]),
     styleUrls: ['./app.component.less'],
     standalone: true,
     imports: [ToastModule, ButtonModule, Menu, BreadcrumbModule, TooltipModule, NgClass, AsyncPipe, RouterLink, RouterLinkActive, RouterOutlet,
-        WhatsNewDialogComponent]
+        WhatsNewDialogComponent, NotificationBellComponent]
 })
 export class AppComponent implements OnInit {
     title = 'Task-FE';
