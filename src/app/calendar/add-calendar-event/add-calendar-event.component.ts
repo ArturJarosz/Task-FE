@@ -4,6 +4,8 @@ import {CalendarEventForm, CalendarEventFormProvider} from "../form/calendar-eve
 import {CalendarEvent} from "../../generated/models/calendar-event";
 import {Client} from "../../generated/models/client";
 import {Project} from "../../generated/models/project";
+import {Architect} from "../../generated/models/architect";
+import {accountName} from "../../settings/account-name";
 import {clientDisplayName} from "../../client/model/client";
 import {CalendarStore} from "../state";
 import {EventSelection, GOOGLE_SYNC_ISSUES} from "../model/calendar.model";
@@ -36,6 +38,9 @@ export class AddCalendarEventComponent implements OnChanges {
     clients: Client[] = [];
     @Input()
     projects: Project[] = [];
+    // With their linked accounts, which say who gets the meeting's notifications
+    @Input()
+    architects: Architect[] = [];
     // A new event opened from a client's or project's page belongs to it, so these are preselected and locked
     @Input()
     fixedClientId?: number;
@@ -58,6 +63,7 @@ export class AddCalendarEventComponent implements OnChanges {
     clientOptions: {id?: number, name: string}[] = [];
     // Only projects of the selected client
     projectOptions: Project[] = [];
+    architectOptions: {id?: number, name: string}[] = [];
 
     constructor(private formProvider: CalendarEventFormProvider) {
         this.calendarEventForm = this.formProvider.getCalendarEventFormGroup();
@@ -76,6 +82,9 @@ export class AddCalendarEventComponent implements OnChanges {
         }
         if (changes['projects']) {
             this.updateProjectOptions();
+        }
+        if (changes['architects']) {
+            this.architectOptions = this.architects.map(architect => ({id: architect.id, name: architectName(architect)}));
         }
     }
 
@@ -96,6 +105,25 @@ export class AddCalendarEventComponent implements OnChanges {
             this.calendarEventForm.controls.clientId.setValue(project.client.id);
         }
         this.updateProjectOptions();
+        this.updateArchitectField();
+    }
+
+    // Who the meeting's notifications go to: the project's architect, else the chosen one, else everyone
+    get recipientHint(): string {
+        const project = this.selectedProject();
+        const architectId = this.calendarEventForm.controls.architectId.value;
+        if (!project && architectId === null) {
+            return 'Without a project or architect, notifications go to everyone';
+        }
+        const architect = this.architects.find(architect => architect.id === architectId);
+        const prefix = project ? "The project's architect · " : '';
+        if (!architect) {
+            return `${prefix}No one gets notifications, as the project has no architect`;
+        }
+        if (!architect.linkedUser) {
+            return `${prefix}No one gets notifications, as ${architectName(architect)} has no linked account`;
+        }
+        return `${prefix}Notifications go to ${accountName(architect.linkedUser)}`;
     }
 
     onClose(): void {
@@ -158,6 +186,9 @@ export class AddCalendarEventComponent implements OnChanges {
             allDay: allDay,
             clientId: this.calendarEventForm.controls.clientId.value ?? undefined,
             projectId: this.calendarEventForm.controls.projectId.value ?? undefined,
+            // A meeting with a project is for the project's architect, so the backend keeps an architect only without one
+            architectId: this.selectedProject() ? undefined
+                : this.calendarEventForm.controls.architectId.value ?? undefined,
         };
     }
 
@@ -171,6 +202,7 @@ export class AddCalendarEventComponent implements OnChanges {
                 allDay: this.event.allDay,
                 clientId: this.event.clientId,
                 projectId: this.event.projectId,
+                architectId: this.event.architectId,
             });
         } else if (this.prefillSelection) {
             this.calendarEventForm = this.formProvider.getCalendarEventFormGroup({
@@ -191,6 +223,24 @@ export class AddCalendarEventComponent implements OnChanges {
             }
         }
         this.updateProjectOptions();
+        this.updateArchitectField();
+    }
+
+    private selectedProject(): Project | undefined {
+        const projectId = this.calendarEventForm.controls.projectId.value;
+        return projectId === null ? undefined : this.projects.find(project => project.id === projectId);
+    }
+
+    // With a project the architect is the project's and can't be changed; without one it is free to choose
+    private updateArchitectField(): void {
+        const architectControl = this.calendarEventForm.controls.architectId;
+        const project = this.selectedProject();
+        if (project) {
+            architectControl.setValue(project.architect?.id ?? null);
+            architectControl.disable();
+        } else {
+            architectControl.enable();
+        }
     }
 
     private updateProjectOptions(): void {
@@ -199,4 +249,8 @@ export class AddCalendarEventComponent implements OnChanges {
             ? this.projects.filter(project => project.client?.id === clientId)
             : this.projects;
     }
+}
+
+function architectName(architect: Architect): string {
+    return `${architect.firstName ?? ''} ${architect.lastName ?? ''}`.trim();
 }

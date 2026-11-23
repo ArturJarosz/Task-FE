@@ -120,4 +120,35 @@ describe('AddCalendarEventComponent', () => {
       expect(saved.event.projectId).toBe(10);
     });
   });
+
+  describe('architect', () => {
+    const linked = {id: 5, firstName: 'Anna', lastName: 'Nowak', linkedUser: {id: 1, username: 'anna@example.com'}};
+    const unlinked = {id: 6, firstName: 'Jan', lastName: 'Kowal'};
+    const projects = [{id: 10, name: 'House', architect: linked}];
+
+    beforeEach(() => {
+      fixture.componentRef.setInput('architects', [linked, unlinked]);
+      fixture.componentRef.setInput('projects', projects);
+      fixture.detectChanges();
+    });
+
+    it('should notify everyone about a meeting without a project or architect', () => {
+      expect(component.recipientHint).toBe('Without a project or architect, notifications go to everyone');
+    });
+
+    it("should use the project's architect and lock the field once a project is selected", () => {
+      component.calendarEventForm.controls.projectId.setValue(10);
+      component.onProjectChange();
+
+      expect(component.calendarEventForm.controls.architectId.value).toBe(5);
+      expect(component.calendarEventForm.controls.architectId.disabled).toBeTrue();
+      expect(component.recipientHint).toBe("The project's architect · Notifications go to anna@example.com");
+    });
+
+    it('should say no one is notified when the architect has no linked account', () => {
+      component.calendarEventForm.controls.architectId.setValue(6);
+
+      expect(component.recipientHint).toBe('No one gets notifications, as Jan Kowal has no linked account');
+    });
+  });
 });

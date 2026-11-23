@@ -39,6 +39,7 @@ export class StageFormProvider {
             hasInvoice: this.formBuilder.control<boolean>(true, [Validators.required]),
             paid: this.formBuilder.control<boolean>(false, [Validators.required]),
             paymentDate: this.formBuilder.control<Date | null>(null),
+            dueDate: this.formBuilder.control<Date | null>(null),
         })
     }
 }
@@ -65,5 +66,6 @@ export interface AddStageForm {
     installmentValue?: FormControl<number | null>,
     hasInvoice?: FormControl<boolean | null>,
     paid?: FormControl<boolean | null>,
-    paymentDate?: FormControl<Date | null>
+    paymentDate?: FormControl<Date | null>,
+    dueDate?: FormControl<Date | null>
 }

@@ -22,6 +22,7 @@ export interface CalendarEventFormDefaults {
     allDay?: boolean;
     clientId?: number;
     projectId?: number;
+    architectId?: number;
 }
 
 @Injectable({
@@ -43,6 +44,7 @@ export class CalendarEventFormProvider {
             allDay: this.formBuilder.nonNullable.control<boolean>(defaults?.allDay ?? false),
             clientId: this.formBuilder.control<number | null>(defaults?.clientId ?? null),
             projectId: this.formBuilder.control<number | null>(defaults?.projectId ?? null),
+            architectId: this.formBuilder.control<number | null>(defaults?.architectId ?? null),
         }, {validators: [endAfterStartValidator()]})
     }
 }
@@ -55,4 +57,5 @@ export interface CalendarEventForm {
     allDay: FormControl<boolean>;
     clientId: FormControl<number | null>;
     projectId: FormControl<number | null>;
+    architectId: FormControl<number | null>;
 }

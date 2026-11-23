@@ -68,6 +68,12 @@
                 <p-toggleswitch inputId="addStagePaid" formControlName="paid"/>
                 <label for="addStagePaid" class="text-sm font-medium text-gray-700 cursor-pointer">Paid</label>
             </div>
+            <div>
+                <label for="addStageDueDate" class="app-form-label">Due date</label>
+                <p-datepicker inputId="addStageDueDate" formControlName="dueDate" dateFormat="dd.mm.yy" [showIcon]="true"
+                              [showClear]="true" appendTo="body" [fluid]="true"/>
+                <small class="block mt-1.5 text-xs text-gray-500">When the client should pay; you get notified before it</small>
+            </div>
         }
     </form>
     <ng-template #footer>

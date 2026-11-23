@@ -47,6 +47,19 @@
                                      (retry)="onRetry()"/>
             </section>
         }
+        @case ('notifications') {
+            <section class="app-card overflow-hidden min-w-0">
+                <div class="px-5 py-4">
+                    <h2 class="m-0 text-base font-semibold text-gray-800">Notifications</h2>
+                </div>
+                <app-notification-settings [settings]="notificationSettingsStore.settings()"
+                                           [loading]="notificationSettingsStore.settingsLoading()"
+                                           [loadFailed]="notificationSettingsStore.settingsLoadFailed()"
+                                           [saving]="notificationSettingsStore.saving()"
+                                           (save)="notificationSettingsStore.saveSettings($event)"
+                                           (retry)="notificationSettingsStore.loadSettings({})"/>
+            </section>
+        }
         @case ('users') {
             <section class="app-card overflow-hidden min-w-0">
                 <div class="px-5 py-4">

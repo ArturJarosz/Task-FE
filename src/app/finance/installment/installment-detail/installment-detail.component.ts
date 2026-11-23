@@ -25,7 +25,7 @@ type InstallmentFormValue = ReturnType<FormGroup<InstallmentForm>['getRawValue']
 
 // What the update endpoint changes. It keeps the paid flag, and takes a payment date only for an installment that is
 // already paid; marking one paid is the separate payment endpoint.
-const DATA_FIELDS: (keyof InstallmentFormValue)[] = ['value', 'hasInvoice', 'note'];
+const DATA_FIELDS: (keyof InstallmentFormValue)[] = ['value', 'hasInvoice', 'note', 'dueDate'];
 
 @Component({
     selector: 'installment-detail',
@@ -128,6 +128,7 @@ export class InstallmentDetailComponent implements OnChanges {
                 hasInvoice: value.hasInvoice,
                 paid: alreadyPaid,
                 paymentDate: alreadyPaid ? paymentDate : undefined,
+                dueDate: value.dueDate ? toTimeZoneString(value.dueDate) : undefined,
                 // The backend replaces the note with what is sent, so it always goes along
                 note: value.note ?? undefined,
             } : undefined,
@@ -161,7 +162,8 @@ export class InstallmentDetailComponent implements OnChanges {
             hasInvoice: this.installment.hasInvoice ?? false,
             note: this.installment.note ?? '',
             paid: paid,
-            paymentDate: toDateIfExists(this.installment.paymentDate) ?? null
+            paymentDate: toDateIfExists(this.installment.paymentDate) ?? null,
+            dueDate: toDateIfExists(this.installment.dueDate) ?? null
         });
         // A payment can't be undone, so a paid installment can't be switched back
         if (paid) {

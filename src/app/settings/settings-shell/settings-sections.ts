@@ -17,6 +17,7 @@ export const SETTINGS_SECTION_GROUPS: SettingsSectionGroup[] = [
         label: 'Application', sections: [
             {key: 'system-parameters', label: 'System parameters', icon: 'pi pi-sliders-h', showsSystemParameters: true},
             {key: 'appearance', label: 'Appearance', icon: 'pi pi-palette', showsSystemParameters: true},
+            {key: 'notifications', label: 'Notifications', icon: 'pi pi-bell', showsSystemParameters: false},
         ]
     },
     {

@@ -80,7 +80,7 @@ Import PrimeNG modules individually per component (e.g. `TableModule` from `prim
   Code the app shell loads at start (`app.config.ts`, `app.component.ts`, `security/`, every store and REST service)
   imports from the file itself, never through a barrel (`shared/index.ts`, a feature's `index.ts`): a barrel drags its
   page components and their PrimeNG modules into the first load. `import {MessageSeverity} from "../../shared/message"`,
-  not `from "../../shared"`. Measure with `ng build --stats-json`; the initial total was 271 kB compressed
+  not `from "../../shared"`. Measure with `ng build --stats-json`; the initial total was 294 kB compressed
 
 ### State Management Pattern
 

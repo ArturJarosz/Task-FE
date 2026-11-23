@@ -5,6 +5,7 @@
             <ng-template #header>
                 <tr>
                     <th pSortableColumn="for">For <p-sortIcon field="for"/></th>
+                    <th pSortableColumn="dueDate">Due date <p-sortIcon field="dueDate"/></th>
                     <th pSortableColumn="paymentDate">Payment date <p-sortIcon field="paymentDate"/></th>
                     <th pSortableColumn="value" class="app-num">Net value <p-sortIcon field="value"/></th>
                     <th pSortableColumn="hasInvoice" class="w-24 text-center">Invoice <p-sortIcon field="hasInvoice"/></th>
@@ -15,6 +16,18 @@
                 <tr [routerLink]="['/projects', projectId, 'installments', installment.id]" class="cursor-pointer">
                     <td>
                         <span class="font-medium text-gray-800">{{ isDeposit(installment) ? 'Deposit' : installment.stageName }}</span>
+                    </td>
+                    <td>
+                        @if (installment.dueDate) {
+                            <span class="inline-flex flex-wrap items-center gap-2">
+                                {{ installment.dueDate | date:'dd.MM.yyyy' }}
+                                @if (isOverdue(installment)) {
+                                    <p-tag value="Overdue" severity="danger"/>
+                                }
+                            </span>
+                        } @else {
+                            <app-not-set/>
+                        }
                     </td>
                     <td>
                         @if (installment.paymentDate) {
@@ -30,7 +43,7 @@
             </ng-template>
             <ng-template #emptymessage>
                 <tr>
-                    <td [attr.colspan]="5" class="p-0">
+                    <td [attr.colspan]="6" class="p-0">
                         <app-empty-state icon="pi pi-credit-card" title="No installments yet" text="Add the deposit and one installment per stage to track client payments."/>
                     </td>
                 </tr>

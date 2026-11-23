@@ -1,0 +1,36 @@
+<p-popover appendTo="body" styleClass="w-[min(400px,calc(100vw-2rem))]" [pt]="{content: {class: 'p-0'}}"
+           (onShow)="onShow()">
+    <div class="flex items-center justify-between gap-3 px-4 pt-4 pb-3">
+        <h2 class="m-0 text-base font-semibold text-gray-800">Notifications</h2>
+        <p-button label="Mark all as read" [text]="true" severity="secondary"
+                  [disabled]="!notificationStore.unreadCount()" (onClick)="markAllRead()"/>
+    </div>
+    <div class="px-4 pb-3">
+        <div class="app-seg" role="group" aria-label="Show">
+            <button type="button" class="app-seg-item gap-2" [class.active]="unread()" [attr.aria-pressed]="unread()"
+                    (click)="setUnread(true)">
+                Unread
+                @if (notificationStore.unreadCount() !== null) {
+                    <span class="text-xs text-gray-500 tabular-nums">{{ notificationStore.unreadCount() }}</span>
+                }
+            </button>
+            <button type="button" class="app-seg-item" [class.active]="!unread()" [attr.aria-pressed]="!unread()"
+                    (click)="setUnread(false)">
+                All
+            </button>
+        </div>
+    </div>
+    <div class="max-h-[min(28rem,60vh)] overflow-y-auto">
+        <app-notification-list [notifications]="notificationStore.panel().notifications"
+                               [loading]="notificationStore.panel().loading"
+                               [loadFailed]="notificationStore.panel().loadFailed"
+                               [loaded]="notificationStore.panel().loaded"
+                               [emptyTitle]="unread() ? 'You are all caught up' : 'Nothing due'"
+                               (opened)="openItem($event)" (readToggled)="toggleRead($event)"
+                               (retry)="onShow()"/>
+    </div>
+    <div class="flex items-center justify-between gap-3 px-4 py-3 border-t border-gray-200">
+        <p-button label="See all" severity="secondary" [outlined]="true" (onClick)="seeAll()"/>
+        <p-button label="Settings" icon="pi pi-cog" [text]="true" severity="secondary" (onClick)="openSettings()"/>
+    </div>
+</p-popover>

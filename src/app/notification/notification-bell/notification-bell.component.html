@@ -1,0 +1,11 @@
+<span #bell class="inline-flex">
+    <p-overlaybadge [value]="$badge()" severity="danger" [badgeDisabled]="!notificationStore.unreadCount()">
+        <p-button icon="pi pi-bell" severity="secondary" [text]="true" [rounded]="true"
+                  [ariaLabel]="$label()" [pTooltip]="$label()" tooltipPosition="bottom"
+                  (onClick)="toggle($event)"/>
+    </p-overlaybadge>
+</span>
+<!-- The popover is loaded after the app has started, so the first load stays small -->
+@defer (on idle) {
+    <app-notification-panel #panel/>
+}

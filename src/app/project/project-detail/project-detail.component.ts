@@ -458,6 +458,7 @@ export class ProjectDetailComponent implements OnChanges {
             paid: value.paid,
             // A payment date only makes sense once the deposit is paid
             paymentDate: value.paid && value.paymentDate ? toTimeZoneString(value.paymentDate) : undefined,
+            dueDate: value.dueDate ? toTimeZoneString(value.dueDate) : undefined,
         };
     }
 

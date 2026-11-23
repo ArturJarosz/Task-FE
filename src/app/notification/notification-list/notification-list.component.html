@@ -1,0 +1,62 @@
+@if (loading() && !loaded()) {
+    <div class="flex flex-col gap-3 px-4 py-3" aria-busy="true">
+        @for (row of [1, 2, 3]; track row) {
+            <div class="flex items-start gap-3">
+                <p-skeleton width="2.5rem" height="2.5rem" borderRadius="12px"/>
+                <div class="flex flex-col flex-1 gap-2">
+                    <p-skeleton width="70%"/>
+                    <p-skeleton width="45%"/>
+                </div>
+            </div>
+        }
+    </div>
+} @else if (loadFailed() && notifications().length === 0) {
+    <app-empty-state icon="pi pi-exclamation-triangle" title="Couldn't load notifications">
+        <p-button label="Try again" severity="secondary" [outlined]="true" (onClick)="retry.emit()"/>
+    </app-empty-state>
+} @else if (notifications().length === 0) {
+    <app-empty-state icon="pi pi-bell" [title]="emptyTitle()"/>
+} @else {
+    @for (group of groups(); track group.group) {
+        <section [attr.aria-label]="group.group">
+            <p class="m-0 px-4 pt-3 pb-1 text-xs font-medium text-gray-500">{{ group.group }}</p>
+            <ul class="list-none m-0 p-0">
+                @for (row of group.rows; track row.notification.id) {
+                    <!-- Unread rows stand out: a brand tint, a brand bar on the left and a bold title. Read ones
+                         keep the same 4px left border, transparent, so their content lines up -->
+                    <li class="flex items-start gap-3 px-4 py-3 border-t border-t-gray-100 border-l-4"
+                        [ngClass]="row.notification.read ? 'border-l-transparent hover:bg-gray-50'
+                            : 'border-l-brand-500 bg-brand-50 hover:bg-brand-100'">
+                        <span class="flex items-center justify-center w-10 h-10 shrink-0 rounded-xl"
+                              [ngClass]="row.toneClasses" aria-hidden="true">
+                            <i [class]="row.icon"></i>
+                        </span>
+                        <!-- The row's text opens the item; the marker on the right only changes read or unread -->
+                        <button type="button"
+                                class="flex flex-col flex-1 min-w-0 gap-0.5 p-0 text-left bg-transparent border-0 rounded cursor-pointer focus-visible:shadow-focus-ring focus-visible:outline-none"
+                                (click)="opened.emit(row.notification)">
+                            <span class="text-sm truncate"
+                                  [ngClass]="row.notification.read ? 'text-gray-700' : 'font-semibold text-gray-800'">
+                                @if (!row.notification.read) {
+                                    <span class="sr-only">Unread: </span>
+                                }
+                                {{ row.title }}
+                            </span>
+                            @if (row.notification.projectName) {
+                                <span class="text-xs text-gray-500 truncate">{{ row.notification.projectName }}</span>
+                            }
+                            <span class="text-xs text-gray-500">{{ row.date }} · {{ row.relative }}</span>
+                        </button>
+                        <p-button [icon]="row.notification.read ? 'pi pi-circle' : 'pi pi-circle-fill'"
+                                  [text]="true" [rounded]="true" severity="secondary"
+                                  [styleClass]="row.notification.read ? 'text-gray-400' : 'text-brand-500'"
+                                  [ariaLabel]="(row.notification.read ? 'Mark as unread: ' : 'Mark as read: ') + row.title"
+                                  [pTooltip]="row.notification.read ? 'Mark as unread' : 'Mark as read'"
+                                  tooltipPosition="left"
+                                  (onClick)="readToggled.emit(row.notification)"/>
+                    </li>
+                }
+            </ul>
+        </section>
+    }
+}

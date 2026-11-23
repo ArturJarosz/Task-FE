@@ -37,6 +37,7 @@
                         <div class="app-field-value tabular-nums">{{ (installment.value ?? 0) | currency:'PLN':'symbol':'1.2-2' }}</div>
                     </div>
                     <app-field label="Invoice issued" [value]="installment.hasInvoice ? 'Yes' : 'No'"/>
+                    <app-field label="Due date" [value]="installment.dueDate | date:'dd.MM.yyyy'"/>
                     <app-field label="Paid" [value]="installment.paid ? 'Yes' : 'No'"/>
                     <app-field label="Payment date" [value]="installment.paymentDate | date:'dd.MM.yyyy'"/>
                     <app-field class="sm:col-span-2 lg:col-span-3" label="Note" [value]="installment.note" emptyText="No note yet"/>
@@ -134,6 +135,12 @@
                     <small class="block mt-1.5 text-xs text-error-600">Select the payment date</small>
                 }
             }
+        </div>
+        <div>
+            <label for="installmentDueDate" class="app-form-label">Due date</label>
+            <p-datepicker inputId="installmentDueDate" formControlName="dueDate" dateFormat="dd.mm.yy" [showIcon]="true"
+                          [showClear]="true" appendTo="body" [fluid]="true"/>
+            <small class="block mt-1.5 text-xs text-gray-500">When the client should pay; you get notified before it</small>
         </div>
         <div class="sm:col-span-2">
             <label for="installmentNote" class="app-form-label">Note</label>

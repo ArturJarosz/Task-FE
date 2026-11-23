@@ -106,6 +106,17 @@ export const AppThemePreset = definePreset(Aura, {
   },
 
   components: {
+    // The bell's unread count: Aura's 24px badge with a 12px bold number outweighs the 16px bell it sits on
+    badge: {
+      root: {
+        fontSize: '0.6875rem',
+        fontWeight: '600',
+        minWidth: '1.125rem',
+        height: '1.125rem',
+        padding: '0 0.3125rem',
+      },
+    },
+
     card: {
       root: {
         borderRadius: '{border.radius.xl}',

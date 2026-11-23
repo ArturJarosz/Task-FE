@@ -1,0 +1,38 @@
+<app-page-header title="Notifications" [crumbs]="crumbs"/>
+
+<section class="app-card overflow-hidden">
+    <div class="app-card-header">
+        <div>
+            <h2 class="app-card-title">Notifications</h2>
+            <p class="app-card-subtitle m-0">{{ $subtitle() }}</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+            <div class="app-seg" role="group" aria-label="Show">
+                <button type="button" class="app-seg-item gap-2" [class.active]="$filter().unread"
+                        [attr.aria-pressed]="$filter().unread" (click)="setFilter({unread: true})">
+                    Unread
+                    @if (notificationStore.unreadCount() !== null) {
+                        <span class="text-xs text-gray-500 tabular-nums">{{ notificationStore.unreadCount() }}</span>
+                    }
+                </button>
+                <button type="button" class="app-seg-item" [class.active]="!$filter().unread"
+                        [attr.aria-pressed]="!$filter().unread" (click)="setFilter({unread: false})">
+                    All
+                </button>
+            </div>
+            <p-select [options]="typeOptions" optionLabel="label" optionValue="value" [ngModel]="$filter().type"
+                      (ngModelChange)="setFilter({type: $event ?? null})" [showClear]="true"
+                      placeholder="All types" ariaLabel="Type" appendTo="body" styleClass="w-60"/>
+            <p-button label="Mark all as read" icon="pi pi-check" severity="secondary" [outlined]="true"
+                      [disabled]="!notificationStore.unreadCount()" (onClick)="markAllRead()"/>
+        </div>
+    </div>
+    <app-notification-list [notifications]="notificationStore.page().notifications"
+                           [loading]="notificationStore.page().loading"
+                           [loadFailed]="notificationStore.page().loadFailed"
+                           [loaded]="notificationStore.page().loaded"
+                           [emptyTitle]="$filter().unread ? 'You are all caught up' : 'Nothing due'"
+                           (opened)="openItem($event)" (readToggled)="toggleRead($event)" (retry)="reload()"/>
+    <app-table-footer [total]="notificationStore.page().total" [page]="$filter().page" [pageSize]="pageSize"
+                      (pageChange)="setFilter({page: $event})"/>
+</section>

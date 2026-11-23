@@ -327,3 +327,15 @@ export type { GetUnseenReleaseNotes$Params as GetUnseenReleaseNotes$Params } fro
 export { getUnseenReleaseNotes as getUnseenReleaseNotes } from './fn/release-note/get-unseen-release-notes';
 export type { MarkReleaseNotesSeen$Params as MarkReleaseNotesSeen$Params } from './fn/release-note/mark-release-notes-seen';
 export { markReleaseNotesSeen as markReleaseNotesSeen } from './fn/release-note/mark-release-notes-seen';
+export type { GetNotifications$Params as GetNotifications$Params } from './fn/notification/get-notifications';
+export { getNotifications as getNotifications } from './fn/notification/get-notifications';
+export type { GetNotificationCount$Params as GetNotificationCount$Params } from './fn/notification/get-notification-count';
+export { getNotificationCount as getNotificationCount } from './fn/notification/get-notification-count';
+export type { UpdateNotificationRead$Params as UpdateNotificationRead$Params } from './fn/notification/update-notification-read';
+export { updateNotificationRead as updateNotificationRead } from './fn/notification/update-notification-read';
+export type { MarkAllNotificationsRead$Params as MarkAllNotificationsRead$Params } from './fn/notification/mark-all-notifications-read';
+export { markAllNotificationsRead as markAllNotificationsRead } from './fn/notification/mark-all-notifications-read';
+export type { GetNotificationSettings$Params as GetNotificationSettings$Params } from './fn/notification/get-notification-settings';
+export { getNotificationSettings as getNotificationSettings } from './fn/notification/get-notification-settings';
+export type { UpdateNotificationSettings$Params as UpdateNotificationSettings$Params } from './fn/notification/update-notification-settings';
+export { updateNotificationSettings as updateNotificationSettings } from './fn/notification/update-notification-settings';
